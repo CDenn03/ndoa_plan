@@ -6,7 +6,8 @@ import { evaluateRisks } from '@/lib/risk-engine'
 
 export const runtime = 'nodejs'
 
-export async function POST(_req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function POST(_req: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

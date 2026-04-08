@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, use } from 'react';
 import { ShoppingBag, Search, Plus, Phone, Mail, X } from 'lucide-react'
 import { Button, Input, Select, Badge, Card, CardHeader, CardContent, CardTitle, StatCard, EmptyState, Spinner } from '@/components/ui'
 import { useVendors, useVendorStats, useAddVendor, useUpdateVendorStatus } from '@/hooks/use-vendors'
@@ -127,7 +127,8 @@ function AddVendorModal({ weddingId, onClose }: { weddingId: string; onClose: ()
   )
 }
 
-export default function VendorsPage({ params }: { params: { weddingId: string } }) {
+export default function VendorsPage(props: { params: Promise<{ weddingId: string }> }) {
+  const params = use(props.params);
   const wid = params.weddingId
   const { data: vendors = [], isLoading } = useVendors(wid)
   const stats = useVendorStats(wid)

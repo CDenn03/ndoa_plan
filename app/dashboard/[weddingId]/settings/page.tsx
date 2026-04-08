@@ -4,7 +4,8 @@ import { db } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import { WeddingSettingsClient } from './settings-client'
 
-export default async function SettingsPage({ params }: { params: { weddingId: string } }) {
+export default async function SettingsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   if (!session?.user) redirect('/login')
   const userId = (session.user as typeof session.user & { id: string }).id

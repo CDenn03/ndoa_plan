@@ -1,0 +1,13 @@
+{
+  "name": "Env Var Check on New API Route",
+  "version": "1.0.0",
+  "description": "When a new API route is created, remind agent to check required env vars",
+  "when": {
+    "type": "fileCreated",
+    "patterns": ["app/api/**/route.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new API route was created. Ensure it: (1) validates the session with getServerSession(authOptions) unless it's an M-Pesa callback, (2) returns { error: string } with correct HTTP status on failure, (3) uses idempotencyKey for any payment mutations, (4) does not expose raw Prisma errors to the client."
+  }
+}

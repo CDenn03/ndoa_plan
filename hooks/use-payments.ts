@@ -23,7 +23,7 @@ export interface Payment {
 export interface Contribution {
   id: string
   weddingId: string
-  memberId: string
+  memberId?: string
   memberName: string
   pledgeAmount: number
   paidAmount: number

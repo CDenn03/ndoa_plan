@@ -10,7 +10,7 @@ export type {
   PaymentStatus,
   ContribStatus,
   RiskSeverity,
-} from '@prisma/client'
+} from '@/lib/generated/prisma'
 
 // ─── Sync types ───────────────────────────────────────────────────────────────
 

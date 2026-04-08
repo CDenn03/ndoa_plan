@@ -8,11 +8,12 @@ async function checkAccess(weddingId: string, userId: string) {
 }
 
 // ─── Timeline GET ─────────────────────────────────────────────────────────────
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const userId = (session.user as typeof session.user & { id: string }).id
-  if (!await checkAccess(params.id, userId)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!(await checkAccess(params.id, userId))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const events = await db.timelineEvent.findMany({
     where: { weddingId: params.id, deletedAt: null },

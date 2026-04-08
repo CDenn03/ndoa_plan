@@ -1,0 +1,13 @@
+{
+  "name": "Type Check on Save",
+  "version": "1.0.0",
+  "description": "Run tsc type check when core lib files change",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["lib/**/*.ts", "hooks/**/*.ts", "types/**/*.ts"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "pnpm tsc --noEmit"
+  }
+}

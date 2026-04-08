@@ -7,7 +7,8 @@ import { DashboardClient } from './dashboard-client'
 import { Spinner } from '@/components/ui'
 import { differenceInDays } from 'date-fns'
 
-export default async function DashboardPage({ params }: { params: { weddingId: string } }) {
+export default async function DashboardPage(props: { params: Promise<{ weddingId: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   if (!session?.user) redirect('/login')
 
@@ -18,7 +19,7 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
     db.guest.groupBy({ by: ['rsvpStatus'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.vendor.groupBy({ by: ['status'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.budgetLine.findMany({ where: { weddingId: wid, deletedAt: null }, select: { estimated: true, actual: true, committed: true } }),
-    db.checklistItem.aggregate({ where: { weddingId: wid, deletedAt: null }, _count: { _all: true }, _sum: { isChecked: false as never } }),
+    db.checklistItem.aggregate({ where: { weddingId: wid, deletedAt: null }, _count: { _all: true } }),
     db.riskAlert.findMany({ where: { weddingId: wid, isResolved: false }, orderBy: { severity: 'asc' }, take: 5 }),
   ])
 

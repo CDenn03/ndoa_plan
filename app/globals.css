@@ -4,62 +4,69 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262 83% 58%;
-    --radius: 0.5rem;
+    /* Color system */
+    --bg: 40 20% 97%;           /* soft warm white */
+    --surface: 0 0% 100%;       /* pure white panels */
+    --border: 220 13% 91%;      /* subtle border */
+    --text-primary: 228 14% 10%;   /* #14161C deep navy */
+    --text-secondary: 220 9% 46%;  /* muted body */
+    --text-muted: 220 9% 64%;      /* placeholder / meta */
+    --accent-lavender: 263 52% 83%; /* #CDB5F7 muted lavender */
+    --accent-yellow: 48 68% 87%;    /* #E5DF98 soft yellow */
+    --primary: 263 68% 58%;         /* violet-600 */
+    --primary-fg: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --radius: 0.75rem;
+    --surface-subtle: 220 14% 96%;          /* off-white section backgrounds */
+    --accent-lavender-fg: 263 52% 35%;      /* dark lavender for text on lavender bg */
   }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 262 83% 68%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 262 83% 68%;
-  }
+  * { border-color: hsl(var(--border)); box-sizing: border-box; }
 
-  * { border-color: hsl(var(--border)); }
-  body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); }
+  body {
+    background-color: hsl(var(--bg));
+    color: hsl(var(--text-primary));
+    font-family: var(--font-jakarta), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 @layer utilities {
+  .font-jakarta { font-family: var(--font-jakarta), system-ui, sans-serif; }
+
+  .text-primary { color: hsl(var(--text-primary)); }
+  .text-secondary { color: hsl(var(--text-secondary)); }
+  .text-muted-ui { color: hsl(var(--text-muted)); }
+
+  .bg-surface { background-color: hsl(var(--surface)); }
+  .bg-app { background-color: hsl(var(--bg)); }
+
+  .accent-lavender { background-color: hsl(var(--accent-lavender)); }
+  .accent-yellow { background-color: hsl(var(--accent-yellow)); }
+
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.zinc.300') transparent;
+    scrollbar-color: #d4d4d8 transparent;
   }
   .scrollbar-thin::-webkit-scrollbar { width: 4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background-color: theme('colors.zinc.300'); border-radius: 9999px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #d4d4d8; border-radius: 9999px; }
 
-  .font-display { font-family: var(--font-display); }
+  /* Editorial divider */
+  .section-divider {
+    border: none;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  /* Surface variants */
+  .bg-surface-subtle { background-color: hsl(var(--surface-subtle)); }
+  .text-accent-lavender { color: hsl(var(--accent-lavender-fg)); }
+  .border-subtle { border-color: hsl(var(--border)); }
+
+  /* Modal slide-up on mobile */
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .modal-slide-up { animation: slide-up 0.2s ease-out; }
 }

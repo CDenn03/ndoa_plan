@@ -1,62 +1,58 @@
 'use client'
-import { useState, useMemo } from 'react'
-import { CheckSquare, Plus, X } from 'lucide-react'
-import { Button, Input, Select, Card, CardHeader, CardContent, CardTitle, ProgressBar, EmptyState, Spinner } from '@/components/ui'
+import { useState, useMemo, use } from 'react'
+import { CheckSquare, Plus } from 'lucide-react'
+import { Button, Input, Select, Label, ProgressBar, EmptyState, Spinner, Modal } from '@/components/ui'
 import { useChecklistItems, useToggleChecklistItem, useAddChecklistItem } from '@/hooks/use-data'
 import { format } from 'date-fns'
 import type { LocalChecklistItem } from '@/types'
 
 const CATEGORIES = ['VENUE','CATERING','ATTIRE','PHOTOGRAPHY','MUSIC','TRANSPORT','LEGAL','INVITATIONS','DECORATIONS','OTHER']
 const PRIORITY_LABEL = ['', 'High', 'Medium', 'Low']
-const PRIORITY_COLOR = ['', 'text-red-500', 'text-amber-500', 'text-blue-500']
+const PRIORITY_COLOR = ['', 'text-red-500', 'text-amber-500', 'text-sky-500']
 
-function ChecklistRow({ item, weddingId }: { item: LocalChecklistItem; weddingId: string }) {
+function ChecklistRow({ item, weddingId }: Readonly<{ item: LocalChecklistItem; weddingId: string }>) {
   const toggle = useToggleChecklistItem(weddingId)
   const overdue = item.dueDate && !item.isChecked && new Date(item.dueDate) < new Date()
 
   return (
-    <div className={`flex items-start gap-3 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors ${item.isChecked ? 'opacity-60' : ''}`}>
+    <div className={`flex items-start gap-4 py-3.5 border-b border-zinc-100 last:border-0 transition-colors ${item.isChecked ? 'opacity-50' : ''}`}>
       <button
         onClick={() => toggle.mutate({ itemId: item.id, currentVersion: item.version })}
         disabled={toggle.isPending}
-        className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-          item.isChecked ? 'bg-violet-600 border-violet-600' : 'border-zinc-300 dark:border-zinc-600 hover:border-violet-500'
+        className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+          item.isChecked ? 'bg-violet-500 border-violet-500' : 'border-zinc-300 hover:border-violet-400'
         }`}
       >
         {item.isChecked && (
           <svg viewBox="0 0 12 10" className="w-3 h-3 fill-white">
-            <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </button>
-
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className={`text-sm font-medium ${item.isChecked ? 'line-through text-zinc-400' : 'text-zinc-900 dark:text-zinc-100'}`}>
+          <p className={`text-sm font-semibold ${item.isChecked ? 'line-through text-zinc-400' : 'text-[#14161C]'}`}>
             {item.title}
           </p>
-          {item.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" title="Pending sync" />}
+          {item.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
         </div>
-        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          {item.category && <span className="text-xs text-zinc-400">{item.category}</span>}
+        <div className="flex items-center gap-3 mt-1 flex-wrap">
           {item.dueDate && (
-            <span className={`text-xs ${overdue ? 'text-red-500 font-medium' : 'text-zinc-400'}`}>
-              {overdue ? '⚠ ' : ''}Due {format(new Date(item.dueDate), 'MMM d')}
+            <span className={`text-xs font-medium ${overdue ? 'text-red-500' : 'text-zinc-400'}`}>
+              {overdue ? '⚠ Overdue · ' : ''}Due {format(new Date(item.dueDate), 'MMM d')}
             </span>
           )}
           {item.priority <= 2 && (
-            <span className={`text-xs font-medium ${PRIORITY_COLOR[item.priority]}`}>
-              {PRIORITY_LABEL[item.priority]}
-            </span>
+            <span className={`text-xs font-semibold ${PRIORITY_COLOR[item.priority]}`}>{PRIORITY_LABEL[item.priority]}</span>
           )}
+          {item.description && <p className="text-xs text-zinc-400 w-full mt-0.5">{item.description}</p>}
         </div>
-        {item.description && <p className="text-xs text-zinc-400 mt-0.5">{item.description}</p>}
       </div>
     </div>
   )
 }
 
-function AddItemModal({ weddingId, onClose }: { weddingId: string; onClose: () => void }) {
+function AddItemModal({ weddingId, onClose }: Readonly<{ weddingId: string; onClose: () => void }>) {
   const add = useAddChecklistItem(weddingId)
   const [form, setForm] = useState({ title: '', description: '', category: 'VENUE', dueDate: '', priority: '2', order: '0' })
 
@@ -72,52 +68,47 @@ function AddItemModal({ weddingId, onClose }: { weddingId: string; onClose: () =
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
-          <h2 className="font-semibold">Add checklist item</h2>
-          <button onClick={onClose}><X size={18} className="text-zinc-400" /></button>
+    <Modal onClose={onClose} title="Add task">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label>Task *</Label>
+          <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Book the venue" required />
         </div>
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Task *</label>
-            <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Book the venue" required />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <Select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Priority</label>
-              <Select value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}>
-                <option value="1">High</option>
-                <option value="2">Medium</option>
-                <option value="3">Low</option>
-              </Select>
-            </div>
+            <Label>Category</Label>
+            <Select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
+            </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Due date</label>
-            <Input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} />
+            <Label>Priority</Label>
+            <Select value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}>
+              <option value="1">High</option>
+              <option value="2">Medium</option>
+              <option value="3">Low</option>
+            </Select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
-            <Input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Additional details" />
-          </div>
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
-            <Button type="submit" className="flex-1" disabled={add.isPending}>{add.isPending ? 'Adding...' : 'Add item'}</Button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+        <div>
+          <Label>Due date</Label>
+          <Input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} />
+        </div>
+        <div>
+          <Label>Notes</Label>
+          <Input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Additional details" />
+        </div>
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button type="submit" className="flex-1" disabled={add.isPending}>{add.isPending ? 'Adding…' : 'Add task'}</Button>
+        </div>
+      </form>
+    </Modal>
   )
 }
 
-export default function ChecklistPage({ params }: { params: { weddingId: string } }) {
+export default function ChecklistPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
   const { data: items = [], isLoading } = useChecklistItems(wid)
   const [showAdd, setShowAdd] = useState(false)
@@ -142,57 +133,70 @@ export default function ChecklistPage({ params }: { params: { weddingId: string 
   }, {}), [filtered])
 
   return (
-    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100">Checklist</h1>
-          <p className="text-sm text-zinc-500">{checked} of {items.length} completed</p>
-        </div>
-        <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={15} /> Add task</Button>
-      </div>
-
-      {/* Progress */}
-      {items.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-zinc-500">Overall progress</span>
-            <span className="font-semibold text-violet-600">{pct}%</span>
+    <div className="min-h-full">
+      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+        <div className="max-w-3xl mx-auto flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Planning</p>
+            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Checklist</h1>
+            <p className="text-sm text-zinc-400 mt-2">{checked} of {items.length} completed</p>
           </div>
-          <ProgressBar value={checked} max={items.length} />
+          <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add task</Button>
         </div>
-      )}
-
-      {/* Filters */}
-      <div className="flex gap-2">
-        {(['all', 'pending', 'done'] as const).map(f => (
-          <button key={f} onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === f ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}>
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
-        <Select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="w-auto ml-auto">
-          <option value="all">All categories</option>
-          {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
-        </Select>
       </div>
 
-      {isLoading ? <div className="flex justify-center py-12"><Spinner /></div>
-        : items.length === 0 ? (
-          <EmptyState icon={<CheckSquare size={40} />} title="No tasks yet" description="Build your pre-wedding checklist"
-            action={<Button onClick={() => setShowAdd(true)}><Plus size={15} />Add task</Button>} />
-        ) : (
-          Object.entries(grouped).map(([cat, catItems]) => (
-            <Card key={cat}>
-              <CardHeader className="flex flex-row items-center justify-between py-3">
-                <CardTitle className="text-sm">{cat.replace('_', ' ')}</CardTitle>
-                <span className="text-xs text-zinc-400">{catItems.filter(i => i.isChecked).length}/{catItems.length}</span>
-              </CardHeader>
-              <CardContent className="p-0">
-                {catItems.map(i => <ChecklistRow key={i.id} item={i} weddingId={wid} />)}
-              </CardContent>
-            </Card>
-          ))
+      <div className="max-w-3xl mx-auto px-8 py-10 space-y-8">
+        {/* Progress */}
+        {items.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-zinc-500">Overall progress</span>
+              <span className="font-bold text-violet-600">{pct}%</span>
+            </div>
+            <ProgressBar value={checked} max={items.length} />
+          </div>
         )}
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2">
+          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+            {(['all', 'pending', 'done'] as const).map(f => (
+              <button key={f} onClick={() => setFilter(f)}
+                className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${
+                  filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
+                }`}>
+                {f}
+              </button>
+            ))}
+          </div>
+          <Select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="w-auto">
+            <option value="all">All categories</option>
+            {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
+          </Select>
+        </div>
+
+        {/* Items */}
+        {isLoading ? (
+          <div className="flex justify-center py-16"><Spinner /></div>
+        ) : items.length === 0 ? (
+          <EmptyState icon={<CheckSquare size={40} />} title="No tasks yet" description="Build your pre-wedding checklist"
+            action={<Button onClick={() => setShowAdd(true)}><Plus size={14} />Add task</Button>} />
+        ) : (
+          <div className="space-y-8">
+            {Object.entries(grouped).map(([cat, catItems]) => (
+              <div key={cat}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{cat.replace(/_/g, ' ')}</p>
+                  <span className="text-xs text-zinc-400">{catItems.filter(i => i.isChecked).length}/{catItems.length}</span>
+                </div>
+                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                  {catItems.map(i => <ChecklistRow key={i.id} item={i} weddingId={wid} />)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {showAdd && <AddItemModal weddingId={wid} onClose={() => setShowAdd(false)} />}
     </div>

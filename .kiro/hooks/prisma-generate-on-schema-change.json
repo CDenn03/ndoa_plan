@@ -1,0 +1,13 @@
+{
+  "name": "Prisma Generate on Schema Change",
+  "version": "1.0.0",
+  "description": "Remind agent to run prisma generate after schema edits",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["prisma/schema.prisma"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The Prisma schema was just edited. Remind the user to run `pnpm db:generate` to regenerate the client at lib/generated/prisma. If the change adds a new model or field, also suggest running `pnpm db:push` for dev or `pnpm db:migrate` for production."
+  }
+}

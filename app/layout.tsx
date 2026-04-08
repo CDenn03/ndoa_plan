@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-display', display: 'swap' })
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: { default: 'Ndoa — Wedding Platform', template: '%s | Ndoa' },
@@ -21,8 +25,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
+    <html lang="en" className={jakarta.variable} suppressHydrationWarning>
+      <body className="min-h-screen bg-stone-50 text-[#14161C] antialiased font-jakarta">
         <Providers>{children}</Providers>
       </body>
     </html>

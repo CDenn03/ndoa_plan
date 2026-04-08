@@ -5,13 +5,18 @@ import { db } from '@/lib/db'
 import { Sidebar, MobileMenuButton } from '@/components/sidebar'
 import { SyncProvider } from '@/components/sync-provider'
 
-export default async function DashboardLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode
-  params: { weddingId: string }
-}) {
+export default async function DashboardLayout(
+  props: {
+    children: React.ReactNode
+    params: Promise<{ weddingId: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const session = await getServerSession(authOptions)
   if (!session?.user) redirect('/login')
 
@@ -26,13 +31,13 @@ export default async function DashboardLayout({
 
   return (
     <SyncProvider weddingId={params.weddingId}>
-      <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-zinc-950">
+      <div className="flex h-screen overflow-hidden bg-stone-50">
         <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} />
         <main className="flex-1 flex flex-col overflow-hidden">
-          {/* Top bar */}
-          <header className="flex items-center gap-3 px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 lg:hidden">
+          {/* Mobile top bar */}
+          <header className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 bg-white lg:hidden">
             <MobileMenuButton />
-            <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+            <span className="font-bold text-sm text-[#14161C]">
               {membership.wedding.name}
             </span>
           </header>

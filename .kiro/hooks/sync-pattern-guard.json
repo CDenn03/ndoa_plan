@@ -1,0 +1,13 @@
+{
+  "name": "Sync Pattern Guard",
+  "version": "1.0.0",
+  "description": "Before writing to hooks or lib/sync, verify the offline-first pattern is followed",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If this write touches a hooks/use-*.ts file or lib/sync/*.ts, verify the offline-first pattern is followed: (1) Dexie write first with isDirty:true, (2) enqueue() called from lib/sync/engine.ts, (3) no direct server mutations without going through the sync queue. Also ensure no direct @prisma/client imports — always use lib/generated/prisma via @/lib/db."
+  }
+}

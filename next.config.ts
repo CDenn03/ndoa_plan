@@ -1,7 +1,8 @@
 import type { NextConfig } from 'next'
 
 const config: NextConfig = {
-  experimental: { serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'] },
+  serverExternalPackages: ['@prisma/client', 'bcryptjs'],
+  turbopack: { root: __dirname },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },

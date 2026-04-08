@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Settings, Save } from 'lucide-react'
-import { Button, Input, Select, Card, CardHeader, CardContent, CardTitle } from '@/components/ui'
+import { Save } from 'lucide-react'
+import { Button, Input, Select, Label } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 
 const CULTURAL_TYPES = ['STANDARD','KIKUYU','LUO','KAMBA','KALENJIN','COASTAL']
@@ -15,7 +15,7 @@ interface Props {
   }
 }
 
-export function WeddingSettingsClient({ weddingId, initialValues }: Props) {
+export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Props>) {
   const router = useRouter()
   const { toast } = useToast()
   const [form, setForm] = useState(initialValues)
@@ -48,78 +48,87 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Props) {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-2xl mx-auto space-y-4">
-      <div className="flex items-center gap-3">
-        <Settings size={20} className="text-zinc-400" />
-        <h1 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100">Settings</h1>
+    <div className="min-h-full">
+      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Configuration</p>
+          <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Settings</h1>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Card>
-          <CardHeader><CardTitle>Wedding details</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Wedding name</label>
-              <Input value={form.name} onChange={set('name')} required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Date</label>
-                <Input type="date" value={form.date} onChange={set('date')} required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Cultural type</label>
-                <Select value={form.culturalType} onChange={set('culturalType')}>
-                  {CULTURAL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                </Select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Venue</label>
-              <Input value={form.venue} onChange={set('venue')} placeholder="e.g. Safari Park Hotel" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Venue capacity</label>
-                <Input type="number" value={form.venueCapacity} onChange={set('venueCapacity')} min="1" placeholder="300" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Total budget (KES)</label>
-                <Input type="number" value={form.budget} onChange={set('budget')} min="0" placeholder="1500000" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="max-w-2xl mx-auto px-8 py-10">
+        <form onSubmit={handleSubmit} className="space-y-10">
 
-        <Card>
-          <CardHeader><CardTitle>Theme</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          {/* Wedding details section */}
+          <div>
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">Wedding details</p>
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Primary colour</label>
-                <div className="flex items-center gap-3">
-                  <input type="color" value={form.themeColor} onChange={set('themeColor')} className="w-10 h-10 rounded-lg cursor-pointer border-0 p-0" />
+                <Label>Wedding name</Label>
+                <Input value={form.name} onChange={set('name')} required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Date</Label>
+                  <Input type="date" value={form.date} onChange={set('date')} required />
+                </div>
+                <div>
+                  <Label>Cultural type</Label>
+                  <Select value={form.culturalType} onChange={set('culturalType')}>
+                    {CULTURAL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label>Venue</Label>
+                <Input value={form.venue} onChange={set('venue')} placeholder="e.g. Safari Park Hotel" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Venue capacity</Label>
+                  <Input type="number" value={form.venueCapacity} onChange={set('venueCapacity')} min="1" placeholder="300" />
+                </div>
+                <div>
+                  <Label>Total budget (KES)</Label>
+                  <Input type="number" value={form.budget} onChange={set('budget')} min="0" placeholder="1500000" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-zinc-100" />
+
+          {/* Theme section */}
+          <div>
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">Theme colours</p>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <Label>Primary colour</Label>
+                <div className="flex items-center gap-3 mt-1">
+                  <input type="color" value={form.themeColor} onChange={set('themeColor')}
+                    className="w-10 h-10 rounded-xl cursor-pointer border border-zinc-200 p-0.5" />
                   <span className="text-sm text-zinc-500 font-mono">{form.themeColor}</span>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Accent colour</label>
-                <div className="flex items-center gap-3">
-                  <input type="color" value={form.themeAccent} onChange={set('themeAccent')} className="w-10 h-10 rounded-lg cursor-pointer border-0 p-0" />
+                <Label>Accent colour</Label>
+                <div className="flex items-center gap-3 mt-1">
+                  <input type="color" value={form.themeAccent} onChange={set('themeAccent')}
+                    className="w-10 h-10 rounded-xl cursor-pointer border border-zinc-200 p-0.5" />
                   <span className="text-sm text-zinc-500 font-mono">{form.themeAccent}</span>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <div className="flex justify-end">
-          <Button type="submit" disabled={saving}>
-            <Save size={15} />
-            {saving ? 'Saving...' : 'Save settings'}
-          </Button>
-        </div>
-      </form>
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={saving}>
+              <Save size={14} />
+              {saving ? 'Saving…' : 'Save settings'}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

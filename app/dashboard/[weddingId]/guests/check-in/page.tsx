@@ -1,84 +1,64 @@
 'use client'
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, use } from 'react'
 import { Search, UserCheck, Users, Wifi, WifiOff } from 'lucide-react'
-import { Input, StatCard } from '@/components/ui'
+import { Input } from '@/components/ui'
 import { useGuests, useCheckInGuest, useGuestStats } from '@/hooks/use-guests'
 import { useSync } from '@/components/sync-provider'
 import type { LocalGuest } from '@/types'
 
-// Day-of check-in page — full-screen, optimised for mobile at venue door.
-// Works fully offline. Check-ins queue and sync automatically.
-
-function CheckInRow({ guest, weddingId, onCheckedIn }: { guest: LocalGuest; weddingId: string; onCheckedIn: () => void }) {
+function CheckInRow({ guest, weddingId, onCheckedIn }: Readonly<{ guest: LocalGuest; weddingId: string; onCheckedIn: () => void }>) {
   const checkIn = useCheckInGuest(weddingId)
   const [justCheckedIn, setJustCheckedIn] = useState(false)
+  const isCheckedIn = guest.checkedIn || justCheckedIn
 
   const handleCheckIn = async () => {
-    if (guest.checkedIn || justCheckedIn) return
+    if (isCheckedIn) return
     await checkIn.mutateAsync({ guestId: guest.id, currentVersion: guest.version })
     setJustCheckedIn(true)
     onCheckedIn()
-    // Reset visual feedback after 2s
     setTimeout(() => setJustCheckedIn(false), 2000)
   }
-
-  const isCheckedIn = guest.checkedIn || justCheckedIn
 
   return (
     <button
       onClick={handleCheckIn}
       disabled={isCheckedIn || checkIn.isPending}
       className={[
-        'w-full flex items-center gap-4 px-4 py-4 rounded-xl border transition-all text-left',
+        'w-full flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all text-left active:scale-[0.98]',
         isCheckedIn
-          ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 opacity-70'
-          : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-violet-300 dark:hover:border-violet-700 active:scale-[0.98]',
+          ? 'bg-emerald-50 border-emerald-100 opacity-60'
+          : 'bg-white border-zinc-100 hover:border-[#CDB5F7] hover:shadow-sm',
         checkIn.isPending ? 'opacity-60' : '',
       ].join(' ')}
     >
-      {/* Avatar */}
       <div className={[
         'w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors',
-        isCheckedIn
-          ? 'bg-green-500 text-white'
-          : 'bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400',
+        isCheckedIn ? 'bg-emerald-500 text-white' : 'bg-[#CDB5F7]/20 text-violet-600',
       ].join(' ')}>
         {isCheckedIn ? <UserCheck size={18} /> : guest.name.charAt(0).toUpperCase()}
       </div>
-
-      {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className={['font-semibold text-base truncate', isCheckedIn ? 'text-green-700 dark:text-green-400 line-through' : 'text-zinc-900 dark:text-zinc-100'].join(' ')}>
+        <p className={`font-semibold text-base truncate ${isCheckedIn ? 'text-emerald-600 line-through' : 'text-[#14161C]'}`}>
           {guest.name}
         </p>
-        <div className="flex items-center gap-2 mt-0.5">
-          {guest.tableNumber && (
-            <span className="text-xs text-zinc-400">Table {guest.tableNumber}</span>
-          )}
-          {guest.phone && (
-            <span className="text-xs text-zinc-400 truncate">{guest.phone}</span>
-          )}
+        <div className="flex items-center gap-3 mt-0.5">
+          {guest.tableNumber && <span className="text-xs text-zinc-400">Table {guest.tableNumber}</span>}
+          {guest.phone && <span className="text-xs text-zinc-400 truncate">{guest.phone}</span>}
         </div>
       </div>
-
-      {/* Status */}
       <div className="flex-shrink-0">
-        {isCheckedIn ? (
-          <span className="text-xs font-medium text-green-600 dark:text-green-400">✓ In</span>
-        ) : (
-          <span className="text-xs text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded px-2 py-1">
-            Tap to check in
-          </span>
-        )}
-        {guest.isDirty && (
-          <span className="ml-1 w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" title="Pending sync" />
-        )}
+        {isCheckedIn
+          ? <span className="text-xs font-semibold text-emerald-500">✓ In</span>
+          : <span className="text-xs text-zinc-400 border border-zinc-200 rounded-lg px-2.5 py-1">Tap to check in</span>
+        }
+        {guest.isDirty && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" title="Pending sync" />}
       </div>
     </button>
   )
 }
 
-export default function CheckInPage({ params }: { params: { weddingId: string } }) {
+export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
   const { data: guests = [], isLoading } = useGuests(wid)
   const stats = useGuestStats(wid)
@@ -87,7 +67,6 @@ export default function CheckInPage({ params }: { params: { weddingId: string } 
   const [lastCheckedIn, setLastCheckedIn] = useState<string | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
-  // Auto-focus search on mount
   useEffect(() => { searchRef.current?.focus() }, [])
 
   const filtered = useMemo(() => {
@@ -98,56 +77,52 @@ export default function CheckInPage({ params }: { params: { weddingId: string } 
       g.phone?.includes(q) ||
       String(g.tableNumber ?? '').includes(q)
     ).sort((a, b) => {
-      // Confirmed + not checked in first
-      if (a.rsvpStatus === 'CONFIRMED' && !a.checkedIn && !(b.rsvpStatus === 'CONFIRMED' && !b.checkedIn)) return -1
-      if (b.rsvpStatus === 'CONFIRMED' && !b.checkedIn) return 1
-      return 0
+      const aReady = a.rsvpStatus === 'CONFIRMED' && !a.checkedIn
+      const bReady = b.rsvpStatus === 'CONFIRMED' && !b.checkedIn
+      return aReady === bReady ? 0 : aReady ? -1 : 1
     })
   }, [guests, search])
 
   const confirmedNotIn = guests.filter(g => g.rsvpStatus === 'CONFIRMED' && !g.checkedIn).length
 
   return (
-    <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex flex-col h-full bg-stone-50">
       {/* Header */}
-      <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Day-of check-in
-          </h1>
-          <div className="flex items-center gap-2">
-            {isOnline
-              ? <span className="flex items-center gap-1 text-xs text-green-500"><Wifi size={12} /> Live</span>
-              : <span className="flex items-center gap-1 text-xs text-amber-500"><WifiOff size={12} /> Offline</span>
-            }
+      <div className="bg-white border-b border-zinc-100 px-5 py-4">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-xl font-extrabold text-[#14161C]">Day-of check-in</h1>
+            <p className="text-xs text-zinc-400 mt-0.5">Tap a guest to mark them as arrived</p>
+          </div>
+          <div className={`flex items-center gap-1.5 text-xs font-semibold ${isOnline ? 'text-emerald-500' : 'text-amber-500'}`}>
+            {isOnline ? <Wifi size={13} /> : <WifiOff size={13} />}
+            {isOnline ? 'Live' : 'Offline'}
           </div>
         </div>
 
-        {/* Live stats bar */}
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          <div className="text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg py-2">
-            <p className="text-lg font-bold text-green-600">{stats.checkedIn}</p>
-            <p className="text-xs text-zinc-400">Checked in</p>
-          </div>
-          <div className="text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg py-2">
-            <p className="text-lg font-bold text-amber-600">{confirmedNotIn}</p>
-            <p className="text-xs text-zinc-400">Still expected</p>
-          </div>
-          <div className="text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg py-2">
-            <p className="text-lg font-bold text-zinc-700 dark:text-zinc-300">{stats.confirmed}</p>
-            <p className="text-xs text-zinc-400">Total confirmed</p>
-          </div>
+        {/* Live stats */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[
+            { label: 'Checked in', val: stats.checkedIn, color: 'text-emerald-600' },
+            { label: 'Still expected', val: confirmedNotIn, color: 'text-amber-500' },
+            { label: 'Total confirmed', val: stats.confirmed, color: 'text-[#14161C]' },
+          ].map(({ label, val, color }) => (
+            <div key={label} className="text-center bg-stone-50 rounded-xl py-2.5">
+              <p className={`text-xl font-extrabold leading-none ${color}`}>{val}</p>
+              <p className="text-[11px] text-zinc-400 mt-1">{label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
           <Input
             ref={searchRef}
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by name, phone, or table…"
-            className="pl-9 h-11 text-base"
+            className="pl-10 h-11 text-base"
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
@@ -155,53 +130,45 @@ export default function CheckInPage({ params }: { params: { weddingId: string } 
         </div>
       </div>
 
-      {/* Last checked-in flash */}
+      {/* Flash feedback */}
       {lastCheckedIn && (
-        <div className="mx-4 mt-3 px-4 py-2 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-700 dark:text-green-400 font-medium animate-fade-in">
+        <div className="mx-4 mt-3 px-4 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-sm text-emerald-700 font-semibold">
           ✓ {lastCheckedIn} checked in
         </div>
       )}
 
-      {/* Guest list */}
+      {/* List */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-8 h-8 rounded-full border-2 border-violet-200 border-t-violet-600 animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#CDB5F7] border-t-violet-600 animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <Users size={40} className="text-zinc-300 dark:text-zinc-600 mb-3" />
-            <p className="font-medium text-zinc-600 dark:text-zinc-400">
+            <Users size={40} className="text-zinc-200 mb-4" />
+            <p className="font-semibold text-zinc-500">
               {search ? 'No guests match your search' : 'All confirmed guests are checked in!'}
             </p>
-            {search && (
-              <p className="text-sm text-zinc-400 mt-1">
-                Try searching by first name, last name, or table number
-              </p>
-            )}
+            {search && <p className="text-sm text-zinc-400 mt-1.5">Try first name, last name, or table number</p>}
           </div>
         ) : (
-          filtered.map(g => (
-            <CheckInRow
-              key={g.id}
-              guest={g}
-              weddingId={wid}
-              onCheckedIn={() => setLastCheckedIn(g.name)}
-            />
-          ))
-        )}
-
-        {!search && filtered.length > 0 && (
-          <p className="text-center text-xs text-zinc-400 py-2">
-            {filtered.length} guest{filtered.length !== 1 ? 's' : ''} still to arrive
-          </p>
+          <>
+            {filtered.map(g => (
+              <CheckInRow key={g.id} guest={g} weddingId={wid} onCheckedIn={() => setLastCheckedIn(g.name)} />
+            ))}
+            {!search && (
+              <p className="text-center text-xs text-zinc-400 py-3">
+                {filtered.length} guest{filtered.length !== 1 ? 's' : ''} still to arrive
+              </p>
+            )}
+          </>
         )}
       </div>
 
-      {/* Bottom hint */}
+      {/* Offline banner */}
       {!isOnline && (
-        <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border-t border-amber-200 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-400 text-center">
-          Offline mode — check-ins are saved locally and will sync when connected
+        <div className="px-5 py-3 bg-amber-50 border-t border-amber-100 text-xs text-amber-700 text-center font-medium">
+          Offline — check-ins are saved locally and will sync when connected
         </div>
       )}
     </div>
