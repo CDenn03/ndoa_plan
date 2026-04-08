@@ -1,0 +1,13 @@
+{
+  "name": "M-Pesa Callback Auth Guard",
+  "version": "1.0.0",
+  "description": "Warn if auth is accidentally added to the M-Pesa callback route",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["app/api/mpesa/callback/route.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The M-Pesa callback route was just edited. Verify it does NOT call getServerSession() or any auth middleware — this endpoint must remain unauthenticated so Safaricom can POST to it. Also confirm it: (1) validates the incoming payload shape before processing, (2) updates the Payment record status and sets mpesaRef, (3) is idempotent (safe to receive the same callback twice)."
+  }
+}

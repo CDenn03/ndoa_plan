@@ -212,7 +212,7 @@ async function handlePayment(op: SyncOperation, actorId: string): Promise<SyncOp
 
   const payment = await db.payment.create({
     data: {
-      ...sanitisePayload(op.payload),
+      ...(sanitisePayload(op.payload) as Parameters<typeof db.payment.create>[0]['data']),
       id: undefined,
       idempotencyKey,
       version: 1,

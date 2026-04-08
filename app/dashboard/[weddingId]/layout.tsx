@@ -32,7 +32,7 @@ export default async function DashboardLayout(
   return (
     <SyncProvider weddingId={params.weddingId}>
       <div className="flex h-screen overflow-hidden bg-stone-50">
-        <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} />
+        <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} culturalType={membership.wedding.culturalType} />
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile top bar */}
           <header className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 bg-white lg:hidden">

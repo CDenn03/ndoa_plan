@@ -1,13 +1,13 @@
 {
   "name": "Type Check on Save",
   "version": "1.0.0",
-  "description": "Run tsc type check when core lib files change",
+  "description": "Run tsc type check when core lib, hooks, or type files change",
   "when": {
     "type": "fileEdited",
-    "patterns": ["lib/**/*.ts", "hooks/**/*.ts", "types/**/*.ts"]
+    "patterns": ["lib/**/*.ts", "hooks/**/*.ts", "types/**/*.ts", "types/index.ts"]
   },
   "then": {
     "type": "runCommand",
-    "command": "pnpm tsc --noEmit"
+    "command": "pnpm tsc --noEmit --incremental"
   }
 }

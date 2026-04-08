@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { evaluateRisks } from '@/lib/risk-engine'
+import type { Prisma } from '@/lib/generated/prisma'
 
 export const runtime = 'nodejs'
 
@@ -71,14 +72,14 @@ export async function POST(_req: NextRequest, props: { params: Promise<{ id: str
           severity: result.severity,
           category: result.category,
           message: result.message,
-          data: result.data ?? {},
+          ...(result.data ? { data: result.data as unknown as Prisma.InputJsonValue } : {}),
         },
       })
     } else {
       // Update message in case values changed
       await db.riskAlert.update({
         where: { id: existing.id },
-        data: { message: result.message, data: result.data ?? {}, severity: result.severity },
+        data: { message: result.message, severity: result.severity, ...(result.data ? { data: result.data as unknown as Prisma.InputJsonValue } : {}) },
       })
     }
   }

@@ -1,10 +1,13 @@
 {
+  "enabled": true,
   "name": "Env Var Check on New API Route",
-  "version": "1.0.0",
-  "description": "When a new API route is created, remind agent to check required env vars",
+  "description": "When a new API route is created, remind agent to check required env vars and auth patterns",
+  "version": "1",
   "when": {
     "type": "fileCreated",
-    "patterns": ["app/api/**/route.ts"]
+    "patterns": [
+      "app/api/**/route.ts"
+    ]
   },
   "then": {
     "type": "askAgent",

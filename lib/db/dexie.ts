@@ -108,8 +108,12 @@ class WeddingDB extends Dexie {
             JSON.stringify({ backed_up_at: Date.now(), operations: queue })
           )
         } catch (_) { /* localStorage unavailable */ }
-        await this.delete()
-        this.open()
+        try {
+          await this.delete()
+          await this.open()
+        } catch (reopenErr) {
+          console.error('[WeddingDB] Failed to reopen after delete', reopenErr)
+        }
       }
     })
   }

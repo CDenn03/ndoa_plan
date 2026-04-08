@@ -17,14 +17,14 @@ export async function ensurePrivateBuckets(): Promise<void> {
 
 export async function uploadFile(opts: {
   bucket: StorageBucket; path: string; file: File | Blob | Buffer
-  contentType: string; weddingId: string
+  contentType: string; weddingId: string; upsert?: boolean
 }): Promise<{ path: string }> {
   if (!opts.path.startsWith(`${opts.weddingId}/`))
     throw new Error(`Path must be scoped to weddingId. Got: ${opts.path}`)
   const sb = adminClient()
   const { data, error } = await sb.storage.from(opts.bucket)
-    .upload(opts.path, opts.file, { contentType: opts.contentType, upsert: false })
-  if (error) throw error
+    .upload(opts.path, opts.file, { contentType: opts.contentType, upsert: opts.upsert ?? true })
+  if (error) throw new Error(`Supabase upload error [${opts.bucket}/${opts.path}]: ${error.message}`)
   return { path: data.path }
 }
 
@@ -42,7 +42,7 @@ export async function getSignedUrls(bucket: StorageBucket, paths: string[], expi
   const { data, error } = await sb.storage.from(bucket).createSignedUrls(paths, expiresIn)
   if (error) throw error
   const result: Record<string, string> = {}
-  for (const item of data ?? []) { if (item.signedUrl) result[item.path] = item.signedUrl }
+  for (const item of data ?? []) { if (item.signedUrl && item.path) result[item.path] = item.signedUrl }
   return result
 }
 

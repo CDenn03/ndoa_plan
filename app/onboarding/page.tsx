@@ -3,11 +3,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Heart, Loader2 } from 'lucide-react'
 import { Button, Input, Select } from '@/components/ui'
+import { useToast } from '@/components/ui/toast'
 
 const CULTURAL_TYPES = ['STANDARD', 'KIKUYU', 'LUO', 'KAMBA', 'KALENJIN', 'COASTAL']
 
 export default function OnboardingPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     name: '',
@@ -36,7 +38,7 @@ export default function OnboardingPage() {
       const { id } = await res.json()
       router.push(`/dashboard/${id}`)
     } catch (err) {
-      alert('Failed to create wedding. Please try again.')
+      toast(err instanceof Error ? err.message : 'Failed to create wedding. Please try again.', 'error')
     } finally {
       setLoading(false)
     }

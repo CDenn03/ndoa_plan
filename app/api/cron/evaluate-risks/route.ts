@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { evaluateRisks } from '@/lib/risk-engine'
+import type { Prisma } from '@/lib/generated/prisma'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -65,12 +66,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         const existing = await db.riskAlert.findFirst({ where: { weddingId: wedding.id, ruleId: result.ruleId, isResolved: false } })
         if (!existing) {
           await db.riskAlert.create({
-            data: { weddingId: wedding.id, ruleId: result.ruleId, severity: result.severity, category: result.category, message: result.message, data: result.data ?? {} },
+            data: { weddingId: wedding.id, ruleId: result.ruleId, severity: result.severity, category: result.category, message: result.message, ...(result.data ? { data: result.data as unknown as Prisma.InputJsonValue } : {}) },
           })
         } else {
           await db.riskAlert.update({
             where: { id: existing.id },
-            data: { message: result.message, data: result.data ?? {}, severity: result.severity },
+            data: { message: result.message, severity: result.severity, ...(result.data ? { data: result.data as unknown as Prisma.InputJsonValue } : {}) },
           })
         }
       }

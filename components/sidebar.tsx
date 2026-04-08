@@ -117,13 +117,11 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
   return (
     <>
       {open && (
-        <div
-          role="button"
-          tabIndex={0}
+        <button
+          type="button"
           aria-label="Close navigation"
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden w-full h-full cursor-default"
           onClick={toggleSidebar}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSidebar() }}
         />
       )}
       <aside className={cn(
@@ -154,16 +152,21 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
 
         {/* Sync status */}
         <div className="px-5 pb-3">
-          <div className={cn(
-            'flex items-center gap-1.5 text-[11px] font-medium',
-            isOnline ? 'text-emerald-500' : 'text-amber-500'
-          )}>
-            <div className={cn(
-              'w-1.5 h-1.5 rounded-full',
-              isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-            )} />
-            {circuitOpen ? 'Sync paused' : isOnline ? 'Connected' : 'Offline'}
-          </div>
+        {mounted && (() => {
+            const syncLabel = circuitOpen ? 'Sync paused' : isOnline ? 'Connected' : 'Offline'
+            return (
+              <div className={cn(
+                'flex items-center gap-1.5 text-[11px] font-medium',
+                isOnline ? 'text-emerald-500' : 'text-amber-500'
+              )}>
+                <div className={cn(
+                  'w-1.5 h-1.5 rounded-full',
+                  isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                )} />
+                {syncLabel}
+              </div>
+            )
+          })()}
         </div>
 
         <hr className="border-[hsl(var(--border))] mx-5" />

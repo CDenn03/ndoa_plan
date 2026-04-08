@@ -20,10 +20,15 @@ export function SyncProvider({ weddingId, children }: { weddingId: string; child
   const qc = useQueryClient()
   const setOffline = useWeddingStore(s => s.setIsOffline)
   const setCircuit = useWeddingStore(s => s.setSyncCircuitOpen)
-  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
+  const [isOnline, setIsOnline] = useState(true)
   const [circuitOpen, setCircuitOpen] = useState(false)
   const [pendingConflicts, setPendingConflicts] = useState<ConflictPayload[]>([])
   const started = useRef(false)
+
+  // Sync actual online state after mount to avoid SSR/client mismatch
+  useEffect(() => {
+    setIsOnline(navigator.onLine)
+  }, [])
 
   useEffect(() => {
     if (started.current) return

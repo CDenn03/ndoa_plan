@@ -103,6 +103,83 @@ const rules: RiskRule[] = [
     }
     return null
   },
+
+  // ── No catering vendor confirmed close to wedding ─────────────────────────
+  (ctx) => {
+    const daysLeft = differenceInDays(ctx.wedding.date, new Date())
+    if (daysLeft > 60) return null
+    const hasCatering = ctx.vendors.some(v =>
+      v.status === 'CONFIRMED' || v.status === 'BOOKED'
+    )
+    if (!hasCatering) return {
+      ruleId: 'vendor.no_catering', triggered: true, severity: 'CRITICAL', category: 'vendor',
+      message: `No catering vendor confirmed with ${daysLeft} days to go`,
+      data: { daysLeft },
+      suggestedAction: 'Book a catering vendor immediately',
+    }
+    return null
+  },
+
+  // ── No photographer booked ────────────────────────────────────────────────
+  (ctx) => {
+    const daysLeft = differenceInDays(ctx.wedding.date, new Date())
+    if (daysLeft > 90) return null
+    const hasPhotographer = ctx.vendors.some(v =>
+      (v.status === 'CONFIRMED' || v.status === 'BOOKED') &&
+      (v as { category?: string }).category === 'PHOTOGRAPHY'
+    )
+    if (!hasPhotographer) return {
+      ruleId: 'vendor.no_photographer', triggered: true, severity: 'HIGH', category: 'vendor',
+      message: `No photographer booked with ${daysLeft} days to go`,
+      data: { daysLeft },
+      suggestedAction: 'Book a photographer — they get booked up fast',
+    }
+    return null
+  },
+
+  // ── Budget committed >90% with >3 months remaining ────────────────────────
+  (ctx) => {
+    const daysLeft = differenceInDays(ctx.wedding.date, new Date())
+    if (daysLeft < 90) return null
+    const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.committed + l.actual, 0)
+    const pct = totalCommitted / ctx.wedding.budget
+    if (pct > 0.9) return {
+      ruleId: 'budget.early_overshoot', triggered: true, severity: 'HIGH', category: 'budget',
+      message: `${Math.round(pct * 100)}% of budget committed with ${daysLeft} days remaining`,
+      data: { percent: Math.round(pct * 100), daysLeft },
+      suggestedAction: 'Review budget — many costs are still to come',
+    }
+    return null
+  },
+
+  // ── Checklist <30% complete with <30 days to go ───────────────────────────
+  (ctx) => {
+    const daysLeft = differenceInDays(ctx.wedding.date, new Date())
+    if (daysLeft > 30 || ctx.checklistItems.length === 0) return null
+    const checked = ctx.checklistItems.filter(i => i.isChecked).length
+    const pct = checked / ctx.checklistItems.length
+    if (pct < 0.3) return {
+      ruleId: 'checklist.low_completion', triggered: true, severity: 'CRITICAL', category: 'timeline',
+      message: `Only ${Math.round(pct * 100)}% of checklist complete with ${daysLeft} days to go`,
+      data: { percent: Math.round(pct * 100), daysLeft },
+      suggestedAction: 'Review and action outstanding checklist items urgently',
+    }
+    return null
+  },
+
+  // ── Guest count exceeds venue capacity ────────────────────────────────────
+  (ctx) => {
+    const capacity = ctx.wedding.venueCapacity
+    if (!capacity) return null
+    const total = ctx.guests.length
+    if (total > capacity) return {
+      ruleId: 'guests.exceeds_capacity', triggered: true, severity: 'HIGH', category: 'guests',
+      message: `${total} guests invited but venue capacity is ${capacity}`,
+      data: { total, capacity, overflow: total - capacity },
+      suggestedAction: 'Review guest list or discuss capacity with venue',
+    }
+    return null
+  },
 ]
 
 export function evaluateRisks(ctx: WeddingContext): RiskRuleResult[] {

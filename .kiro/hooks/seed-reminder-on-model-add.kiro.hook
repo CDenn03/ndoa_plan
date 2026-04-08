@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Seed Reminder on New Model",
+  "description": "When the Prisma schema gets a new model, remind agent to update the seed file and verify required fields",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "prisma/schema.prisma"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The Prisma schema was edited. If a new model was added, check whether prisma/seed.ts needs a corresponding seed block. Also verify: (1) the new model has version, checksum, updatedBy, and deletedAt fields for soft-delete + optimistic locking, (2) relevant indexes are defined, (3) if the model has a weddingId FK it should cascade-delete. Remind the user to run `pnpm db:generate` then `pnpm db:push` (dev) or `pnpm db:migrate` (prod)."
+  }
+}

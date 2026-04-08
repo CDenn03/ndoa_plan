@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Lint on Save",
+  "description": "Run ESLint on the saved file only (fast, file-scoped)",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/**/*.ts",
+      "app/**/*.tsx",
+      "components/**/*.ts",
+      "components/**/*.tsx",
+      "hooks/**/*.ts",
+      "lib/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "pnpm eslint --max-warnings=0 \"${file}\""
+  }
+}

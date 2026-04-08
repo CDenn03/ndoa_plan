@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Dexie Version Guard",
+  "description": "When the Dexie DB file is edited, remind agent to bump the schema version to avoid VersionError",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "lib/db/dexie.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The Dexie database file was just edited. Check if any table was added, removed, or had its indexes changed. If so: (1) bump the version number in the .version(N) chain, (2) add a migration callback if existing data needs reshaping, (3) never remove a version block — only add new ones. Failing to bump the version when indexes change will cause a Dexie VersionError at runtime."
+  }
+}

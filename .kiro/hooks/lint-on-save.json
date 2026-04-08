@@ -1,13 +1,13 @@
 {
   "name": "Lint on Save",
   "version": "1.0.0",
-  "description": "Run ESLint whenever a TS/TSX file is saved",
+  "description": "Run ESLint on the saved file only (fast, file-scoped)",
   "when": {
     "type": "fileEdited",
-    "patterns": ["**/*.ts", "**/*.tsx"]
+    "patterns": ["app/**/*.ts", "app/**/*.tsx", "components/**/*.ts", "components/**/*.tsx", "hooks/**/*.ts", "lib/**/*.ts"]
   },
   "then": {
     "type": "runCommand",
-    "command": "pnpm lint"
+    "command": "pnpm eslint --max-warnings=0 \"${file}\""
   }
 }

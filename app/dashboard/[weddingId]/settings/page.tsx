@@ -29,6 +29,7 @@ export default async function SettingsPage(props: Readonly<{ params: Promise<{ w
         culturalType: w.culturalType,
         themeColor: w.themeColor,
         themeAccent: w.themeAccent,
+        couplePhotoPath: w.couplePhotoPath ?? undefined,
       }}
     />
   )

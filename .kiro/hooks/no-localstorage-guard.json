@@ -1,0 +1,13 @@
+{
+  "name": "No localStorage for Wedding Data",
+  "version": "1.0.0",
+  "description": "Catch any use of localStorage in client components — wedding data must go through Dexie",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If this write targets a file under app/dashboard/, components/, or hooks/, scan the content being written for any use of localStorage.setItem or localStorage.getItem with wedding-related keys (guests, vendors, budget, checklist, payments, etc.). If found, reject and replace with the appropriate weddingDB Dexie table. localStorage is only acceptable for UI preferences (theme, sidebar state), never for domain data."
+  }
+}
