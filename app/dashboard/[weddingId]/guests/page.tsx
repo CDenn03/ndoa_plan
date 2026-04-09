@@ -1,9 +1,11 @@
 'use client'
 import { useState, useMemo, use } from 'react'
-import { Users, Search, Plus, UserCheck, X, Star } from 'lucide-react'
+import { Users, Search, Plus, UserCheck, X, Star, Pencil, Trash2 } from 'lucide-react'
 import { Button, Input, Select, Label, EmptyState, Spinner, Modal, Badge } from '@/components/ui'
 import { useGuests, useGuestStats, useUpdateGuestRsvp, useCheckInGuest, useAddGuest } from '@/hooks/use-guests'
 import { useWeddingStore } from '@/store/wedding-store'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/components/ui/toast'
 import type { LocalGuest } from '@/types'
 
 const RSVP_BADGE: Record<string, 'confirmed' | 'declined' | 'pending' | 'maybe'> = {
@@ -20,59 +22,138 @@ const TAG_COLORS: Record<string, string> = {
   'Out-of-town': 'bg-orange-50 text-orange-700', 'Bridal Party': 'bg-pink-50 text-pink-700',
 }
 
+function EditGuestModal({ guest, weddingId, onClose }: Readonly<{ guest: LocalGuest; weddingId: string; onClose: () => void }>) {
+  const qc = useQueryClient()
+  const { toast } = useToast()
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState({
+    name: guest.name, phone: guest.phone ?? '', side: guest.side ?? 'BOTH',
+    mealPref: guest.mealPref ?? '', notes: guest.notes ?? '', tags: guest.tags ?? [],
+  })
+
+  const toggleTag = (tag: string) => setForm(f => ({
+    ...f, tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag],
+  }))
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); setSaving(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/guests/${guest.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, phone: form.phone || null, side: form.side, mealPref: form.mealPref || null, notes: form.notes || null, tags: form.tags }),
+      })
+      qc.invalidateQueries({ queryKey: ['guests', weddingId] })
+      toast('Guest updated', 'success'); onClose()
+    } catch { toast('Failed to update guest', 'error') } finally { setSaving(false) }
+  }
+
+  return (
+    <Modal onClose={onClose} title="Edit guest">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div><Label htmlFor="eg-name">Full name *</Label>
+          <Input id="eg-name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="eg-phone">Phone</Label>
+            <Input id="eg-phone" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
+          <div><Label htmlFor="eg-side">Side</Label>
+            <Select id="eg-side" value={form.side} onChange={e => setForm(f => ({ ...f, side: e.target.value }))}>
+              <option value="BOTH">Both sides</option>
+              <option value="BRIDE">Bride&apos;s side</option>
+              <option value="GROOM">Groom&apos;s side</option>
+            </Select></div>
+        </div>
+        <div><Label htmlFor="eg-meal">Meal preference</Label>
+          <Input id="eg-meal" value={form.mealPref} onChange={e => setForm(f => ({ ...f, mealPref: e.target.value }))} placeholder="e.g. Vegetarian" /></div>
+        <div><Label htmlFor="eg-notes">Notes</Label>
+          <Input id="eg-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} /></div>
+        <div>
+          <Label>Tags</Label>
+          <div className="flex flex-wrap gap-1.5 mt-1">
+            {PRESET_TAGS.map(tag => (
+              <button key={tag} type="button" onClick={() => toggleTag(tag)}
+                className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
 function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; weddingId: string }>) {
   const updateRsvp = useUpdateGuestRsvp(weddingId)
   const checkIn = useCheckInGuest(weddingId)
+  const qc = useQueryClient()
+  const { toast } = useToast()
+  const [editing, setEditing] = useState(false)
   const extGuest = guest as LocalGuest & { priority?: string; plusOneOf?: string }
 
+  const handleDelete = async () => {
+    if (!confirm(`Remove ${guest.name} from guest list?`)) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/guests/${guest.id}`, { method: 'DELETE' })
+      qc.invalidateQueries({ queryKey: ['guests', weddingId] })
+      toast('Guest removed', 'success')
+    } catch { toast('Failed to remove guest', 'error') }
+  }
+
   return (
-    <div className="flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors px-6">
-      <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
-        {guest.name.charAt(0).toUpperCase()}
-        {extGuest.priority === 'VIP' && (
-          <Star size={9} className="absolute -top-0.5 -right-0.5 text-amber-500 fill-amber-500" />
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-semibold text-[#14161C] truncate">{guest.name}</p>
-          {extGuest.plusOneOf && <span className="text-[11px] text-zinc-400">+1</span>}
-          {guest.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
-          {guest.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
+    <>
+      <div className="group flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors px-6">
+        <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
+          {guest.name.charAt(0).toUpperCase()}
+          {extGuest.priority === 'VIP' && <Star size={9} className="absolute -top-0.5 -right-0.5 text-amber-500 fill-amber-500" />}
         </div>
-        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          {guest.phone && <p className="text-xs text-zinc-400">{guest.phone}</p>}
-          {guest.tableNumber && <p className="text-xs text-zinc-400">Table {guest.tableNumber}</p>}
-          {guest.mealPref && <p className="text-xs text-zinc-400">🍽 {guest.mealPref}</p>}
-          {guest.tags && guest.tags.length > 0 && guest.tags.map(tag => (
-            <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>
-              {tag}
-            </span>
-          ))}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold text-[#14161C] truncate">{guest.name}</p>
+            {extGuest.plusOneOf && <span className="text-[11px] text-zinc-400">+1</span>}
+            {guest.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
+            {guest.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
+          </div>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            {guest.phone && <p className="text-xs text-zinc-400">{guest.phone}</p>}
+            {guest.mealPref && <p className="text-xs text-zinc-400">🍽 {guest.mealPref}</p>}
+            {guest.tags && guest.tags.length > 0 && guest.tags.map(tag => (
+              <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>{tag}</span>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Badge variant={RSVP_BADGE[guest.rsvpStatus] ?? 'default'}>{guest.rsvpStatus}</Badge>
+          <select value={guest.rsvpStatus}
+            onChange={e => updateRsvp.mutate({ guestId: guest.id, rsvpStatus: e.target.value as LocalGuest['rsvpStatus'], currentVersion: guest.version })}
+            className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
+            disabled={updateRsvp.isPending} aria-label="Update RSVP status">
+            <option value="PENDING">Pending</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="DECLINED">Declined</option>
+            <option value="MAYBE">Maybe</option>
+            <option value="WAITLISTED">Waitlisted</option>
+          </select>
+          {!guest.checkedIn && guest.rsvpStatus === 'CONFIRMED' && (
+            <Button size="icon" variant="ghost" onClick={() => checkIn.mutate({ guestId: guest.id, currentVersion: guest.version })} disabled={checkIn.isPending} title="Check in">
+              <UserCheck size={14} />
+            </Button>
+          )}
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit guest">
+              <Pencil size={13} />
+            </button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Remove guest">
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <Badge variant={RSVP_BADGE[guest.rsvpStatus] ?? 'default'}>{guest.rsvpStatus}</Badge>
-        <select
-          value={guest.rsvpStatus}
-          onChange={e => updateRsvp.mutate({ guestId: guest.id, rsvpStatus: e.target.value as LocalGuest['rsvpStatus'], currentVersion: guest.version })}
-          className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
-          disabled={updateRsvp.isPending}
-          aria-label="Update RSVP status"
-        >
-          <option value="PENDING">Pending</option>
-          <option value="CONFIRMED">Confirmed</option>
-          <option value="DECLINED">Declined</option>
-          <option value="MAYBE">Maybe</option>
-          <option value="WAITLISTED">Waitlisted</option>
-        </select>
-        {!guest.checkedIn && guest.rsvpStatus === 'CONFIRMED' && (
-          <Button size="icon" variant="ghost" onClick={() => checkIn.mutate({ guestId: guest.id, currentVersion: guest.version })} disabled={checkIn.isPending} title="Check in">
-            <UserCheck size={14} />
-          </Button>
-        )}
-      </div>
-    </div>
+      {editing && <EditGuestModal guest={guest} weddingId={weddingId} onClose={() => setEditing(false)} />}
+    </>
   )
 }
 
@@ -81,7 +162,7 @@ const PRESET_TAGS = ['VIP', 'Family', 'Work', 'Committee', 'Out-of-town', 'Brida
 function AddGuestModal({ weddingId, onClose }: Readonly<{ weddingId: string; onClose: () => void }>) {
   const addGuest = useAddGuest(weddingId)
   const [form, setForm] = useState({
-    name: '', phone: '', email: '', side: 'BOTH', tableNumber: '',
+    name: '', phone: '', email: '', side: 'BOTH',
     mealPref: '', priority: 'GENERAL', tags: [] as string[], plusOneAllowed: false,
   })
 
@@ -92,14 +173,13 @@ function AddGuestModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!form.name.trim()) return
     await addGuest.mutateAsync({
       weddingId, name: form.name.trim(),
       phone: form.phone || undefined, email: form.email || undefined,
       side: form.side as LocalGuest['side'],
-      tableNumber: form.tableNumber ? parseInt(form.tableNumber) : undefined,
       rsvpStatus: 'PENDING', checkedIn: false,
     })
     onClose()
@@ -116,10 +196,6 @@ function AddGuestModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
           <div>
             <Label htmlFor="guest-phone">Phone</Label>
             <Input id="guest-phone" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+254…" />
-          </div>
-          <div>
-            <Label htmlFor="guest-table">Table #</Label>
-            <Input id="guest-table" type="number" value={form.tableNumber} onChange={e => setForm(f => ({ ...f, tableNumber: e.target.value }))} placeholder="1" min="1" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -178,6 +254,19 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
   const { guestFilter, setGuestFilter } = useWeddingStore()
   const [showAdd, setShowAdd] = useState(false)
 
+  const { data: wedding } = useQuery({
+    queryKey: ['wedding', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}`)
+      if (!res.ok) return null
+      return res.json() as Promise<{ expectedGuestCount?: number | null }>
+    },
+    staleTime: 60_000,
+  })
+
+  const expectedCount = wedding?.expectedGuestCount ?? null
+  const delta = expectedCount != null ? stats.confirmed - expectedCount : null
+
   const filtered = useMemo(() => guests.filter(g => {
     if (guestFilter.search && !g.name.toLowerCase().includes(guestFilter.search.toLowerCase())) return false
     if (guestFilter.rsvpStatus !== 'all' && g.rsvpStatus !== guestFilter.rsvpStatus) return false
@@ -194,7 +283,14 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
           <div>
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">People</p>
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Guests</h1>
-            <p className="text-sm text-zinc-400 mt-2">{stats.total} invited · {stats.confirmed} confirmed</p>
+            <p className="text-sm text-zinc-400 mt-2">
+              {stats.total} invited · {stats.confirmed} confirmed
+              {expectedCount != null && (
+                <span className={`ml-2 font-semibold ${delta === 0 ? 'text-emerald-500' : delta != null && delta > 0 ? 'text-amber-500' : 'text-zinc-400'}`}>
+                  {delta != null && delta > 0 ? `· ${delta} more than expected` : delta != null && delta < 0 ? `· ${Math.abs(delta)} fewer than expected` : '· on target'}
+                </span>
+              )}
+            </p>
           </div>
           <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add guest</Button>
         </div>

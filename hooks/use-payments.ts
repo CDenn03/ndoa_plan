@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 export interface Payment {
   id: string
   weddingId: string
+  eventId?: string
   vendorId?: string
   contributionId?: string
   mpesaRef?: string
@@ -31,6 +32,7 @@ export interface Contribution {
   dueDate?: string
   status: 'PLEDGED' | 'PARTIAL' | 'FULFILLED' | 'OVERDUE' | 'CANCELLED'
   notes?: string
+  eventId?: string
 }
 
 export interface InitiatePaymentArgs {
@@ -105,7 +107,6 @@ export function useAddContribution(weddingId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contributions', weddingId] }),
   })
 }
-
 export function usePaymentSummary(weddingId: string) {
   const { data: payments = [] } = usePayments(weddingId)
   const { data: contributions = [] } = useContributions(weddingId)

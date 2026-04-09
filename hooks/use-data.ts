@@ -4,58 +4,7 @@ import { weddingDB } from '@/lib/db/dexie'
 import { computeChecksum } from '@/lib/db/checksum'
 import { atomicWrite } from './use-atomic-write'
 import { v4 as uuidv4 } from 'uuid'
-import type { LocalTimelineEvent, LocalChecklistItem, LocalBudgetLine } from '@/types'
-
-// ─── Timeline ─────────────────────────────────────────────────────────────────
-
-export function useTimelineEvents(weddingId: string) {
-  return useQuery({
-    queryKey: ['timeline', weddingId],
-    queryFn: async () => {
-      const local = await weddingDB.timelineEvents.where('weddingId').equals(weddingId)
-        .filter(e => !e.deletedAt).sortBy('startTime')
-      if (local.length > 0) return local
-      const res = await fetch(`/api/weddings/${weddingId}/timeline`)
-      if (!res.ok) throw new Error('Failed to load timeline')
-      const events: LocalTimelineEvent[] = await res.json()
-      await weddingDB.timelineEvents.bulkPut(events)
-      return events.sort((a, b) => a.startTime - b.startTime)
-    },
-    staleTime: 30_000,
-    gcTime: Infinity,
-  })
-}
-
-export function useAddTimelineEvent(weddingId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async (data: Omit<LocalTimelineEvent, 'id'|'version'|'checksum'|'isDirty'|'updatedAt'>) => {
-      const event: LocalTimelineEvent = {
-        ...data, id: uuidv4(), weddingId, isComplete: false,
-        version: 0, checksum: '', isDirty: true, updatedAt: Date.now(),
-      }
-      event.checksum = computeChecksum(event as unknown as Record<string, unknown>)
-      const r = await atomicWrite(qc, { table: weddingDB.timelineEvents, queryKey: ['timeline', weddingId], data: event, operation: 'add', entityType: 'timeline_event', syncOp: 'CREATE', priority: 2 })
-      if (!r.ok) throw r.error
-      return event
-    },
-  })
-}
-
-export function useUpdateTimelineEvent(weddingId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ eventId, data, currentVersion }: { eventId: string; data: Partial<LocalTimelineEvent>; currentVersion: number }) => {
-      const existing = await weddingDB.timelineEvents.get(eventId)
-      if (!existing) throw new Error('Event not found')
-      const updated: LocalTimelineEvent = { ...existing, ...data, updatedAt: Date.now(), isDirty: true }
-      updated.checksum = computeChecksum(updated as unknown as Record<string, unknown>)
-      const r = await atomicWrite(qc, { table: weddingDB.timelineEvents, queryKey: ['timeline', weddingId], data: updated, operation: 'put', entityType: 'timeline_event', syncOp: 'UPDATE', priority: 2, clientVersion: currentVersion })
-      if (!r.ok) throw r.error
-      return updated
-    },
-  })
-}
+import type { LocalChecklistItem, LocalBudgetLine } from '@/types'
 
 // ─── Checklist ────────────────────────────────────────────────────────────────
 
@@ -114,20 +63,61 @@ export function useAddChecklistItem(weddingId: string) {
   })
 }
 
+export function useUpdateChecklistItem(weddingId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (patch: Partial<LocalChecklistItem> & { id: string; currentVersion: number }) => {
+      const existing = await weddingDB.checklistItems.get(patch.id)
+      if (!existing) throw new Error('Item not found')
+      const updated: LocalChecklistItem = {
+        ...existing, ...patch,
+        updatedAt: Date.now(), isDirty: true,
+      }
+      updated.checksum = computeChecksum(updated as unknown as Record<string, unknown>)
+      const r = await atomicWrite(qc, { table: weddingDB.checklistItems, queryKey: ['checklist', weddingId], data: updated, operation: 'put', entityType: 'checklist_item', syncOp: 'UPDATE', priority: 2, clientVersion: patch.currentVersion })
+      if (!r.ok) throw r.error
+      return updated
+    },
+  })
+}
+
+export function useDeleteChecklistItem(weddingId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ itemId, currentVersion }: { itemId: string; currentVersion: number }) => {
+      const existing = await weddingDB.checklistItems.get(itemId)
+      if (!existing) throw new Error('Item not found')
+      const updated: LocalChecklistItem = {
+        ...existing, deletedAt: Date.now(), updatedAt: Date.now(), isDirty: true,
+      }
+      updated.checksum = computeChecksum(updated as unknown as Record<string, unknown>)
+      const r = await atomicWrite(qc, { table: weddingDB.checklistItems, queryKey: ['checklist', weddingId], data: updated, operation: 'put', entityType: 'checklist_item', syncOp: 'DELETE', priority: 2, clientVersion: currentVersion })
+      if (!r.ok) throw r.error
+      return itemId
+    },
+  })
+}
 // ─── Budget ───────────────────────────────────────────────────────────────────
 
 export function useBudgetLines(weddingId: string) {
   return useQuery({
     queryKey: ['budget', weddingId],
     queryFn: async () => {
-      const local = await weddingDB.budgetLines.where('weddingId').equals(weddingId)
-        .filter(l => !l.deletedAt).toArray()
-      if (local.length > 0) return local
+      // Always fetch from server — items may have been created via the event detail
+      // page which posts directly to the API without going through Dexie
       const res = await fetch(`/api/weddings/${weddingId}/budget`)
-      if (!res.ok) throw new Error('Failed to load budget')
-      const lines: LocalBudgetLine[] = await res.json()
-      await weddingDB.budgetLines.bulkPut(lines)
-      return lines
+      if (!res.ok) {
+        // Offline fallback: return whatever is in Dexie
+        return weddingDB.budgetLines.where('weddingId').equals(weddingId)
+          .filter(l => !l.deletedAt).toArray()
+      }
+      const serverLines: LocalBudgetLine[] = await res.json()
+      // Preserve any dirty (unsynced) local lines not yet on the server
+      const dirty = await weddingDB.budgetLines.where('weddingId').equals(weddingId)
+        .filter(l => !!l.isDirty && !l.deletedAt).toArray()
+      const dirtyIds = new Set(dirty.map(l => l.id))
+      await weddingDB.budgetLines.bulkPut(serverLines.filter(l => !dirtyIds.has(l.id)))
+      return [...serverLines.filter(l => !dirtyIds.has(l.id)), ...dirty]
     },
     staleTime: 30_000,
     gcTime: Infinity,

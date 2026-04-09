@@ -49,7 +49,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
   const totalGuests = guestCounts.reduce((s, g) => s + g._count, 0)
   const confirmedVendors = vendorCounts.find(v => v.status === 'CONFIRMED')?._count ?? 0
   const totalVendors = vendorCounts.reduce((s, v) => s + v._count, 0)
-  const totalBudget = Number(wedding.budget)
+  const totalBudget = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
   const totalSpent = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
   const totalCommitted = budgetLines.reduce((s, l) => s + Number(l.committed) + Number(l.actual), 0)
   const daysToWedding = differenceInDays(wedding.date, new Date())

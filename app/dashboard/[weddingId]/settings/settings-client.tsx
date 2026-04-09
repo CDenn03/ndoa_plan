@@ -6,13 +6,14 @@ import { Button, Input, Select, Label } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 
 const CULTURAL_TYPES = ['STANDARD','KIKUYU','LUO','KAMBA','KALENJIN','COASTAL']
+const CURRENCIES = ['KES','USD','GBP','EUR','UGX','TZS','ZAR']
 
 interface Props {
   weddingId: string
   initialValues: {
     name: string; date: string; venue: string; venueCapacity: number | string
     budget: number; culturalType: string; themeColor: string; themeAccent: string
-    couplePhotoPath?: string
+    couplePhotoPath?: string; currency?: string; expectedGuestCount?: number | string
   }
 }
 
@@ -57,7 +58,7 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSaving(true)
     try {
@@ -149,8 +150,20 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
                   <Input id="s-capacity" type="number" value={form.venueCapacity} onChange={set('venueCapacity')} min="1" placeholder="300" />
                 </div>
                 <div>
-                  <Label htmlFor="s-budget">Total budget (KES)</Label>
+                  <Label htmlFor="s-expected">Expected guests</Label>
+                  <Input id="s-expected" type="number" value={form.expectedGuestCount ?? ''} onChange={set('expectedGuestCount')} min="1" placeholder="250" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="s-budget">Total budget</Label>
                   <Input id="s-budget" type="number" value={form.budget} onChange={set('budget')} min="0" placeholder="1500000" />
+                </div>
+                <div>
+                  <Label htmlFor="s-currency">Currency</Label>
+                  <Select id="s-currency" value={form.currency ?? 'KES'} onChange={set('currency')}>
+                    {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </Select>
                 </div>
               </div>
             </div>

@@ -1,43 +1,29 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { redirect } from 'next/navigation'
+'use client'
+import { use } from 'react'
 import { AppointmentsClient } from './appointments-client'
+import { useQuery } from '@tanstack/react-query'
+import { useSession } from 'next-auth/react'
+import { Spinner } from '@/components/ui'
 
-export default async function AppointmentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
-  const params = await props.params
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
+interface Vendor { id: string; name: string; category: string }
 
-  const userId = (session.user as typeof session.user & { id: string }).id
+export default function AppointmentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
+  const { data: session } = useSession()
+  const userId = (session?.user as typeof session.user & { id?: string })?.id ?? ''
 
-  const [appointments, vendors] = await Promise.all([
-    db.appointment.findMany({
-      where: { weddingId: wid },
-      include: { vendor: { select: { id: true, name: true, category: true } } },
-      orderBy: { startAt: 'asc' },
-    }),
-    db.vendor.findMany({
-      where: { weddingId: wid, deletedAt: null },
-      select: { id: true, name: true, category: true },
-      orderBy: { name: 'asc' },
-    }),
-  ])
+  const { data: vendors = [] } = useQuery<Vendor[]>({
+    queryKey: ['vendors', wid, 'select'],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/vendors`)
+      if (!res.ok) return []
+      return res.json() as Promise<Vendor[]>
+    },
+    staleTime: 60_000,
+  })
 
-  return (
-    <AppointmentsClient
-      weddingId={wid}
-      userId={userId}
-      appointments={appointments.map(a => ({
-        ...a,
-        startAt: a.startAt.toISOString(),
-        endAt: a.endAt?.toISOString() ?? null,
-        reminderAt: a.reminderAt?.toISOString() ?? null,
-        createdAt: a.createdAt.toISOString(),
-        updatedAt: a.updatedAt.toISOString(),
-      }))}
-      vendors={vendors}
-    />
-  )
+  if (!userId) return <div className="flex justify-center py-20"><Spinner /></div>
+
+  return <AppointmentsClient weddingId={wid} userId={userId} vendors={vendors} />
 }

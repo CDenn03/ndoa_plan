@@ -1,28 +1,51 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { redirect } from 'next/navigation'
-import { AlertTriangle, CheckCircle2 } from 'lucide-react'
-import { Badge } from '@/components/ui'
+'use client'
+import { use } from 'react'
+import { CheckCircle2 } from 'lucide-react'
+import { Badge, Button, Spinner } from '@/components/ui'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/components/ui/toast'
+
+interface RiskAlert {
+  id: string; severity: string; category: string; message: string; isResolved: boolean
+}
 
 const SEV_BADGE: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
   CRITICAL: 'critical', HIGH: 'high', MEDIUM: 'medium', LOW: 'low',
 }
-
 const SEV_DOT: Record<string, string> = {
   CRITICAL: 'bg-red-400', HIGH: 'bg-orange-400', MEDIUM: 'bg-sky-400', LOW: 'bg-emerald-400',
 }
 
-export default async function RisksPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
-  const params = await props.params
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
-
+export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
-  const [active, resolved] = await Promise.all([
-    db.riskAlert.findMany({ where: { weddingId: wid, isResolved: false }, orderBy: [{ severity: 'asc' }, { createdAt: 'desc' }] }),
-    db.riskAlert.findMany({ where: { weddingId: wid, isResolved: true }, orderBy: { resolvedAt: 'desc' }, take: 10 }),
-  ])
+  const qc = useQueryClient()
+  const { toast } = useToast()
+
+  const { data: risks = [], isLoading } = useQuery<RiskAlert[]>({
+    queryKey: ['risks', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/risks`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json()
+    },
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+  })
+
+  const active = risks.filter(r => !r.isResolved)
+  const resolved = risks.filter(r => r.isResolved).slice(0, 10)
+
+  const resolve = async (riskId: string) => {
+    try {
+      await fetch(`/api/weddings/${wid}/risks/${riskId}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isResolved: true }),
+      })
+      qc.invalidateQueries({ queryKey: ['risks', wid] })
+      toast('Risk marked as resolved', 'success')
+    } catch { toast('Failed to resolve risk', 'error') }
+  }
 
   return (
     <div className="min-h-full">
@@ -35,7 +58,9 @@ export default async function RisksPage(props: Readonly<{ params: Promise<{ wedd
       </div>
 
       <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
-        {active.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center py-16"><Spinner /></div>
+        ) : active.length === 0 ? (
           <div className="flex flex-col items-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
               <CheckCircle2 size={28} className="text-emerald-500" />
@@ -48,7 +73,7 @@ export default async function RisksPage(props: Readonly<{ params: Promise<{ wedd
             <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5">Active</p>
             <div className="space-y-0">
               {active.map(r => (
-                <div key={r.id} className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
+                <div key={r.id} className="group flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
                   <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${SEV_DOT[r.severity] ?? 'bg-zinc-300'}`} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -57,6 +82,11 @@ export default async function RisksPage(props: Readonly<{ params: Promise<{ wedd
                     </div>
                     <p className="text-sm text-zinc-700 leading-relaxed">{r.message}</p>
                   </div>
+                  <Button size="sm" variant="secondary"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    onClick={() => resolve(r.id)}>
+                    <CheckCircle2 size={13} /> Resolve
+                  </Button>
                 </div>
               ))}
             </div>

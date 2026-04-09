@@ -76,12 +76,6 @@ export function resolveConflict(conflict: ConflictPayload): ResolveResult {
       return { resolution: 'field_merge', mergedState: merged, needsHumanReview: false, summary: 'Checklist item merged. Completed state preserved.' }
     }
 
-    case 'timeline_event': {
-      const cTs = clientState.updatedAt as number ?? 0
-      const sTs = serverState.updatedAt as number ?? 0
-      return { resolution: 'append', mergedState: cTs > sTs ? clientState : serverState, needsHumanReview: false, summary: 'Timeline event updated to most recent version.' }
-    }
-
     case 'budget_line': {
       const { merged, serverWonFields } = fieldMerge(clientState, clientState, serverState)
       const needsHuman = serverWonFields.includes('estimated') || serverWonFields.includes('actual') || serverWonFields.includes('committed')

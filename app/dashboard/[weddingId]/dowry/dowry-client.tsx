@@ -25,7 +25,7 @@ function AddDowryModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ name: '', quantity: '1', estimatedValue: '', notes: '' })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSaving(true)
     try {

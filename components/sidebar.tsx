@@ -2,90 +2,25 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Users, ShoppingBag, Clock, DollarSign, CheckSquare, AlertTriangle,
+  Users, ShoppingBag, DollarSign, CheckSquare, AlertTriangle,
   LayoutDashboard, Menu, X, Heart, LogOut, Settings, UserCheck,
   CreditCard, Calendar, BarChart2, Image, FileText, Gift,
-  Truck, Zap, Sparkles,
+  Truck, Zap, Sparkles, ChevronDown, ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/components/ui'
 import { useWeddingStore } from '@/store/wedding-store'
 import { signOut } from 'next-auth/react'
 import { useSync } from '@/components/sync-provider'
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-type NavItem = {
-  href: string
-  label: string
-  icon: React.ElementType
-  indent?: boolean
-  badge?: number
+interface WeddingEvent { id: string; name: string; type: string }
+
+const EVENT_TYPE_COLORS: Record<string, string> = {
+  WEDDING: 'bg-violet-400', RURACIO: 'bg-amber-400', RECEPTION: 'bg-sky-400',
+  ENGAGEMENT: 'bg-pink-400', TRADITIONAL: 'bg-orange-400', CIVIL: 'bg-emerald-400',
+  AFTER_PARTY: 'bg-purple-400', HONEYMOON: 'bg-rose-400', MOVING: 'bg-zinc-400',
 }
-
-type NavGroup = {
-  label: string
-  items: NavItem[]
-}
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: '',
-    items: [
-      { href: '', label: 'Overview', icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: 'Planning',
-    items: [
-      { href: '/events', label: 'Events', icon: Calendar },
-      { href: '/checklist', label: 'Checklist', icon: CheckSquare },
-      { href: '/timeline', label: 'Timeline', icon: Clock },
-      { href: '/appointments', label: 'Appointments', icon: Sparkles },
-    ],
-  },
-  {
-    label: 'People',
-    items: [
-      { href: '/guests', label: 'Guests', icon: Users },
-      { href: '/guests/check-in', label: 'Check-in', icon: UserCheck, indent: true },
-      { href: '/vendors', label: 'Vendors', icon: ShoppingBag },
-    ],
-  },
-  {
-    label: 'Finance',
-    items: [
-      { href: '/budget', label: 'Budget', icon: DollarSign },
-      { href: '/payments', label: 'Payments', icon: CreditCard },
-    ],
-  },
-  {
-    label: 'Insights',
-    items: [
-      { href: '/risks', label: 'Risk Alerts', icon: AlertTriangle },
-      { href: '/analytics', label: 'Analytics', icon: BarChart2 },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { href: '/moodboard', label: 'Vision Board', icon: Image },
-      { href: '/documents', label: 'Documents', icon: FileText },
-      { href: '/gifts', label: 'Gifts', icon: Gift },
-    ],
-  },
-  {
-    label: 'Logistics',
-    items: [
-      { href: '/logistics', label: 'Logistics', icon: Truck },
-      { href: '/day-of', label: 'Day-of', icon: Zap },
-    ],
-  },
-  {
-    label: 'Settings',
-    items: [
-      { href: '/settings', label: 'Settings', icon: Settings },
-    ],
-  },
-]
 
 interface SidebarProps {
   weddingId: string
@@ -99,30 +34,60 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
   const { isOnline, circuitOpen } = useSync()
   const base = `/dashboard/${weddingId}`
   const [mounted, setMounted] = useState(false)
-  // Defer to avoid hydration mismatch — runs only on client after mount
+  const [eventsExpanded, setEventsExpanded] = useState(true)
+
   useEffect(() => { setMounted(true) }, [])
   const open = mounted && sidebarOpen
 
-  // Inject Dowry item into Planning group when cultural type is set
-  const groups: NavGroup[] = NAV_GROUPS.map(group => {
-    if (group.label === 'Planning' && culturalType && culturalType !== 'STANDARD') {
-      return {
-        ...group,
-        items: [...group.items, { href: '/dowry', label: 'Dowry', icon: Heart } satisfies NavItem],
-      }
-    }
-    return group
+  const { data: events = [] } = useQuery<WeddingEvent[]>({
+    queryKey: ['events', weddingId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/events`)
+      if (!res.ok) return []
+      return res.json()
+    },
+    staleTime: 60_000,
+    enabled: mounted,
   })
+
+  const isActive = (href: string) => {
+    if (href === '') return pathname === base
+    const to = `${base}${href}`
+    return pathname === to || pathname.startsWith(to + '/')
+  }
+
+  const NavLink = ({ href, label, icon: Icon, indent = false }: {
+    href: string; label: string; icon: React.ElementType; indent?: boolean
+  }) => {
+    const active = isActive(href)
+    return (
+      <Link
+        href={`${base}${href}`}
+        onClick={() => { if (window.innerWidth < 1024) toggleSidebar() }}
+        className={cn(
+          'flex items-center gap-2.5 py-2 rounded-xl text-sm transition-colors',
+          indent ? 'px-2.5 ml-4 text-xs' : 'px-3',
+          active
+            ? 'bg-[#CDB5F7]/20 text-violet-700 font-semibold'
+            : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium'
+        )}
+      >
+        <Icon size={indent ? 13 : 15} className={active ? 'text-violet-600' : 'text-zinc-400'} />
+        <span className="flex-1 truncate">{label}</span>
+      </Link>
+    )
+  }
+
+  const SectionLabel = ({ children }: { children: string }) => (
+    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 px-3 pt-3 pb-1">{children}</p>
+  )
 
   return (
     <>
       {open && (
-        <button
-          type="button"
-          aria-label="Close navigation"
+        <button type="button" aria-label="Close navigation"
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden w-full h-full cursor-default"
-          onClick={toggleSidebar}
-        />
+          onClick={toggleSidebar} />
       )}
       <aside className={cn(
         'fixed top-0 left-0 h-full z-40 flex flex-col',
@@ -142,27 +107,18 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
               <p className="text-[11px] text-zinc-400 mt-0.5 truncate max-w-[120px]">{weddingName}</p>
             </div>
           </div>
-          <button
-            onClick={toggleSidebar}
-            className="lg:hidden text-zinc-400 hover:text-zinc-600 transition-colors"
-          >
+          <button onClick={toggleSidebar} className="lg:hidden text-zinc-400 hover:text-zinc-600 transition-colors">
             <X size={16} />
           </button>
         </div>
 
         {/* Sync status */}
         <div className="px-5 pb-3">
-        {mounted && (() => {
+          {mounted && (() => {
             const syncLabel = circuitOpen ? 'Sync paused' : isOnline ? 'Connected' : 'Offline'
             return (
-              <div className={cn(
-                'flex items-center gap-1.5 text-[11px] font-medium',
-                isOnline ? 'text-emerald-500' : 'text-amber-500'
-              )}>
-                <div className={cn(
-                  'w-1.5 h-1.5 rounded-full',
-                  isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-                )} />
+              <div className={cn('flex items-center gap-1.5 text-[11px] font-medium', isOnline ? 'text-emerald-500' : 'text-amber-500')}>
+                <div className={cn('w-1.5 h-1.5 rounded-full', isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400')} />
                 {syncLabel}
               </div>
             )
@@ -171,52 +127,112 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
 
         <hr className="border-[hsl(var(--border))] mx-5" />
 
-        {/* Nav */}
         <nav className="flex-1 px-3 py-3 overflow-y-auto scrollbar-thin">
-          {groups.map((group) => (
-            <div key={group.label} className="mb-1">
-              {group.label && (
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 px-3 pt-4 pb-1">
-                  {group.label}
-                </p>
-              )}
-              <ul className="space-y-0.5">
-                {group.items.map(({ href, label, icon: Icon, indent, badge }) => {
-                  const to = `${base}${href}`
-                  const isRoot = href === ''
-                  const active = isRoot
-                    ? pathname === base
-                    : pathname === to || pathname.startsWith(to + '/')
+
+          {/* Overview — always first */}
+          <NavLink href="" label="Overview" icon={LayoutDashboard} />
+
+          {/* ── Events ── collapsible with dynamic sub-items */}
+          <div className="mt-1">
+            <div className="flex items-center justify-between px-3 pt-3 pb-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">Events</p>
+              <button onClick={() => setEventsExpanded(v => !v)}
+                className="text-zinc-300 hover:text-zinc-500 transition-colors" aria-label="Toggle events">
+                {eventsExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+              </button>
+            </div>
+            <NavLink href="/events" label="All events" icon={Calendar} />
+            {eventsExpanded && events.length > 0 && (
+              <ul className="mt-0.5 space-y-0.5">
+                {events.map(ev => {
+                  const evPath = `${base}/events/${ev.id}`
+                  const active = pathname === evPath || pathname.startsWith(evPath + '/')
                   return (
-                    <li key={href}>
-                      <Link
-                        href={to}
+                    <li key={ev.id}>
+                      <Link href={evPath}
                         onClick={() => { if (window.innerWidth < 1024) toggleSidebar() }}
                         className={cn(
-                          'flex items-center gap-3 py-2.5 rounded-xl text-sm transition-colors',
-                          indent ? 'px-3 ml-5 text-xs' : 'px-3',
+                          'flex items-center gap-2.5 py-1.5 px-2.5 ml-4 rounded-xl text-xs transition-colors',
                           active
                             ? 'bg-[#CDB5F7]/20 text-violet-700 font-semibold'
                             : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium'
-                        )}
-                      >
-                        <Icon
-                          size={indent ? 13 : 15}
-                          className={active ? 'text-violet-600' : 'text-zinc-400'}
-                        />
-                        <span className="flex-1">{label}</span>
-                        {badge != null && badge > 0 && (
-                          <span className="text-[10px] font-bold bg-violet-100 text-violet-600 rounded-full px-1.5 py-0.5 leading-none">
-                            {badge}
-                          </span>
-                        )}
+                        )}>
+                        <span className={cn('w-2 h-2 rounded-full flex-shrink-0', EVENT_TYPE_COLORS[ev.type] ?? 'bg-zinc-300')} />
+                        <span className="truncate">{ev.name}</span>
                       </Link>
                     </li>
                   )
                 })}
               </ul>
+            )}
+          </div>
+
+          {/* ── Planning — tasks, appointments, dowry */}
+          <div className="mt-1">
+            <SectionLabel>Planning</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/checklist" label="Tasks" icon={CheckSquare} />
+              <NavLink href="/appointments" label="Appointments" icon={Sparkles} />
+              {culturalType && culturalType !== 'STANDARD' && (
+                <NavLink href="/dowry" label="Dowry" icon={Heart} />
+              )}
             </div>
-          ))}
+          </div>
+
+          {/* ── People — guests, check-in, vendors */}
+          <div className="mt-1">
+            <SectionLabel>People</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/guests" label="Guests" icon={Users} />
+              <NavLink href="/guests/check-in" label="Check-in" icon={UserCheck} indent />
+              <NavLink href="/vendors" label="Vendors" icon={ShoppingBag} />
+            </div>
+          </div>
+
+          {/* ── Finance — budget, payments, contributions */}
+          <div className="mt-1">
+            <SectionLabel>Finance</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/budget" label="Budget" icon={DollarSign} />
+              <NavLink href="/payments" label="Payments" icon={CreditCard} />
+              <NavLink href="/contributions" label="Contributions" icon={Users} />
+            </div>
+          </div>
+
+          {/* ── Execution — logistics, day-of */}
+          <div className="mt-1">
+            <SectionLabel>Execution</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/logistics" label="Logistics" icon={Truck} />
+              <NavLink href="/day-of" label="Day-of" icon={Zap} />
+            </div>
+          </div>
+
+          {/* ── Insights — risks, analytics */}
+          <div className="mt-1">
+            <SectionLabel>Insights</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/risks" label="Risk Alerts" icon={AlertTriangle} />
+              <NavLink href="/analytics" label="Analytics" icon={BarChart2} />
+            </div>
+          </div>
+
+          {/* ── Content — vision board, gifts, documents */}
+          <div className="mt-1">
+            <SectionLabel>Content</SectionLabel>
+            <div className="space-y-0.5">
+              <NavLink href="/moodboard" label="Vision Board" icon={Image} />
+              <NavLink href="/gifts" label="Gifts" icon={Gift} />
+              <NavLink href="/documents" label="Documents" icon={FileText} />
+            </div>
+          </div>
+
+          {/* ── Settings */}
+          <div className="mt-1 pb-2">
+            <SectionLabel>Settings</SectionLabel>
+            <NavLink href="/settings" label="Settings" icon={Settings} />
+          </div>
+
         </nav>
 
         {/* Footer */}

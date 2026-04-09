@@ -232,7 +232,6 @@ async function handlePayment(op: SyncOperation, actorId: string): Promise<SyncOp
 const ENTITY_TABLE: Record<string, string> = {
   guest: 'guest',
   vendor: 'vendor',
-  timeline_event: 'timelineEvent',
   checklist_item: 'checklistItem',
   budget_line: 'budgetLine',
   payment: 'payment',

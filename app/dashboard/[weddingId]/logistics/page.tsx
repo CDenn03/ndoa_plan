@@ -1,33 +1,61 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { redirect } from 'next/navigation'
+'use client'
+import { use } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Spinner } from '@/components/ui'
 import { LogisticsClient } from './logistics-client'
 
-export default async function LogisticsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
-  const params = await props.params
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
+interface WeddingEvent { id: string; name: string; type: string; date: string }
 
+export default function LogisticsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
+  const qc = useQueryClient()
 
-  const [routes, accommodations] = await Promise.all([
-    db.transportRoute.findMany({
-      where: { weddingId: wid },
-      include: { assignedVendor: { select: { id: true, name: true } } },
-      orderBy: { departureTime: 'asc' },
-    }),
-    db.accommodation.findMany({
-      where: { weddingId: wid },
-      orderBy: { checkIn: 'asc' },
-    }),
-  ])
+  const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
+    queryKey: ['events', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/events`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json()
+    },
+    staleTime: 60_000,
+  })
+
+  const { data: routes = [], isLoading: routesLoading } = useQuery({
+    queryKey: ['logistics-routes', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/logistics/routes`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json()
+    },
+    staleTime: 30_000,
+  })
+
+  const { data: accommodations = [], isLoading: accomLoading } = useQuery({
+    queryKey: ['logistics-accommodations', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/logistics/accommodations`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json()
+    },
+    staleTime: 30_000,
+  })
+
+  const isLoading = eventsLoading || routesLoading || accomLoading
+  const refresh = () => {
+    void qc.invalidateQueries({ queryKey: ['logistics-routes', wid] })
+    void qc.invalidateQueries({ queryKey: ['logistics-accommodations', wid] })
+  }
+
+  if (isLoading) return <div className="flex justify-center py-20"><Spinner /></div>
 
   return (
     <LogisticsClient
       weddingId={wid}
-      routes={routes.map(r => ({ ...r, departureTime: r.departureTime.toISOString(), createdAt: r.createdAt.toISOString() }))}
-      accommodations={accommodations.map(a => ({ ...a, checkIn: a.checkIn.toISOString(), checkOut: a.checkOut.toISOString(), createdAt: a.createdAt.toISOString() }))}
+      events={events}
+      routes={routes}
+      accommodations={accommodations}
+      onRefresh={refresh}
     />
   )
 }

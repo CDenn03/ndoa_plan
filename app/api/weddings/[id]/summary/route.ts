@@ -37,8 +37,8 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   const totalGuests = guestCounts.reduce((s, g) => s + g._count, 0)
   const totalVendors = vendorCounts.reduce((s, v) => s + v._count, 0)
   const confirmedVendors = vendorCounts.find(v => v.status === 'CONFIRMED')?._count ?? 0
-  const totalBudget = Number(member.wedding.budget)
-  const totalEstimated = Number(budgetAgg._sum.estimated ?? 0)
+  const totalBudget = Number(budgetAgg._sum.estimated ?? 0)
+  const totalEstimated = totalBudget
   const totalActual = Number(budgetAgg._sum.actual ?? 0)
   const totalCommitted = Number(budgetAgg._sum.committed ?? 0) + totalActual
   const checkedCount = checklistAgg.find(c => c.isChecked)?._count ?? 0

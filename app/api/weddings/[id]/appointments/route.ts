@@ -3,13 +3,16 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 
-export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const { searchParams } = new URL(req.url)
+  const eventId = searchParams.get('eventId')
+
   const appointments = await db.appointment.findMany({
-    where: { weddingId: id },
+    where: { weddingId: id, ...(eventId ? { eventId } : {}) },
     include: { vendor: { select: { id: true, name: true } } },
     orderBy: { startAt: 'asc' },
   })
@@ -22,7 +25,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { title, vendorId, location, startAt, endAt, reminderAt, notes, createdBy } = body
+  const { title, vendorId, eventId, location, startAt, endAt, reminderAt, notes, createdBy } = body
 
   if (!title || !startAt || !createdBy) {
     return NextResponse.json({ error: 'title, startAt, and createdBy are required' }, { status: 400 })
@@ -31,6 +34,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   const appointment = await db.appointment.create({
     data: {
       weddingId: id,
+      eventId: eventId || null,
       title,
       vendorId: vendorId || null,
       location: location || null,

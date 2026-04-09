@@ -1,10 +1,11 @@
 'use client'
 import { useState } from 'react'
-import { Calendar, Plus, MapPin } from 'lucide-react'
-import { Button, Input, Select, Label, Badge, EmptyState, Modal } from '@/components/ui'
+import { Calendar, Plus, MapPin, CheckSquare, DollarSign, Clock, ChevronRight } from 'lucide-react'
+import { Button, Input, Select, Label, EmptyState, Modal } from '@/components/ui'
 import { format, differenceInDays } from 'date-fns'
 import { useToast } from '@/components/ui/toast'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const EVENT_TYPES = ['RURACIO','WEDDING','RECEPTION','POST_WEDDING','TRADITIONAL','CIVIL','ENGAGEMENT','AFTER_PARTY','HONEYMOON','MOVING']
 
@@ -22,33 +23,26 @@ const TYPE_COLOR: Record<string, string> = {
 }
 
 interface WeddingEvent {
-  id: string
-  name: string
-  type: string
-  date: string
-  venue?: string | null
-  description?: string | null
-  isMain: boolean
+  id: string; name: string; type: string; date: string
+  venue?: string | null; description?: string | null; isMain: boolean
+  startTime?: string | null; endTime?: string | null
+  taskCount: number; budgetLineCount: number
 }
 
-interface Props {
-  weddingId: string
-  events: WeddingEvent[]
-}
+interface Props { weddingId: string; events: WeddingEvent[] }
 
 function AddEventModal({ weddingId, onClose }: Readonly<{ weddingId: string; onClose: () => void }>) {
   const { toast } = useToast()
   const router = useRouter()
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ name: '', type: 'WEDDING', date: '', venue: '', description: '' })
+  const [form, setForm] = useState({ name: '', type: 'WEDDING', date: '', venue: '', description: '', startTime: '', endTime: '' })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSaving(true)
     try {
       const res = await fetch(`/api/weddings/${weddingId}/events`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
       if (!res.ok) throw new Error('Failed to create event')
@@ -73,12 +67,22 @@ function AddEventModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
           <div>
             <Label htmlFor="ev-type">Type</Label>
             <Select id="ev-type" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-              {EVENT_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
+              {EVENT_TYPES.map(t => <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>)}
             </Select>
           </div>
           <div>
             <Label htmlFor="ev-date">Date *</Label>
             <Input id="ev-date" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor="ev-start">Start time</Label>
+            <Input id="ev-start" type="time" value={form.startTime} onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))} />
+          </div>
+          <div>
+            <Label htmlFor="ev-end">End time</Label>
+            <Input id="ev-end" type="time" value={form.endTime} onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))} />
           </div>
         </div>
         <div>
@@ -101,9 +105,61 @@ function AddEventModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
 export function EventsClient({ weddingId, events }: Readonly<Props>) {
   const [showAdd, setShowAdd] = useState(false)
   const now = new Date()
-
   const upcoming = events.filter(e => new Date(e.date) >= now)
   const past = events.filter(e => new Date(e.date) < now)
+
+  const EventCard = ({ ev }: { ev: WeddingEvent }) => {
+    const daysLeft = differenceInDays(new Date(ev.date), now)
+    const isPast = daysLeft < 0
+    return (
+      <Link
+        href={`/dashboard/${weddingId}/events/${ev.id}`}
+        className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors group"
+      >
+        <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isPast ? 'bg-zinc-100' : 'bg-[#E5DF98]/40 border border-[#E5DF98]'}`}>
+          {isPast ? (
+            <p className="text-xs font-semibold text-zinc-400">Done</p>
+          ) : (
+            <>
+              <p className="text-lg font-extrabold text-[#14161C] leading-none">{daysLeft}</p>
+              <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wide">days</p>
+            </>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold text-[#14161C]">{ev.name}</p>
+            {ev.isMain && <span className="text-[10px] font-bold bg-violet-100 text-violet-600 rounded-full px-2 py-0.5">Main</span>}
+            <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${TYPE_COLOR[ev.type] ?? 'bg-zinc-100 text-zinc-600'}`}>
+              {ev.type.replaceAll('_', ' ')}
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            {format(new Date(ev.date), 'EEEE, d MMMM yyyy')}
+            {ev.startTime && <> · <Clock size={10} className="inline" /> {ev.startTime}{ev.endTime ? ` – ${ev.endTime}` : ''}</>}
+          </p>
+          {ev.venue && (
+            <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+              <MapPin size={10} /> {ev.venue}
+            </p>
+          )}
+          <div className="flex items-center gap-4 mt-1.5">
+            {ev.taskCount > 0 && (
+              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+                <CheckSquare size={10} /> {ev.taskCount} task{ev.taskCount !== 1 ? 's' : ''}
+              </span>
+            )}
+            {ev.budgetLineCount > 0 && (
+              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+                <DollarSign size={10} /> {ev.budgetLineCount} budget line{ev.budgetLineCount !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        </div>
+        <ChevronRight size={14} className="text-zinc-300 group-hover:text-zinc-500 transition-colors flex-shrink-0 mt-1" />
+      </Link>
+    )
+  }
 
   return (
     <div className="min-h-full">
@@ -123,63 +179,24 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
           <EmptyState
             icon={<Calendar size={40} />}
             title="No events yet"
-            description="Add your wedding events — Ruracio, ceremony, reception, and more"
+            description="Add your wedding events — Ruracio, ceremony, reception, and more. Each event is a self-contained workspace with tasks, budget, and guests."
             action={<Button onClick={() => setShowAdd(true)}><Plus size={14} />Add event</Button>}
           />
         ) : (
           <>
             {upcoming.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5">Upcoming</p>
-                <div className="space-y-3">
-                  {upcoming.map(ev => {
-                    const daysLeft = differenceInDays(new Date(ev.date), now)
-                    return (
-                      <div key={ev.id} className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
-                        <div className="w-12 h-12 rounded-xl bg-[#E5DF98]/40 border border-[#E5DF98] flex flex-col items-center justify-center flex-shrink-0">
-                          <p className="text-lg font-extrabold text-[#14161C] leading-none">{daysLeft}</p>
-                          <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wide">days</p>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-semibold text-[#14161C]">{ev.name}</p>
-                            {ev.isMain && <span className="text-[10px] font-bold bg-violet-100 text-violet-600 rounded-full px-2 py-0.5">Main</span>}
-                            <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${TYPE_COLOR[ev.type] ?? 'bg-zinc-100 text-zinc-600'}`}>
-                              {ev.type.replace(/_/g, ' ')}
-                            </span>
-                          </div>
-                          <p className="text-xs text-zinc-400 mt-0.5">{format(new Date(ev.date), 'EEEE, d MMMM yyyy')}</p>
-                          {ev.venue && (
-                            <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
-                              <MapPin size={10} /> {ev.venue}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Upcoming</p>
+                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                  {upcoming.map(ev => <EventCard key={ev.id} ev={ev} />)}
                 </div>
               </div>
             )}
-
             {past.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5">Past</p>
-                <div className="space-y-3 opacity-60">
-                  {past.map(ev => (
-                    <div key={ev.id} className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-semibold text-[#14161C]">{ev.name}</p>
-                          <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${TYPE_COLOR[ev.type] ?? 'bg-zinc-100 text-zinc-600'}`}>
-                            {ev.type.replace(/_/g, ' ')}
-                          </span>
-                        </div>
-                        <p className="text-xs text-zinc-400 mt-0.5">{format(new Date(ev.date), 'EEEE, d MMMM yyyy')}</p>
-                        {ev.venue && <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {ev.venue}</p>}
-                      </div>
-                    </div>
-                  ))}
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Past</p>
+                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4 opacity-60">
+                  {past.map(ev => <EventCard key={ev.id} ev={ev} />)}
                 </div>
               </div>
             )}

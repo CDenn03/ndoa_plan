@@ -1,7 +1,8 @@
 'use client'
 import { useState, useRef } from 'react'
-import { Image as ImageIcon, Upload } from 'lucide-react'
+import { Image as ImageIcon, Upload, Trash2 } from 'lucide-react'
 import { Button, Select, Label, EmptyState, Spinner } from '@/components/ui'
+import { useToast } from '@/components/ui/toast'
 
 interface MoodImage {
   id: string; path: string; bucket: string; title?: string; category: string
@@ -19,6 +20,16 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
   const [uploadCategory, setUploadCategory] = useState('OTHER')
   const [activeCategory, setActiveCategory] = useState('ALL')
   const fileRef = useRef<HTMLInputElement>(null)
+  const { toast } = useToast()
+
+  const handleDelete = async (imgId: string, path: string, bucket: string) => {
+    if (!confirm('Remove this image from the vision board?')) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/media/${imgId}`, { method: 'DELETE' })
+      setImages(prev => prev.filter(i => i.id !== imgId))
+      toast('Image removed', 'success')
+    } catch { toast('Failed to remove image', 'error') }
+  }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
@@ -117,8 +128,14 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
                   alt={img.title ?? 'Mood board image'}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-[11px] text-white font-medium truncate">{img.title ?? img.category}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 flex items-end justify-between">
+                    <p className="text-[11px] text-white font-medium truncate">{img.title ?? img.category}</p>
+                    <button onClick={() => handleDelete(img.id, img.path, img.bucket)}
+                      className="p-1.5 rounded-lg bg-black/40 hover:bg-red-500/80 text-white transition-colors flex-shrink-0" aria-label="Delete image">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

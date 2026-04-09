@@ -1,38 +1,43 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { redirect } from 'next/navigation'
+'use client'
+import { use } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Spinner } from '@/components/ui'
 import { DayOfClient } from './day-of-client'
 
-export default async function DayOfPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
-  const params = await props.params
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
+interface WeddingEvent { id: string; name: string; type: string; date: string; isMain: boolean }
 
+export default function DayOfPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = use(props.params)
   const wid = params.weddingId
+  const qc = useQueryClient()
 
-  const [events, vendors, incidents] = await Promise.all([
-    db.timelineEvent.findMany({
-      where: { weddingId: wid, deletedAt: null },
-      orderBy: { startTime: 'asc' },
-    }),
-    db.vendor.findMany({
-      where: { weddingId: wid, deletedAt: null, status: { in: ['CONFIRMED', 'BOOKED'] } },
-      select: { id: true, name: true, category: true, contactPhone: true, contactEmail: true },
-    }),
-    db.incident.findMany({
-      where: { weddingId: wid },
-      orderBy: { reportedAt: 'desc' },
-      take: 20,
-    }),
-  ])
+  const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
+    queryKey: ['events', wid],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/events`); if (!res.ok) throw new Error(); return res.json() },
+    staleTime: 60_000,
+  })
 
-  return (
-    <DayOfClient
-      weddingId={wid}
-      events={events.map(e => ({ ...e, startTime: e.startTime.toISOString(), endTime: e.endTime?.toISOString() ?? null, createdAt: e.createdAt.toISOString(), updatedAt: e.updatedAt.toISOString() }))}
-      vendors={vendors}
-      incidents={incidents.map(i => ({ ...i, reportedAt: i.reportedAt.toISOString(), resolvedAt: i.resolvedAt?.toISOString() ?? null }))}
-    />
-  )
+  const { data: vendors = [], isLoading: vendorsLoading } = useQuery({
+    queryKey: ['vendors-confirmed', wid],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/vendors`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; name: string; category: string; status: string; contactPhone?: string | null; contactEmail?: string | null }[]
+      return all.filter(v => v.status === 'CONFIRMED' || v.status === 'BOOKED')
+    },
+    staleTime: 60_000,
+  })
+
+  const { data: incidents = [], isLoading: incidentsLoading } = useQuery({
+    queryKey: ['incidents', wid],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/incidents`); if (!res.ok) throw new Error(); return res.json() },
+    staleTime: 15_000,
+  })
+
+  const isLoading = eventsLoading || vendorsLoading || incidentsLoading
+  const refresh = () => qc.invalidateQueries({ queryKey: ['incidents', wid] })
+
+  if (isLoading) return <div className="flex justify-center py-20"><Spinner /></div>
+
+  return <DayOfClient weddingId={wid} events={events} vendors={vendors} incidents={incidents} onRefresh={refresh} />
 }

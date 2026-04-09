@@ -19,6 +19,7 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   return NextResponse.json(contribs.map(c => ({
     id: c.id,
     weddingId: c.weddingId,
+    eventId: c.eventId ?? undefined,
     memberId: c.memberId,
     memberName: c.memberName,
     pledgeAmount: Number(c.pledgeAmount),
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       memberName: body.memberName,
       pledgeAmount: body.pledgeAmount,
       paidAmount: 0,
+      eventId: body.eventId || null,
       dueDate: body.dueDate ? new Date(body.dueDate) : null,
       status: 'PLEDGED',
       notes: body.notes ?? null,

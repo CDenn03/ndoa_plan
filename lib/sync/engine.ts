@@ -125,7 +125,7 @@ async function processResult(result: SyncOperationResult): Promise<void> {
       await weddingDB.syncQueue.where('operationId').equals(result.operationId).modify({ status: 'conflict', conflictData: result.conflict })
       window.dispatchEvent(new CustomEvent('sync:conflict', { detail: { conflict: result.conflict, summary: resolved.summary } }))
     } else {
-      const tableMap: Record<string, string> = { guest: 'guests', vendor: 'vendors', timeline_event: 'timelineEvents', checklist_item: 'checklistItems', budget_line: 'budgetLines', payment: 'payments' }
+      const tableMap: Record<string, string> = { guest: 'guests', vendor: 'vendors', checklist_item: 'checklistItems', budget_line: 'budgetLines', payment: 'payments' }
       const tbl = weddingDB.table(tableMap[result.conflict.entityType] ?? '')
       if (tbl) await tbl.where('id').equals(result.conflict.entityId)
         .modify({ ...resolved.mergedState, version: result.conflict.serverVersion, syncedAt: Date.now(), isDirty: false })

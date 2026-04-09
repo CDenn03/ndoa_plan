@@ -22,7 +22,7 @@ export default async function AnalyticsPage(props: Readonly<{ params: Promise<{ 
 
   if (!wedding) redirect('/dashboard')
 
-  const totalBudget = Number(wedding.budget)
+  const totalBudget = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
   const totalSpent = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
   const totalCommitted = budgetLines.reduce((s, l) => s + Number(l.committed) + Number(l.actual), 0)
 

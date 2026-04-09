@@ -163,3 +163,15 @@ CREATE POLICY "risk_isolation"      ON "RiskAlert"     USING ("weddingId"::text 
 --   $$ DELETE FROM "ProcessedOperation" WHERE "processedAt" < now() - interval '72 hours' $$);
 
 COMMIT;
+
+-- ── Appointment.eventId (per-event appointment scoping) ───────────────────────
+ALTER TABLE "Appointment" ADD COLUMN IF NOT EXISTS "eventId" UUID REFERENCES "WeddingEvent"("id") ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS "appointment_event_id" ON "Appointment" ("eventId");
+
+-- ── EventProgramItem: rename time → startTime, add endTime ───────────────────
+ALTER TABLE "EventProgramItem"
+  ADD COLUMN IF NOT EXISTS "startTime" TEXT,
+  ADD COLUMN IF NOT EXISTS "endTime"   TEXT;
+
+-- Migrate existing time values to startTime
+UPDATE "EventProgramItem" SET "startTime" = "time" WHERE "time" IS NOT NULL AND "startTime" IS NULL;

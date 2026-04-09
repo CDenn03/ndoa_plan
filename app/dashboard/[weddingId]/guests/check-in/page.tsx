@@ -42,7 +42,6 @@ function CheckInRow({ guest, weddingId, onCheckedIn }: Readonly<{ guest: LocalGu
           {guest.name}
         </p>
         <div className="flex items-center gap-3 mt-0.5">
-          {guest.tableNumber && <span className="text-xs text-zinc-400">Table {guest.tableNumber}</span>}
           {guest.phone && <span className="text-xs text-zinc-400 truncate">{guest.phone}</span>}
         </div>
       </div>
@@ -74,8 +73,7 @@ export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingI
     const q = search.toLowerCase()
     return guests.filter(g =>
       g.name.toLowerCase().includes(q) ||
-      g.phone?.includes(q) ||
-      String(g.tableNumber ?? '').includes(q)
+      (g.phone?.includes(q) ?? false)
     ).sort((a, b) => {
       const aReady = a.rsvpStatus === 'CONFIRMED' && !a.checkedIn
       const bReady = b.rsvpStatus === 'CONFIRMED' && !b.checkedIn

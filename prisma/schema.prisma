@@ -89,7 +89,7 @@ model Wedding {
   vendors             Vendor[]
   payments            Payment[]
   contributions       CommitteeContribution[]
-  timelineEvents      TimelineEvent[]
+  // timelineEvents removed — replaced by EventProgramItem
   checklistItems      ChecklistItem[]
   budgetLines         BudgetLine[]
   riskAlerts          RiskAlert[]
@@ -141,6 +141,8 @@ model WeddingEvent {
   name              String
   type              EventType
   date              DateTime
+  startTime         String?
+  endTime           String?
   venue             String?
   mapUrl            String?
   description       String?
@@ -150,7 +152,39 @@ model WeddingEvent {
   fromDependencies  EventDependency[]   @relation("FromEvent")
   toDependencies    EventDependency[]   @relation("ToEvent")
   honeymoonDays     HoneymoonDay[]
+  programItems      EventProgramItem[]
+  checklistItems    ChecklistItem[]
+  budgetLines       BudgetLine[]
+  appointments      Appointment[]
+  transportRoutes   TransportRoute[]
+  accommodations    Accommodation[]
+  giftRegistry      GiftRegistryItem[]
+  giftsReceived     GiftReceived[]
+  incidents         Incident[]
+  payments          Payment[]
+  contributions     CommitteeContribution[]
+  mediaItems        MediaItem[]
+  vendorAssignments VendorEventAssignment[]
   @@index([weddingId, date])
+}
+
+// ─── Event Program (ordered day-of activities) ────────────────────────────────
+
+model EventProgramItem {
+  id          String       @id @default(uuid())
+  eventId     String
+  title       String
+  description String?
+  startTime   String?      // HH:mm — start of this activity
+  endTime     String?      // HH:mm — end of this activity (derived or explicit)
+  duration    Int?         // minutes — always stored; derived from start/end or set directly
+  order       Int          @default(0)
+  assignedTo  String?
+  vendorId    String?
+  event       WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  @@index([eventId, order])
 }
 
 enum EventType {
@@ -202,8 +236,6 @@ model Guest {
   phone           String?
   email           String?
   rsvpStatus      RsvpStatus    @default(PENDING)
-  tableNumber     Int?
-  seatNumber      Int?
   committeeId     String?
   side            GuestSide     @default(BOTH)
   mealPref        String?
@@ -233,7 +265,6 @@ model Guest {
   updatedAt       DateTime      @updatedAt
 
   @@index([weddingId, rsvpStatus])
-  @@index([weddingId, tableNumber])
   @@index([weddingId, updatedAt])
   @@index([committeeId, weddingId])
   @@index([householdId])
@@ -304,6 +335,8 @@ model Vendor {
   appointments    Appointment[]
   transportRoutes TransportRoute[]
   attireItems     AttireItem[]
+  budgetLines     BudgetLine[]
+  eventAssignments VendorEventAssignment[]
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -311,6 +344,30 @@ model Vendor {
   @@index([weddingId, status])
   @@index([weddingId, category])
   @@index([weddingId, lastContactAt])
+}
+
+// ─── Vendor Event Assignment ──────────────────────────────────────────────────
+
+model VendorEventAssignment {
+  id        String       @id @default(uuid())
+  vendorId  String
+  eventId   String
+  notes     String?
+
+  version   Int          @default(1)
+  checksum  String       @default("")
+  updatedBy String?
+  deletedAt DateTime?
+  deletedBy String?
+
+  vendor    Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  event     WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([vendorId, eventId])
+  @@index([eventId])
+  @@index([vendorId])
 }
 
 // ─── Vendor Notes ─────────────────────────────────────────────────────────────
@@ -374,6 +431,7 @@ enum VendorStatus {
 model Payment {
   id                String        @id @default(uuid())
   weddingId         String
+  eventId           String?
   vendorId          String?
   contributionId    String?
   mpesaRef          String?       @unique
@@ -394,6 +452,7 @@ model Payment {
   deletedAt         DateTime?
 
   wedding           Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event             WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   vendor            Vendor?       @relation(fields: [vendorId], references: [id])
   contribution      CommitteeContribution? @relation(fields: [contributionId], references: [id])
 
@@ -403,6 +462,7 @@ model Payment {
   @@index([weddingId, createdAt])
   @@index([weddingId, status])
   @@index([vendorId])
+  @@index([eventId])
 }
 
 enum PaymentStatus {
@@ -419,6 +479,7 @@ enum PaymentStatus {
 model CommitteeContribution {
   id           String       @id @default(uuid())
   weddingId    String
+  eventId      String?
   memberId     String
   memberName   String
   pledgeAmount Decimal
@@ -430,12 +491,14 @@ model CommitteeContribution {
   payments     Payment[]
 
   wedding      Wedding      @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event        WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
   @@index([weddingId, status])
   @@index([memberId, weddingId])
+  @@index([eventId])
 }
 
 enum ContribStatus {
@@ -446,45 +509,15 @@ enum ContribStatus {
   CANCELLED
 }
 
-// ─── Timeline Events ──────────────────────────────────────────────────────────
-
-model TimelineEvent {
-  id                String    @id @default(uuid())
-  weddingId         String
-  eventId           String?
-  title             String
-  description       String?
-  startTime         DateTime
-  endTime           DateTime?
-  location          String?
-  mapUrl            String?
-  assignedUserId    String?
-  assignedRoleName  String?
-  vendorId          String?
-  category          String?
-  color             String?
-  isComplete        Boolean   @default(false)
-
-  version           Int       @default(1)
-  checksum          String    @default("")
-  updatedBy         String?
-  deletedAt         DateTime?
-
-  wedding           Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  @@index([weddingId, startTime])
-  @@index([weddingId, assignedUserId])
-  @@index([eventId])
-}
+// Timeline scheduling replaced by EventProgramItem (day-of program per event)
+// and event-scoped ChecklistItem tasks. TimelineEvent model removed.
 
 // ─── Checklist ────────────────────────────────────────────────────────────────
 
 model ChecklistItem {
   id              String         @id @default(uuid())
   weddingId       String
+  eventId         String?
   title           String
   description     String?
   category        String?
@@ -508,6 +541,7 @@ model ChecklistItem {
   deletedAt       DateTime?
 
   wedding         Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event           WeddingEvent?  @relation(fields: [eventId], references: [id])
   activityGroup   ActivityGroup? @relation(fields: [activityGroupId], references: [id])
   reminders       Reminder[]
 
@@ -519,6 +553,7 @@ model ChecklistItem {
   @@index([weddingId, category])
   @@index([weddingId, phase])
   @@index([activityGroupId])
+  @@index([eventId])
 }
 
 enum PlanningPhase {
@@ -547,17 +582,21 @@ model ActivityGroup {
 // ─── Budget Lines ─────────────────────────────────────────────────────────────
 
 model BudgetLine {
-  id          String         @id @default(uuid())
-  weddingId   String
-  eventId     String?
-  phase       PlanningPhase?
-  category    String
-  description String
-  estimated   Decimal        @default(0)
-  actual      Decimal        @default(0)
-  committed   Decimal        @default(0)
-  vendorId    String?
-  notes       String?
+  id            String         @id @default(uuid())
+  weddingId     String
+  eventId       String?
+  phase         PlanningPhase?
+  category      String
+  description   String
+  estimated     Decimal        @default(0)
+  actual        Decimal        @default(0)
+  committed     Decimal        @default(0)
+  vendorId      String?
+  vendorName    String?
+  notes         String?
+  paymentDate   DateTime?
+  paymentPlan   String?
+  paymentType   String?
 
   version     Int            @default(1)
   checksum    String         @default("")
@@ -565,6 +604,8 @@ model BudgetLine {
   deletedAt   DateTime?
 
   wedding     Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event       WeddingEvent?  @relation(fields: [eventId], references: [id])
+  vendor      Vendor?        @relation(fields: [vendorId], references: [id])
 
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -572,6 +613,7 @@ model BudgetLine {
   @@index([weddingId, category])
   @@index([weddingId, phase])
   @@index([eventId])
+  @@index([vendorId])
 }
 
 // ─── Risk Alerts ──────────────────────────────────────────────────────────────
@@ -609,6 +651,7 @@ enum RiskSeverity {
 model MediaItem {
   id          String    @id @default(uuid())
   weddingId   String
+  eventId     String?
   title       String?
   bucket      String
   path        String
@@ -619,13 +662,15 @@ model MediaItem {
   uploadedBy  String?
   deletedAt   DateTime?
 
-  wedding     Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  wedding     Wedding      @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event       WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([weddingId, createdAt])
   @@index([linkedToId, linkedToType])
+  @@index([eventId])
 }
 
 // ─── Idempotency + Audit ──────────────────────────────────────────────────────
@@ -664,6 +709,7 @@ model AuditLog {
 model Appointment {
   id          String            @id @default(uuid())
   weddingId   String
+  eventId     String?
   title       String
   description String?
   vendorId    String?
@@ -677,6 +723,7 @@ model Appointment {
   createdBy   String
 
   wedding     Wedding           @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event       WeddingEvent?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
   vendor      Vendor?           @relation(fields: [vendorId], references: [id])
   reminders   Reminder[]
 
@@ -685,6 +732,7 @@ model Appointment {
 
   @@index([weddingId, startAt])
   @@index([vendorId])
+  @@index([eventId])
 }
 
 enum AppointmentStatus {
@@ -712,14 +760,17 @@ model Reminder {
 model Incident {
   id          String   @id @default(uuid())
   weddingId   String
+  eventId     String?
   reportedAt  DateTime @default(now())
   description String
   severity    String
   resolvedAt  DateTime?
   resolvedBy  String?
   resolution  String?
-  wedding     Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  wedding     Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event       WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   @@index([weddingId])
+  @@index([eventId])
 }
 
 // ─── Templates ────────────────────────────────────────────────────────────────
@@ -804,21 +855,25 @@ model AttireItem {
 model GiftRegistryItem {
   id             String   @id @default(uuid())
   weddingId      String
+  eventId        String?
   name           String
   description    String?
   url            String?
   estimatedPrice Decimal?
   quantity       Int      @default(1)
   priority       Int      @default(2)
-  wedding        Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  wedding        Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event          WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   @@index([weddingId])
+  @@index([eventId])
 }
 
 model GiftReceived {
   id              String      @id @default(uuid())
   weddingId       String
+  eventId         String?
   guestId         String?
   giverName       String
   description     String
@@ -828,10 +883,12 @@ model GiftReceived {
   thankYouSent    Boolean     @default(false)
   thankYouSentAt  DateTime?
   wedding         Wedding     @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event           WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   guest           Guest?      @relation(fields: [guestId], references: [id])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   @@index([weddingId])
+  @@index([eventId])
 }
 
 enum GiftStatus {
@@ -845,6 +902,7 @@ enum GiftStatus {
 model TransportRoute {
   id                String          @id @default(uuid())
   weddingId         String
+  eventId           String?
   name              String
   departureLocation String
   arrivalLocation   String
@@ -852,10 +910,12 @@ model TransportRoute {
   capacity          Int?
   assignedVendorId  String?
   wedding           Wedding         @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event             WeddingEvent?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
   assignedVendor    Vendor?         @relation(fields: [assignedVendorId], references: [id])
   guestTransports   GuestTransport[]
   createdAt         DateTime        @default(now())
   @@index([weddingId])
+  @@index([eventId])
 }
 
 model GuestTransport {
@@ -870,6 +930,7 @@ model GuestTransport {
 model Accommodation {
   id           String               @id @default(uuid())
   weddingId    String
+  eventId      String?
   hotelName    String
   address      String?
   checkIn      DateTime
@@ -877,9 +938,11 @@ model Accommodation {
   roomsBlocked Int?
   notes        String?
   wedding      Wedding              @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event        WeddingEvent?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
   guestAccommodations GuestAccommodation[]
   createdAt    DateTime             @default(now())
   @@index([weddingId])
+  @@index([eventId])
 }
 
 model GuestAccommodation {

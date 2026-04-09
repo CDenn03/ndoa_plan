@@ -1,12 +1,13 @@
 'use client'
 import { useState, useMemo, use } from 'react'
-import { ShoppingBag, Search, Plus, Phone, Mail, X, MessageCircle, ChevronDown, ChevronUp, Send, Shield } from 'lucide-react'
+import { ShoppingBag, Search, Plus, Phone, Mail, X, MessageCircle, ChevronDown, ChevronUp, Send, Shield, Pencil, Trash2 } from 'lucide-react'
 import { Button, Input, Select, Label, Badge, EmptyState, Spinner, Modal } from '@/components/ui'
-import { useVendors, useVendorStats, useAddVendor, useUpdateVendorStatus } from '@/hooks/use-vendors'
+import { useVendors, useVendorStats, useAddVendor, useUpdateVendorStatus, useUpdateVendor } from '@/hooks/use-vendors'
 import { useWeddingStore } from '@/store/wedding-store'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import type { LocalVendor } from '@/types'
+import { useToast } from '@/components/ui/toast'
 
 const STATUS_BADGE: Record<string, 'confirmed' | 'pending' | 'maybe' | 'declined'> = {
   CONFIRMED: 'confirmed', BOOKED: 'maybe', ENQUIRED: 'pending', QUOTED: 'pending', CANCELLED: 'declined', COMPLETED: 'confirmed',
@@ -42,7 +43,7 @@ function VendorNotes({ vendorId, weddingId }: Readonly<{ vendorId: string; weddi
     },
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!note.trim()) return
     addNote.mutate(note.trim())
@@ -80,82 +81,204 @@ function VendorNotes({ vendorId, weddingId }: Readonly<{ vendorId: string; weddi
   )
 }
 
+function EditVendorModal({ vendor, weddingId, onClose }: Readonly<{ vendor: LocalVendor; weddingId: string; onClose: () => void }>) {
+  const update = useUpdateVendor(weddingId)
+  const [form, setForm] = useState({
+    name: vendor.name, category: vendor.category,
+    contactPhone: vendor.contactPhone ?? '', contactEmail: vendor.contactEmail ?? '',
+    amount: vendor.amount ? String(vendor.amount) : '',
+    paidAmount: String(vendor.paidAmount),
+  })
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await update.mutateAsync({
+      vendorId: vendor.id,
+      data: {
+        name: form.name, category: form.category,
+        contactPhone: form.contactPhone || undefined, contactEmail: form.contactEmail || undefined,
+        amount: form.amount ? parseFloat(form.amount) : undefined,
+        paidAmount: parseFloat(form.paidAmount) || 0,
+      },
+      currentVersion: vendor.version,
+    })
+    onClose()
+  }
+
+  return (
+    <Modal onClose={onClose} title="Edit vendor">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div><Label htmlFor="ev-name">Name *</Label>
+          <Input id="ev-name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
+        <div><Label htmlFor="ev-cat">Category</Label>
+          <Select id="ev-cat" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+            {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
+          </Select></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="ev-phone">Phone</Label>
+            <Input id="ev-phone" value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} /></div>
+          <div><Label htmlFor="ev-email">Email</Label>
+            <Input id="ev-email" value={form.contactEmail} onChange={e => setForm(f => ({ ...f, contactEmail: e.target.value }))} /></div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="ev-amount">Total amount (KES)</Label>
+            <Input id="ev-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0" min="0" /></div>
+          <div><Label htmlFor="ev-paid">Paid (KES)</Label>
+            <Input id="ev-paid" type="number" value={form.paidAmount} onChange={e => setForm(f => ({ ...f, paidAmount: e.target.value }))} placeholder="0" min="0" /></div>
+        </div>
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button type="submit" className="flex-1" disabled={update.isPending}>{update.isPending ? 'Saving…' : 'Save'}</Button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
+function VendorEventAssign({ vendorId, weddingId }: Readonly<{ vendorId: string; weddingId: string }>) {
+  const qc = useQueryClient()
+  const { data: assignments = [] } = useQuery<{ id: string; eventId: string; event: { id: string; name: string } }[]>({
+    queryKey: ['vendor-events', vendorId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}/events`)
+      if (!res.ok) return []
+      return res.json()
+    },
+  })
+  const { data: allEvents = [] } = useQuery<{ id: string; name: string }[]>({
+    queryKey: ['events', weddingId],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/events`); if (!res.ok) return []; return res.json() },
+    staleTime: 60_000,
+  })
+
+  const assignedIds = new Set(assignments.map(a => a.eventId))
+
+  const toggle = async (eventId: string, assigned: boolean) => {
+    if (assigned) {
+      await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}/events`, {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId }),
+      })
+    } else {
+      await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}/events`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId }),
+      })
+    }
+    qc.invalidateQueries({ queryKey: ['vendor-events', vendorId] })
+  }
+
+  if (allEvents.length === 0) return null
+
+  return (
+    <div className="px-6 pb-5 pt-3 border-t border-zinc-100 space-y-2">
+      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Assigned events</p>
+      <div className="flex flex-wrap gap-1.5">
+        {allEvents.map(ev => {
+          const assigned = assignedIds.has(ev.id)
+          return (
+            <button key={ev.id} onClick={() => toggle(ev.id, assigned)}
+              className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${assigned ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+              {assigned ? '✓ ' : ''}{ev.name}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function VendorRow({ vendor, weddingId }: Readonly<{ vendor: LocalVendor; weddingId: string }>) {
   const updateStatus = useUpdateVendorStatus(weddingId)
+  const qc = useQueryClient()
+  const { toast } = useToast()
   const [expanded, setExpanded] = useState(false)
+  const [editing, setEditing] = useState(false)
   const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(n)
   const extVendor = vendor as LocalVendor & { description?: string; isBackup?: boolean }
 
+  const handleDelete = async () => {
+    if (!confirm(`Delete ${vendor.name}?`)) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/vendors/${vendor.id}`, { method: 'DELETE' })
+      qc.invalidateQueries({ queryKey: ['vendors', weddingId] })
+      toast('Vendor deleted', 'success')
+    } catch { toast('Failed to delete vendor', 'error') }
+  }
+
   return (
-    <div className="border-b border-zinc-100 last:border-0">
-      <div className="flex items-center gap-4 py-4 px-6 hover:bg-stone-50 transition-colors">
-        <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
-          {vendor.name.charAt(0).toUpperCase()}
-          {extVendor.isBackup && (
-            <Shield size={9} className="absolute -top-0.5 -right-0.5 text-zinc-400" aria-label="Backup vendor" />
+    <>
+      <div className="border-b border-zinc-100 last:border-0">
+        <div className="group flex items-center gap-4 py-4 px-6 hover:bg-stone-50 transition-colors">
+          <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
+            {vendor.name.charAt(0).toUpperCase()}
+            {extVendor.isBackup && <Shield size={9} className="absolute -top-0.5 -right-0.5 text-zinc-400" aria-label="Backup vendor" />}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold text-[#14161C]">{vendor.name}</p>
+              {extVendor.isBackup && <span className="text-[10px] text-zinc-400 font-medium">Backup</span>}
+              {vendor.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
+            </div>
+            <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+              <span className="text-xs text-zinc-400">{vendor.category.replace(/_/g, ' ')}</span>
+              {extVendor.description && <span className="text-xs text-zinc-400 truncate max-w-48">{extVendor.description}</span>}
+              {vendor.contactPhone && (
+                <a href={`tel:${vendor.contactPhone}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
+                  <Phone size={10} /> {vendor.contactPhone}
+                </a>
+              )}
+              {vendor.contactEmail && (
+                <a href={`mailto:${vendor.contactEmail}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
+                  <Mail size={10} /> {vendor.contactEmail}
+                </a>
+              )}
+              {vendor.contactPhone && (
+                <a href={`https://wa.me/${vendor.contactPhone.replace(/\D/g, '')}?text=Hi, I'm reaching out regarding our wedding`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-xs text-zinc-400 hover:text-emerald-600 transition-colors">
+                  <MessageCircle size={10} /> WhatsApp
+                </a>
+              )}
+            </div>
+          </div>
+          {vendor.amount != null && (
+            <div className="text-right flex-shrink-0 hidden sm:block">
+              <p className="text-sm font-bold text-[#14161C]">{fmt(vendor.amount)}</p>
+              {vendor.amount > vendor.paidAmount && <p className="text-xs text-red-400 mt-0.5">Owed: {fmt(vendor.amount - vendor.paidAmount)}</p>}
+            </div>
           )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-[#14161C]">{vendor.name}</p>
-            {extVendor.isBackup && <span className="text-[10px] text-zinc-400 font-medium">Backup</span>}
-            {vendor.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
-          </div>
-          <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-            <span className="text-xs text-zinc-400">{vendor.category.replace(/_/g, ' ')}</span>
-            {extVendor.description && <span className="text-xs text-zinc-400 truncate max-w-48">{extVendor.description}</span>}
-            {vendor.contactPhone && (
-              <a href={`tel:${vendor.contactPhone}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
-                <Phone size={10} /> {vendor.contactPhone}
-              </a>
-            )}
-            {vendor.contactEmail && (
-              <a href={`mailto:${vendor.contactEmail}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
-                <Mail size={10} /> {vendor.contactEmail}
-              </a>
-            )}
-            {vendor.contactPhone && (
-              <a
-                href={`https://wa.me/${vendor.contactPhone.replace(/\D/g, '')}?text=Hi, I'm reaching out regarding our wedding`}
-                target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-zinc-400 hover:text-emerald-600 transition-colors"
-              >
-                <MessageCircle size={10} /> WhatsApp
-              </a>
-            )}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Badge variant={STATUS_BADGE[vendor.status] ?? 'default'}>{vendor.status}</Badge>
+            <select value={vendor.status}
+              onChange={e => updateStatus.mutate({ vendorId: vendor.id, status: e.target.value as LocalVendor['status'], currentVersion: vendor.version })}
+              className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
+              disabled={updateStatus.isPending} aria-label="Update vendor status">
+              <option value="ENQUIRED">Enquired</option>
+              <option value="QUOTED">Quoted</option>
+              <option value="BOOKED">Booked</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="CANCELLED">Cancelled</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit">
+                <Pencil size={13} />
+              </button>
+              <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete">
+                <Trash2 size={13} />
+              </button>
+            </div>
+            <Button size="icon" variant="ghost" onClick={() => setExpanded(v => !v)} aria-label={expanded ? 'Collapse' : 'Expand notes'}>
+              {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </Button>
           </div>
         </div>
-        {vendor.amount != null && (
-          <div className="text-right flex-shrink-0 hidden sm:block">
-            <p className="text-sm font-bold text-[#14161C]">{fmt(vendor.amount)}</p>
-            {vendor.amount > vendor.paidAmount && (
-              <p className="text-xs text-red-400 mt-0.5">Owed: {fmt(vendor.amount - vendor.paidAmount)}</p>
-            )}
-          </div>
-        )}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Badge variant={STATUS_BADGE[vendor.status] ?? 'default'}>{vendor.status}</Badge>
-          <select
-            value={vendor.status}
-            onChange={e => updateStatus.mutate({ vendorId: vendor.id, status: e.target.value as LocalVendor['status'], currentVersion: vendor.version })}
-            className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
-            disabled={updateStatus.isPending}
-            aria-label="Update vendor status"
-          >
-            <option value="ENQUIRED">Enquired</option>
-            <option value="QUOTED">Quoted</option>
-            <option value="BOOKED">Booked</option>
-            <option value="CONFIRMED">Confirmed</option>
-            <option value="CANCELLED">Cancelled</option>
-            <option value="COMPLETED">Completed</option>
-          </select>
-          <Button size="icon" variant="ghost" onClick={() => setExpanded(v => !v)} aria-label={expanded ? 'Collapse' : 'Expand notes'}>
-            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </Button>
-        </div>
+        {expanded && <VendorNotes vendorId={vendor.id} weddingId={weddingId} />}
+        {expanded && <VendorEventAssign vendorId={vendor.id} weddingId={weddingId} />}
       </div>
-      {expanded && <VendorNotes vendorId={vendor.id} weddingId={weddingId} />}
-    </div>
+      {editing && <EditVendorModal vendor={vendor} weddingId={weddingId} onClose={() => setEditing(false)} />}
+    </>
   )
 }
 
@@ -166,7 +289,7 @@ function AddVendorModal({ weddingId, onClose }: Readonly<{ weddingId: string; on
     amount: '', description: '', isBackup: false,
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!form.name.trim()) return
     await addVendor.mutateAsync({

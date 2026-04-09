@@ -18,7 +18,6 @@ export type EntityType =
   | 'guest'
   | 'vendor'
   | 'payment'
-  | 'timeline_event'
   | 'checklist_item'
   | 'budget_line'
   | 'committee_contribution'
@@ -141,8 +140,6 @@ export interface LocalGuest {
   phone?: string
   email?: string
   rsvpStatus: 'PENDING' | 'CONFIRMED' | 'DECLINED' | 'MAYBE' | 'WAITLISTED'
-  tableNumber?: number
-  seatNumber?: number
   committeeId?: string
   side?: string
   mealPref?: string
@@ -150,6 +147,10 @@ export interface LocalGuest {
   checkedInAt?: number
   notes?: string
   tags?: string[]
+  plusOneOf?: string
+  plusOneAllowed?: boolean
+  priority?: string
+  householdId?: string
   version: number
   checksum: string
   syncedAt?: number
@@ -183,37 +184,19 @@ export interface LocalVendor {
   deletedAt?: number
 }
 
-export interface LocalTimelineEvent {
-  id: string
-  serverId?: string
-  weddingId: string
-  title: string
-  description?: string
-  startTime: number
-  endTime?: number
-  location?: string
-  assignedUserId?: string
-  vendorId?: string
-  category?: string
-  color?: string
-  isComplete: boolean
-  version: number
-  checksum: string
-  syncedAt?: number
-  isDirty: boolean
-  updatedAt: number
-  deletedAt?: number
-}
-
 export interface LocalChecklistItem {
   id: string
   serverId?: string
   weddingId: string
+  eventId?: string
   title: string
   description?: string
   category?: string
+  phase?: string
   dueDate?: number
   assignedTo?: string
+  assignedToName?: string
+  isFinalCheck?: boolean
   isChecked: boolean
   checkedAt?: number
   checkedBy?: string
@@ -231,13 +214,18 @@ export interface LocalBudgetLine {
   id: string
   serverId?: string
   weddingId: string
+  eventId?: string
   category: string
   description: string
   estimated: number
   actual: number
   committed: number
   vendorId?: string
+  vendorName?: string
   notes?: string
+  paymentDate?: string
+  paymentPlan?: string
+  paymentType?: string
   version: number
   checksum: string
   syncedAt?: number

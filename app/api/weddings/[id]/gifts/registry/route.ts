@@ -18,12 +18,12 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { name, description, url, estimatedPrice, quantity, priority } = body
+  const { name, description, url, estimatedPrice, quantity, priority, eventId } = body
 
   if (!name) return NextResponse.json({ error: 'name is required' }, { status: 400 })
 
   const item = await db.giftRegistryItem.create({
-    data: { weddingId: id, name, description: description || null, url: url || null, estimatedPrice: estimatedPrice ?? null, quantity: quantity ?? 1, priority: priority ?? 2 },
+    data: { weddingId: id, eventId: eventId ?? null, name, description: description || null, url: url || null, estimatedPrice: estimatedPrice ?? null, quantity: quantity ?? 1, priority: priority ?? 2 },
   })
   return NextResponse.json(item, { status: 201 })
 }

@@ -2,7 +2,6 @@ import Dexie, { type Table } from 'dexie'
 import type {
   LocalGuest,
   LocalVendor,
-  LocalTimelineEvent,
   LocalChecklistItem,
   LocalBudgetLine,
   SyncOperation,
@@ -36,7 +35,6 @@ export interface WeddingCacheRow {
 class WeddingDB extends Dexie {
   guests!: Table<LocalGuest>
   vendors!: Table<LocalVendor>
-  timelineEvents!: Table<LocalTimelineEvent>
   checklistItems!: Table<LocalChecklistItem>
   budgetLines!: Table<LocalBudgetLine>
   syncQueue!: Table<SyncOperation>
@@ -47,43 +45,26 @@ class WeddingDB extends Dexie {
     super('WeddingPlatformDB')
 
     this.version(1).stores({
-      guests:
-        'id, weddingId, rsvpStatus, tableNumber, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
-      vendors:
-        'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
-      timelineEvents:
-        'id, weddingId, startTime, assignedUserId, vendorId, isDirty, updatedAt, syncedAt',
-      checklistItems:
-        'id, weddingId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
-      budgetLines:
-        'id, weddingId, category, isDirty, updatedAt, syncedAt',
-      syncQueue:
-        '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
-      syncConflicts:
-        '++id, operationId, entityId, resolved, createdAt',
-      weddingCache:
-        'id, updatedAt',
+      guests: 'id, weddingId, rsvpStatus, tableNumber, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
+      vendors: 'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
+      timelineEvents: 'id, weddingId, startTime, assignedUserId, vendorId, isDirty, updatedAt, syncedAt',
+      checklistItems: 'id, weddingId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
+      budgetLines: 'id, weddingId, category, isDirty, updatedAt, syncedAt',
+      syncQueue: '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
+      syncConflicts: '++id, operationId, entityId, resolved, createdAt',
+      weddingCache: 'id, updatedAt',
     })
 
-    // Safe migration: v2 adds tags[] to guests
     this.version(2)
       .stores({
-        guests:
-          'id, weddingId, rsvpStatus, tableNumber, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
-        vendors:
-          'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
-        timelineEvents:
-          'id, weddingId, startTime, assignedUserId, vendorId, isDirty, updatedAt, syncedAt',
-        checklistItems:
-          'id, weddingId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
-        budgetLines:
-          'id, weddingId, category, isDirty, updatedAt, syncedAt',
-        syncQueue:
-          '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
-        syncConflicts:
-          '++id, operationId, entityId, resolved, createdAt',
-        weddingCache:
-          'id, updatedAt',
+        guests: 'id, weddingId, rsvpStatus, tableNumber, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
+        vendors: 'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
+        timelineEvents: 'id, weddingId, startTime, assignedUserId, vendorId, isDirty, updatedAt, syncedAt',
+        checklistItems: 'id, weddingId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
+        budgetLines: 'id, weddingId, category, isDirty, updatedAt, syncedAt',
+        syncQueue: '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
+        syncConflicts: '++id, operationId, entityId, resolved, createdAt',
+        weddingCache: 'id, updatedAt',
       })
       .upgrade(tx => {
         return tx.table('guests').toCollection().modify((g: LocalGuest) => {
@@ -92,7 +73,22 @@ class WeddingDB extends Dexie {
         })
       })
 
-    // Schema validation on open
+    // v3: Remove timelineEvents, add eventId index to checklist/budget, drop seating index
+    this.version(3)
+      .stores({
+        guests: 'id, weddingId, rsvpStatus, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
+        vendors: 'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
+        timelineEvents: null,
+        checklistItems: 'id, weddingId, eventId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
+        budgetLines: 'id, weddingId, eventId, category, isDirty, updatedAt, syncedAt',
+        syncQueue: '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
+        syncConflicts: '++id, operationId, entityId, resolved, createdAt',
+        weddingCache: 'id, updatedAt',
+      })
+      .upgrade(tx => {
+        return tx.table('timelineEvents').clear()
+      })
+
     this.on('ready', async () => {
       try {
         await Promise.all([
@@ -103,11 +99,12 @@ class WeddingDB extends Dexie {
         console.error('[WeddingDB] Schema validation failed, backing up queue', err)
         try {
           const queue = await this.syncQueue.toArray()
-          localStorage.setItem(
+          // Sync queue backup only — not domain data
+          window.sessionStorage.setItem(
             'wedding_sync_queue_backup',
             JSON.stringify({ backed_up_at: Date.now(), operations: queue })
           )
-        } catch (_) { /* localStorage unavailable */ }
+        } catch (_) { /* storage unavailable */ }
         try {
           await this.delete()
           await this.open()

@@ -39,9 +39,13 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       venue: body.venue ?? null,
       venueCapacity: body.venueCapacity ?? null,
       budget: body.budget ?? undefined,
+      currency: body.currency ?? undefined,
       culturalType: body.culturalType ?? undefined,
       themeColor: body.themeColor ?? undefined,
       themeAccent: body.themeAccent ?? undefined,
+      couplePhotoPath: body.couplePhotoPath ?? undefined,
+      expectedGuestCount: body.expectedGuestCount ?? null,
+      setupComplete: body.setupComplete ?? undefined,
     },
   })
 
