@@ -1,239 +1,263 @@
 # Ndoa — Wedding Platform
 
-Fault-tolerant, offline-first wedding coordination platform. Built for real-world use in low-connectivity environments with M-Pesa payment reconciliation and multi-cultural wedding support.
+Offline-first, fault-tolerant wedding coordination platform built for real-world use in low-connectivity environments. Supports M-Pesa payment reconciliation, multi-cultural Kenyan wedding types, and role-based multi-member planning.
 
 ---
 
-## Quick start
+## Quick Start
 
 ```bash
-# 1. Install dependencies
-npm install
-
-# 2. Copy environment variables
-cp .env.example .env.local
-# Fill in all values (see Environment Variables section below)
-
-# 3. Run database migration
-npx prisma db push
-
-# 4. Run SQL hardening migration
-psql $DIRECT_URL -f sql/migration.sql
-
-# 5. Seed sample data (optional)
-npm run db:seed
-
-# 6. Start development server
-npm run dev
+pnpm install
+cp .env.example .env.local   # fill in all values
+pnpm db:push                 # apply schema to dev DB
+pnpm db:seed                 # optional sample data
+pnpm dev                     # start dev server (Turbopack)
 ```
 
 Open http://localhost:3000 and sign in with Google.
 
 ---
 
-## Architecture
+## Stack
 
-### Stack
 | Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Server state | TanStack Query |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS + Radix UI |
+| Server state | TanStack Query v5 |
 | UI state | Zustand |
-| Offline storage | Dexie (IndexedDB) |
-| Database | PostgreSQL via Prisma (Neon) |
+| Offline storage | Dexie (IndexedDB) — `WeddingPlatformDB` |
+| Database | PostgreSQL via Prisma + Neon serverless |
+| Prisma output | `lib/generated/prisma` (not default) |
 | File storage | Supabase Storage (private buckets) |
-| Auth | NextAuth.js (Google OAuth) |
-| Payments | M-Pesa Daraja API |
-
-### Key design decisions
-
-**Offline-first, not offline-capable.** The app works fully without internet. Every write goes to IndexedDB first. A background sync worker flushes to the server when connectivity is available.
-
-**Versioned conflict detection.** Every entity has a `version` field. Sync updates include `clientVersion`. The server returns 409 if versions diverge. The client resolves conflicts per-entity type (RSVP: server wins; check-in: OR-set; budget: field merge with human escalation).
-
-**Atomic write bridge.** `atomicWrite()` writes Dexie first, then updates TanStack Query cache only on Dexie success. Prevents stale-positive UI state from silent Dexie failures (storage quota, private browsing).
-
-**Server-authoritative payments.** Payment records are never created client-wins. M-Pesa callbacks are idempotent by `mpesaRef` unique constraint. Raw callbacks are always stored before processing.
+| Auth | NextAuth v4 — Google OAuth + PrismaAdapter, JWT sessions |
+| Payments | M-Pesa Daraja API (STK Push) |
+| Package manager | pnpm |
 
 ---
 
-## Project structure
+## Architecture
+
+### Offline-First Sync
+
+Every mutation follows this flow:
+
+1. Write to Dexie locally (optimistic, `isDirty: true`)
+2. `enqueue(entityType, entityId, opType, payload)` adds to `syncQueue`
+3. `startSyncWorker(weddingId)` flushes batches of 10 to `POST /api/sync/batch` every 15s
+4. Conflicts resolved via `lib/sync/conflict-resolver.ts`
+
+Priority levels: payments/RSVP/check-in = 1 (highest), guests/vendors = 2, rest = 3.
+
+Circuit breaker opens after 5 consecutive failures. Check `getSyncCircuitOpen()` before showing sync UI.
+
+Entities tracked offline: `guests`, `vendors`, `checklistItems`, `budgetLines`, `syncQueue`, `syncConflicts`, `weddingCache`.
+
+### Conflict Resolution Strategy
+
+| Entity | Strategy |
+|---|---|
+| Guest RSVP | Server wins |
+| Guest check-in | OR-set (true if either side true) |
+| Vendor status | Forward-only progression |
+| Payment/Contribution | Server-authoritative |
+| Checklist completed | OR-set |
+| Budget amounts | Field-level merge, human review on conflict |
+
+### Payments
+
+M-Pesa STK Push via `lib/mpesa.ts`. Tokens cached for 1 hour. Callbacks hit `/api/mpesa/callback` (must remain unauthenticated and publicly accessible). Raw callbacks stored before processing. Idempotency enforced via unique `mpesaRef` + `idempotencyKey`.
+
+### Storage
+
+Supabase Storage with four private buckets: `documents`, `contracts`, `receipts`, `media`. All paths scoped to `weddingId/` prefix. Signed URLs expire after 1 hour.
+
+---
+
+## Project Structure
 
 ```
 app/
   api/
-    auth/[...nextauth]/     NextAuth handler
-    sync/batch/             Sync engine server-side (idempotency, conflict detection)
-    weddings/               Wedding CRUD + per-resource endpoints
-    mpesa/                  M-Pesa callback + STK push initiation
-    storage/signed-url/     Private signed URL generation
-  dashboard/[weddingId]/    Main app pages
-  login/                    Auth page
-  onboarding/               First wedding creation
+    auth/[...nextauth]/         NextAuth handler
+    sync/batch/                 Sync engine — idempotency, conflict detection
+    weddings/[id]/              Wedding CRUD + all sub-resources
+    mpesa/                      STK push initiation + callback
+    storage/                    Signed URL generation + upload
+    cron/evaluate-risks/        Scheduled risk evaluation
+    templates/                  System template listing
+    health/                     Uptime check
+  dashboard/[weddingId]/
+    page.tsx + dashboard-client.tsx
+    guests/        vendors/     budget/       checklist/
+    payments/      contributions/ risks/      settings/
+    timeline/      events/      appointments/ analytics/
+    moodboard/     documents/   dowry/        gifts/
+    logistics/     day-of/
+  login/                        Google OAuth entry
+  onboarding/                   Wedding creation wizard
 
 lib/
-  db.ts                     Prisma singleton (PgBouncer-aware)
-  db/dexie.ts               IndexedDB schema + migration safety
-  db/checksum.ts            Deterministic entity checksums
-  sync/engine.ts            Queue writer, batch flusher, circuit breaker
-  sync/conflict-resolver.ts Per-entity conflict resolution strategies
-  storage/supabase-storage.ts Private buckets, signed URLs
-  risk-engine.ts            Modular rule-based risk evaluation
-  auth.ts                   NextAuth config
+  db.ts                         Prisma singleton (PgBouncer-aware)
+  db/dexie.ts                   IndexedDB schema (v3 migrations)
+  db/checksum.ts                Deterministic entity checksums
+  sync/engine.ts                Queue writer, batch flusher, circuit breaker
+  sync/conflict-resolver.ts     Per-entity conflict resolution
+  storage/supabase-storage.ts   Private buckets, signed URLs
+  risk-engine.ts                Modular rule-based risk evaluation
+  auth.ts                       NextAuth config
+  mpesa.ts                      Daraja API client
 
 hooks/
-  use-guests.ts             Offline-first guest CRUD hooks
-  use-vendors.ts            Offline-first vendor hooks
-  use-data.ts               Timeline, checklist, budget hooks
-  use-atomic-write.ts       Dexie + TanStack Query atomic bridge
+  use-guests.ts                 Offline-first guest CRUD
+  use-vendors.ts                Offline-first vendor CRUD
+  use-data.ts                   Checklist, budget, timeline
+  use-payments.ts               Payments + contributions
+  use-risks.ts                  Risk alerts
+  use-atomic-write.ts           Dexie + TanStack Query atomic bridge
 
 store/
-  wedding-store.ts          Zustand: UI state, filters, offline status
+  wedding-store.ts              Zustand: UI state, filters, offline status
 
 components/
-  sync-provider.tsx         Sync worker, offline banner, conflict toasts
-  providers.tsx             TanStack Query + NextAuth providers
-  sidebar.tsx               Navigation
-  ui/index.tsx              Design system components
-
-prisma/
-  schema.prisma             Full database schema
-  seed.ts                   Sample data seed
-
-sql/
-  migration.sql             Idempotent DDL: indexes, RLS, audit rules, private storage
+  sync-provider.tsx             Sync worker, offline banner, conflict toasts
+  sidebar.tsx                   Navigation
+  ui/index.tsx                  Design system (Radix + Tailwind)
 ```
 
 ---
 
-## Environment variables
+## Domain Concepts
+
+- Currency: **KES** (Kenyan Shillings) by default
+- Cultural types: `STANDARD | KIKUYU | LUO | KAMBA | KALENJIN | COASTAL`
+- Event types: `RURACIO | WEDDING | RECEPTION | POST_WEDDING | TRADITIONAL | CIVIL | ENGAGEMENT | AFTER_PARTY | HONEYMOON | MOVING`
+- User roles: `COUPLE | PLANNER | COMMITTEE | VENDOR | ADMIN`
+- Guest priority: `VIP | GENERAL | OVERFLOW`
+- RSVP status: `PENDING | CONFIRMED | DECLINED | MAYBE | WAITLISTED`
+- Vendor status: `ENQUIRED | QUOTED | BOOKED | CONFIRMED | CANCELLED | COMPLETED`
+
+---
+
+## Database
+
+Prisma schema at `prisma/schema.prisma`. All models include `version`, `checksum`, `updatedBy`, `deletedAt` for optimistic locking and soft-delete.
+
+Key models: `Wedding`, `WeddingMember`, `WeddingEvent`, `EventProgramItem`, `EventDependency`, `GuestEventAttendance`, `Guest`, `Household`, `Vendor`, `VendorEventAssignment`, `VendorNote`, `Payment`, `CommitteeContribution`, `ChecklistItem`, `ActivityGroup`, `BudgetLine`, `PaymentSchedule`, `RiskAlert`, `MediaItem`, `Appointment`, `Reminder`, `Incident`, `Template`, `DowryItem`, `AttireItem`, `GiftRegistryItem`, `GiftReceived`, `TransportRoute`, `Accommodation`, `HoneymoonDay`, `ProcessedOperation`, `AuditLog`.
 
 ```bash
-# Database (Neon)
-DATABASE_URL     # Pooled connection with ?pgbouncer=true&connection_limit=1
-DIRECT_URL       # Direct connection for migrations (no params)
-
-# Auth
-NEXTAUTH_SECRET  # openssl rand -base64 32
-NEXTAUTH_URL     # https://your-domain.com in production
-GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_SECRET
-
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY   # Server-side only — never expose to browser
-
-# M-Pesa
-MPESA_CONSUMER_KEY
-MPESA_CONSUMER_SECRET
-MPESA_PASSKEY
-MPESA_SHORTCODE
-MPESA_CALLBACK_URL           # Must be publicly accessible (not localhost)
+pnpm db:generate   # after schema changes
+pnpm db:migrate    # production migrations
+pnpm db:push       # dev schema push
+pnpm db:seed       # seed sample data
 ```
 
 ---
 
-## Production checklist
+## Environment Variables
 
-### Before first deployment
-- [ ] Run `sql/migration.sql` on production database
-- [ ] Set all environment variables in Vercel
-- [ ] Verify Supabase Storage buckets are private (`SELECT public FROM storage.buckets`)
-- [ ] Add MPESA_CALLBACK_URL pointing to production URL
-- [ ] Test M-Pesa STK push in Safaricom sandbox
-- [ ] Set up Uptime Robot to ping `/api/health` every 5min (keeps Vercel warm)
+See `.env.example` for all required values.
 
-### Critical fixes (P0 — must ship before first wedding)
-- [x] PgBouncer connection pooling (`pgbouncer=true` in DATABASE_URL)
-- [x] M-Pesa idempotency + unique `mpesaRef` constraint
-- [x] Supabase Storage private + signed URLs
-- [x] Dexie migration safety harness
-- [x] `ProcessedOperation` table for server-side idempotency
-- [x] Entity version fields + 409 conflict detection
-- [x] Composite indexes on all entity tables
-
-### Deployment
-```bash
-# Vercel (recommended)
-vercel deploy --prod
-
-# Run migration on production DB after deploy
-npx prisma migrate deploy
-```
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | Neon pooled connection string |
+| `DIRECT_URL` | Neon direct connection (Prisma CLI only) |
+| `NEXTAUTH_SECRET` | JWT signing secret |
+| `NEXTAUTH_URL` | App base URL |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role (server-side only) |
+| `MPESA_CONSUMER_KEY` / `MPESA_CONSUMER_SECRET` | Daraja API credentials |
+| `MPESA_PASSKEY` / `MPESA_SHORTCODE` | M-Pesa STK Push config |
+| `MPESA_CALLBACK_URL` | Public URL for M-Pesa callbacks |
+| `CRON_SECRET` | Secures cron endpoints |
+| `NEXT_PUBLIC_APP_URL` | App base URL (client-side) |
 
 ---
 
-## Offline behaviour
+## API Conventions
 
-| Feature | Offline | Sync on reconnect |
-|---------|---------|-------------------|
-| View all guests/vendors/timeline | ✅ | — |
-| Check in guests | ✅ | ✅ Auto |
-| Update RSVPs | ✅ | ✅ Auto |
-| Add new guest/vendor | ✅ | ✅ Auto |
-| Real-time vendor alerts | ❌ | ✅ Missed events fetched |
-| M-Pesa payments | ❌ (requires internet) | — |
-| Risk alerts | Local rules only | ✅ Full server eval |
-
-When offline, an amber banner appears. A sync indicator in the sidebar shows live/offline status. Circuit breaker engages after 5 consecutive sync failures and shows a retry button.
+- All routes validate session via `getServerSession(authOptions)`
+- Errors return `{ error: string }` with appropriate HTTP status
+- Payments require `idempotencyKey` on every mutation
+- `/api/mpesa/callback` must remain unauthenticated
+- Soft-deleted records always filtered by `deletedAt: null`
 
 ---
 
-## Day-of coordinator protocol
+## Coding Conventions
 
-1. **Before the event:** Ensure all devices have synced (green indicator in sidebar)
-2. **If internet drops:** Designate one device as the seating authority — only that device assigns tables during offline mode
-3. **Guest check-in:** Works fully offline — tap check-in, syncs automatically when connectivity returns
-4. **Vendor contact:** All vendor phone numbers are available offline in the Vendors page
-5. **Timeline shifts:** Update locally; cascade to all devices on reconnect
-
----
-
-## M-Pesa integration
-
-The platform supports M-Pesa STK Push for:
-- Committee contributions (pledge → payment tracking)
-- Vendor deposits and final payments
-- Ad-hoc payments
-
-Callback handling is hardened against:
-- Duplicate callbacks (unique `mpesaRef` constraint + idempotency check)
-- Amount mismatches (reconciliation flag + audit log)
-- Network retries (always return HTTP 200 to Safaricom)
+- Prisma: `import { db } from '@/lib/db'` — never import from `@prisma/client` directly
+- Dexie: `import { weddingDB } from '@/lib/db/dexie'`
+- Types: `@/types` (root `types/` folder or `types/index.ts`)
+- Client components: named `*-client.tsx` alongside their page
+- Hooks: `hooks/use-[feature].ts` — wrap Dexie + sync enqueue logic
+- No `use client` on API routes or server components
 
 ---
 
-## Extending the risk engine
+## Current State
 
-Add rules to `lib/risk-engine.ts`:
+### Implemented and Working
 
-```typescript
-const myRule: RiskRule = (ctx) => {
-  if (someCondition) return {
-    ruleId: 'my.rule',
-    triggered: true,
-    severity: 'HIGH',
-    category: 'vendor',
-    message: 'Human-readable alert message',
-    data: { ... },
-    suggestedAction: 'What the coordinator should do',
-  }
-  return null
-}
-// Add to the rules array at the bottom of the file
-```
+- Auth (Google OAuth, JWT sessions, role-based `WeddingMember`)
+- Wedding CRUD + onboarding flow
+- Guests — list, add, edit, RSVP, check-in (offline-first)
+- Vendors — list, add, edit, status tracking (offline-first)
+- Budget — line items by category, estimated/actual/committed columns
+- Checklist — tasks with due dates, priority, assignment, check/uncheck
+- Payments — M-Pesa STK Push, callback handling, contribution tracking
+- Risk alerts — rule-based engine, cron + per-wedding manual trigger
+- Settings — wedding metadata, theme color picker
+- Offline sync engine — queue, batch flush, circuit breaker, conflict resolution
+- Supabase Storage — private buckets, signed URLs, upload API
+- Timeline page (minimal)
 
-Rules are evaluated by `POST /api/weddings/[id]/evaluate-risks`. Hook this to a Vercel cron job for automatic evaluation:
+### Pages Scaffolded (UI Incomplete or Placeholder)
 
-```json
-// vercel.json
-{
-  "crons": [{
-    "path": "/api/cron/evaluate-risks",
-    "schedule": "0 */6 * * *"
-  }]
-}
-```
+`analytics/`, `appointments/`, `events/`, `moodboard/`, `documents/`, `dowry/`, `gifts/`, `logistics/`, `day-of/`
+
+### Schema Exists, UI Not Built
+
+- `ActivityGroup` — task grouping with drag-and-drop
+- `GuestEventAttendance` — per-event RSVP
+- `EventDependency` — cross-event dependency graph
+- `PaymentSchedule` — vendor payment milestones
+- `Appointment` / `Reminder` — vendor meetings and notifications
+- `Incident` — day-of incident log
+- `Template` / `TemplateApplication` — reusable checklists/budgets
+- `DowryItem` — traditional dowry tracking
+- `AttireItem` — attire coordination
+- `GiftRegistryItem` / `GiftReceived` — gift registry and thank-you tracker
+- `TransportRoute` / `GuestTransport` — logistics
+- `Accommodation` / `GuestAccommodation` — hotel bookings
+- `HoneymoonDay` — honeymoon itinerary
+- `Household` — guest household grouping
+
+### Known Issues
+
+- `components/sidebar.tsx` has a corrupted duplicate navigation block
+- `app/dashboard/[weddingId]/timeline/page.tsx` has unused imports, untyped props, missing sort comparator
+- Circuit breaker does not auto-reset after recovery (manual retry required)
+- Reminders cron job not implemented despite schema support
+- Multi-currency: `Wedding.currency` field exists but all UI renders KES only
+- No real-time collaboration — sync is eventual-consistent only
+- M-Pesa callbacks require a publicly accessible URL (not localhost)
+
+### Pending Features (see CHANGES.md for full detail)
+
+- Dashboard analytics widgets (charts, guest funnel, vendor readiness, cost-per-guest)
+- Planning phases (`BUDGETING | PLANNING | PRE_WEDDING | PROCUREMENT | DAY_OF | POST_WEDDING`)
+- Activity group UI with drag-and-drop reorder
+- Per-event budget and checklist scoping
+- Budget enhancements: variance column, smart allocation, receipt uploads, hidden cost suggestions
+- Guest enhancements: household grouping, CSV import, seating layout, per-event attendance
+- Vendor enhancements: notes log, contract upload, comparison tool, payment milestones
+- Template system with seeded defaults
+- Cultural/traditional module (dowry tracker, attire coordination)
+- Day-of execution page (live timeline, incident log, role assignment)
+- Role enforcement middleware and financial visibility gating
+- Google Calendar sync, WhatsApp templates
+- Multi-step onboarding wizard
