@@ -8,6 +8,6 @@
   },
   "then": {
     "type": "runCommand",
-    "command": "pnpm eslint --max-warnings=0 \"${file}\""
+    "command": "/home/mwangi/.local/share/pnpm/pnpm eslint --max-warnings=0 \"${file}\""
   }
 }

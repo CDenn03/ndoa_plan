@@ -96,7 +96,17 @@ function AddManualPaymentModal({ weddingId, eventId, events, onClose }: Readonly
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
     amount: '', description: '', payerName: '', mpesaRef: '', status: 'COMPLETED',
-    selectedEventId: eventId ?? '',
+    selectedEventId: eventId ?? '', vendorId: '',
+  })
+
+  const { data: vendors = [] } = useQuery<{ id: string; name: string; category: string }[]>({
+    queryKey: ['vendors', weddingId, 'select'],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/vendors`)
+      if (!res.ok) return []
+      return res.json()
+    },
+    staleTime: 60_000,
   })
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -105,9 +115,13 @@ function AddManualPaymentModal({ weddingId, eventId, events, onClose }: Readonly
       const res = await fetch(`/api/weddings/${weddingId}/payments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: parseFloat(form.amount), description: form.description || null,
-          payerName: form.payerName || null, mpesaRef: form.mpesaRef || null,
-          status: form.status, eventId: form.selectedEventId || null,
+          amount: parseFloat(form.amount),
+          description: form.description || null,
+          payerName: form.payerName || null,
+          mpesaRef: form.mpesaRef || null,
+          vendorId: form.vendorId || null,
+          status: form.status,
+          eventId: form.selectedEventId || null,
         }),
       })
       if (!res.ok) throw new Error()
@@ -128,8 +142,13 @@ function AddManualPaymentModal({ weddingId, eventId, events, onClose }: Readonly
         )}
         <div><Label htmlFor="mp-amount">Amount (KES) *</Label>
           <Input id="mp-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="5000" min="1" required /></div>
-        <div><Label htmlFor="mp-desc">Description</Label>
-          <Input id="mp-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Catering deposit" /></div>
+        <div><Label htmlFor="mp-vendor">Vendor (optional)</Label>
+          <Select id="mp-vendor" value={form.vendorId} onChange={e => setForm(f => ({ ...f, vendorId: e.target.value }))}>
+            <option value="">No vendor</option>
+            {vendors.map(v => <option key={v.id} value={v.id}>{v.name} — {v.category.replace(/_/g, ' ')}</option>)}
+          </Select></div>
+        <div><Label htmlFor="mp-desc">Description / Notes</Label>
+          <Input id="mp-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Catering deposit — 50% upfront" /></div>
         <div className="grid grid-cols-2 gap-3">
           <div><Label htmlFor="mp-name">Payer name</Label>
             <Input id="mp-name" value={form.payerName} onChange={e => setForm(f => ({ ...f, payerName: e.target.value }))} placeholder="Jane Doe" /></div>

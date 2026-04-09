@@ -199,12 +199,12 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
             </div>
           </div>
 
-          {/* ── Execution — logistics, day-of */}
+          {/* ── Execution — logistics, schedule */}
           <div className="mt-1">
             <SectionLabel>Execution</SectionLabel>
             <div className="space-y-0.5">
               <NavLink href="/logistics" label="Logistics" icon={Truck} />
-              <NavLink href="/day-of" label="Day-of" icon={Zap} />
+              <NavLink href="/day-of" label="Schedule" icon={Zap} />
             </div>
           </div>
 

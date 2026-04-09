@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
 
   if (template.type === 'CHECKLIST') {
     const items = data as Array<{
-      title: string; category?: string; phase?: string; priority?: number; isFinalCheck?: boolean; description?: string
+      title: string; category?: string; priority?: number; isFinalCheck?: boolean; description?: string
     }>
     await db.checklistItem.createMany({
       data: items.map((item, i) => ({
@@ -32,7 +32,6 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         weddingId: wid,
         title: item.title,
         category: item.category ?? 'OTHER',
-        phase: (item.phase as never) ?? null,
         priority: item.priority ?? 2,
         isFinalCheck: item.isFinalCheck ?? false,
         description: item.description ?? null,
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       })),
     })
   } else if (template.type === 'BUDGET') {
-    const lines = data as Array<{ category: string; description: string; estimated: number; phase?: string }>
+    const lines = data as Array<{ category: string; description: string; estimated: number }>
     await db.budgetLine.createMany({
       data: lines.map(line => ({
         id: uuid(),
@@ -54,7 +53,6 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         estimated: line.estimated,
         actual: 0,
         committed: 0,
-        phase: (line.phase as never) ?? null,
         version: 1,
         checksum: '',
         updatedBy: userId,

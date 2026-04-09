@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo, use } from 'react'
-import { CheckSquare, Plus, Lock, LayoutTemplate, Pencil, Trash2, CalendarDays } from 'lucide-react'
+import { CheckSquare, Plus, LayoutTemplate, Pencil, Trash2, CalendarDays } from 'lucide-react'
 import { Button, Input, Select, Label, ProgressBar, EmptyState, Spinner, Modal } from '@/components/ui'
 import { useChecklistItems, useToggleChecklistItem, useAddChecklistItem, useUpdateChecklistItem, useDeleteChecklistItem } from '@/hooks/use-data'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -11,18 +11,9 @@ import type { LocalChecklistItem } from '@/types'
 const CATEGORIES = ['VENUE','CATERING','ATTIRE','PHOTOGRAPHY','MUSIC','TRANSPORT','LEGAL','INVITATIONS','DECORATIONS','OTHER']
 const PRIORITY_LABEL = ['', 'High', 'Medium', 'Low']
 const PRIORITY_COLOR = ['', 'text-red-500', 'text-amber-500', 'text-sky-500']
-const PHASES = [
-  { key: 'all', label: 'All' },
-  { key: 'BUDGETING', label: 'Budgeting' },
-  { key: 'PLANNING', label: 'Planning' },
-  { key: 'PRE_WEDDING', label: 'Pre-Wedding' },
-  { key: 'PROCUREMENT', label: 'Procurement' },
-  { key: 'DAY_OF', label: 'Day-of' },
-  { key: 'POST_WEDDING', label: 'Post-Wedding' },
-]
 
 interface WeddingEvent { id: string; name: string; type: string; date: string }
-type ItemWithExtras = LocalChecklistItem & { isFinalCheck?: boolean; assignedToName?: string; phase?: string }
+type ItemWithExtras = LocalChecklistItem & { isFinalCheck?: boolean; assignedToName?: string }
 
 // ─── Task form modal ──────────────────────────────────────────────────────────
 
@@ -37,7 +28,6 @@ function TaskModal({ weddingId, item, onClose }: Readonly<{
     category: item?.category ?? 'VENUE',
     dueDate: item?.dueDate ? new Date(item.dueDate).toISOString().split('T')[0] : '',
     priority: String(item?.priority ?? 2),
-    phase: item?.phase ?? '',
     assignedToName: item?.assignedToName ?? '',
     isFinalCheck: item?.isFinalCheck ?? false,
   })
@@ -51,7 +41,6 @@ function TaskModal({ weddingId, item, onClose }: Readonly<{
       category: form.category,
       dueDate: form.dueDate ? new Date(form.dueDate).getTime() : undefined,
       priority: parseInt(form.priority),
-      phase: form.phase || undefined,
       assignedToName: form.assignedToName || undefined,
       isFinalCheck: form.isFinalCheck,
       order: item?.order ?? 0,
@@ -76,11 +65,6 @@ function TaskModal({ weddingId, item, onClose }: Readonly<{
           <div><Label htmlFor="task-cat">Category</Label>
             <Select id="task-cat" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
               {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
-            </Select></div>
-          <div><Label htmlFor="task-phase">Phase</Label>
-            <Select id="task-phase" value={form.phase} onChange={e => setForm(f => ({ ...f, phase: e.target.value }))}>
-              <option value="">No phase</option>
-              {PHASES.slice(1).map(p => <option key={p.key} value={p.key}>{p.label}</option>)}
             </Select></div>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -231,34 +215,21 @@ function TaskRow({ item, weddingId }: Readonly<{ item: ItemWithExtras; weddingId
 // ─── Task list with filters ───────────────────────────────────────────────────
 
 function TaskList({ items, weddingId, onAdd }: Readonly<{ items: ItemWithExtras[]; weddingId: string; onAdd: () => void }>) {
-  const [phase, setPhase] = useState('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'done'>('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
 
   const checked = items.filter(i => i.isChecked).length
   const pct = items.length > 0 ? Math.round((checked / items.length) * 100) : 0
 
-  const phaseStats = useMemo(() => {
-    const stats: Record<string, { total: number; done: number; finalChecks: number; finalChecksDone: number }> = {}
-    for (const item of items) {
-      const p = item.phase; if (!p) continue
-      if (!stats[p]) stats[p] = { total: 0, done: 0, finalChecks: 0, finalChecksDone: 0 }
-      stats[p].total++
-      if (item.isChecked) stats[p].done++
-      if (item.isFinalCheck) { stats[p].finalChecks++; if (item.isChecked) stats[p].finalChecksDone++ }
-    }
-    return stats
-  }, [items])
 
   const categories = useMemo(() => ['all', ...Array.from(new Set(items.map(i => i.category ?? 'OTHER')))], [items])
 
   const filtered = useMemo(() => items.filter(i => {
     if (statusFilter === 'pending' && i.isChecked) return false
     if (statusFilter === 'done' && !i.isChecked) return false
-    if (phase !== 'all' && i.phase !== phase) return false
     if (categoryFilter !== 'all' && (i.category ?? 'OTHER') !== categoryFilter) return false
     return true
-  }), [items, statusFilter, phase, categoryFilter])
+  }), [items, statusFilter, categoryFilter])
 
   const grouped = useMemo(() => filtered.reduce<Record<string, ItemWithExtras[]>>((acc, i) => {
     const cat = i.category ?? 'OTHER'
@@ -282,22 +253,6 @@ function TaskList({ items, weddingId, onAdd }: Readonly<{ items: ItemWithExtras[
         <ProgressBar value={checked} max={items.length} />
       </div>
 
-      {/* Phase tabs */}
-      <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-thin">
-        {PHASES.map(p => {
-          const stats = p.key !== 'all' ? phaseStats[p.key] : null
-          const phaseDone = stats ? (stats.finalChecks > 0 ? stats.finalChecksDone === stats.finalChecks : stats.done === stats.total && stats.total > 0) : false
-          return (
-            <button key={p.key} onClick={() => setPhase(p.key)}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${phase === p.key ? 'bg-[#14161C] text-white' : 'bg-zinc-100 text-zinc-500 hover:text-zinc-700'}`}>
-              {phaseDone && <span className="text-emerald-400">✓</span>}
-              {stats && !phaseDone && stats.finalChecks > 0 && stats.finalChecksDone < stats.finalChecks && <Lock size={11} className="text-zinc-400" />}
-              {p.label}
-              {stats && <span className="text-[11px] opacity-60">{stats.done}/{stats.total}</span>}
-            </button>
-          )
-        })}
-      </div>
 
       {/* Status + category filters */}
       <div className="flex items-center gap-3 flex-wrap">

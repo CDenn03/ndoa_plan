@@ -85,30 +85,31 @@ model Wedding {
   palette            String[]     @default([])
   setupComplete      Boolean      @default(false)
 
-  members              WeddingMember[]
-  events               WeddingEvent[]
-  guests               Guest[]
-  vendors              Vendor[]
-  payments             Payment[]
-  contributions        CommitteeContribution[]
+  members               WeddingMember[]
+  events                WeddingEvent[]
+  guests                Guest[]
+  vendors               Vendor[]
+  payments              Payment[]
+  contributions         CommitteeContribution[]
   // timelineEvents removed — replaced by EventProgramItem
-  checklistItems       ChecklistItem[]
-  budgetLines          BudgetLine[]
-  riskAlerts           RiskAlert[]
-  mediaItems           MediaItem[]
-  auditLogs            AuditLog[]
-  activityGroups       ActivityGroup[]
-  appointments         Appointment[]
-  dowryItems           DowryItem[]
-  attireItems          AttireItem[]
-  giftRegistryItems    GiftRegistryItem[]
-  giftsReceived        GiftReceived[]
-  transportRoutes      TransportRoute[]
-  accommodations       Accommodation[]
-  households           Household[]
-  paymentSchedules     PaymentSchedule[]
-  incidents            Incident[]
-  templateApplications TemplateApplication[]
+  checklistItems        ChecklistItem[]
+  budgetLines           BudgetLine[]
+  riskAlerts            RiskAlert[]
+  mediaItems            MediaItem[]
+  auditLogs             AuditLog[]
+  activityGroups        ActivityGroup[]
+  appointments          Appointment[]
+  dowryItems            DowryItem[]
+  attireItems           AttireItem[]
+  giftRegistryItems     GiftRegistryItem[]
+  giftsReceived         GiftReceived[]
+  transportRoutes       TransportRoute[]
+  accommodations        Accommodation[]
+  households            Household[]
+  paymentSchedules      PaymentSchedule[]
+  incidents             Incident[]
+  templateApplications  TemplateApplication[]
+  visionBoardCategories VisionBoardCategory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -179,9 +180,10 @@ model EventProgramItem {
   eventId     String
   title       String
   description String?
-  startTime   String? // HH:mm — start of this activity
-  endTime     String? // HH:mm — end of this activity (derived or explicit)
-  duration    Int? // minutes — always stored; derived from start/end or set directly
+  date        DateTime? // null = single-day event; set for multi-day (honeymoon, moving)
+  startTime   String? // HH:mm
+  endTime     String? // HH:mm
+  duration    Int? // minutes
   order       Int          @default(0)
   assignedTo  String?
   vendorId    String?
@@ -190,6 +192,7 @@ model EventProgramItem {
   updatedAt   DateTime     @updatedAt
 
   @@index([eventId, order])
+  @@index([eventId, date])
 }
 
 enum EventType {
@@ -525,25 +528,24 @@ enum ContribStatus {
 // ─── Checklist ────────────────────────────────────────────────────────────────
 
 model ChecklistItem {
-  id              String         @id @default(uuid())
+  id              String    @id @default(uuid())
   weddingId       String
   eventId         String?
   title           String
   description     String?
   category        String?
-  phase           PlanningPhase?
   activityGroupId String?
   dueDate         DateTime?
   assignedTo      String?
   assignedToName  String?
   dependsOnId     String?
-  isChecked       Boolean        @default(false)
+  isChecked       Boolean   @default(false)
   checkedAt       DateTime?
   checkedBy       String?
-  priority        Int            @default(2)
-  order           Int            @default(0)
-  isFinalCheck    Boolean        @default(false)
-  isPrivate       Boolean        @default(false)
+  priority        Int       @default(2)
+  order           Int       @default(0)
+  isFinalCheck    Boolean   @default(false)
+  isPrivate       Boolean   @default(false)
 
   version   Int       @default(1)
   checksum  String    @default("")
@@ -561,18 +563,8 @@ model ChecklistItem {
   @@index([weddingId, isChecked])
   @@index([weddingId, dueDate])
   @@index([weddingId, category])
-  @@index([weddingId, phase])
   @@index([activityGroupId])
   @@index([eventId])
-}
-
-enum PlanningPhase {
-  BUDGETING
-  PLANNING
-  PRE_WEDDING
-  PROCUREMENT
-  DAY_OF
-  POST_WEDDING
 }
 
 // ─── Activity Groups ──────────────────────────────────────────────────────────
@@ -581,7 +573,6 @@ model ActivityGroup {
   id             String          @id @default(uuid())
   weddingId      String
   name           String
-  phase          PlanningPhase?
   color          String          @default("#8B5CF6")
   order          Int             @default(0)
   wedding        Wedding         @relation(fields: [weddingId], references: [id], onDelete: Cascade)
@@ -593,15 +584,14 @@ model ActivityGroup {
 // ─── Budget Lines ─────────────────────────────────────────────────────────────
 
 model BudgetLine {
-  id          String         @id @default(uuid())
+  id          String    @id @default(uuid())
   weddingId   String
   eventId     String?
-  phase       PlanningPhase?
   category    String
   description String
-  estimated   Decimal        @default(0)
-  actual      Decimal        @default(0)
-  committed   Decimal        @default(0)
+  estimated   Decimal   @default(0)
+  actual      Decimal   @default(0)
+  committed   Decimal   @default(0)
   vendorId    String?
   vendorName  String?
   notes       String?
@@ -622,7 +612,6 @@ model BudgetLine {
   updatedAt DateTime @updatedAt
 
   @@index([weddingId, category])
-  @@index([weddingId, phase])
   @@index([eventId])
   @@index([vendorId])
 }
@@ -795,7 +784,6 @@ model Template {
   culturalType CulturalType?
   guestSizeMin Int?
   guestSizeMax Int?
-  phase        PlanningPhase?
   data         Json
   isSystem     Boolean               @default(true)
   applications TemplateApplication[]
@@ -991,4 +979,20 @@ model HoneymoonDay {
   createdAt   DateTime     @default(now())
 
   @@index([eventId])
+}
+
+// ─── Vision Board Categories ──────────────────────────────────────────────────
+
+model VisionBoardCategory {
+  id        String   @id @default(uuid())
+  weddingId String
+  name      String
+  color     String   @default("#8B5CF6")
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([weddingId, name])
+  @@index([weddingId, order])
 }

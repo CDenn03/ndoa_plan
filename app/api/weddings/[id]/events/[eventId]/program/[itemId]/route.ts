@@ -35,6 +35,7 @@ export async function PATCH(req: NextRequest, props: Params) {
       ...(data.description !== undefined && { description: data.description || null }),
       ...(data.assignedTo !== undefined && { assignedTo: data.assignedTo || null }),
       ...(data.order != null && { order: data.order }),
+      ...(data.date !== undefined && { date: data.date ? new Date(data.date) : null }),
       ...timingUpdate,
     },
   })

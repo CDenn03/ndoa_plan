@@ -1,25 +1,19 @@
 'use client'
 import { useState, useRef } from 'react'
 import { format } from 'date-fns'
-import { MapPin, Clock, Plus, Trash2, GripVertical, CheckSquare, DollarSign, Users, List, ArrowLeft } from 'lucide-react'
-import { Button, Input, Select, Label, Badge, Modal, Spinner, ProgressBar } from '@/components/ui'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { MapPin, Clock, Plus, Trash2, GripVertical, CheckSquare, DollarSign, Users, List, ArrowLeft, CreditCard, Sparkles, Truck, Hotel, Gift, Image as ImageIcon, ShoppingBag, Zap, Upload } from 'lucide-react'
+import { Button, Input, Select, Label, Badge, Modal, Spinner, ProgressBar, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { weddingDB } from '@/lib/db/dexie'
+import { useBudgetLines } from '@/hooks/use-data'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface EventTask {
   id: string; title: string; description?: string; category?: string
-  phase?: string; dueDate?: string; assignedToName?: string
+  dueDate?: string; assignedToName?: string
   isChecked: boolean; priority: number; order: number; isFinalCheck: boolean
-}
-
-interface BudgetLine {
-  id: string; category: string; description: string
-  estimated: number; actual: number; committed: number; vendorId?: string
 }
 
 interface GuestAttendance {
@@ -39,13 +33,11 @@ interface Props {
     venue?: string; description?: string; startTime?: string; endTime?: string; isMain: boolean
   }
   tasks: EventTask[]
-  budgetLines: BudgetLine[]
   guestAttendances: GuestAttendance[]
   programItems: ProgramItem[]
-  budgetSummary: { totalEstimated: number; totalCommitted: number }
 }
 
-type Tab = 'tasks' | 'budget' | 'guests' | 'program'
+type Tab = 'tasks' | 'budget' | 'guests' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule'
 
 const TASK_CATEGORIES = ['CATERING','MEDIA','TRANSPORT','DECOR','CEREMONY','RECEPTION','ATTIRE','LEGAL','LOGISTICS','OTHER']
 const BUDGET_CATEGORIES = ['VENUE','CATERING','PHOTOGRAPHY','VIDEOGRAPHY','DECOR','FLOWERS','MUSIC','TRANSPORT','ATTIRE','CAKE','INVITATIONS','ACCOMMODATION','MISCELLANEOUS']
@@ -60,7 +52,6 @@ const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', c
 // ─── Task list ────────────────────────────────────────────────────────────────
 
 function TasksTab({ weddingId, eventId, initialTasks }: Readonly<{ weddingId: string; eventId: string; initialTasks: EventTask[] }>) {
-  const router = useRouter()
   const { toast } = useToast()
   const [tasks, setTasks] = useState(initialTasks)
   const [showAdd, setShowAdd] = useState(false)
@@ -225,15 +216,79 @@ function TasksTab({ weddingId, eventId, initialTasks }: Readonly<{ weddingId: st
 
 // ─── Budget tab ───────────────────────────────────────────────────────────────
 
-function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
-  weddingId: string; eventId: string
-  initialLines: BudgetLine[]; summary: { totalEstimated: number; totalCommitted: number }
+function RecordPaymentModal({ weddingId, line, onClose }: Readonly<{
+  weddingId: string
+  line: { id: string; description: string; estimated: number; actual: number; committed: number; vendorId?: string; vendorName?: string }
+  onClose: () => void
 }>) {
+  const qc = useQueryClient()
+  const { toast } = useToast()
+  const [saving, setSaving] = useState(false)
+  const remaining = Math.max(0, line.estimated - line.actual - line.committed)
+  const [form, setForm] = useState({ amount: String(remaining || line.estimated), payerName: '', mpesaRef: '', description: line.description })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); setSaving(true)
+    try {
+      const amount = parseFloat(form.amount) || 0
+      await fetch(`/api/weddings/${weddingId}/payments`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount, description: form.description || null,
+          payerName: form.payerName || null, mpesaRef: form.mpesaRef || null,
+          vendorId: line.vendorId || null, status: 'COMPLETED',
+        }),
+      })
+      await fetch(`/api/weddings/${weddingId}/budget/${line.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actual: line.actual + amount }),
+      })
+      await weddingDB.budgetLines.update(line.id, { actual: line.actual + amount, isDirty: false, updatedAt: Date.now() })
+      qc.invalidateQueries({ queryKey: ['budget', weddingId] })
+      qc.invalidateQueries({ queryKey: ['payments', weddingId] })
+      toast('Payment recorded and budget updated', 'success')
+      onClose()
+    } catch { toast('Failed to record payment', 'error') } finally { setSaving(false) }
+  }
+
+  return (
+    <Modal onClose={onClose} title="Record payment">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-zinc-50 rounded-xl p-3 text-sm">
+          <p className="font-semibold text-[#14161C]">{line.description}</p>
+          <div className="flex gap-4 mt-1 text-xs text-zinc-500">
+            <span>Estimated: {fmt(line.estimated)}</span>
+            <span>Paid: {fmt(line.actual)}</span>
+            <span className={remaining > 0 ? 'text-amber-500 font-semibold' : 'text-emerald-600'}>Remaining: {fmt(remaining)}</span>
+          </div>
+        </div>
+        <div><Label htmlFor="rp-amount">Amount paid (KES) *</Label>
+          <Input id="rp-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} min="1" required /></div>
+        <div><Label htmlFor="rp-desc">Description</Label>
+          <Input id="rp-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="rp-payer">Payer name</Label>
+            <Input id="rp-payer" value={form.payerName} onChange={e => setForm(f => ({ ...f, payerName: e.target.value }))} placeholder="Jane Doe" /></div>
+          <div><Label htmlFor="rp-ref">M-Pesa ref</Label>
+            <Input id="rp-ref" value={form.mpesaRef} onChange={e => setForm(f => ({ ...f, mpesaRef: e.target.value }))} placeholder="QHX7..." /></div>
+        </div>
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Recording…' : 'Record payment'}</Button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
+function BudgetTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
   const { toast } = useToast()
   const qc = useQueryClient()
-  const [lines, setLines] = useState(initialLines)
+  const { data: allLines = [], isLoading } = useBudgetLines(weddingId)
+  const lines = allLines.filter(l => l.eventId === eventId)
   const [showAdd, setShowAdd] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [payingLine, setPayingLine] = useState<typeof lines[0] | null>(null)
   const [form, setForm] = useState({ category: 'CATERING', description: '', estimated: '', committed: '', actual: '' })
 
   const totalEst = lines.reduce((s, l) => s + l.estimated, 0)
@@ -241,8 +296,7 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
   const variance = totalEst - totalComm
 
   const addLine = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setSaving(true)
+    e.preventDefault(); setSaving(true)
     try {
       const res = await fetch(`/api/weddings/${weddingId}/budget`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -254,8 +308,7 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
         }),
       })
       if (!res.ok) throw new Error()
-      const newLine = await res.json() as BudgetLine
-      // Seed into Dexie so the budget page picks it up without a full refetch
+      const newLine = await res.json() as { id: string; category: string; description: string; estimated: number; actual: number; committed: number }
       await weddingDB.budgetLines.put({
         id: newLine.id, serverId: newLine.id, weddingId, eventId,
         category: newLine.category, description: newLine.description,
@@ -263,16 +316,14 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
         version: 1, checksum: '', isDirty: false, updatedAt: Date.now(),
       })
       await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
-      setLines(prev => [...prev, newLine])
       setShowAdd(false)
       setForm({ category: 'CATERING', description: '', estimated: '', committed: '', actual: '' })
       toast('Budget line added', 'success')
-    } catch {
-      toast('Failed to add budget line', 'error')
-    } finally {
-      setSaving(false)
-    }
+    } catch { toast('Failed to add budget line', 'error') }
+    finally { setSaving(false) }
   }
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
 
   return (
     <div className="space-y-6">
@@ -295,6 +346,7 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
         </div>
         <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add line</Button>
       </div>
+
       {lines.length === 0 ? (
         <div className="text-center py-12">
           <DollarSign size={32} className="text-zinc-200 mx-auto mb-3" />
@@ -302,30 +354,40 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
         </div>
       ) : (
         <div className="space-y-0">
-          <div className="grid grid-cols-4 gap-4 pb-2 border-b border-zinc-100">
+          <div className="grid grid-cols-5 gap-3 pb-2 border-b border-zinc-100">
             <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest col-span-2">Item</p>
             <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Estimated</p>
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Committed</p>
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Paid</p>
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Action</p>
           </div>
           {lines.map(line => {
-            const comm = line.committed + line.actual
-            const v = line.estimated - comm
+            const paid = line.actual
+            const remaining = Math.max(0, line.estimated - paid - line.committed)
             return (
-              <div key={line.id} className="grid grid-cols-4 gap-4 py-3 border-b border-zinc-100 last:border-0 items-center">
+              <div key={line.id} className="grid grid-cols-5 gap-3 py-3 border-b border-zinc-100 last:border-0 items-center">
                 <div className="col-span-2">
                   <p className="text-sm font-semibold text-[#14161C]">{line.description}</p>
-                  <p className="text-xs text-zinc-400">{line.category}</p>
+                  <p className="text-xs text-zinc-400">{line.category}{line.vendorName ? ` · ${line.vendorName}` : ''}</p>
                 </div>
                 <p className="text-sm text-zinc-500 text-right">{fmt(line.estimated)}</p>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-[#14161C]">{fmt(comm)}</p>
-                  <p className={`text-xs ${v < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{v < 0 ? '-' : '+'}{fmt(Math.abs(v))}</p>
+                  <p className="text-sm font-bold text-[#14161C]">{fmt(paid)}</p>
+                  {remaining > 0 && <p className="text-xs text-amber-500">{fmt(remaining)} left</p>}
+                  {remaining === 0 && paid > 0 && <p className="text-xs text-emerald-500">Paid in full</p>}
+                </div>
+                <div className="text-right">
+                  {remaining > 0 && (
+                    <Button size="sm" variant="lavender" onClick={() => setPayingLine(line)}>
+                      <CreditCard size={11} /> Pay
+                    </Button>
+                  )}
                 </div>
               </div>
             )
           })}
         </div>
       )}
+
       {showAdd && (
         <Modal onClose={() => setShowAdd(false)} title="Add budget line">
           <form onSubmit={addLine} className="space-y-4">
@@ -353,6 +415,10 @@ function BudgetTab({ weddingId, eventId, initialLines, summary }: Readonly<{
             </div>
           </form>
         </Modal>
+      )}
+
+      {payingLine && (
+        <RecordPaymentModal weddingId={weddingId} line={payingLine} onClose={() => setPayingLine(null)} />
       )}
     </div>
   )
@@ -656,6 +722,387 @@ function ProgramTab({ weddingId, eventId, initialItems }: Readonly<{ weddingId: 
 }
 
 
+// ─── Appointments Tab ─────────────────────────────────────────────────────────
+
+function AppointmentsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['appointments', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/appointments?eventId=${eventId}`)
+      if (!res.ok) throw new Error('Failed to fetch appointments')
+      return res.json() as Promise<{ id: string; title: string; startAt: string; endAt?: string; location?: string; status: string; vendor?: { name: string } }[]>
+    },
+    staleTime: 30_000,
+  })
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
+  if (data.length === 0) return <EmptyState icon={<Sparkles size={32} className="text-zinc-200" />} title="No appointments" description="Appointments for this event will appear here" />
+
+  return (
+    <div className="space-y-2">
+      {data.map(a => (
+        <div key={a.id} className="flex items-start gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-[#14161C]">{a.title}</p>
+            <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+              <span className="text-xs text-zinc-400">{format(new Date(a.startAt), 'MMM d, yyyy')}</span>
+              <span className="text-xs text-zinc-400 flex items-center gap-1"><Clock size={10} />{format(new Date(a.startAt), 'h:mm a')}</span>
+              {a.location && <span className="text-xs text-zinc-400 flex items-center gap-1"><MapPin size={10} />{a.location}</span>}
+              {a.vendor && <span className="text-xs text-zinc-400">{a.vendor.name}</span>}
+            </div>
+          </div>
+          <Badge variant={a.status === 'COMPLETED' ? 'confirmed' : a.status === 'CANCELLED' ? 'declined' : 'pending'}>{a.status}</Badge>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Payments Tab ─────────────────────────────────────────────────────────────
+
+function PaymentsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['payments-event', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/payments?eventId=${eventId}`)
+      if (!res.ok) throw new Error('Failed to fetch payments')
+      const all = await res.json() as { id: string; amount: number; payerName?: string; status: string; description?: string; eventId?: string }[]
+      return all.filter(p => p.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
+  if (data.length === 0) return <EmptyState icon={<CreditCard size={32} className="text-zinc-200" />} title="No payments" description="Payments linked to this event will appear here" />
+
+  const total = data.reduce((s, p) => s + p.amount, 0)
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <p className="text-xs text-zinc-400">{data.length} payment{data.length !== 1 ? 's' : ''}</p>
+        <span className="text-xs font-bold text-emerald-600">{fmt(total)} total</span>
+      </div>
+      <div className="space-y-2">
+        {data.map(p => (
+          <div key={p.id} className="flex items-center gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-[#14161C]">{p.description ?? 'Payment'}</p>
+              {p.payerName && <p className="text-xs text-zinc-400 mt-0.5">{p.payerName}</p>}
+            </div>
+            <p className="text-sm font-bold text-[#14161C]">{fmt(p.amount)}</p>
+            <Badge variant={p.status === 'COMPLETED' ? 'confirmed' : p.status === 'FAILED' ? 'declined' : 'pending'}>{p.status}</Badge>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Contributions Tab ────────────────────────────────────────────────────────
+
+function ContributionsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['contributions-event', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/contributions`)
+      if (!res.ok) throw new Error('Failed to fetch contributions')
+      const all = await res.json() as { id: string; memberName: string; pledgeAmount: number; paidAmount: number; eventId?: string }[]
+      return all.filter(c => c.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
+  if (data.length === 0) return <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No contributions" description="Committee contributions for this event will appear here" />
+
+  return (
+    <div className="space-y-2">
+      {data.map(c => {
+        const pct = c.pledgeAmount > 0 ? Math.min(100, Math.round((c.paidAmount / c.pledgeAmount) * 100)) : 0
+        return (
+          <div key={c.id} className="py-3 px-4 border border-zinc-100 rounded-xl space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-[#14161C]">{c.memberName}</p>
+              <p className="text-xs text-zinc-400">{fmt(c.paidAmount)} / {fmt(c.pledgeAmount)}</p>
+            </div>
+            <ProgressBar value={c.paidAmount} max={c.pledgeAmount} />
+            <p className="text-xs text-zinc-400">{pct}% paid</p>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ─── Logistics Tab ────────────────────────────────────────────────────────────
+
+function LogisticsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { data: routes = [], isLoading: loadingRoutes } = useQuery({
+    queryKey: ['logistics-routes', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/logistics/routes`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; name: string; from: string; to: string; departureTime?: string; capacity?: number; eventId?: string }[]
+      return all.filter(r => r.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+  const { data: accommodations = [], isLoading: loadingAccom } = useQuery({
+    queryKey: ['logistics-accommodations', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/logistics/accommodations`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; name: string; location: string; rooms?: number; checkIn?: string; checkOut?: string; eventId?: string }[]
+      return all.filter(a => a.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  if (loadingRoutes || loadingAccom) return <div className="flex justify-center py-12"><Spinner /></div>
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-1.5"><Truck size={12} /> Transport routes</p>
+        {routes.length === 0 ? (
+          <p className="text-sm text-zinc-400 py-4 text-center">No transport routes</p>
+        ) : (
+          <div className="space-y-2">
+            {routes.map(r => (
+              <div key={r.id} className="py-3 px-4 border border-zinc-100 rounded-xl">
+                <p className="text-sm font-semibold text-[#14161C]">{r.name}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{r.from} to {r.to}{r.departureTime ? ` · ${r.departureTime}` : ''}{r.capacity ? ` · ${r.capacity} seats` : ''}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div>
+        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-1.5"><Hotel size={12} /> Accommodation</p>
+        {accommodations.length === 0 ? (
+          <p className="text-sm text-zinc-400 py-4 text-center">No accommodation blocks</p>
+        ) : (
+          <div className="space-y-2">
+            {accommodations.map(a => (
+              <div key={a.id} className="py-3 px-4 border border-zinc-100 rounded-xl">
+                <p className="text-sm font-semibold text-[#14161C]">{a.name}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{a.location}{a.rooms ? ` · ${a.rooms} rooms` : ''}{a.checkIn ? ` · Check-in ${a.checkIn}` : ''}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Vision Board Tab ─────────────────────────────────────────────────────────
+
+function VisionTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const { data: images = [], isLoading } = useQuery({
+    queryKey: ['vision', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/media`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; url: string; caption?: string; linkedToType?: string; eventId?: string }[]
+      return all.filter(m => m.linkedToType === 'moodboard' && m.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const uploadRes = await fetch('/api/storage/upload', { method: 'POST', body: fd })
+      if (!uploadRes.ok) throw new Error()
+      const { url } = await uploadRes.json() as { url: string }
+      await fetch(`/api/weddings/${weddingId}/media`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, linkedToType: 'moodboard', eventId }),
+      })
+      qc.invalidateQueries({ queryKey: ['vision', weddingId, eventId] })
+      toast('Image added to vision board', 'success')
+    } catch {
+      toast('Upload failed', 'error')
+    } finally {
+      setUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-zinc-500">{images.length} image{images.length !== 1 ? 's' : ''}</p>
+        <Button size="sm" onClick={() => fileRef.current?.click()} disabled={uploading}>
+          <Upload size={13} /> {uploading ? 'Uploading...' : 'Upload'}
+        </Button>
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+      </div>
+      {images.length === 0 ? (
+        <EmptyState icon={<ImageIcon size={32} className="text-zinc-200" />} title="No images yet" description="Upload inspiration images for this event" />
+      ) : (
+        <div className="columns-2 sm:columns-3 gap-3 space-y-3">
+          {images.map(img => (
+            <div key={img.id} className="break-inside-avoid rounded-xl overflow-hidden border border-zinc-100">
+              <img src={img.url} alt={img.caption ?? 'Vision board image'} className="w-full object-cover" />
+              {img.caption && <p className="text-xs text-zinc-400 px-2 py-1">{img.caption}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Gifts Tab ────────────────────────────────────────────────────────────────
+
+function GiftsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const [subTab, setSubTab] = useState<'registry' | 'received'>('registry')
+
+  const { data: registry = [], isLoading: loadingReg } = useQuery({
+    queryKey: ['gifts-registry', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/gifts/registry`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; name: string; price?: number; status: string; eventId?: string }[]
+      return all.filter(g => g.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  const { data: received = [], isLoading: loadingRec } = useQuery({
+    queryKey: ['gifts-received', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/gifts/received`)
+      if (!res.ok) throw new Error()
+      const all = await res.json() as { id: string; description: string; giverName?: string; value?: number; eventId?: string }[]
+      return all.filter(g => g.eventId === eventId)
+    },
+    staleTime: 30_000,
+  })
+
+  const isLoading = loadingReg || loadingRec
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        {(['registry', 'received'] as const).map(t => (
+          <button key={t} onClick={() => setSubTab(t)}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${subTab === t ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+            {t === 'registry' ? 'Registry' : 'Received'}
+          </button>
+        ))}
+      </div>
+
+      {isLoading ? <div className="flex justify-center py-12"><Spinner /></div> : subTab === 'registry' ? (
+        registry.length === 0 ? (
+          <EmptyState icon={<Gift size={32} className="text-zinc-200" />} title="No registry items" description="Gift registry items for this event will appear here" />
+        ) : (
+          <div className="space-y-2">
+            {registry.map(g => (
+              <div key={g.id} className="flex items-center gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{g.name}</p>
+                  {g.price != null && <p className="text-xs text-zinc-400">{fmt(g.price)}</p>}
+                </div>
+                <Badge variant={g.status === 'PURCHASED' ? 'confirmed' : 'pending'}>{g.status}</Badge>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        received.length === 0 ? (
+          <EmptyState icon={<Gift size={32} className="text-zinc-200" />} title="No gifts received" description="Gifts received at this event will appear here" />
+        ) : (
+          <div className="space-y-2">
+            {received.map(g => (
+              <div key={g.id} className="flex items-center gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{g.description}</p>
+                  {g.giverName && <p className="text-xs text-zinc-400">From {g.giverName}</p>}
+                </div>
+                {g.value != null && <p className="text-sm font-bold text-[#14161C]">{fmt(g.value)}</p>}
+              </div>
+            ))}
+          </div>
+        )
+      )}
+    </div>
+  )
+}
+
+// ─── Vendors Tab ──────────────────────────────────────────────────────────────
+
+function VendorsTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['vendors-event', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/vendors`)
+      if (!res.ok) throw new Error()
+      return res.json() as Promise<{ id: string; name: string; category: string; phone?: string; status: string; assignedEventIds?: string[] }[]>
+    },
+    staleTime: 30_000,
+  })
+
+  if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
+  if (data.length === 0) return <EmptyState icon={<ShoppingBag size={32} className="text-zinc-200" />} title="No vendors" description="Vendors for this wedding will appear here" />
+
+  const assigned = data.filter(v => v.assignedEventIds?.includes(eventId))
+  const unassigned = data.filter(v => !v.assignedEventIds?.includes(eventId))
+
+  return (
+    <div className="space-y-4">
+      {assigned.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Assigned to this event</p>
+          <div className="space-y-2">
+            {assigned.map(v => (
+              <div key={v.id} className="flex items-center gap-3 py-3 px-4 border border-violet-100 bg-violet-50/40 rounded-xl">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{v.name}</p>
+                  <p className="text-xs text-zinc-400">{v.category}{v.phone ? ` · ${v.phone}` : ''}</p>
+                </div>
+                <Badge variant={v.status === 'CONFIRMED' ? 'confirmed' : v.status === 'CANCELLED' ? 'declined' : 'pending'}>{v.status}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {unassigned.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Other vendors</p>
+          <div className="space-y-2">
+            {unassigned.map(v => (
+              <div key={v.id} className="flex items-center gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{v.name}</p>
+                  <p className="text-xs text-zinc-400">{v.category}{v.phone ? ` · ${v.phone}` : ''}</p>
+                </div>
+                <Badge variant={v.status === 'CONFIRMED' ? 'confirmed' : v.status === 'CANCELLED' ? 'declined' : 'pending'}>{v.status}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const TYPE_COLOR: Record<string, string> = {
   WEDDING: 'bg-violet-100 text-violet-700', RURACIO: 'bg-amber-100 text-amber-700',
   RECEPTION: 'bg-sky-100 text-sky-700', ENGAGEMENT: 'bg-pink-100 text-pink-700',
@@ -663,20 +1110,27 @@ const TYPE_COLOR: Record<string, string> = {
   CIVIL: 'bg-zinc-100 text-zinc-600', AFTER_PARTY: 'bg-purple-100 text-purple-700',
 }
 
-export function EventDetailClient({ weddingId, event, tasks, budgetLines, guestAttendances, programItems, budgetSummary }: Readonly<Props>) {
+export function EventDetailClient({ weddingId, event, tasks, guestAttendances, programItems }: Readonly<Props>) {
   const [tab, setTab] = useState<Tab>('tasks')
 
   const tabs: { key: Tab; label: string; icon: React.ElementType; count?: number }[] = [
     { key: 'tasks', label: 'Tasks', icon: CheckSquare, count: tasks.length },
-    { key: 'budget', label: 'Budget', icon: DollarSign, count: budgetLines.length },
+    { key: 'budget', label: 'Budget', icon: DollarSign },
     { key: 'guests', label: 'Guests', icon: Users, count: guestAttendances.length },
-    { key: 'program', label: 'Program', icon: List, count: programItems.length },
+    { key: 'appointments', label: 'Appointments', icon: Sparkles },
+    { key: 'payments', label: 'Payments', icon: CreditCard },
+    { key: 'contributions', label: 'Contributions', icon: Users },
+    { key: 'logistics', label: 'Logistics', icon: Truck },
+    { key: 'vision', label: 'Vision', icon: ImageIcon },
+    { key: 'gifts', label: 'Gifts', icon: Gift },
+    { key: 'vendors', label: 'Vendors', icon: ShoppingBag },
+    { key: 'schedule', label: 'Schedule', icon: Zap },
   ]
 
   return (
     <div className="min-h-full">
       <div className="px-8 pt-8 pb-6 border-b border-zinc-100 bg-white">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <a href={`/dashboard/${weddingId}/events`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-600 transition-colors mb-4">
             <ArrowLeft size={12} /> All events
           </a>
@@ -706,10 +1160,10 @@ export function EventDetailClient({ weddingId, event, tasks, budgetLines, guestA
 
       <div className="border-b border-zinc-100 bg-white">
         <div className="max-w-3xl mx-auto px-8">
-          <div className="flex gap-0">
+          <div className="flex gap-0 overflow-x-auto scrollbar-none">
             {tabs.map(({ key, label, icon: Icon, count }) => (
               <button key={key} onClick={() => setTab(key)}
-                className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
                   tab === key ? 'border-violet-500 text-violet-700' : 'border-transparent text-zinc-500 hover:text-zinc-700'
                 }`}>
                 <Icon size={14} />
@@ -725,9 +1179,16 @@ export function EventDetailClient({ weddingId, event, tasks, budgetLines, guestA
 
       <div className="max-w-3xl mx-auto px-8 py-8">
         {tab === 'tasks' && <TasksTab weddingId={weddingId} eventId={event.id} initialTasks={tasks} />}
-        {tab === 'budget' && <BudgetTab weddingId={weddingId} eventId={event.id} initialLines={budgetLines} summary={budgetSummary} />}
+        {tab === 'budget' && <BudgetTab weddingId={weddingId} eventId={event.id} />}
         {tab === 'guests' && <GuestsTab attendances={guestAttendances} />}
-        {tab === 'program' && <ProgramTab weddingId={weddingId} eventId={event.id} initialItems={programItems} />}
+        {tab === 'appointments' && <AppointmentsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'payments' && <PaymentsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'contributions' && <ContributionsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'logistics' && <LogisticsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'vision' && <VisionTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'gifts' && <GiftsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'vendors' && <VendorsTab weddingId={weddingId} eventId={event.id} />}
+        {tab === 'schedule' && <ProgramTab weddingId={weddingId} eventId={event.id} initialItems={programItems} />}
       </div>
     </div>
   )

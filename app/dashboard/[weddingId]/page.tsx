@@ -15,7 +15,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
   const wid = params.weddingId
   const thirtyDaysOut = new Date(new Date().getTime() + 30 * 86400000)
 
-  const [wedding, guestCounts, vendorCounts, budgetLines, activeRisks, upcomingEvents, upcomingTasks, moodImages, phaseItems] = await Promise.all([
+  const [wedding, guestCounts, vendorCounts, budgetLines, activeRisks, upcomingEvents, upcomingTasks, moodImages] = await Promise.all([
     db.wedding.findUnique({ where: { id: wid } }),
     db.guest.groupBy({ by: ['rsvpStatus'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.vendor.groupBy({ by: ['status'], where: { weddingId: wid, deletedAt: null }, _count: true }),
@@ -36,10 +36,6 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
       orderBy: { createdAt: 'desc' }, take: 4,
       select: { id: true, path: true, bucket: true, title: true },
     }),
-    db.checklistItem.findMany({
-      where: { weddingId: wid, deletedAt: null, phase: { not: null } },
-      select: { phase: true, isChecked: true },
-    }),
   ])
 
   if (!wedding) redirect('/dashboard')
@@ -54,14 +50,6 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
   const totalCommitted = budgetLines.reduce((s, l) => s + Number(l.committed) + Number(l.actual), 0)
   const daysToWedding = differenceInDays(wedding.date, new Date())
 
-  const phaseMap: Record<string, { total: number; done: number }> = {}
-  for (const item of phaseItems) {
-    if (!item.phase) continue
-    if (!phaseMap[item.phase]) phaseMap[item.phase] = { total: 0, done: 0 }
-    phaseMap[item.phase].total++
-    if (item.isChecked) phaseMap[item.phase].done++
-  }
-  const phaseProgress = Object.entries(phaseMap).map(([phase, v]) => ({ phase, ...v }))
   const now = new Date()
 
   return (
@@ -89,7 +77,6 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
           category: t.category ?? undefined, isOverdue: t.dueDate! < now,
         }))}
         moodImages={moodImages.map(m => ({ id: m.id, path: m.path, bucket: m.bucket, title: m.title ?? undefined }))}
-        phaseProgress={phaseProgress}
       />
     </Suspense>
   )

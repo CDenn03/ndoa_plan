@@ -27,7 +27,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     id: l.id, serverId: l.id, weddingId: l.weddingId,
     eventId: l.eventId ?? undefined,
     category: l.category, description: l.description,
-    phase: l.phase ?? undefined,
     estimated: Number(l.estimated), actual: Number(l.actual), committed: Number(l.committed),
     vendorId: l.vendorId ?? undefined, vendorName: l.vendorName ?? undefined,
     notes: l.notes ?? undefined,
@@ -46,13 +45,13 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   const member = await db.weddingMember.findFirst({ where: { weddingId: params.id, userId } })
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { category, description, eventId, phase, estimated, actual, committed, vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = await req.json()
+  const { category, description, eventId, estimated, actual, committed, vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = await req.json()
   if (!category || !description) return NextResponse.json({ error: 'category and description required' }, { status: 400 })
 
   const line = await db.budgetLine.create({
     data: {
       weddingId: params.id, eventId: eventId || null,
-      category, description, phase: phase || null,
+      category, description,
       estimated: estimated ?? 0, actual: actual ?? 0, committed: committed ?? 0,
       vendorId: vendorId || null, vendorName: vendorName || null,
       notes: notes || null,

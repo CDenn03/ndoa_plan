@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+prisma/generated
+lib/generated
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+README.md
+CHANGES.md
+.kiro
+.vscode
+.agents

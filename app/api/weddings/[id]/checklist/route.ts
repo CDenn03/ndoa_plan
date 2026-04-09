@@ -28,7 +28,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     eventId: i.eventId ?? undefined,
     title: i.title, description: i.description ?? undefined,
     category: i.category ?? undefined,
-    phase: i.phase ?? undefined,
     dueDate: i.dueDate?.getTime() ?? undefined,
     assignedTo: i.assignedTo ?? undefined,
     assignedToName: i.assignedToName ?? undefined,
@@ -49,14 +48,14 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { title, description, category, eventId, phase, dueDate, assignedTo, assignedToName, priority, order, isFinalCheck, isChecked } = body
+  const { title, description, category, eventId, dueDate, assignedTo, assignedToName, priority, order, isFinalCheck, isChecked } = body
   if (!title?.trim()) return NextResponse.json({ error: 'title required' }, { status: 400 })
 
   const item = await db.checklistItem.create({
     data: {
       weddingId: params.id, eventId: eventId || null,
       title: title.trim(), description: description || null,
-      category: category || null, phase: phase || null,
+      category: category || null,
       dueDate: dueDate ? new Date(dueDate) : null,
       assignedTo: assignedTo || null, assignedToName: assignedToName || null,
       priority: priority ?? 2, order: order ?? 0,
@@ -68,7 +67,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   return NextResponse.json({
     id: item.id, weddingId: item.weddingId, eventId: item.eventId ?? undefined,
     title: item.title, description: item.description ?? undefined,
-    category: item.category ?? undefined, phase: item.phase ?? undefined,
+    category: item.category ?? undefined,
     dueDate: item.dueDate?.toISOString() ?? undefined,
     assignedToName: item.assignedToName ?? undefined,
     isChecked: item.isChecked, priority: item.priority, order: item.order,

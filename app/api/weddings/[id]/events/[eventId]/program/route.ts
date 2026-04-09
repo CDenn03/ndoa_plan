@@ -91,7 +91,7 @@ export async function POST(req: NextRequest, props: Params) {
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { title, description, startTime, endTime, duration, order, assignedTo, vendorId } = body
+  const { title, description, startTime, endTime, duration, order, assignedTo, vendorId, date } = body
   if (!title?.trim()) return NextResponse.json({ error: 'title required' }, { status: 400 })
 
   const resolved = resolveTimings(
@@ -105,6 +105,7 @@ export async function POST(req: NextRequest, props: Params) {
       eventId,
       title: title.trim(),
       description: description || null,
+      date: date ? new Date(date) : null,
       startTime: resolved.startTime,
       endTime: resolved.endTime,
       duration: resolved.duration,

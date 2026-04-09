@@ -208,6 +208,11 @@ export type GuestAccommodation = $Result.DefaultSelection<Prisma.$GuestAccommoda
  * 
  */
 export type HoneymoonDay = $Result.DefaultSelection<Prisma.$HoneymoonDayPayload>
+/**
+ * Model VisionBoardCategory
+ * 
+ */
+export type VisionBoardCategory = $Result.DefaultSelection<Prisma.$VisionBoardCategoryPayload>
 
 /**
  * Enums
@@ -338,18 +343,6 @@ export const ContribStatus: {
 export type ContribStatus = (typeof ContribStatus)[keyof typeof ContribStatus]
 
 
-export const PlanningPhase: {
-  BUDGETING: 'BUDGETING',
-  PLANNING: 'PLANNING',
-  PRE_WEDDING: 'PRE_WEDDING',
-  PROCUREMENT: 'PROCUREMENT',
-  DAY_OF: 'DAY_OF',
-  POST_WEDDING: 'POST_WEDDING'
-};
-
-export type PlanningPhase = (typeof PlanningPhase)[keyof typeof PlanningPhase]
-
-
 export const RiskSeverity: {
   CRITICAL: 'CRITICAL',
   HIGH: 'HIGH',
@@ -440,10 +433,6 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type ContribStatus = $Enums.ContribStatus
 
 export const ContribStatus: typeof $Enums.ContribStatus
-
-export type PlanningPhase = $Enums.PlanningPhase
-
-export const PlanningPhase: typeof $Enums.PlanningPhase
 
 export type RiskSeverity = $Enums.RiskSeverity
 
@@ -975,6 +964,16 @@ export class PrismaClient<
     * ```
     */
   get honeymoonDay(): Prisma.HoneymoonDayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.visionBoardCategory`: Exposes CRUD operations for the **VisionBoardCategory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VisionBoardCategories
+    * const visionBoardCategories = await prisma.visionBoardCategory.findMany()
+    * ```
+    */
+  get visionBoardCategory(): Prisma.VisionBoardCategoryDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1447,7 +1446,8 @@ export namespace Prisma {
     GuestTransport: 'GuestTransport',
     Accommodation: 'Accommodation',
     GuestAccommodation: 'GuestAccommodation',
-    HoneymoonDay: 'HoneymoonDay'
+    HoneymoonDay: 'HoneymoonDay',
+    VisionBoardCategory: 'VisionBoardCategory'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1463,7 +1463,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "wedding" | "weddingMember" | "weddingEvent" | "eventProgramItem" | "eventDependency" | "guestEventAttendance" | "guest" | "household" | "vendor" | "vendorEventAssignment" | "vendorNote" | "paymentSchedule" | "payment" | "committeeContribution" | "checklistItem" | "activityGroup" | "budgetLine" | "riskAlert" | "mediaItem" | "processedOperation" | "auditLog" | "appointment" | "reminder" | "incident" | "template" | "templateApplication" | "dowryItem" | "attireItem" | "giftRegistryItem" | "giftReceived" | "transportRoute" | "guestTransport" | "accommodation" | "guestAccommodation" | "honeymoonDay"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "wedding" | "weddingMember" | "weddingEvent" | "eventProgramItem" | "eventDependency" | "guestEventAttendance" | "guest" | "household" | "vendor" | "vendorEventAssignment" | "vendorNote" | "paymentSchedule" | "payment" | "committeeContribution" | "checklistItem" | "activityGroup" | "budgetLine" | "riskAlert" | "mediaItem" | "processedOperation" | "auditLog" | "appointment" | "reminder" | "incident" | "template" | "templateApplication" | "dowryItem" | "attireItem" | "giftRegistryItem" | "giftReceived" | "transportRoute" | "guestTransport" | "accommodation" | "guestAccommodation" | "honeymoonDay" | "visionBoardCategory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4353,6 +4353,80 @@ export namespace Prisma {
           }
         }
       }
+      VisionBoardCategory: {
+        payload: Prisma.$VisionBoardCategoryPayload<ExtArgs>
+        fields: Prisma.VisionBoardCategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VisionBoardCategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VisionBoardCategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.VisionBoardCategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VisionBoardCategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          findMany: {
+            args: Prisma.VisionBoardCategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>[]
+          }
+          create: {
+            args: Prisma.VisionBoardCategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          createMany: {
+            args: Prisma.VisionBoardCategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VisionBoardCategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>[]
+          }
+          delete: {
+            args: Prisma.VisionBoardCategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          update: {
+            args: Prisma.VisionBoardCategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.VisionBoardCategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VisionBoardCategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VisionBoardCategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.VisionBoardCategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VisionBoardCategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.VisionBoardCategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVisionBoardCategory>
+          }
+          groupBy: {
+            args: Prisma.VisionBoardCategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VisionBoardCategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VisionBoardCategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<VisionBoardCategoryCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -4500,6 +4574,7 @@ export namespace Prisma {
     accommodation?: AccommodationOmit
     guestAccommodation?: GuestAccommodationOmit
     honeymoonDay?: HoneymoonDayOmit
+    visionBoardCategory?: VisionBoardCategoryOmit
   }
 
   /* Types for Logging */
@@ -4652,6 +4727,7 @@ export namespace Prisma {
     paymentSchedules: number
     incidents: number
     templateApplications: number
+    visionBoardCategories: number
   }
 
   export type WeddingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4678,6 +4754,7 @@ export namespace Prisma {
     paymentSchedules?: boolean | WeddingCountOutputTypeCountPaymentSchedulesArgs
     incidents?: boolean | WeddingCountOutputTypeCountIncidentsArgs
     templateApplications?: boolean | WeddingCountOutputTypeCountTemplateApplicationsArgs
+    visionBoardCategories?: boolean | WeddingCountOutputTypeCountVisionBoardCategoriesArgs
   }
 
   // Custom InputTypes
@@ -4850,6 +4927,13 @@ export namespace Prisma {
    */
   export type WeddingCountOutputTypeCountTemplateApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TemplateApplicationWhereInput
+  }
+
+  /**
+   * WeddingCountOutputType without action
+   */
+  export type WeddingCountOutputTypeCountVisionBoardCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VisionBoardCategoryWhereInput
   }
 
 
@@ -10147,6 +10231,7 @@ export namespace Prisma {
     paymentSchedules?: boolean | Wedding$paymentSchedulesArgs<ExtArgs>
     incidents?: boolean | Wedding$incidentsArgs<ExtArgs>
     templateApplications?: boolean | Wedding$templateApplicationsArgs<ExtArgs>
+    visionBoardCategories?: boolean | Wedding$visionBoardCategoriesArgs<ExtArgs>
     _count?: boolean | WeddingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wedding"]>
 
@@ -10238,6 +10323,7 @@ export namespace Prisma {
     paymentSchedules?: boolean | Wedding$paymentSchedulesArgs<ExtArgs>
     incidents?: boolean | Wedding$incidentsArgs<ExtArgs>
     templateApplications?: boolean | Wedding$templateApplicationsArgs<ExtArgs>
+    visionBoardCategories?: boolean | Wedding$visionBoardCategoriesArgs<ExtArgs>
     _count?: boolean | WeddingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WeddingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -10269,6 +10355,7 @@ export namespace Prisma {
       paymentSchedules: Prisma.$PaymentSchedulePayload<ExtArgs>[]
       incidents: Prisma.$IncidentPayload<ExtArgs>[]
       templateApplications: Prisma.$TemplateApplicationPayload<ExtArgs>[]
+      visionBoardCategories: Prisma.$VisionBoardCategoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10706,6 +10793,7 @@ export namespace Prisma {
     paymentSchedules<T extends Wedding$paymentSchedulesArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$paymentSchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     incidents<T extends Wedding$incidentsArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$incidentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     templateApplications<T extends Wedding$templateApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$templateApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplateApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    visionBoardCategories<T extends Wedding$visionBoardCategoriesArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$visionBoardCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11695,6 +11783,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TemplateApplicationScalarFieldEnum | TemplateApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * Wedding.visionBoardCategories
+   */
+  export type Wedding$visionBoardCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    where?: VisionBoardCategoryWhereInput
+    orderBy?: VisionBoardCategoryOrderByWithRelationInput | VisionBoardCategoryOrderByWithRelationInput[]
+    cursor?: VisionBoardCategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VisionBoardCategoryScalarFieldEnum | VisionBoardCategoryScalarFieldEnum[]
   }
 
   /**
@@ -14433,6 +14545,7 @@ export namespace Prisma {
     eventId: string | null
     title: string | null
     description: string | null
+    date: Date | null
     startTime: string | null
     endTime: string | null
     duration: number | null
@@ -14448,6 +14561,7 @@ export namespace Prisma {
     eventId: string | null
     title: string | null
     description: string | null
+    date: Date | null
     startTime: string | null
     endTime: string | null
     duration: number | null
@@ -14463,6 +14577,7 @@ export namespace Prisma {
     eventId: number
     title: number
     description: number
+    date: number
     startTime: number
     endTime: number
     duration: number
@@ -14490,6 +14605,7 @@ export namespace Prisma {
     eventId?: true
     title?: true
     description?: true
+    date?: true
     startTime?: true
     endTime?: true
     duration?: true
@@ -14505,6 +14621,7 @@ export namespace Prisma {
     eventId?: true
     title?: true
     description?: true
+    date?: true
     startTime?: true
     endTime?: true
     duration?: true
@@ -14520,6 +14637,7 @@ export namespace Prisma {
     eventId?: true
     title?: true
     description?: true
+    date?: true
     startTime?: true
     endTime?: true
     duration?: true
@@ -14622,6 +14740,7 @@ export namespace Prisma {
     eventId: string
     title: string
     description: string | null
+    date: Date | null
     startTime: string | null
     endTime: string | null
     duration: number | null
@@ -14656,6 +14775,7 @@ export namespace Prisma {
     eventId?: boolean
     title?: boolean
     description?: boolean
+    date?: boolean
     startTime?: boolean
     endTime?: boolean
     duration?: boolean
@@ -14672,6 +14792,7 @@ export namespace Prisma {
     eventId?: boolean
     title?: boolean
     description?: boolean
+    date?: boolean
     startTime?: boolean
     endTime?: boolean
     duration?: boolean
@@ -14688,6 +14809,7 @@ export namespace Prisma {
     eventId?: boolean
     title?: boolean
     description?: boolean
+    date?: boolean
     startTime?: boolean
     endTime?: boolean
     duration?: boolean
@@ -14704,6 +14826,7 @@ export namespace Prisma {
     eventId?: boolean
     title?: boolean
     description?: boolean
+    date?: boolean
     startTime?: boolean
     endTime?: boolean
     duration?: boolean
@@ -14714,7 +14837,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EventProgramItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventId" | "title" | "description" | "startTime" | "endTime" | "duration" | "order" | "assignedTo" | "vendorId" | "createdAt" | "updatedAt", ExtArgs["result"]["eventProgramItem"]>
+  export type EventProgramItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventId" | "title" | "description" | "date" | "startTime" | "endTime" | "duration" | "order" | "assignedTo" | "vendorId" | "createdAt" | "updatedAt", ExtArgs["result"]["eventProgramItem"]>
   export type EventProgramItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     event?: boolean | WeddingEventDefaultArgs<ExtArgs>
   }
@@ -14735,6 +14858,7 @@ export namespace Prisma {
       eventId: string
       title: string
       description: string | null
+      date: Date | null
       startTime: string | null
       endTime: string | null
       duration: number | null
@@ -15171,6 +15295,7 @@ export namespace Prisma {
     readonly eventId: FieldRef<"EventProgramItem", 'String'>
     readonly title: FieldRef<"EventProgramItem", 'String'>
     readonly description: FieldRef<"EventProgramItem", 'String'>
+    readonly date: FieldRef<"EventProgramItem", 'DateTime'>
     readonly startTime: FieldRef<"EventProgramItem", 'String'>
     readonly endTime: FieldRef<"EventProgramItem", 'String'>
     readonly duration: FieldRef<"EventProgramItem", 'Int'>
@@ -27930,7 +28055,6 @@ export namespace Prisma {
     title: string | null
     description: string | null
     category: string | null
-    phase: $Enums.PlanningPhase | null
     activityGroupId: string | null
     dueDate: Date | null
     assignedTo: string | null
@@ -27958,7 +28082,6 @@ export namespace Prisma {
     title: string | null
     description: string | null
     category: string | null
-    phase: $Enums.PlanningPhase | null
     activityGroupId: string | null
     dueDate: Date | null
     assignedTo: string | null
@@ -27986,7 +28109,6 @@ export namespace Prisma {
     title: number
     description: number
     category: number
-    phase: number
     activityGroupId: number
     dueDate: number
     assignedTo: number
@@ -28028,7 +28150,6 @@ export namespace Prisma {
     title?: true
     description?: true
     category?: true
-    phase?: true
     activityGroupId?: true
     dueDate?: true
     assignedTo?: true
@@ -28056,7 +28177,6 @@ export namespace Prisma {
     title?: true
     description?: true
     category?: true
-    phase?: true
     activityGroupId?: true
     dueDate?: true
     assignedTo?: true
@@ -28084,7 +28204,6 @@ export namespace Prisma {
     title?: true
     description?: true
     category?: true
-    phase?: true
     activityGroupId?: true
     dueDate?: true
     assignedTo?: true
@@ -28199,7 +28318,6 @@ export namespace Prisma {
     title: string
     description: string | null
     category: string | null
-    phase: $Enums.PlanningPhase | null
     activityGroupId: string | null
     dueDate: Date | null
     assignedTo: string | null
@@ -28246,7 +28364,6 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     category?: boolean
-    phase?: boolean
     activityGroupId?: boolean
     dueDate?: boolean
     assignedTo?: boolean
@@ -28279,7 +28396,6 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     category?: boolean
-    phase?: boolean
     activityGroupId?: boolean
     dueDate?: boolean
     assignedTo?: boolean
@@ -28310,7 +28426,6 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     category?: boolean
-    phase?: boolean
     activityGroupId?: boolean
     dueDate?: boolean
     assignedTo?: boolean
@@ -28341,7 +28456,6 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     category?: boolean
-    phase?: boolean
     activityGroupId?: boolean
     dueDate?: boolean
     assignedTo?: boolean
@@ -28362,7 +28476,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ChecklistItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "title" | "description" | "category" | "phase" | "activityGroupId" | "dueDate" | "assignedTo" | "assignedToName" | "dependsOnId" | "isChecked" | "checkedAt" | "checkedBy" | "priority" | "order" | "isFinalCheck" | "isPrivate" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["checklistItem"]>
+  export type ChecklistItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "title" | "description" | "category" | "activityGroupId" | "dueDate" | "assignedTo" | "assignedToName" | "dependsOnId" | "isChecked" | "checkedAt" | "checkedBy" | "priority" | "order" | "isFinalCheck" | "isPrivate" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["checklistItem"]>
   export type ChecklistItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | ChecklistItem$eventArgs<ExtArgs>
@@ -28396,7 +28510,6 @@ export namespace Prisma {
       title: string
       description: string | null
       category: string | null
-      phase: $Enums.PlanningPhase | null
       activityGroupId: string | null
       dueDate: Date | null
       assignedTo: string | null
@@ -28848,7 +28961,6 @@ export namespace Prisma {
     readonly title: FieldRef<"ChecklistItem", 'String'>
     readonly description: FieldRef<"ChecklistItem", 'String'>
     readonly category: FieldRef<"ChecklistItem", 'String'>
-    readonly phase: FieldRef<"ChecklistItem", 'PlanningPhase'>
     readonly activityGroupId: FieldRef<"ChecklistItem", 'String'>
     readonly dueDate: FieldRef<"ChecklistItem", 'DateTime'>
     readonly assignedTo: FieldRef<"ChecklistItem", 'String'>
@@ -29372,7 +29484,6 @@ export namespace Prisma {
     id: string | null
     weddingId: string | null
     name: string | null
-    phase: $Enums.PlanningPhase | null
     color: string | null
     order: number | null
   }
@@ -29381,7 +29492,6 @@ export namespace Prisma {
     id: string | null
     weddingId: string | null
     name: string | null
-    phase: $Enums.PlanningPhase | null
     color: string | null
     order: number | null
   }
@@ -29390,7 +29500,6 @@ export namespace Prisma {
     id: number
     weddingId: number
     name: number
-    phase: number
     color: number
     order: number
     _all: number
@@ -29409,7 +29518,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     name?: true
-    phase?: true
     color?: true
     order?: true
   }
@@ -29418,7 +29526,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     name?: true
-    phase?: true
     color?: true
     order?: true
   }
@@ -29427,7 +29534,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     name?: true
-    phase?: true
     color?: true
     order?: true
     _all?: true
@@ -29523,7 +29629,6 @@ export namespace Prisma {
     id: string
     weddingId: string
     name: string
-    phase: $Enums.PlanningPhase | null
     color: string
     order: number
     _count: ActivityGroupCountAggregateOutputType | null
@@ -29551,7 +29656,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     name?: boolean
-    phase?: boolean
     color?: boolean
     order?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -29563,7 +29667,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     name?: boolean
-    phase?: boolean
     color?: boolean
     order?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -29573,7 +29676,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     name?: boolean
-    phase?: boolean
     color?: boolean
     order?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -29583,12 +29685,11 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     name?: boolean
-    phase?: boolean
     color?: boolean
     order?: boolean
   }
 
-  export type ActivityGroupOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "name" | "phase" | "color" | "order", ExtArgs["result"]["activityGroup"]>
+  export type ActivityGroupOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "name" | "color" | "order", ExtArgs["result"]["activityGroup"]>
   export type ActivityGroupInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     checklistItems?: boolean | ActivityGroup$checklistItemsArgs<ExtArgs>
@@ -29611,7 +29712,6 @@ export namespace Prisma {
       id: string
       weddingId: string
       name: string
-      phase: $Enums.PlanningPhase | null
       color: string
       order: number
     }, ExtArgs["result"]["activityGroup"]>
@@ -30042,7 +30142,6 @@ export namespace Prisma {
     readonly id: FieldRef<"ActivityGroup", 'String'>
     readonly weddingId: FieldRef<"ActivityGroup", 'String'>
     readonly name: FieldRef<"ActivityGroup", 'String'>
-    readonly phase: FieldRef<"ActivityGroup", 'PlanningPhase'>
     readonly color: FieldRef<"ActivityGroup", 'String'>
     readonly order: FieldRef<"ActivityGroup", 'Int'>
   }
@@ -30518,7 +30617,6 @@ export namespace Prisma {
     id: string | null
     weddingId: string | null
     eventId: string | null
-    phase: $Enums.PlanningPhase | null
     category: string | null
     description: string | null
     estimated: Decimal | null
@@ -30542,7 +30640,6 @@ export namespace Prisma {
     id: string | null
     weddingId: string | null
     eventId: string | null
-    phase: $Enums.PlanningPhase | null
     category: string | null
     description: string | null
     estimated: Decimal | null
@@ -30566,7 +30663,6 @@ export namespace Prisma {
     id: number
     weddingId: number
     eventId: number
-    phase: number
     category: number
     description: number
     estimated: number
@@ -30606,7 +30702,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     eventId?: true
-    phase?: true
     category?: true
     description?: true
     estimated?: true
@@ -30630,7 +30725,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     eventId?: true
-    phase?: true
     category?: true
     description?: true
     estimated?: true
@@ -30654,7 +30748,6 @@ export namespace Prisma {
     id?: true
     weddingId?: true
     eventId?: true
-    phase?: true
     category?: true
     description?: true
     estimated?: true
@@ -30765,7 +30858,6 @@ export namespace Prisma {
     id: string
     weddingId: string
     eventId: string | null
-    phase: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated: Decimal
@@ -30808,7 +30900,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     eventId?: boolean
-    phase?: boolean
     category?: boolean
     description?: boolean
     estimated?: boolean
@@ -30835,7 +30926,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     eventId?: boolean
-    phase?: boolean
     category?: boolean
     description?: boolean
     estimated?: boolean
@@ -30862,7 +30952,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     eventId?: boolean
-    phase?: boolean
     category?: boolean
     description?: boolean
     estimated?: boolean
@@ -30889,7 +30978,6 @@ export namespace Prisma {
     id?: boolean
     weddingId?: boolean
     eventId?: boolean
-    phase?: boolean
     category?: boolean
     description?: boolean
     estimated?: boolean
@@ -30909,7 +30997,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BudgetLineOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "phase" | "category" | "description" | "estimated" | "actual" | "committed" | "vendorId" | "vendorName" | "notes" | "paymentDate" | "paymentPlan" | "paymentType" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["budgetLine"]>
+  export type BudgetLineOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "category" | "description" | "estimated" | "actual" | "committed" | "vendorId" | "vendorName" | "notes" | "paymentDate" | "paymentPlan" | "paymentType" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["budgetLine"]>
   export type BudgetLineInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | BudgetLine$eventArgs<ExtArgs>
@@ -30937,7 +31025,6 @@ export namespace Prisma {
       id: string
       weddingId: string
       eventId: string | null
-      phase: $Enums.PlanningPhase | null
       category: string
       description: string
       estimated: Prisma.Decimal
@@ -31384,7 +31471,6 @@ export namespace Prisma {
     readonly id: FieldRef<"BudgetLine", 'String'>
     readonly weddingId: FieldRef<"BudgetLine", 'String'>
     readonly eventId: FieldRef<"BudgetLine", 'String'>
-    readonly phase: FieldRef<"BudgetLine", 'PlanningPhase'>
     readonly category: FieldRef<"BudgetLine", 'String'>
     readonly description: FieldRef<"BudgetLine", 'String'>
     readonly estimated: FieldRef<"BudgetLine", 'Decimal'>
@@ -40012,7 +40098,6 @@ export namespace Prisma {
     culturalType: $Enums.CulturalType | null
     guestSizeMin: number | null
     guestSizeMax: number | null
-    phase: $Enums.PlanningPhase | null
     isSystem: boolean | null
     createdAt: Date | null
   }
@@ -40024,7 +40109,6 @@ export namespace Prisma {
     culturalType: $Enums.CulturalType | null
     guestSizeMin: number | null
     guestSizeMax: number | null
-    phase: $Enums.PlanningPhase | null
     isSystem: boolean | null
     createdAt: Date | null
   }
@@ -40036,7 +40120,6 @@ export namespace Prisma {
     culturalType: number
     guestSizeMin: number
     guestSizeMax: number
-    phase: number
     data: number
     isSystem: number
     createdAt: number
@@ -40061,7 +40144,6 @@ export namespace Prisma {
     culturalType?: true
     guestSizeMin?: true
     guestSizeMax?: true
-    phase?: true
     isSystem?: true
     createdAt?: true
   }
@@ -40073,7 +40155,6 @@ export namespace Prisma {
     culturalType?: true
     guestSizeMin?: true
     guestSizeMax?: true
-    phase?: true
     isSystem?: true
     createdAt?: true
   }
@@ -40085,7 +40166,6 @@ export namespace Prisma {
     culturalType?: true
     guestSizeMin?: true
     guestSizeMax?: true
-    phase?: true
     data?: true
     isSystem?: true
     createdAt?: true
@@ -40185,7 +40265,6 @@ export namespace Prisma {
     culturalType: $Enums.CulturalType | null
     guestSizeMin: number | null
     guestSizeMax: number | null
-    phase: $Enums.PlanningPhase | null
     data: JsonValue
     isSystem: boolean
     createdAt: Date
@@ -40217,7 +40296,6 @@ export namespace Prisma {
     culturalType?: boolean
     guestSizeMin?: boolean
     guestSizeMax?: boolean
-    phase?: boolean
     data?: boolean
     isSystem?: boolean
     createdAt?: boolean
@@ -40232,7 +40310,6 @@ export namespace Prisma {
     culturalType?: boolean
     guestSizeMin?: boolean
     guestSizeMax?: boolean
-    phase?: boolean
     data?: boolean
     isSystem?: boolean
     createdAt?: boolean
@@ -40245,7 +40322,6 @@ export namespace Prisma {
     culturalType?: boolean
     guestSizeMin?: boolean
     guestSizeMax?: boolean
-    phase?: boolean
     data?: boolean
     isSystem?: boolean
     createdAt?: boolean
@@ -40258,13 +40334,12 @@ export namespace Prisma {
     culturalType?: boolean
     guestSizeMin?: boolean
     guestSizeMax?: boolean
-    phase?: boolean
     data?: boolean
     isSystem?: boolean
     createdAt?: boolean
   }
 
-  export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "name" | "culturalType" | "guestSizeMin" | "guestSizeMax" | "phase" | "data" | "isSystem" | "createdAt", ExtArgs["result"]["template"]>
+  export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "name" | "culturalType" | "guestSizeMin" | "guestSizeMax" | "data" | "isSystem" | "createdAt", ExtArgs["result"]["template"]>
   export type TemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | Template$applicationsArgs<ExtArgs>
     _count?: boolean | TemplateCountOutputTypeDefaultArgs<ExtArgs>
@@ -40284,7 +40359,6 @@ export namespace Prisma {
       culturalType: $Enums.CulturalType | null
       guestSizeMin: number | null
       guestSizeMax: number | null
-      phase: $Enums.PlanningPhase | null
       data: Prisma.JsonValue
       isSystem: boolean
       createdAt: Date
@@ -40718,7 +40792,6 @@ export namespace Prisma {
     readonly culturalType: FieldRef<"Template", 'CulturalType'>
     readonly guestSizeMin: FieldRef<"Template", 'Int'>
     readonly guestSizeMax: FieldRef<"Template", 'Int'>
-    readonly phase: FieldRef<"Template", 'PlanningPhase'>
     readonly data: FieldRef<"Template", 'Json'>
     readonly isSystem: FieldRef<"Template", 'Boolean'>
     readonly createdAt: FieldRef<"Template", 'DateTime'>
@@ -52676,6 +52749,1129 @@ export namespace Prisma {
 
 
   /**
+   * Model VisionBoardCategory
+   */
+
+  export type AggregateVisionBoardCategory = {
+    _count: VisionBoardCategoryCountAggregateOutputType | null
+    _avg: VisionBoardCategoryAvgAggregateOutputType | null
+    _sum: VisionBoardCategorySumAggregateOutputType | null
+    _min: VisionBoardCategoryMinAggregateOutputType | null
+    _max: VisionBoardCategoryMaxAggregateOutputType | null
+  }
+
+  export type VisionBoardCategoryAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type VisionBoardCategorySumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type VisionBoardCategoryMinAggregateOutputType = {
+    id: string | null
+    weddingId: string | null
+    name: string | null
+    color: string | null
+    order: number | null
+    isDefault: boolean | null
+    createdAt: Date | null
+  }
+
+  export type VisionBoardCategoryMaxAggregateOutputType = {
+    id: string | null
+    weddingId: string | null
+    name: string | null
+    color: string | null
+    order: number | null
+    isDefault: boolean | null
+    createdAt: Date | null
+  }
+
+  export type VisionBoardCategoryCountAggregateOutputType = {
+    id: number
+    weddingId: number
+    name: number
+    color: number
+    order: number
+    isDefault: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type VisionBoardCategoryAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type VisionBoardCategorySumAggregateInputType = {
+    order?: true
+  }
+
+  export type VisionBoardCategoryMinAggregateInputType = {
+    id?: true
+    weddingId?: true
+    name?: true
+    color?: true
+    order?: true
+    isDefault?: true
+    createdAt?: true
+  }
+
+  export type VisionBoardCategoryMaxAggregateInputType = {
+    id?: true
+    weddingId?: true
+    name?: true
+    color?: true
+    order?: true
+    isDefault?: true
+    createdAt?: true
+  }
+
+  export type VisionBoardCategoryCountAggregateInputType = {
+    id?: true
+    weddingId?: true
+    name?: true
+    color?: true
+    order?: true
+    isDefault?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type VisionBoardCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VisionBoardCategory to aggregate.
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VisionBoardCategories to fetch.
+     */
+    orderBy?: VisionBoardCategoryOrderByWithRelationInput | VisionBoardCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VisionBoardCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VisionBoardCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VisionBoardCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VisionBoardCategories
+    **/
+    _count?: true | VisionBoardCategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VisionBoardCategoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VisionBoardCategorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VisionBoardCategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VisionBoardCategoryMaxAggregateInputType
+  }
+
+  export type GetVisionBoardCategoryAggregateType<T extends VisionBoardCategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateVisionBoardCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVisionBoardCategory[P]>
+      : GetScalarType<T[P], AggregateVisionBoardCategory[P]>
+  }
+
+
+
+
+  export type VisionBoardCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VisionBoardCategoryWhereInput
+    orderBy?: VisionBoardCategoryOrderByWithAggregationInput | VisionBoardCategoryOrderByWithAggregationInput[]
+    by: VisionBoardCategoryScalarFieldEnum[] | VisionBoardCategoryScalarFieldEnum
+    having?: VisionBoardCategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VisionBoardCategoryCountAggregateInputType | true
+    _avg?: VisionBoardCategoryAvgAggregateInputType
+    _sum?: VisionBoardCategorySumAggregateInputType
+    _min?: VisionBoardCategoryMinAggregateInputType
+    _max?: VisionBoardCategoryMaxAggregateInputType
+  }
+
+  export type VisionBoardCategoryGroupByOutputType = {
+    id: string
+    weddingId: string
+    name: string
+    color: string
+    order: number
+    isDefault: boolean
+    createdAt: Date
+    _count: VisionBoardCategoryCountAggregateOutputType | null
+    _avg: VisionBoardCategoryAvgAggregateOutputType | null
+    _sum: VisionBoardCategorySumAggregateOutputType | null
+    _min: VisionBoardCategoryMinAggregateOutputType | null
+    _max: VisionBoardCategoryMaxAggregateOutputType | null
+  }
+
+  type GetVisionBoardCategoryGroupByPayload<T extends VisionBoardCategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VisionBoardCategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VisionBoardCategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VisionBoardCategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], VisionBoardCategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VisionBoardCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weddingId?: boolean
+    name?: boolean
+    color?: boolean
+    order?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["visionBoardCategory"]>
+
+  export type VisionBoardCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weddingId?: boolean
+    name?: boolean
+    color?: boolean
+    order?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["visionBoardCategory"]>
+
+  export type VisionBoardCategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weddingId?: boolean
+    name?: boolean
+    color?: boolean
+    order?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["visionBoardCategory"]>
+
+  export type VisionBoardCategorySelectScalar = {
+    id?: boolean
+    weddingId?: boolean
+    name?: boolean
+    color?: boolean
+    order?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+  }
+
+  export type VisionBoardCategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "name" | "color" | "order" | "isDefault" | "createdAt", ExtArgs["result"]["visionBoardCategory"]>
+  export type VisionBoardCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }
+  export type VisionBoardCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }
+  export type VisionBoardCategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wedding?: boolean | WeddingDefaultArgs<ExtArgs>
+  }
+
+  export type $VisionBoardCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VisionBoardCategory"
+    objects: {
+      wedding: Prisma.$WeddingPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      weddingId: string
+      name: string
+      color: string
+      order: number
+      isDefault: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["visionBoardCategory"]>
+    composites: {}
+  }
+
+  type VisionBoardCategoryGetPayload<S extends boolean | null | undefined | VisionBoardCategoryDefaultArgs> = $Result.GetResult<Prisma.$VisionBoardCategoryPayload, S>
+
+  type VisionBoardCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VisionBoardCategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VisionBoardCategoryCountAggregateInputType | true
+    }
+
+  export interface VisionBoardCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VisionBoardCategory'], meta: { name: 'VisionBoardCategory' } }
+    /**
+     * Find zero or one VisionBoardCategory that matches the filter.
+     * @param {VisionBoardCategoryFindUniqueArgs} args - Arguments to find a VisionBoardCategory
+     * @example
+     * // Get one VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VisionBoardCategoryFindUniqueArgs>(args: SelectSubset<T, VisionBoardCategoryFindUniqueArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one VisionBoardCategory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VisionBoardCategoryFindUniqueOrThrowArgs} args - Arguments to find a VisionBoardCategory
+     * @example
+     * // Get one VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VisionBoardCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, VisionBoardCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VisionBoardCategory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryFindFirstArgs} args - Arguments to find a VisionBoardCategory
+     * @example
+     * // Get one VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VisionBoardCategoryFindFirstArgs>(args?: SelectSubset<T, VisionBoardCategoryFindFirstArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VisionBoardCategory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryFindFirstOrThrowArgs} args - Arguments to find a VisionBoardCategory
+     * @example
+     * // Get one VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VisionBoardCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, VisionBoardCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more VisionBoardCategories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VisionBoardCategories
+     * const visionBoardCategories = await prisma.visionBoardCategory.findMany()
+     * 
+     * // Get first 10 VisionBoardCategories
+     * const visionBoardCategories = await prisma.visionBoardCategory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const visionBoardCategoryWithIdOnly = await prisma.visionBoardCategory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VisionBoardCategoryFindManyArgs>(args?: SelectSubset<T, VisionBoardCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a VisionBoardCategory.
+     * @param {VisionBoardCategoryCreateArgs} args - Arguments to create a VisionBoardCategory.
+     * @example
+     * // Create one VisionBoardCategory
+     * const VisionBoardCategory = await prisma.visionBoardCategory.create({
+     *   data: {
+     *     // ... data to create a VisionBoardCategory
+     *   }
+     * })
+     * 
+     */
+    create<T extends VisionBoardCategoryCreateArgs>(args: SelectSubset<T, VisionBoardCategoryCreateArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many VisionBoardCategories.
+     * @param {VisionBoardCategoryCreateManyArgs} args - Arguments to create many VisionBoardCategories.
+     * @example
+     * // Create many VisionBoardCategories
+     * const visionBoardCategory = await prisma.visionBoardCategory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VisionBoardCategoryCreateManyArgs>(args?: SelectSubset<T, VisionBoardCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VisionBoardCategories and returns the data saved in the database.
+     * @param {VisionBoardCategoryCreateManyAndReturnArgs} args - Arguments to create many VisionBoardCategories.
+     * @example
+     * // Create many VisionBoardCategories
+     * const visionBoardCategory = await prisma.visionBoardCategory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VisionBoardCategories and only return the `id`
+     * const visionBoardCategoryWithIdOnly = await prisma.visionBoardCategory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VisionBoardCategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, VisionBoardCategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a VisionBoardCategory.
+     * @param {VisionBoardCategoryDeleteArgs} args - Arguments to delete one VisionBoardCategory.
+     * @example
+     * // Delete one VisionBoardCategory
+     * const VisionBoardCategory = await prisma.visionBoardCategory.delete({
+     *   where: {
+     *     // ... filter to delete one VisionBoardCategory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VisionBoardCategoryDeleteArgs>(args: SelectSubset<T, VisionBoardCategoryDeleteArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one VisionBoardCategory.
+     * @param {VisionBoardCategoryUpdateArgs} args - Arguments to update one VisionBoardCategory.
+     * @example
+     * // Update one VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VisionBoardCategoryUpdateArgs>(args: SelectSubset<T, VisionBoardCategoryUpdateArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more VisionBoardCategories.
+     * @param {VisionBoardCategoryDeleteManyArgs} args - Arguments to filter VisionBoardCategories to delete.
+     * @example
+     * // Delete a few VisionBoardCategories
+     * const { count } = await prisma.visionBoardCategory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VisionBoardCategoryDeleteManyArgs>(args?: SelectSubset<T, VisionBoardCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VisionBoardCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VisionBoardCategories
+     * const visionBoardCategory = await prisma.visionBoardCategory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VisionBoardCategoryUpdateManyArgs>(args: SelectSubset<T, VisionBoardCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VisionBoardCategories and returns the data updated in the database.
+     * @param {VisionBoardCategoryUpdateManyAndReturnArgs} args - Arguments to update many VisionBoardCategories.
+     * @example
+     * // Update many VisionBoardCategories
+     * const visionBoardCategory = await prisma.visionBoardCategory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more VisionBoardCategories and only return the `id`
+     * const visionBoardCategoryWithIdOnly = await prisma.visionBoardCategory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VisionBoardCategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, VisionBoardCategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one VisionBoardCategory.
+     * @param {VisionBoardCategoryUpsertArgs} args - Arguments to update or create a VisionBoardCategory.
+     * @example
+     * // Update or create a VisionBoardCategory
+     * const visionBoardCategory = await prisma.visionBoardCategory.upsert({
+     *   create: {
+     *     // ... data to create a VisionBoardCategory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VisionBoardCategory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VisionBoardCategoryUpsertArgs>(args: SelectSubset<T, VisionBoardCategoryUpsertArgs<ExtArgs>>): Prisma__VisionBoardCategoryClient<$Result.GetResult<Prisma.$VisionBoardCategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of VisionBoardCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryCountArgs} args - Arguments to filter VisionBoardCategories to count.
+     * @example
+     * // Count the number of VisionBoardCategories
+     * const count = await prisma.visionBoardCategory.count({
+     *   where: {
+     *     // ... the filter for the VisionBoardCategories we want to count
+     *   }
+     * })
+    **/
+    count<T extends VisionBoardCategoryCountArgs>(
+      args?: Subset<T, VisionBoardCategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VisionBoardCategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VisionBoardCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VisionBoardCategoryAggregateArgs>(args: Subset<T, VisionBoardCategoryAggregateArgs>): Prisma.PrismaPromise<GetVisionBoardCategoryAggregateType<T>>
+
+    /**
+     * Group by VisionBoardCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VisionBoardCategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VisionBoardCategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VisionBoardCategoryGroupByArgs['orderBy'] }
+        : { orderBy?: VisionBoardCategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VisionBoardCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVisionBoardCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VisionBoardCategory model
+   */
+  readonly fields: VisionBoardCategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VisionBoardCategory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VisionBoardCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    wedding<T extends WeddingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WeddingDefaultArgs<ExtArgs>>): Prisma__WeddingClient<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VisionBoardCategory model
+   */
+  interface VisionBoardCategoryFieldRefs {
+    readonly id: FieldRef<"VisionBoardCategory", 'String'>
+    readonly weddingId: FieldRef<"VisionBoardCategory", 'String'>
+    readonly name: FieldRef<"VisionBoardCategory", 'String'>
+    readonly color: FieldRef<"VisionBoardCategory", 'String'>
+    readonly order: FieldRef<"VisionBoardCategory", 'Int'>
+    readonly isDefault: FieldRef<"VisionBoardCategory", 'Boolean'>
+    readonly createdAt: FieldRef<"VisionBoardCategory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VisionBoardCategory findUnique
+   */
+  export type VisionBoardCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which VisionBoardCategory to fetch.
+     */
+    where: VisionBoardCategoryWhereUniqueInput
+  }
+
+  /**
+   * VisionBoardCategory findUniqueOrThrow
+   */
+  export type VisionBoardCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which VisionBoardCategory to fetch.
+     */
+    where: VisionBoardCategoryWhereUniqueInput
+  }
+
+  /**
+   * VisionBoardCategory findFirst
+   */
+  export type VisionBoardCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which VisionBoardCategory to fetch.
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VisionBoardCategories to fetch.
+     */
+    orderBy?: VisionBoardCategoryOrderByWithRelationInput | VisionBoardCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VisionBoardCategories.
+     */
+    cursor?: VisionBoardCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VisionBoardCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VisionBoardCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VisionBoardCategories.
+     */
+    distinct?: VisionBoardCategoryScalarFieldEnum | VisionBoardCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * VisionBoardCategory findFirstOrThrow
+   */
+  export type VisionBoardCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which VisionBoardCategory to fetch.
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VisionBoardCategories to fetch.
+     */
+    orderBy?: VisionBoardCategoryOrderByWithRelationInput | VisionBoardCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VisionBoardCategories.
+     */
+    cursor?: VisionBoardCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VisionBoardCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VisionBoardCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VisionBoardCategories.
+     */
+    distinct?: VisionBoardCategoryScalarFieldEnum | VisionBoardCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * VisionBoardCategory findMany
+   */
+  export type VisionBoardCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which VisionBoardCategories to fetch.
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VisionBoardCategories to fetch.
+     */
+    orderBy?: VisionBoardCategoryOrderByWithRelationInput | VisionBoardCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VisionBoardCategories.
+     */
+    cursor?: VisionBoardCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VisionBoardCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VisionBoardCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VisionBoardCategories.
+     */
+    distinct?: VisionBoardCategoryScalarFieldEnum | VisionBoardCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * VisionBoardCategory create
+   */
+  export type VisionBoardCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VisionBoardCategory.
+     */
+    data: XOR<VisionBoardCategoryCreateInput, VisionBoardCategoryUncheckedCreateInput>
+  }
+
+  /**
+   * VisionBoardCategory createMany
+   */
+  export type VisionBoardCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VisionBoardCategories.
+     */
+    data: VisionBoardCategoryCreateManyInput | VisionBoardCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VisionBoardCategory createManyAndReturn
+   */
+  export type VisionBoardCategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many VisionBoardCategories.
+     */
+    data: VisionBoardCategoryCreateManyInput | VisionBoardCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VisionBoardCategory update
+   */
+  export type VisionBoardCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VisionBoardCategory.
+     */
+    data: XOR<VisionBoardCategoryUpdateInput, VisionBoardCategoryUncheckedUpdateInput>
+    /**
+     * Choose, which VisionBoardCategory to update.
+     */
+    where: VisionBoardCategoryWhereUniqueInput
+  }
+
+  /**
+   * VisionBoardCategory updateMany
+   */
+  export type VisionBoardCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VisionBoardCategories.
+     */
+    data: XOR<VisionBoardCategoryUpdateManyMutationInput, VisionBoardCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which VisionBoardCategories to update
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * Limit how many VisionBoardCategories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * VisionBoardCategory updateManyAndReturn
+   */
+  export type VisionBoardCategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to update VisionBoardCategories.
+     */
+    data: XOR<VisionBoardCategoryUpdateManyMutationInput, VisionBoardCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which VisionBoardCategories to update
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * Limit how many VisionBoardCategories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VisionBoardCategory upsert
+   */
+  export type VisionBoardCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VisionBoardCategory to update in case it exists.
+     */
+    where: VisionBoardCategoryWhereUniqueInput
+    /**
+     * In case the VisionBoardCategory found by the `where` argument doesn't exist, create a new VisionBoardCategory with this data.
+     */
+    create: XOR<VisionBoardCategoryCreateInput, VisionBoardCategoryUncheckedCreateInput>
+    /**
+     * In case the VisionBoardCategory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VisionBoardCategoryUpdateInput, VisionBoardCategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * VisionBoardCategory delete
+   */
+  export type VisionBoardCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+    /**
+     * Filter which VisionBoardCategory to delete.
+     */
+    where: VisionBoardCategoryWhereUniqueInput
+  }
+
+  /**
+   * VisionBoardCategory deleteMany
+   */
+  export type VisionBoardCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VisionBoardCategories to delete
+     */
+    where?: VisionBoardCategoryWhereInput
+    /**
+     * Limit how many VisionBoardCategories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * VisionBoardCategory without action
+   */
+  export type VisionBoardCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VisionBoardCategory
+     */
+    select?: VisionBoardCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VisionBoardCategory
+     */
+    omit?: VisionBoardCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VisionBoardCategoryInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -52797,6 +53993,7 @@ export namespace Prisma {
     eventId: 'eventId',
     title: 'title',
     description: 'description',
+    date: 'date',
     startTime: 'startTime',
     endTime: 'endTime',
     duration: 'duration',
@@ -52995,7 +54192,6 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     category: 'category',
-    phase: 'phase',
     activityGroupId: 'activityGroupId',
     dueDate: 'dueDate',
     assignedTo: 'assignedTo',
@@ -53023,7 +54219,6 @@ export namespace Prisma {
     id: 'id',
     weddingId: 'weddingId',
     name: 'name',
-    phase: 'phase',
     color: 'color',
     order: 'order'
   };
@@ -53035,7 +54230,6 @@ export namespace Prisma {
     id: 'id',
     weddingId: 'weddingId',
     eventId: 'eventId',
-    phase: 'phase',
     category: 'category',
     description: 'description',
     estimated: 'estimated',
@@ -53180,7 +54374,6 @@ export namespace Prisma {
     culturalType: 'culturalType',
     guestSizeMin: 'guestSizeMin',
     guestSizeMax: 'guestSizeMax',
-    phase: 'phase',
     data: 'data',
     isSystem: 'isSystem',
     createdAt: 'createdAt'
@@ -53330,6 +54523,19 @@ export namespace Prisma {
   };
 
   export type HoneymoonDayScalarFieldEnum = (typeof HoneymoonDayScalarFieldEnum)[keyof typeof HoneymoonDayScalarFieldEnum]
+
+
+  export const VisionBoardCategoryScalarFieldEnum: {
+    id: 'id',
+    weddingId: 'weddingId',
+    name: 'name',
+    color: 'color',
+    order: 'order',
+    isDefault: 'isDefault',
+    createdAt: 'createdAt'
+  };
+
+  export type VisionBoardCategoryScalarFieldEnum = (typeof VisionBoardCategoryScalarFieldEnum)[keyof typeof VisionBoardCategoryScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -53599,20 +54805,6 @@ export namespace Prisma {
    * Reference to a field of type 'ContribStatus[]'
    */
   export type ListEnumContribStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContribStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'PlanningPhase'
-   */
-  export type EnumPlanningPhaseFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanningPhase'>
-    
-
-
-  /**
-   * Reference to a field of type 'PlanningPhase[]'
-   */
-  export type ListEnumPlanningPhaseFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanningPhase[]'>
     
 
 
@@ -54010,6 +55202,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleListRelationFilter
     incidents?: IncidentListRelationFilter
     templateApplications?: TemplateApplicationListRelationFilter
+    visionBoardCategories?: VisionBoardCategoryListRelationFilter
   }
 
   export type WeddingOrderByWithRelationInput = {
@@ -54054,6 +55247,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleOrderByRelationAggregateInput
     incidents?: IncidentOrderByRelationAggregateInput
     templateApplications?: TemplateApplicationOrderByRelationAggregateInput
+    visionBoardCategories?: VisionBoardCategoryOrderByRelationAggregateInput
   }
 
   export type WeddingWhereUniqueInput = Prisma.AtLeast<{
@@ -54101,6 +55295,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleListRelationFilter
     incidents?: IncidentListRelationFilter
     templateApplications?: TemplateApplicationListRelationFilter
+    visionBoardCategories?: VisionBoardCategoryListRelationFilter
   }, "id">
 
   export type WeddingOrderByWithAggregationInput = {
@@ -54356,6 +55551,7 @@ export namespace Prisma {
     eventId?: StringFilter<"EventProgramItem"> | string
     title?: StringFilter<"EventProgramItem"> | string
     description?: StringNullableFilter<"EventProgramItem"> | string | null
+    date?: DateTimeNullableFilter<"EventProgramItem"> | Date | string | null
     startTime?: StringNullableFilter<"EventProgramItem"> | string | null
     endTime?: StringNullableFilter<"EventProgramItem"> | string | null
     duration?: IntNullableFilter<"EventProgramItem"> | number | null
@@ -54372,6 +55568,7 @@ export namespace Prisma {
     eventId?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    date?: SortOrderInput | SortOrder
     startTime?: SortOrderInput | SortOrder
     endTime?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
@@ -54391,6 +55588,7 @@ export namespace Prisma {
     eventId?: StringFilter<"EventProgramItem"> | string
     title?: StringFilter<"EventProgramItem"> | string
     description?: StringNullableFilter<"EventProgramItem"> | string | null
+    date?: DateTimeNullableFilter<"EventProgramItem"> | Date | string | null
     startTime?: StringNullableFilter<"EventProgramItem"> | string | null
     endTime?: StringNullableFilter<"EventProgramItem"> | string | null
     duration?: IntNullableFilter<"EventProgramItem"> | number | null
@@ -54407,6 +55605,7 @@ export namespace Prisma {
     eventId?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    date?: SortOrderInput | SortOrder
     startTime?: SortOrderInput | SortOrder
     endTime?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
@@ -54430,6 +55629,7 @@ export namespace Prisma {
     eventId?: StringWithAggregatesFilter<"EventProgramItem"> | string
     title?: StringWithAggregatesFilter<"EventProgramItem"> | string
     description?: StringNullableWithAggregatesFilter<"EventProgramItem"> | string | null
+    date?: DateTimeNullableWithAggregatesFilter<"EventProgramItem"> | Date | string | null
     startTime?: StringNullableWithAggregatesFilter<"EventProgramItem"> | string | null
     endTime?: StringNullableWithAggregatesFilter<"EventProgramItem"> | string | null
     duration?: IntNullableWithAggregatesFilter<"EventProgramItem"> | number | null
@@ -55423,7 +56623,6 @@ export namespace Prisma {
     title?: StringFilter<"ChecklistItem"> | string
     description?: StringNullableFilter<"ChecklistItem"> | string | null
     category?: StringNullableFilter<"ChecklistItem"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"ChecklistItem"> | $Enums.PlanningPhase | null
     activityGroupId?: StringNullableFilter<"ChecklistItem"> | string | null
     dueDate?: DateTimeNullableFilter<"ChecklistItem"> | Date | string | null
     assignedTo?: StringNullableFilter<"ChecklistItem"> | string | null
@@ -55455,7 +56654,6 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     category?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     activityGroupId?: SortOrderInput | SortOrder
     dueDate?: SortOrderInput | SortOrder
     assignedTo?: SortOrderInput | SortOrder
@@ -55490,7 +56688,6 @@ export namespace Prisma {
     title?: StringFilter<"ChecklistItem"> | string
     description?: StringNullableFilter<"ChecklistItem"> | string | null
     category?: StringNullableFilter<"ChecklistItem"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"ChecklistItem"> | $Enums.PlanningPhase | null
     activityGroupId?: StringNullableFilter<"ChecklistItem"> | string | null
     dueDate?: DateTimeNullableFilter<"ChecklistItem"> | Date | string | null
     assignedTo?: StringNullableFilter<"ChecklistItem"> | string | null
@@ -55522,7 +56719,6 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     category?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     activityGroupId?: SortOrderInput | SortOrder
     dueDate?: SortOrderInput | SortOrder
     assignedTo?: SortOrderInput | SortOrder
@@ -55558,7 +56754,6 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"ChecklistItem"> | string
     description?: StringNullableWithAggregatesFilter<"ChecklistItem"> | string | null
     category?: StringNullableWithAggregatesFilter<"ChecklistItem"> | string | null
-    phase?: EnumPlanningPhaseNullableWithAggregatesFilter<"ChecklistItem"> | $Enums.PlanningPhase | null
     activityGroupId?: StringNullableWithAggregatesFilter<"ChecklistItem"> | string | null
     dueDate?: DateTimeNullableWithAggregatesFilter<"ChecklistItem"> | Date | string | null
     assignedTo?: StringNullableWithAggregatesFilter<"ChecklistItem"> | string | null
@@ -55586,7 +56781,6 @@ export namespace Prisma {
     id?: StringFilter<"ActivityGroup"> | string
     weddingId?: StringFilter<"ActivityGroup"> | string
     name?: StringFilter<"ActivityGroup"> | string
-    phase?: EnumPlanningPhaseNullableFilter<"ActivityGroup"> | $Enums.PlanningPhase | null
     color?: StringFilter<"ActivityGroup"> | string
     order?: IntFilter<"ActivityGroup"> | number
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -55597,7 +56791,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     name?: SortOrder
-    phase?: SortOrderInput | SortOrder
     color?: SortOrder
     order?: SortOrder
     wedding?: WeddingOrderByWithRelationInput
@@ -55611,7 +56804,6 @@ export namespace Prisma {
     NOT?: ActivityGroupWhereInput | ActivityGroupWhereInput[]
     weddingId?: StringFilter<"ActivityGroup"> | string
     name?: StringFilter<"ActivityGroup"> | string
-    phase?: EnumPlanningPhaseNullableFilter<"ActivityGroup"> | $Enums.PlanningPhase | null
     color?: StringFilter<"ActivityGroup"> | string
     order?: IntFilter<"ActivityGroup"> | number
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -55622,7 +56814,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     name?: SortOrder
-    phase?: SortOrderInput | SortOrder
     color?: SortOrder
     order?: SortOrder
     _count?: ActivityGroupCountOrderByAggregateInput
@@ -55639,7 +56830,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"ActivityGroup"> | string
     weddingId?: StringWithAggregatesFilter<"ActivityGroup"> | string
     name?: StringWithAggregatesFilter<"ActivityGroup"> | string
-    phase?: EnumPlanningPhaseNullableWithAggregatesFilter<"ActivityGroup"> | $Enums.PlanningPhase | null
     color?: StringWithAggregatesFilter<"ActivityGroup"> | string
     order?: IntWithAggregatesFilter<"ActivityGroup"> | number
   }
@@ -55651,7 +56841,6 @@ export namespace Prisma {
     id?: StringFilter<"BudgetLine"> | string
     weddingId?: StringFilter<"BudgetLine"> | string
     eventId?: StringNullableFilter<"BudgetLine"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"BudgetLine"> | $Enums.PlanningPhase | null
     category?: StringFilter<"BudgetLine"> | string
     description?: StringFilter<"BudgetLine"> | string
     estimated?: DecimalFilter<"BudgetLine"> | Decimal | DecimalJsLike | number | string
@@ -55678,7 +56867,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     category?: SortOrder
     description?: SortOrder
     estimated?: SortOrder
@@ -55708,7 +56896,6 @@ export namespace Prisma {
     NOT?: BudgetLineWhereInput | BudgetLineWhereInput[]
     weddingId?: StringFilter<"BudgetLine"> | string
     eventId?: StringNullableFilter<"BudgetLine"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"BudgetLine"> | $Enums.PlanningPhase | null
     category?: StringFilter<"BudgetLine"> | string
     description?: StringFilter<"BudgetLine"> | string
     estimated?: DecimalFilter<"BudgetLine"> | Decimal | DecimalJsLike | number | string
@@ -55735,7 +56922,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     category?: SortOrder
     description?: SortOrder
     estimated?: SortOrder
@@ -55767,7 +56953,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"BudgetLine"> | string
     weddingId?: StringWithAggregatesFilter<"BudgetLine"> | string
     eventId?: StringNullableWithAggregatesFilter<"BudgetLine"> | string | null
-    phase?: EnumPlanningPhaseNullableWithAggregatesFilter<"BudgetLine"> | $Enums.PlanningPhase | null
     category?: StringWithAggregatesFilter<"BudgetLine"> | string
     description?: StringWithAggregatesFilter<"BudgetLine"> | string
     estimated?: DecimalWithAggregatesFilter<"BudgetLine"> | Decimal | DecimalJsLike | number | string
@@ -56391,7 +57576,6 @@ export namespace Prisma {
     culturalType?: EnumCulturalTypeNullableFilter<"Template"> | $Enums.CulturalType | null
     guestSizeMin?: IntNullableFilter<"Template"> | number | null
     guestSizeMax?: IntNullableFilter<"Template"> | number | null
-    phase?: EnumPlanningPhaseNullableFilter<"Template"> | $Enums.PlanningPhase | null
     data?: JsonFilter<"Template">
     isSystem?: BoolFilter<"Template"> | boolean
     createdAt?: DateTimeFilter<"Template"> | Date | string
@@ -56405,7 +57589,6 @@ export namespace Prisma {
     culturalType?: SortOrderInput | SortOrder
     guestSizeMin?: SortOrderInput | SortOrder
     guestSizeMax?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     data?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
@@ -56422,7 +57605,6 @@ export namespace Prisma {
     culturalType?: EnumCulturalTypeNullableFilter<"Template"> | $Enums.CulturalType | null
     guestSizeMin?: IntNullableFilter<"Template"> | number | null
     guestSizeMax?: IntNullableFilter<"Template"> | number | null
-    phase?: EnumPlanningPhaseNullableFilter<"Template"> | $Enums.PlanningPhase | null
     data?: JsonFilter<"Template">
     isSystem?: BoolFilter<"Template"> | boolean
     createdAt?: DateTimeFilter<"Template"> | Date | string
@@ -56436,7 +57618,6 @@ export namespace Prisma {
     culturalType?: SortOrderInput | SortOrder
     guestSizeMin?: SortOrderInput | SortOrder
     guestSizeMax?: SortOrderInput | SortOrder
-    phase?: SortOrderInput | SortOrder
     data?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
@@ -56457,7 +57638,6 @@ export namespace Prisma {
     culturalType?: EnumCulturalTypeNullableWithAggregatesFilter<"Template"> | $Enums.CulturalType | null
     guestSizeMin?: IntNullableWithAggregatesFilter<"Template"> | number | null
     guestSizeMax?: IntNullableWithAggregatesFilter<"Template"> | number | null
-    phase?: EnumPlanningPhaseNullableWithAggregatesFilter<"Template"> | $Enums.PlanningPhase | null
     data?: JsonWithAggregatesFilter<"Template">
     isSystem?: BoolWithAggregatesFilter<"Template"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
@@ -57226,6 +58406,74 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"HoneymoonDay"> | Date | string
   }
 
+  export type VisionBoardCategoryWhereInput = {
+    AND?: VisionBoardCategoryWhereInput | VisionBoardCategoryWhereInput[]
+    OR?: VisionBoardCategoryWhereInput[]
+    NOT?: VisionBoardCategoryWhereInput | VisionBoardCategoryWhereInput[]
+    id?: StringFilter<"VisionBoardCategory"> | string
+    weddingId?: StringFilter<"VisionBoardCategory"> | string
+    name?: StringFilter<"VisionBoardCategory"> | string
+    color?: StringFilter<"VisionBoardCategory"> | string
+    order?: IntFilter<"VisionBoardCategory"> | number
+    isDefault?: BoolFilter<"VisionBoardCategory"> | boolean
+    createdAt?: DateTimeFilter<"VisionBoardCategory"> | Date | string
+    wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
+  }
+
+  export type VisionBoardCategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    weddingId?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    order?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    wedding?: WeddingOrderByWithRelationInput
+  }
+
+  export type VisionBoardCategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    weddingId_name?: VisionBoardCategoryWeddingIdNameCompoundUniqueInput
+    AND?: VisionBoardCategoryWhereInput | VisionBoardCategoryWhereInput[]
+    OR?: VisionBoardCategoryWhereInput[]
+    NOT?: VisionBoardCategoryWhereInput | VisionBoardCategoryWhereInput[]
+    weddingId?: StringFilter<"VisionBoardCategory"> | string
+    name?: StringFilter<"VisionBoardCategory"> | string
+    color?: StringFilter<"VisionBoardCategory"> | string
+    order?: IntFilter<"VisionBoardCategory"> | number
+    isDefault?: BoolFilter<"VisionBoardCategory"> | boolean
+    createdAt?: DateTimeFilter<"VisionBoardCategory"> | Date | string
+    wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
+  }, "id" | "weddingId_name">
+
+  export type VisionBoardCategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    weddingId?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    order?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    _count?: VisionBoardCategoryCountOrderByAggregateInput
+    _avg?: VisionBoardCategoryAvgOrderByAggregateInput
+    _max?: VisionBoardCategoryMaxOrderByAggregateInput
+    _min?: VisionBoardCategoryMinOrderByAggregateInput
+    _sum?: VisionBoardCategorySumOrderByAggregateInput
+  }
+
+  export type VisionBoardCategoryScalarWhereWithAggregatesInput = {
+    AND?: VisionBoardCategoryScalarWhereWithAggregatesInput | VisionBoardCategoryScalarWhereWithAggregatesInput[]
+    OR?: VisionBoardCategoryScalarWhereWithAggregatesInput[]
+    NOT?: VisionBoardCategoryScalarWhereWithAggregatesInput | VisionBoardCategoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"VisionBoardCategory"> | string
+    weddingId?: StringWithAggregatesFilter<"VisionBoardCategory"> | string
+    name?: StringWithAggregatesFilter<"VisionBoardCategory"> | string
+    color?: StringWithAggregatesFilter<"VisionBoardCategory"> | string
+    order?: IntWithAggregatesFilter<"VisionBoardCategory"> | number
+    isDefault?: BoolWithAggregatesFilter<"VisionBoardCategory"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"VisionBoardCategory"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -57551,6 +58799,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateInput = {
@@ -57595,6 +58844,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUpdateInput = {
@@ -57639,6 +58889,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateInput = {
@@ -57683,6 +58934,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingCreateManyInput = {
@@ -57971,6 +59223,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -57987,6 +59240,7 @@ export namespace Prisma {
     eventId: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -58001,6 +59255,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58017,6 +59272,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58032,6 +59288,7 @@ export namespace Prisma {
     eventId: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -58046,6 +59303,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58061,6 +59319,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -59149,7 +60408,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -59180,7 +60438,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -59207,7 +60464,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59238,7 +60494,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59267,7 +60522,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -59293,7 +60547,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59320,7 +60573,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59344,7 +60596,6 @@ export namespace Prisma {
   export type ActivityGroupCreateInput = {
     id?: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
     wedding: WeddingCreateNestedOneWithoutActivityGroupsInput
@@ -59355,7 +60606,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
     checklistItems?: ChecklistItemUncheckedCreateNestedManyWithoutActivityGroupInput
@@ -59364,7 +60614,6 @@ export namespace Prisma {
   export type ActivityGroupUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     wedding?: WeddingUpdateOneRequiredWithoutActivityGroupsNestedInput
@@ -59375,7 +60624,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     checklistItems?: ChecklistItemUncheckedUpdateManyWithoutActivityGroupNestedInput
@@ -59385,7 +60633,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
   }
@@ -59393,7 +60640,6 @@ export namespace Prisma {
   export type ActivityGroupUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
@@ -59402,14 +60648,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
 
   export type BudgetLineCreateInput = {
     id?: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -59435,7 +60679,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -59457,7 +60700,6 @@ export namespace Prisma {
 
   export type BudgetLineUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59483,7 +60725,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59507,7 +60748,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -59529,7 +60769,6 @@ export namespace Prisma {
 
   export type BudgetLineUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59552,7 +60791,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -60230,7 +61468,6 @@ export namespace Prisma {
     culturalType?: $Enums.CulturalType | null
     guestSizeMin?: number | null
     guestSizeMax?: number | null
-    phase?: $Enums.PlanningPhase | null
     data: JsonNullValueInput | InputJsonValue
     isSystem?: boolean
     createdAt?: Date | string
@@ -60244,7 +61481,6 @@ export namespace Prisma {
     culturalType?: $Enums.CulturalType | null
     guestSizeMin?: number | null
     guestSizeMax?: number | null
-    phase?: $Enums.PlanningPhase | null
     data: JsonNullValueInput | InputJsonValue
     isSystem?: boolean
     createdAt?: Date | string
@@ -60258,7 +61494,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -60272,7 +61507,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -60286,7 +61520,6 @@ export namespace Prisma {
     culturalType?: $Enums.CulturalType | null
     guestSizeMin?: number | null
     guestSizeMax?: number | null
-    phase?: $Enums.PlanningPhase | null
     data: JsonNullValueInput | InputJsonValue
     isSystem?: boolean
     createdAt?: Date | string
@@ -60299,7 +61532,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -60312,7 +61544,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -61097,6 +62328,75 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VisionBoardCategoryCreateInput = {
+    id?: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
+    wedding: WeddingCreateNestedOneWithoutVisionBoardCategoriesInput
+  }
+
+  export type VisionBoardCategoryUncheckedCreateInput = {
+    id?: string
+    weddingId: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
+  }
+
+  export type VisionBoardCategoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    wedding?: WeddingUpdateOneRequiredWithoutVisionBoardCategoriesNestedInput
+  }
+
+  export type VisionBoardCategoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VisionBoardCategoryCreateManyInput = {
+    id?: string
+    weddingId: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
+  }
+
+  export type VisionBoardCategoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VisionBoardCategoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -61606,6 +62906,12 @@ export namespace Prisma {
     none?: TemplateApplicationWhereInput
   }
 
+  export type VisionBoardCategoryListRelationFilter = {
+    every?: VisionBoardCategoryWhereInput
+    some?: VisionBoardCategoryWhereInput
+    none?: VisionBoardCategoryWhereInput
+  }
+
   export type WeddingEventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -61691,6 +62997,10 @@ export namespace Prisma {
   }
 
   export type TemplateApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VisionBoardCategoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -61972,6 +63282,7 @@ export namespace Prisma {
     eventId?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     duration?: SortOrder
@@ -61992,6 +63303,7 @@ export namespace Prisma {
     eventId?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     duration?: SortOrder
@@ -62007,6 +63319,7 @@ export namespace Prisma {
     eventId?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     duration?: SortOrder
@@ -62787,13 +64100,6 @@ export namespace Prisma {
     _max?: NestedEnumContribStatusFilter<$PrismaModel>
   }
 
-  export type EnumPlanningPhaseNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.PlanningPhase | EnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    in?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel> | $Enums.PlanningPhase | null
-  }
-
   export type ActivityGroupNullableScalarRelationFilter = {
     is?: ActivityGroupWhereInput | null
     isNot?: ActivityGroupWhereInput | null
@@ -62816,7 +64122,6 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    phase?: SortOrder
     activityGroupId?: SortOrder
     dueDate?: SortOrder
     assignedTo?: SortOrder
@@ -62850,7 +64155,6 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    phase?: SortOrder
     activityGroupId?: SortOrder
     dueDate?: SortOrder
     assignedTo?: SortOrder
@@ -62878,7 +64182,6 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     category?: SortOrder
-    phase?: SortOrder
     activityGroupId?: SortOrder
     dueDate?: SortOrder
     assignedTo?: SortOrder
@@ -62905,21 +64208,10 @@ export namespace Prisma {
     version?: SortOrder
   }
 
-  export type EnumPlanningPhaseNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PlanningPhase | EnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    in?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumPlanningPhaseNullableWithAggregatesFilter<$PrismaModel> | $Enums.PlanningPhase | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel>
-    _max?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel>
-  }
-
   export type ActivityGroupCountOrderByAggregateInput = {
     id?: SortOrder
     weddingId?: SortOrder
     name?: SortOrder
-    phase?: SortOrder
     color?: SortOrder
     order?: SortOrder
   }
@@ -62932,7 +64224,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     name?: SortOrder
-    phase?: SortOrder
     color?: SortOrder
     order?: SortOrder
   }
@@ -62941,7 +64232,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     name?: SortOrder
-    phase?: SortOrder
     color?: SortOrder
     order?: SortOrder
   }
@@ -62954,7 +64244,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrder
-    phase?: SortOrder
     category?: SortOrder
     description?: SortOrder
     estimated?: SortOrder
@@ -62985,7 +64274,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrder
-    phase?: SortOrder
     category?: SortOrder
     description?: SortOrder
     estimated?: SortOrder
@@ -63009,7 +64297,6 @@ export namespace Prisma {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrder
-    phase?: SortOrder
     category?: SortOrder
     description?: SortOrder
     estimated?: SortOrder
@@ -63422,7 +64709,6 @@ export namespace Prisma {
     culturalType?: SortOrder
     guestSizeMin?: SortOrder
     guestSizeMax?: SortOrder
-    phase?: SortOrder
     data?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
@@ -63440,7 +64726,6 @@ export namespace Prisma {
     culturalType?: SortOrder
     guestSizeMin?: SortOrder
     guestSizeMax?: SortOrder
-    phase?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
   }
@@ -63452,7 +64737,6 @@ export namespace Prisma {
     culturalType?: SortOrder
     guestSizeMin?: SortOrder
     guestSizeMax?: SortOrder
-    phase?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
   }
@@ -63959,6 +65243,49 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type VisionBoardCategoryWeddingIdNameCompoundUniqueInput = {
+    weddingId: string
+    name: string
+  }
+
+  export type VisionBoardCategoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    weddingId?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    order?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VisionBoardCategoryAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type VisionBoardCategoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    weddingId?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    order?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VisionBoardCategoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    weddingId?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    order?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VisionBoardCategorySumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -64306,6 +65633,13 @@ export namespace Prisma {
     connect?: TemplateApplicationWhereUniqueInput | TemplateApplicationWhereUniqueInput[]
   }
 
+  export type VisionBoardCategoryCreateNestedManyWithoutWeddingInput = {
+    create?: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput> | VisionBoardCategoryCreateWithoutWeddingInput[] | VisionBoardCategoryUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: VisionBoardCategoryCreateOrConnectWithoutWeddingInput | VisionBoardCategoryCreateOrConnectWithoutWeddingInput[]
+    createMany?: VisionBoardCategoryCreateManyWeddingInputEnvelope
+    connect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+  }
+
   export type WeddingMemberUncheckedCreateNestedManyWithoutWeddingInput = {
     create?: XOR<WeddingMemberCreateWithoutWeddingInput, WeddingMemberUncheckedCreateWithoutWeddingInput> | WeddingMemberCreateWithoutWeddingInput[] | WeddingMemberUncheckedCreateWithoutWeddingInput[]
     connectOrCreate?: WeddingMemberCreateOrConnectWithoutWeddingInput | WeddingMemberCreateOrConnectWithoutWeddingInput[]
@@ -64465,6 +65799,13 @@ export namespace Prisma {
     connectOrCreate?: TemplateApplicationCreateOrConnectWithoutWeddingInput | TemplateApplicationCreateOrConnectWithoutWeddingInput[]
     createMany?: TemplateApplicationCreateManyWeddingInputEnvelope
     connect?: TemplateApplicationWhereUniqueInput | TemplateApplicationWhereUniqueInput[]
+  }
+
+  export type VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput = {
+    create?: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput> | VisionBoardCategoryCreateWithoutWeddingInput[] | VisionBoardCategoryUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: VisionBoardCategoryCreateOrConnectWithoutWeddingInput | VisionBoardCategoryCreateOrConnectWithoutWeddingInput[]
+    createMany?: VisionBoardCategoryCreateManyWeddingInputEnvelope
+    connect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -64818,6 +66159,20 @@ export namespace Prisma {
     deleteMany?: TemplateApplicationScalarWhereInput | TemplateApplicationScalarWhereInput[]
   }
 
+  export type VisionBoardCategoryUpdateManyWithoutWeddingNestedInput = {
+    create?: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput> | VisionBoardCategoryCreateWithoutWeddingInput[] | VisionBoardCategoryUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: VisionBoardCategoryCreateOrConnectWithoutWeddingInput | VisionBoardCategoryCreateOrConnectWithoutWeddingInput[]
+    upsert?: VisionBoardCategoryUpsertWithWhereUniqueWithoutWeddingInput | VisionBoardCategoryUpsertWithWhereUniqueWithoutWeddingInput[]
+    createMany?: VisionBoardCategoryCreateManyWeddingInputEnvelope
+    set?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    disconnect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    delete?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    connect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    update?: VisionBoardCategoryUpdateWithWhereUniqueWithoutWeddingInput | VisionBoardCategoryUpdateWithWhereUniqueWithoutWeddingInput[]
+    updateMany?: VisionBoardCategoryUpdateManyWithWhereWithoutWeddingInput | VisionBoardCategoryUpdateManyWithWhereWithoutWeddingInput[]
+    deleteMany?: VisionBoardCategoryScalarWhereInput | VisionBoardCategoryScalarWhereInput[]
+  }
+
   export type WeddingMemberUncheckedUpdateManyWithoutWeddingNestedInput = {
     create?: XOR<WeddingMemberCreateWithoutWeddingInput, WeddingMemberUncheckedCreateWithoutWeddingInput> | WeddingMemberCreateWithoutWeddingInput[] | WeddingMemberUncheckedCreateWithoutWeddingInput[]
     connectOrCreate?: WeddingMemberCreateOrConnectWithoutWeddingInput | WeddingMemberCreateOrConnectWithoutWeddingInput[]
@@ -65138,6 +66493,20 @@ export namespace Prisma {
     update?: TemplateApplicationUpdateWithWhereUniqueWithoutWeddingInput | TemplateApplicationUpdateWithWhereUniqueWithoutWeddingInput[]
     updateMany?: TemplateApplicationUpdateManyWithWhereWithoutWeddingInput | TemplateApplicationUpdateManyWithWhereWithoutWeddingInput[]
     deleteMany?: TemplateApplicationScalarWhereInput | TemplateApplicationScalarWhereInput[]
+  }
+
+  export type VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput = {
+    create?: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput> | VisionBoardCategoryCreateWithoutWeddingInput[] | VisionBoardCategoryUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: VisionBoardCategoryCreateOrConnectWithoutWeddingInput | VisionBoardCategoryCreateOrConnectWithoutWeddingInput[]
+    upsert?: VisionBoardCategoryUpsertWithWhereUniqueWithoutWeddingInput | VisionBoardCategoryUpsertWithWhereUniqueWithoutWeddingInput[]
+    createMany?: VisionBoardCategoryCreateManyWeddingInputEnvelope
+    set?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    disconnect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    delete?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    connect?: VisionBoardCategoryWhereUniqueInput | VisionBoardCategoryWhereUniqueInput[]
+    update?: VisionBoardCategoryUpdateWithWhereUniqueWithoutWeddingInput | VisionBoardCategoryUpdateWithWhereUniqueWithoutWeddingInput[]
+    updateMany?: VisionBoardCategoryUpdateManyWithWhereWithoutWeddingInput | VisionBoardCategoryUpdateManyWithWhereWithoutWeddingInput[]
+    deleteMany?: VisionBoardCategoryScalarWhereInput | VisionBoardCategoryScalarWhereInput[]
   }
 
   export type WeddingCreateNestedOneWithoutMembersInput = {
@@ -66855,10 +68224,6 @@ export namespace Prisma {
     connect?: ReminderWhereUniqueInput | ReminderWhereUniqueInput[]
   }
 
-  export type NullableEnumPlanningPhaseFieldUpdateOperationsInput = {
-    set?: $Enums.PlanningPhase | null
-  }
-
   export type WeddingUpdateOneRequiredWithoutChecklistItemsNestedInput = {
     create?: XOR<WeddingCreateWithoutChecklistItemsInput, WeddingUncheckedCreateWithoutChecklistItemsInput>
     connectOrCreate?: WeddingCreateOrConnectWithoutChecklistItemsInput
@@ -67669,6 +69034,20 @@ export namespace Prisma {
     update?: XOR<XOR<WeddingEventUpdateToOneWithWhereWithoutHoneymoonDaysInput, WeddingEventUpdateWithoutHoneymoonDaysInput>, WeddingEventUncheckedUpdateWithoutHoneymoonDaysInput>
   }
 
+  export type WeddingCreateNestedOneWithoutVisionBoardCategoriesInput = {
+    create?: XOR<WeddingCreateWithoutVisionBoardCategoriesInput, WeddingUncheckedCreateWithoutVisionBoardCategoriesInput>
+    connectOrCreate?: WeddingCreateOrConnectWithoutVisionBoardCategoriesInput
+    connect?: WeddingWhereUniqueInput
+  }
+
+  export type WeddingUpdateOneRequiredWithoutVisionBoardCategoriesNestedInput = {
+    create?: XOR<WeddingCreateWithoutVisionBoardCategoriesInput, WeddingUncheckedCreateWithoutVisionBoardCategoriesInput>
+    connectOrCreate?: WeddingCreateOrConnectWithoutVisionBoardCategoriesInput
+    upsert?: WeddingUpsertWithoutVisionBoardCategoriesInput
+    connect?: WeddingWhereUniqueInput
+    update?: XOR<XOR<WeddingUpdateToOneWithWhereWithoutVisionBoardCategoriesInput, WeddingUpdateWithoutVisionBoardCategoriesInput>, WeddingUncheckedUpdateWithoutVisionBoardCategoriesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -68115,23 +69494,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumContribStatusFilter<$PrismaModel>
     _max?: NestedEnumContribStatusFilter<$PrismaModel>
-  }
-
-  export type NestedEnumPlanningPhaseNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.PlanningPhase | EnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    in?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel> | $Enums.PlanningPhase | null
-  }
-
-  export type NestedEnumPlanningPhaseNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PlanningPhase | EnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    in?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.PlanningPhase[] | ListEnumPlanningPhaseFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumPlanningPhaseNullableWithAggregatesFilter<$PrismaModel> | $Enums.PlanningPhase | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel>
-    _max?: NestedEnumPlanningPhaseNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumRiskSeverityFilter<$PrismaModel = never> = {
@@ -68915,7 +70277,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -68944,7 +70305,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -68978,7 +70338,6 @@ export namespace Prisma {
 
   export type BudgetLineCreateWithoutWeddingInput = {
     id?: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -69002,7 +70361,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedCreateWithoutWeddingInput = {
     id?: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -69151,7 +70509,6 @@ export namespace Prisma {
   export type ActivityGroupCreateWithoutWeddingInput = {
     id?: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
     checklistItems?: ChecklistItemCreateNestedManyWithoutActivityGroupInput
@@ -69160,7 +70517,6 @@ export namespace Prisma {
   export type ActivityGroupUncheckedCreateWithoutWeddingInput = {
     id?: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
     checklistItems?: ChecklistItemUncheckedCreateNestedManyWithoutActivityGroupInput
@@ -69542,6 +70898,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type VisionBoardCategoryCreateWithoutWeddingInput = {
+    id?: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
+  }
+
+  export type VisionBoardCategoryUncheckedCreateWithoutWeddingInput = {
+    id?: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
+  }
+
+  export type VisionBoardCategoryCreateOrConnectWithoutWeddingInput = {
+    where: VisionBoardCategoryWhereUniqueInput
+    create: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput>
+  }
+
+  export type VisionBoardCategoryCreateManyWeddingInputEnvelope = {
+    data: VisionBoardCategoryCreateManyWeddingInput | VisionBoardCategoryCreateManyWeddingInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WeddingMemberUpsertWithWhereUniqueWithoutWeddingInput = {
     where: WeddingMemberWhereUniqueInput
     update: XOR<WeddingMemberUpdateWithoutWeddingInput, WeddingMemberUncheckedUpdateWithoutWeddingInput>
@@ -69789,7 +71173,6 @@ export namespace Prisma {
     title?: StringFilter<"ChecklistItem"> | string
     description?: StringNullableFilter<"ChecklistItem"> | string | null
     category?: StringNullableFilter<"ChecklistItem"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"ChecklistItem"> | $Enums.PlanningPhase | null
     activityGroupId?: StringNullableFilter<"ChecklistItem"> | string | null
     dueDate?: DateTimeNullableFilter<"ChecklistItem"> | Date | string | null
     assignedTo?: StringNullableFilter<"ChecklistItem"> | string | null
@@ -69833,7 +71216,6 @@ export namespace Prisma {
     id?: StringFilter<"BudgetLine"> | string
     weddingId?: StringFilter<"BudgetLine"> | string
     eventId?: StringNullableFilter<"BudgetLine"> | string | null
-    phase?: EnumPlanningPhaseNullableFilter<"BudgetLine"> | $Enums.PlanningPhase | null
     category?: StringFilter<"BudgetLine"> | string
     description?: StringFilter<"BudgetLine"> | string
     estimated?: DecimalFilter<"BudgetLine"> | Decimal | DecimalJsLike | number | string
@@ -69979,7 +71361,6 @@ export namespace Prisma {
     id?: StringFilter<"ActivityGroup"> | string
     weddingId?: StringFilter<"ActivityGroup"> | string
     name?: StringFilter<"ActivityGroup"> | string
-    phase?: EnumPlanningPhaseNullableFilter<"ActivityGroup"> | $Enums.PlanningPhase | null
     color?: StringFilter<"ActivityGroup"> | string
     order?: IntFilter<"ActivityGroup"> | number
   }
@@ -70328,6 +71709,35 @@ export namespace Prisma {
     appliedAt?: DateTimeFilter<"TemplateApplication"> | Date | string
   }
 
+  export type VisionBoardCategoryUpsertWithWhereUniqueWithoutWeddingInput = {
+    where: VisionBoardCategoryWhereUniqueInput
+    update: XOR<VisionBoardCategoryUpdateWithoutWeddingInput, VisionBoardCategoryUncheckedUpdateWithoutWeddingInput>
+    create: XOR<VisionBoardCategoryCreateWithoutWeddingInput, VisionBoardCategoryUncheckedCreateWithoutWeddingInput>
+  }
+
+  export type VisionBoardCategoryUpdateWithWhereUniqueWithoutWeddingInput = {
+    where: VisionBoardCategoryWhereUniqueInput
+    data: XOR<VisionBoardCategoryUpdateWithoutWeddingInput, VisionBoardCategoryUncheckedUpdateWithoutWeddingInput>
+  }
+
+  export type VisionBoardCategoryUpdateManyWithWhereWithoutWeddingInput = {
+    where: VisionBoardCategoryScalarWhereInput
+    data: XOR<VisionBoardCategoryUpdateManyMutationInput, VisionBoardCategoryUncheckedUpdateManyWithoutWeddingInput>
+  }
+
+  export type VisionBoardCategoryScalarWhereInput = {
+    AND?: VisionBoardCategoryScalarWhereInput | VisionBoardCategoryScalarWhereInput[]
+    OR?: VisionBoardCategoryScalarWhereInput[]
+    NOT?: VisionBoardCategoryScalarWhereInput | VisionBoardCategoryScalarWhereInput[]
+    id?: StringFilter<"VisionBoardCategory"> | string
+    weddingId?: StringFilter<"VisionBoardCategory"> | string
+    name?: StringFilter<"VisionBoardCategory"> | string
+    color?: StringFilter<"VisionBoardCategory"> | string
+    order?: IntFilter<"VisionBoardCategory"> | number
+    isDefault?: BoolFilter<"VisionBoardCategory"> | boolean
+    createdAt?: DateTimeFilter<"VisionBoardCategory"> | Date | string
+  }
+
   export type WeddingCreateWithoutMembersInput = {
     id?: string
     name: string
@@ -70369,6 +71779,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutMembersInput = {
@@ -70412,6 +71823,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutMembersInput = {
@@ -70502,6 +71914,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutMembersInput = {
@@ -70545,6 +71958,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type UserUpsertWithoutWeddingsInput = {
@@ -70625,6 +72039,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutEventsInput = {
@@ -70668,6 +72083,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutEventsInput = {
@@ -70775,6 +72191,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -70789,6 +72206,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -70814,7 +72232,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -70843,7 +72260,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -70877,7 +72293,6 @@ export namespace Prisma {
 
   export type BudgetLineCreateWithoutEventInput = {
     id?: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -70901,7 +72316,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedCreateWithoutEventInput = {
     id?: string
     weddingId: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -71389,6 +72803,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutEventsInput = {
@@ -71432,6 +72847,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type GuestEventAttendanceUpsertWithWhereUniqueWithoutEventInput = {
@@ -71556,6 +72972,7 @@ export namespace Prisma {
     eventId?: StringFilter<"EventProgramItem"> | string
     title?: StringFilter<"EventProgramItem"> | string
     description?: StringNullableFilter<"EventProgramItem"> | string | null
+    date?: DateTimeNullableFilter<"EventProgramItem"> | Date | string | null
     startTime?: StringNullableFilter<"EventProgramItem"> | string | null
     endTime?: StringNullableFilter<"EventProgramItem"> | string | null
     duration?: IntNullableFilter<"EventProgramItem"> | number | null
@@ -72500,6 +73917,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutGuestsInput = {
@@ -72543,6 +73961,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutGuestsInput = {
@@ -72723,6 +74142,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutGuestsInput = {
@@ -72766,6 +74186,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type HouseholdUpsertWithoutGuestsInput = {
@@ -72915,6 +74336,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutHouseholdsInput = {
@@ -72958,6 +74380,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutHouseholdsInput = {
@@ -73089,6 +74512,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutHouseholdsInput = {
@@ -73132,6 +74556,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type GuestUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -73191,6 +74616,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutVendorsInput = {
@@ -73234,6 +74660,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutVendorsInput = {
@@ -73471,7 +74898,6 @@ export namespace Prisma {
 
   export type BudgetLineCreateWithoutVendorInput = {
     id?: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -73496,7 +74922,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -73613,6 +75038,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutVendorsInput = {
@@ -73656,6 +75082,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type PaymentUpsertWithWhereUniqueWithoutVendorInput = {
@@ -74352,6 +75779,7 @@ export namespace Prisma {
     households?: HouseholdCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutPaymentSchedulesInput = {
@@ -74395,6 +75823,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutPaymentSchedulesInput = {
@@ -74533,6 +75962,7 @@ export namespace Prisma {
     households?: HouseholdUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutPaymentSchedulesInput = {
@@ -74576,6 +76006,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingCreateWithoutPaymentsInput = {
@@ -74619,6 +76050,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutPaymentsInput = {
@@ -74662,6 +76094,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutPaymentsInput = {
@@ -74896,6 +76329,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutPaymentsInput = {
@@ -74939,6 +76373,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutPaymentsInput = {
@@ -75233,6 +76668,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutContributionsInput = {
@@ -75276,6 +76712,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutContributionsInput = {
@@ -75416,6 +76853,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutContributionsInput = {
@@ -75459,6 +76897,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutContributionsInput = {
@@ -75573,6 +77012,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutChecklistItemsInput = {
@@ -75616,6 +77056,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutChecklistItemsInput = {
@@ -75691,7 +77132,6 @@ export namespace Prisma {
   export type ActivityGroupCreateWithoutChecklistItemsInput = {
     id?: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
     wedding: WeddingCreateNestedOneWithoutActivityGroupsInput
@@ -75701,7 +77141,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
   }
@@ -75789,6 +77228,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutChecklistItemsInput = {
@@ -75832,6 +77272,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutChecklistItemsInput = {
@@ -75919,7 +77360,6 @@ export namespace Prisma {
   export type ActivityGroupUpdateWithoutChecklistItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     wedding?: WeddingUpdateOneRequiredWithoutActivityGroupsNestedInput
@@ -75929,7 +77369,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
@@ -76003,6 +77442,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutActivityGroupsInput = {
@@ -76046,6 +77486,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutActivityGroupsInput = {
@@ -76058,7 +77499,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -76088,7 +77528,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -76171,6 +77610,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutActivityGroupsInput = {
@@ -76214,6 +77654,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type ChecklistItemUpsertWithWhereUniqueWithoutActivityGroupInput = {
@@ -76273,6 +77714,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutBudgetLinesInput = {
@@ -76316,6 +77758,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutBudgetLinesInput = {
@@ -76513,6 +77956,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutBudgetLinesInput = {
@@ -76556,6 +78000,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutBudgetLinesInput = {
@@ -76749,6 +78194,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutRiskAlertsInput = {
@@ -76792,6 +78238,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutRiskAlertsInput = {
@@ -76851,6 +78298,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutRiskAlertsInput = {
@@ -76894,6 +78342,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingCreateWithoutMediaItemsInput = {
@@ -76937,6 +78386,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutMediaItemsInput = {
@@ -76980,6 +78430,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutMediaItemsInput = {
@@ -77104,6 +78555,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutMediaItemsInput = {
@@ -77147,6 +78599,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutMediaItemsInput = {
@@ -77261,6 +78714,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutAuditLogsInput = {
@@ -77304,6 +78758,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutAuditLogsInput = {
@@ -77363,6 +78818,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutAuditLogsInput = {
@@ -77406,6 +78862,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingCreateWithoutAppointmentsInput = {
@@ -77449,6 +78906,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutAppointmentsInput = {
@@ -77492,6 +78950,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutAppointmentsInput = {
@@ -77715,6 +79174,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutAppointmentsInput = {
@@ -77758,6 +79218,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutAppointmentsInput = {
@@ -77931,7 +79392,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -77961,7 +79421,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -78046,7 +79505,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78076,7 +79534,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78187,6 +79644,7 @@ export namespace Prisma {
     households?: HouseholdCreateNestedManyWithoutWeddingInput
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutIncidentsInput = {
@@ -78230,6 +79688,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedCreateNestedManyWithoutWeddingInput
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutIncidentsInput = {
@@ -78354,6 +79813,7 @@ export namespace Prisma {
     households?: HouseholdUpdateManyWithoutWeddingNestedInput
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutIncidentsInput = {
@@ -78397,6 +79857,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedUpdateManyWithoutWeddingNestedInput
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutIncidentsInput = {
@@ -78549,6 +80010,7 @@ export namespace Prisma {
     households?: HouseholdCreateNestedManyWithoutWeddingInput
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutTemplateApplicationsInput = {
@@ -78592,6 +80054,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedCreateNestedManyWithoutWeddingInput
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutTemplateApplicationsInput = {
@@ -78606,7 +80069,6 @@ export namespace Prisma {
     culturalType?: $Enums.CulturalType | null
     guestSizeMin?: number | null
     guestSizeMax?: number | null
-    phase?: $Enums.PlanningPhase | null
     data: JsonNullValueInput | InputJsonValue
     isSystem?: boolean
     createdAt?: Date | string
@@ -78619,7 +80081,6 @@ export namespace Prisma {
     culturalType?: $Enums.CulturalType | null
     guestSizeMin?: number | null
     guestSizeMax?: number | null
-    phase?: $Enums.PlanningPhase | null
     data: JsonNullValueInput | InputJsonValue
     isSystem?: boolean
     createdAt?: Date | string
@@ -78682,6 +80143,7 @@ export namespace Prisma {
     households?: HouseholdUpdateManyWithoutWeddingNestedInput
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutTemplateApplicationsInput = {
@@ -78725,6 +80187,7 @@ export namespace Prisma {
     households?: HouseholdUncheckedUpdateManyWithoutWeddingNestedInput
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type TemplateUpsertWithoutApplicationsInput = {
@@ -78745,7 +80208,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78758,7 +80220,6 @@ export namespace Prisma {
     culturalType?: NullableEnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType | null
     guestSizeMin?: NullableIntFieldUpdateOperationsInput | number | null
     guestSizeMax?: NullableIntFieldUpdateOperationsInput | number | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     data?: JsonNullValueInput | InputJsonValue
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78805,6 +80266,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutDowryItemsInput = {
@@ -78848,6 +80310,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutDowryItemsInput = {
@@ -78907,6 +80370,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutDowryItemsInput = {
@@ -78950,6 +80414,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingCreateWithoutAttireItemsInput = {
@@ -78993,6 +80458,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutAttireItemsInput = {
@@ -79036,6 +80502,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutAttireItemsInput = {
@@ -79168,6 +80635,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutAttireItemsInput = {
@@ -79211,6 +80679,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type VendorUpsertWithoutAttireItemsInput = {
@@ -79333,6 +80802,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutGiftRegistryItemsInput = {
@@ -79376,6 +80846,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutGiftRegistryItemsInput = {
@@ -79500,6 +80971,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutGiftRegistryItemsInput = {
@@ -79543,6 +81015,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutGiftRegistryInput = {
@@ -79657,6 +81130,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutGiftsReceivedInput = {
@@ -79700,6 +81174,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutGiftsReceivedInput = {
@@ -79891,6 +81366,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutGiftsReceivedInput = {
@@ -79934,6 +81410,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutGiftsReceivedInput = {
@@ -80121,6 +81598,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutTransportRoutesInput = {
@@ -80164,6 +81642,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutTransportRoutesInput = {
@@ -80381,6 +81860,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutTransportRoutesInput = {
@@ -80424,6 +81904,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutTransportRoutesInput = {
@@ -80841,6 +82322,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
     incidents?: IncidentCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutAccommodationsInput = {
@@ -80884,6 +82366,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
     incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
     templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingCreateOrConnectWithoutAccommodationsInput = {
@@ -81030,6 +82513,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutAccommodationsInput = {
@@ -81073,6 +82557,7 @@ export namespace Prisma {
     paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
     incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
     templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+    visionBoardCategories?: VisionBoardCategoryUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingEventUpsertWithoutAccommodationsInput = {
@@ -81506,6 +82991,198 @@ export namespace Prisma {
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
   }
 
+  export type WeddingCreateWithoutVisionBoardCategoriesInput = {
+    id?: string
+    name: string
+    date: Date | string
+    venue?: string | null
+    venueCapacity?: number | null
+    budget?: Decimal | DecimalJsLike | number | string
+    currency?: string
+    culturalType?: $Enums.CulturalType
+    themeColor?: string
+    themeAccent?: string
+    coverImagePath?: string | null
+    couplePhotoPath?: string | null
+    expectedGuestCount?: number | null
+    uninvitedBuffer?: number
+    palette?: WeddingCreatepaletteInput | string[]
+    setupComplete?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: WeddingMemberCreateNestedManyWithoutWeddingInput
+    events?: WeddingEventCreateNestedManyWithoutWeddingInput
+    guests?: GuestCreateNestedManyWithoutWeddingInput
+    vendors?: VendorCreateNestedManyWithoutWeddingInput
+    payments?: PaymentCreateNestedManyWithoutWeddingInput
+    contributions?: CommitteeContributionCreateNestedManyWithoutWeddingInput
+    checklistItems?: ChecklistItemCreateNestedManyWithoutWeddingInput
+    budgetLines?: BudgetLineCreateNestedManyWithoutWeddingInput
+    riskAlerts?: RiskAlertCreateNestedManyWithoutWeddingInput
+    mediaItems?: MediaItemCreateNestedManyWithoutWeddingInput
+    auditLogs?: AuditLogCreateNestedManyWithoutWeddingInput
+    activityGroups?: ActivityGroupCreateNestedManyWithoutWeddingInput
+    appointments?: AppointmentCreateNestedManyWithoutWeddingInput
+    dowryItems?: DowryItemCreateNestedManyWithoutWeddingInput
+    attireItems?: AttireItemCreateNestedManyWithoutWeddingInput
+    giftRegistryItems?: GiftRegistryItemCreateNestedManyWithoutWeddingInput
+    giftsReceived?: GiftReceivedCreateNestedManyWithoutWeddingInput
+    transportRoutes?: TransportRouteCreateNestedManyWithoutWeddingInput
+    accommodations?: AccommodationCreateNestedManyWithoutWeddingInput
+    households?: HouseholdCreateNestedManyWithoutWeddingInput
+    paymentSchedules?: PaymentScheduleCreateNestedManyWithoutWeddingInput
+    incidents?: IncidentCreateNestedManyWithoutWeddingInput
+    templateApplications?: TemplateApplicationCreateNestedManyWithoutWeddingInput
+  }
+
+  export type WeddingUncheckedCreateWithoutVisionBoardCategoriesInput = {
+    id?: string
+    name: string
+    date: Date | string
+    venue?: string | null
+    venueCapacity?: number | null
+    budget?: Decimal | DecimalJsLike | number | string
+    currency?: string
+    culturalType?: $Enums.CulturalType
+    themeColor?: string
+    themeAccent?: string
+    coverImagePath?: string | null
+    couplePhotoPath?: string | null
+    expectedGuestCount?: number | null
+    uninvitedBuffer?: number
+    palette?: WeddingCreatepaletteInput | string[]
+    setupComplete?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: WeddingMemberUncheckedCreateNestedManyWithoutWeddingInput
+    events?: WeddingEventUncheckedCreateNestedManyWithoutWeddingInput
+    guests?: GuestUncheckedCreateNestedManyWithoutWeddingInput
+    vendors?: VendorUncheckedCreateNestedManyWithoutWeddingInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutWeddingInput
+    contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutWeddingInput
+    checklistItems?: ChecklistItemUncheckedCreateNestedManyWithoutWeddingInput
+    budgetLines?: BudgetLineUncheckedCreateNestedManyWithoutWeddingInput
+    riskAlerts?: RiskAlertUncheckedCreateNestedManyWithoutWeddingInput
+    mediaItems?: MediaItemUncheckedCreateNestedManyWithoutWeddingInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutWeddingInput
+    activityGroups?: ActivityGroupUncheckedCreateNestedManyWithoutWeddingInput
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutWeddingInput
+    dowryItems?: DowryItemUncheckedCreateNestedManyWithoutWeddingInput
+    attireItems?: AttireItemUncheckedCreateNestedManyWithoutWeddingInput
+    giftRegistryItems?: GiftRegistryItemUncheckedCreateNestedManyWithoutWeddingInput
+    giftsReceived?: GiftReceivedUncheckedCreateNestedManyWithoutWeddingInput
+    transportRoutes?: TransportRouteUncheckedCreateNestedManyWithoutWeddingInput
+    accommodations?: AccommodationUncheckedCreateNestedManyWithoutWeddingInput
+    households?: HouseholdUncheckedCreateNestedManyWithoutWeddingInput
+    paymentSchedules?: PaymentScheduleUncheckedCreateNestedManyWithoutWeddingInput
+    incidents?: IncidentUncheckedCreateNestedManyWithoutWeddingInput
+    templateApplications?: TemplateApplicationUncheckedCreateNestedManyWithoutWeddingInput
+  }
+
+  export type WeddingCreateOrConnectWithoutVisionBoardCategoriesInput = {
+    where: WeddingWhereUniqueInput
+    create: XOR<WeddingCreateWithoutVisionBoardCategoriesInput, WeddingUncheckedCreateWithoutVisionBoardCategoriesInput>
+  }
+
+  export type WeddingUpsertWithoutVisionBoardCategoriesInput = {
+    update: XOR<WeddingUpdateWithoutVisionBoardCategoriesInput, WeddingUncheckedUpdateWithoutVisionBoardCategoriesInput>
+    create: XOR<WeddingCreateWithoutVisionBoardCategoriesInput, WeddingUncheckedCreateWithoutVisionBoardCategoriesInput>
+    where?: WeddingWhereInput
+  }
+
+  export type WeddingUpdateToOneWithWhereWithoutVisionBoardCategoriesInput = {
+    where?: WeddingWhereInput
+    data: XOR<WeddingUpdateWithoutVisionBoardCategoriesInput, WeddingUncheckedUpdateWithoutVisionBoardCategoriesInput>
+  }
+
+  export type WeddingUpdateWithoutVisionBoardCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
+    budget?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    culturalType?: EnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType
+    themeColor?: StringFieldUpdateOperationsInput | string
+    themeAccent?: StringFieldUpdateOperationsInput | string
+    coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
+    uninvitedBuffer?: IntFieldUpdateOperationsInput | number
+    palette?: WeddingUpdatepaletteInput | string[]
+    setupComplete?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: WeddingMemberUpdateManyWithoutWeddingNestedInput
+    events?: WeddingEventUpdateManyWithoutWeddingNestedInput
+    guests?: GuestUpdateManyWithoutWeddingNestedInput
+    vendors?: VendorUpdateManyWithoutWeddingNestedInput
+    payments?: PaymentUpdateManyWithoutWeddingNestedInput
+    contributions?: CommitteeContributionUpdateManyWithoutWeddingNestedInput
+    checklistItems?: ChecklistItemUpdateManyWithoutWeddingNestedInput
+    budgetLines?: BudgetLineUpdateManyWithoutWeddingNestedInput
+    riskAlerts?: RiskAlertUpdateManyWithoutWeddingNestedInput
+    mediaItems?: MediaItemUpdateManyWithoutWeddingNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutWeddingNestedInput
+    activityGroups?: ActivityGroupUpdateManyWithoutWeddingNestedInput
+    appointments?: AppointmentUpdateManyWithoutWeddingNestedInput
+    dowryItems?: DowryItemUpdateManyWithoutWeddingNestedInput
+    attireItems?: AttireItemUpdateManyWithoutWeddingNestedInput
+    giftRegistryItems?: GiftRegistryItemUpdateManyWithoutWeddingNestedInput
+    giftsReceived?: GiftReceivedUpdateManyWithoutWeddingNestedInput
+    transportRoutes?: TransportRouteUpdateManyWithoutWeddingNestedInput
+    accommodations?: AccommodationUpdateManyWithoutWeddingNestedInput
+    households?: HouseholdUpdateManyWithoutWeddingNestedInput
+    paymentSchedules?: PaymentScheduleUpdateManyWithoutWeddingNestedInput
+    incidents?: IncidentUpdateManyWithoutWeddingNestedInput
+    templateApplications?: TemplateApplicationUpdateManyWithoutWeddingNestedInput
+  }
+
+  export type WeddingUncheckedUpdateWithoutVisionBoardCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
+    budget?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    culturalType?: EnumCulturalTypeFieldUpdateOperationsInput | $Enums.CulturalType
+    themeColor?: StringFieldUpdateOperationsInput | string
+    themeAccent?: StringFieldUpdateOperationsInput | string
+    coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
+    uninvitedBuffer?: IntFieldUpdateOperationsInput | number
+    palette?: WeddingUpdatepaletteInput | string[]
+    setupComplete?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: WeddingMemberUncheckedUpdateManyWithoutWeddingNestedInput
+    events?: WeddingEventUncheckedUpdateManyWithoutWeddingNestedInput
+    guests?: GuestUncheckedUpdateManyWithoutWeddingNestedInput
+    vendors?: VendorUncheckedUpdateManyWithoutWeddingNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutWeddingNestedInput
+    contributions?: CommitteeContributionUncheckedUpdateManyWithoutWeddingNestedInput
+    checklistItems?: ChecklistItemUncheckedUpdateManyWithoutWeddingNestedInput
+    budgetLines?: BudgetLineUncheckedUpdateManyWithoutWeddingNestedInput
+    riskAlerts?: RiskAlertUncheckedUpdateManyWithoutWeddingNestedInput
+    mediaItems?: MediaItemUncheckedUpdateManyWithoutWeddingNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutWeddingNestedInput
+    activityGroups?: ActivityGroupUncheckedUpdateManyWithoutWeddingNestedInput
+    appointments?: AppointmentUncheckedUpdateManyWithoutWeddingNestedInput
+    dowryItems?: DowryItemUncheckedUpdateManyWithoutWeddingNestedInput
+    attireItems?: AttireItemUncheckedUpdateManyWithoutWeddingNestedInput
+    giftRegistryItems?: GiftRegistryItemUncheckedUpdateManyWithoutWeddingNestedInput
+    giftsReceived?: GiftReceivedUncheckedUpdateManyWithoutWeddingNestedInput
+    transportRoutes?: TransportRouteUncheckedUpdateManyWithoutWeddingNestedInput
+    accommodations?: AccommodationUncheckedUpdateManyWithoutWeddingNestedInput
+    households?: HouseholdUncheckedUpdateManyWithoutWeddingNestedInput
+    paymentSchedules?: PaymentScheduleUncheckedUpdateManyWithoutWeddingNestedInput
+    incidents?: IncidentUncheckedUpdateManyWithoutWeddingNestedInput
+    templateApplications?: TemplateApplicationUncheckedUpdateManyWithoutWeddingNestedInput
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     type: string
@@ -81732,7 +83409,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -81756,7 +83432,6 @@ export namespace Prisma {
   export type BudgetLineCreateManyWeddingInput = {
     id?: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -81822,7 +83497,6 @@ export namespace Prisma {
   export type ActivityGroupCreateManyWeddingInput = {
     id?: string
     name: string
-    phase?: $Enums.PlanningPhase | null
     color?: string
     order?: number
   }
@@ -81949,6 +83623,15 @@ export namespace Prisma {
     id?: string
     templateId: string
     appliedAt?: Date | string
+  }
+
+  export type VisionBoardCategoryCreateManyWeddingInput = {
+    id?: string
+    name: string
+    color?: string
+    order?: number
+    isDefault?: boolean
+    createdAt?: Date | string
   }
 
   export type WeddingMemberUpdateWithoutWeddingInput = {
@@ -82352,7 +84035,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82381,7 +84063,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82409,7 +84090,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82432,7 +84112,6 @@ export namespace Prisma {
 
   export type BudgetLineUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -82456,7 +84135,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -82479,7 +84157,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedUpdateManyWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -82631,7 +84308,6 @@ export namespace Prisma {
   export type ActivityGroupUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     checklistItems?: ChecklistItemUpdateManyWithoutActivityGroupNestedInput
@@ -82640,7 +84316,6 @@ export namespace Prisma {
   export type ActivityGroupUncheckedUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     checklistItems?: ChecklistItemUncheckedUpdateManyWithoutActivityGroupNestedInput
@@ -82649,7 +84324,6 @@ export namespace Prisma {
   export type ActivityGroupUncheckedUpdateManyWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     color?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
@@ -83034,6 +84708,33 @@ export namespace Prisma {
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VisionBoardCategoryUpdateWithoutWeddingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VisionBoardCategoryUncheckedUpdateWithoutWeddingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VisionBoardCategoryUncheckedUpdateManyWithoutWeddingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type GuestEventAttendanceCreateManyEventInput = {
     id?: string
     guestId: string
@@ -83066,6 +84767,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    date?: Date | string | null
     startTime?: string | null
     endTime?: string | null
     duration?: number | null
@@ -83082,7 +84784,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     activityGroupId?: string | null
     dueDate?: Date | string | null
     assignedTo?: string | null
@@ -83106,7 +84807,6 @@ export namespace Prisma {
   export type BudgetLineCreateManyEventInput = {
     id?: string
     weddingId: string
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -83363,6 +85063,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -83377,6 +85078,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -83391,6 +85093,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startTime?: NullableStringFieldUpdateOperationsInput | string | null
     endTime?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
@@ -83406,7 +85109,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -83435,7 +85137,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -83463,7 +85164,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     activityGroupId?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -83486,7 +85186,6 @@ export namespace Prisma {
 
   export type BudgetLineUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -83510,7 +85209,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -83533,7 +85231,6 @@ export namespace Prisma {
   export type BudgetLineUncheckedUpdateManyWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -84338,7 +86035,6 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    phase?: $Enums.PlanningPhase | null
     category: string
     description: string
     estimated?: Decimal | DecimalJsLike | number | string
@@ -84622,7 +86318,6 @@ export namespace Prisma {
 
   export type BudgetLineUpdateWithoutVendorInput = {
     id?: StringFieldUpdateOperationsInput | string
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -84647,7 +86342,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -84670,7 +86364,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     category?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -84863,7 +86556,6 @@ export namespace Prisma {
     title: string
     description?: string | null
     category?: string | null
-    phase?: $Enums.PlanningPhase | null
     dueDate?: Date | string | null
     assignedTo?: string | null
     assignedToName?: string | null
@@ -84888,7 +86580,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84918,7 +86609,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84946,7 +86636,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    phase?: NullableEnumPlanningPhaseFieldUpdateOperationsInput | $Enums.PlanningPhase | null
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
     assignedToName?: NullableStringFieldUpdateOperationsInput | string | null

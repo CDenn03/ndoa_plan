@@ -2,7 +2,7 @@
 import { use } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Spinner } from '@/components/ui'
-import { DayOfClient } from './day-of-client'
+import { ScheduleClient } from './day-of-client'
 
 interface WeddingEvent { id: string; name: string; type: string; date: string; isMain: boolean }
 
@@ -39,5 +39,5 @@ export default function DayOfPage(props: Readonly<{ params: Promise<{ weddingId:
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner /></div>
 
-  return <DayOfClient weddingId={wid} events={events} vendors={vendors} incidents={incidents} onRefresh={refresh} />
+  return <ScheduleClient weddingId={wid} events={events} vendors={vendors} incidents={incidents} onRefresh={refresh} />
 }

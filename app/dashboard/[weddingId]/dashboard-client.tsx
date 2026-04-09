@@ -9,7 +9,6 @@ import type { DashboardSummary } from '@/types'
 interface WeddingEvent { id: string; name: string; type: string; date: string }
 interface UpcomingTask { id: string; title: string; dueDate: string; category?: string; isOverdue: boolean }
 interface MoodImage { id: string; path: string; bucket: string; title?: string }
-interface PhaseProgress { phase: string; total: number; done: number }
 
 interface Props {
   wedding: {
@@ -21,7 +20,6 @@ interface Props {
   upcomingEvents?: WeddingEvent[]
   upcomingTasks?: UpcomingTask[]
   moodImages?: MoodImage[]
-  phaseProgress?: PhaseProgress[]
 }
 
 const SEVERITY_BADGE: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
@@ -34,10 +32,6 @@ const EVENT_COLORS: Record<string, string> = {
   AFTER_PARTY: 'bg-purple-400', HONEYMOON: 'bg-rose-400', MOVING: 'bg-zinc-400',
 }
 
-const PHASE_LABELS: Record<string, string> = {
-  BUDGETING: 'Budgeting', PLANNING: 'Planning', PRE_WEDDING: 'Pre-Wedding',
-  PROCUREMENT: 'Procurement', DAY_OF: 'Day-of', POST_WEDDING: 'Post-Wedding',
-}
 
 function getBudgetColor(pct: number): string {
   if (pct > 100) return 'text-red-500'
@@ -47,7 +41,7 @@ function getBudgetColor(pct: number): string {
 
 export function DashboardClient({
   wedding, summary, recentRisks,
-  upcomingEvents = [], upcomingTasks = [], moodImages = [], phaseProgress = [],
+  upcomingEvents = [], upcomingTasks = [], moodImages = [],
 }: Readonly<Props>) {
   const wid = wedding.id
   const weddingDate = new Date(wedding.date)
@@ -145,30 +139,6 @@ export function DashboardClient({
 
         <hr className="border-zinc-100" />
 
-        {/* Phase progress pills */}
-        {phaseProgress.length > 0 && (
-          <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Planning phases</p>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
-              {phaseProgress.map(({ phase, total, done }) => {
-                const pct = total > 0 ? Math.round((done / total) * 100) : 0
-                const complete = pct === 100
-                return (
-                  <Link key={phase} href={`/dashboard/${wid}/checklist`}
-                    className={`flex-shrink-0 rounded-2xl px-4 py-3 border transition-colors hover:border-violet-300 ${complete ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-zinc-100'}`}>
-                    <p className={`text-xs font-bold ${complete ? 'text-emerald-600' : 'text-[#14161C]'}`}>
-                      {complete ? '✓ ' : ''}{PHASE_LABELS[phase] ?? phase}
-                    </p>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">{done}/{total} tasks</p>
-                    <div className="w-20 bg-zinc-100 rounded-full h-1 mt-2">
-                      <div className={`h-1 rounded-full transition-all ${complete ? 'bg-emerald-400' : 'bg-[#CDB5F7]'}`} style={{ width: `${pct}%` }} />
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Budget + RSVP */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">

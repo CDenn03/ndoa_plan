@@ -12,7 +12,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { category, description, estimated, actual, committed, vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType, phase } = body
+  const { category, description, estimated, actual, committed, vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = body
 
   const line = await db.budgetLine.update({
     where: { id: lineId, weddingId: id },
@@ -28,7 +28,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       ...(paymentDate !== undefined && { paymentDate: paymentDate ? new Date(paymentDate) : null }),
       ...(paymentPlan !== undefined && { paymentPlan: paymentPlan || null }),
       ...(paymentType !== undefined && { paymentType: paymentType || null }),
-      ...(phase !== undefined && { phase: phase || null }),
       version: { increment: 1 },
       updatedBy: userId,
     },

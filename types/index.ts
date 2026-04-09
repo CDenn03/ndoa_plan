@@ -192,7 +192,6 @@ export interface LocalChecklistItem {
   title: string
   description?: string
   category?: string
-  phase?: string
   dueDate?: number
   assignedTo?: string
   assignedToName?: string

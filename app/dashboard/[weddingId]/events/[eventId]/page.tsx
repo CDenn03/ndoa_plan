@@ -11,15 +11,11 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
 
   const { weddingId: wid, eventId } = params
 
-  const [event, tasks, budgetLines, guestAttendances, programItems] = await Promise.all([
+  const [event, tasks, guestAttendances, programItems] = await Promise.all([
     db.weddingEvent.findUnique({ where: { id: eventId } }),
     db.checklistItem.findMany({
       where: { eventId, deletedAt: null },
       orderBy: [{ priority: 'asc' }, { order: 'asc' }],
-    }),
-    db.budgetLine.findMany({
-      where: { eventId, deletedAt: null },
-      orderBy: [{ category: 'asc' }],
     }),
     db.guestEventAttendance.findMany({
       where: { eventId },
@@ -33,9 +29,6 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
 
   if (!event || event.weddingId !== wid) notFound()
 
-  const totalEstimated = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
-  const totalCommitted = budgetLines.reduce((s, l) => s + Number(l.committed) + Number(l.actual), 0)
-
   return (
     <EventDetailClient
       weddingId={wid}
@@ -47,16 +40,11 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
       }}
       tasks={tasks.map(t => ({
         id: t.id, title: t.title, description: t.description ?? undefined,
-        category: t.category ?? undefined, phase: t.phase ?? undefined,
+        category: t.category ?? undefined,
         dueDate: t.dueDate?.toISOString() ?? undefined,
         assignedToName: t.assignedToName ?? undefined,
         isChecked: t.isChecked, priority: t.priority, order: t.order,
         isFinalCheck: t.isFinalCheck,
-      }))}
-      budgetLines={budgetLines.map(l => ({
-        id: l.id, category: l.category, description: l.description,
-        estimated: Number(l.estimated), actual: Number(l.actual), committed: Number(l.committed),
-        vendorId: l.vendorId ?? undefined,
       }))}
       guestAttendances={guestAttendances.map(a => ({
         id: a.id, rsvpStatus: a.rsvpStatus,
@@ -68,7 +56,6 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
         duration: p.duration ?? undefined, order: p.order,
         assignedTo: p.assignedTo ?? undefined,
       }))}
-      budgetSummary={{ totalEstimated, totalCommitted }}
     />
   )
 }

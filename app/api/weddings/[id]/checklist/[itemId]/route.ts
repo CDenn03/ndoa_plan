@@ -29,14 +29,13 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   }
 
   // Full update
-  const { title, description, category, phase, dueDate, assignedToName, priority, isFinalCheck, isChecked } = data
+  const { title, description, category, dueDate, assignedToName, priority, isFinalCheck, isChecked } = data
   const item = await db.checklistItem.update({
     where: { id: itemId },
     data: {
       ...(title !== undefined && { title: title.trim() }),
       ...(description !== undefined && { description: description || null }),
       ...(category !== undefined && { category: category || null }),
-      ...(phase !== undefined && { phase: phase || null }),
       ...(dueDate !== undefined && { dueDate: dueDate ? new Date(dueDate) : null }),
       ...(assignedToName !== undefined && { assignedToName: assignedToName || null }),
       ...(priority !== undefined && { priority }),
@@ -53,7 +52,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   return NextResponse.json({
     id: item.id, weddingId: item.weddingId, eventId: item.eventId ?? undefined,
     title: item.title, description: item.description ?? undefined,
-    category: item.category ?? undefined, phase: item.phase ?? undefined,
+    category: item.category ?? undefined,
     dueDate: item.dueDate?.getTime() ?? undefined,
     assignedToName: item.assignedToName ?? undefined,
     isChecked: item.isChecked, priority: item.priority, order: item.order,
