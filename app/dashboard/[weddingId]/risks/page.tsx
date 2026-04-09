@@ -22,7 +22,7 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
   const qc = useQueryClient()
   const { toast } = useToast()
 
-  const { data: risks = [], isLoading } = useQuery<RiskAlert[]>({
+  const { data, isLoading } = useQuery<{ active: RiskAlert[], resolved: RiskAlert[] }>({
     queryKey: ['risks', wid],
     queryFn: async () => {
       const res = await fetch(`/api/weddings/${wid}/risks`)
@@ -33,8 +33,8 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
     refetchInterval: 60_000,
   })
 
-  const active = risks.filter(r => !r.isResolved)
-  const resolved = risks.filter(r => r.isResolved).slice(0, 10)
+  const active = data?.active ?? []
+  const resolved = (data?.resolved ?? []).slice(0, 10)
 
   const resolve = async (riskId: string) => {
     try {
