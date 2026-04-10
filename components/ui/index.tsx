@@ -163,13 +163,18 @@ Textarea.displayName = 'Textarea'
 // ─── Select ───────────────────────────────────────────────────────────────────
 export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
   ({ className, children, ...props }, ref) => (
-    <select ref={ref} className={cn(
-      'flex h-10 w-full rounded-xl border border-[hsl(var(--border))] bg-white',
-      'px-3.5 py-2 text-sm text-[#14161C]',
-      'focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent',
-      'disabled:opacity-50 cursor-pointer appearance-none',
-      className
-    )} {...props}>{children}</select>
+    <div className={cn('relative', className?.includes('w-auto') ? 'w-auto' : 'w-full')}>
+      <select ref={ref} className={cn(
+        'flex h-10 w-full rounded-xl border border-[hsl(var(--border))] bg-white',
+        'px-3.5 py-2 pr-9 text-sm text-[#14161C]',
+        'focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent',
+        'disabled:opacity-50 cursor-pointer appearance-none',
+        className
+      )} {...props}>{children}</select>
+      <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </div>
   )
 )
 Select.displayName = 'Select'

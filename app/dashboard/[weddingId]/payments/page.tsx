@@ -1,174 +1,16 @@
 'use client'
 import { useState, use, useMemo } from 'react'
-import { DollarSign, Plus, Phone, AlertCircle, CheckCircle2, Clock, CalendarDays } from 'lucide-react'
-import { Button, Input, Label, Select, Badge, EmptyState, Spinner, Modal } from '@/components/ui'
-import { usePayments, useInitiatePayment } from '@/hooks/use-payments'
-import { useToast } from '@/components/ui/toast'
-import { format } from 'date-fns'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { DollarSign, Plus, Phone, CalendarDays } from 'lucide-react'
+import { Button, EmptyState, Spinner } from '@/components/ui'
+import { usePayments } from '@/hooks/use-payments'
+import { useQuery } from '@tanstack/react-query'
 import type { Payment } from '@/hooks/use-payments'
+import {
+  PaymentRow, StkPushModal, AddManualPaymentModal, EventPaymentsTab, fmt,
+  type WeddingEvent,
+} from '@/components/features/payment-modals'
 
-interface WeddingEvent { id: string; name: string; type: string; date: string }
-
-const STATUS_BADGE: Record<string, 'confirmed' | 'pending' | 'declined' | 'maybe'> = {
-  COMPLETED: 'confirmed', PENDING: 'pending', FAILED: 'declined',
-  DISPUTED: 'declined', DUPLICATE: 'maybe', REFUNDED: 'maybe',
-}
-const STATUS_ICON: Record<string, typeof CheckCircle2> = {
-  COMPLETED: CheckCircle2, PENDING: Clock, FAILED: AlertCircle,
-  DISPUTED: AlertCircle, DUPLICATE: AlertCircle, REFUNDED: CheckCircle2,
-}
-const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(n)
-
-function iconBg(status: string) {
-  if (status === 'COMPLETED') return 'bg-emerald-50 text-emerald-600'
-  if (status === 'DISPUTED' || status === 'FAILED') return 'bg-red-50 text-red-500'
-  return 'bg-zinc-100 text-zinc-400'
-}
-
-function PaymentRow({ p }: Readonly<{ p: Payment }>) {
-  const Icon = STATUS_ICON[p.status] ?? Clock
-  return (
-    <div className="flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 px-6">
-      <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconBg(p.status)}`}>
-        <Icon size={15} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-[#14161C]">{p.payerName ?? p.payerPhone ?? 'Unknown payer'}</p>
-        <div className="flex items-center gap-2 mt-0.5">
-          {p.mpesaRef && <span className="text-xs text-zinc-400 font-mono">{p.mpesaRef}</span>}
-          {p.description && <span className="text-xs text-zinc-400 truncate">{p.description}</span>}
-          <span className="text-xs text-zinc-400">{format(new Date(p.createdAt), 'MMM d, HH:mm')}</span>
-        </div>
-      </div>
-      <div className="text-right flex-shrink-0">
-        <p className="text-sm font-bold text-[#14161C]">{fmt(p.amount)}</p>
-        <Badge variant={STATUS_BADGE[p.status] ?? 'pending'} className="mt-1">{p.status}</Badge>
-      </div>
-    </div>
-  )
-}
-
-function StkPushModal({ weddingId, onClose }: Readonly<{ weddingId: string; onClose: () => void }>) {
-  const initiate = useInitiatePayment(weddingId)
-  const { toast } = useToast()
-  const [form, setForm] = useState({ phone: '', amount: '', description: '' })
-
-  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    void (async () => {
-      try {
-        await initiate.mutateAsync({ weddingId, phone: form.phone, amount: parseFloat(form.amount), description: form.description || undefined })
-        toast('M-Pesa STK push sent. Waiting for payment…', 'info')
-        onClose()
-      } catch (err) {
-        toast(err instanceof Error ? err.message : 'Payment initiation failed', 'error')
-      }
-    })()
-  }
-
-  return (
-    <Modal onClose={onClose} title="Request M-Pesa payment">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div><Label htmlFor="stk-phone">Phone number *</Label>
-          <Input id="stk-phone" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="254712345678" required />
-          <p className="text-xs text-zinc-400 mt-1">Format: 254XXXXXXXXX (no +)</p></div>
-        <div><Label htmlFor="stk-amount">Amount (KES) *</Label>
-          <Input id="stk-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="5000" min="1" required /></div>
-        <div><Label htmlFor="stk-desc">Description</Label>
-          <Input id="stk-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Catering deposit" /></div>
-        <div className="flex gap-3 pt-2">
-          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button type="submit" className="flex-1" disabled={initiate.isPending}>
-            {initiate.isPending ? 'Sending…' : <><Phone size={14} /> Send STK Push</>}
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  )
-}
-
-function AddManualPaymentModal({ weddingId, eventId, events, onClose }: Readonly<{
-  weddingId: string; eventId?: string; events: WeddingEvent[]; onClose: () => void
-}>) {
-  const qc = useQueryClient()
-  const { toast } = useToast()
-  const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({
-    amount: '', description: '', payerName: '', mpesaRef: '', status: 'COMPLETED',
-    selectedEventId: eventId ?? '', vendorId: '',
-  })
-
-  const { data: vendors = [] } = useQuery<{ id: string; name: string; category: string }[]>({
-    queryKey: ['vendors', weddingId, 'select'],
-    queryFn: async () => {
-      const res = await fetch(`/api/weddings/${weddingId}/vendors`)
-      if (!res.ok) return []
-      return res.json()
-    },
-    staleTime: 60_000,
-  })
-
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault(); setSaving(true)
-    try {
-      const res = await fetch(`/api/weddings/${weddingId}/payments`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: parseFloat(form.amount),
-          description: form.description || null,
-          payerName: form.payerName || null,
-          mpesaRef: form.mpesaRef || null,
-          vendorId: form.vendorId || null,
-          status: form.status,
-          eventId: form.selectedEventId || null,
-        }),
-      })
-      if (!res.ok) throw new Error()
-      qc.invalidateQueries({ queryKey: ['payments', weddingId] })
-      toast('Payment recorded', 'success'); onClose()
-    } catch { toast('Failed to record payment', 'error') } finally { setSaving(false) }
-  }
-
-  return (
-    <Modal onClose={onClose} title="Record manual payment">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {!eventId && (
-          <div><Label htmlFor="mp-event">Event (optional)</Label>
-            <Select id="mp-event" value={form.selectedEventId} onChange={e => setForm(f => ({ ...f, selectedEventId: e.target.value }))}>
-              <option value="">No specific event</option>
-              {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
-            </Select></div>
-        )}
-        <div><Label htmlFor="mp-amount">Amount (KES) *</Label>
-          <Input id="mp-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="5000" min="1" required /></div>
-        <div><Label htmlFor="mp-vendor">Vendor (optional)</Label>
-          <Select id="mp-vendor" value={form.vendorId} onChange={e => setForm(f => ({ ...f, vendorId: e.target.value }))}>
-            <option value="">No vendor</option>
-            {vendors.map(v => <option key={v.id} value={v.id}>{v.name} — {v.category.replace(/_/g, ' ')}</option>)}
-          </Select></div>
-        <div><Label htmlFor="mp-desc">Description / Notes</Label>
-          <Input id="mp-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Catering deposit — 50% upfront" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="mp-name">Payer name</Label>
-            <Input id="mp-name" value={form.payerName} onChange={e => setForm(f => ({ ...f, payerName: e.target.value }))} placeholder="Jane Doe" /></div>
-          <div><Label htmlFor="mp-ref">M-Pesa ref</Label>
-            <Input id="mp-ref" value={form.mpesaRef} onChange={e => setForm(f => ({ ...f, mpesaRef: e.target.value }))} placeholder="QHX7..." /></div>
-        </div>
-        <div><Label htmlFor="mp-status">Status</Label>
-          <Select id="mp-status" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
-            <option value="COMPLETED">Completed</option>
-            <option value="PENDING">Pending</option>
-            <option value="FAILED">Failed</option>
-          </Select></div>
-        <div className="flex gap-3 pt-2">
-          <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving…' : 'Record payment'}</Button>
-        </div>
-      </form>
-    </Modal>
-  )
-}
+// ─── Overall tab ──────────────────────────────────────────────────────────────
 
 function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events: WeddingEvent[] }>) {
   const totalReceived = payments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
@@ -180,7 +22,7 @@ function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events
     for (const p of payments) {
       const k = p.eventId ?? '__unassigned__'
       if (!map.has(k)) map.set(k, { event: null, payments: [] })
-      map.get(k)!.payments.push(p)
+      map.get(k)?.payments.push(p)
     }
     return map
   }, [payments, events])
@@ -226,6 +68,8 @@ function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events
   )
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function PaymentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
   const params = use(props.params)
   const wid = params.weddingId
@@ -236,15 +80,12 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
     queryKey: ['events', wid],
-    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/events`); if (!res.ok) throw new Error(); return res.json() },
+    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/events`); if (!res.ok) throw new Error('Failed'); return res.json() as Promise<WeddingEvent[]> },
     staleTime: 60_000,
   })
 
   const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
-  const eventPayments = useMemo(() =>
-    activeEvent ? payments.filter(p => p.eventId === activeEvent.id) : [],
-  [payments, activeEvent])
   const totalReceived = payments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
 
   return (
@@ -278,20 +119,7 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
           activeTab === '__overall__'
             ? <OverallTab payments={payments} events={events} />
             : activeEvent
-              ? (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-zinc-400">{eventPayments.length} payments for {activeEvent.name}</p>
-                    <div className="flex gap-2">
-                      <Button onClick={() => setShowManual(true)} size="sm" variant="secondary"><Plus size={14} /> Manual</Button>
-                      <Button onClick={() => setShowStk(true)} size="sm"><Phone size={14} /> STK Push</Button>
-                    </div>
-                  </div>
-                  {eventPayments.length === 0
-                    ? <EmptyState icon={<DollarSign size={40} />} title="No payments for this event" description="Record M-Pesa or manual payments" />
-                    : <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">{eventPayments.map(p => <PaymentRow key={p.id} p={p} />)}</div>}
-                </div>
-              )
+              ? <EventPaymentsTab weddingId={wid} eventId={activeEvent.id} events={events} payments={payments} isLoading={false} />
               : null}
       </div>
 

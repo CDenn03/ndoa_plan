@@ -11,14 +11,7 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
 
   const { weddingId: wid, eventId } = params
 
-  const [event, guestAttendances] = await Promise.all([
-    db.weddingEvent.findUnique({ where: { id: eventId } }),
-    db.guestEventAttendance.findMany({
-      where: { eventId },
-      include: { guest: { select: { id: true, name: true, phone: true, rsvpStatus: true, side: true } } },
-    }),
-  ])
-
+  const event = await db.weddingEvent.findUnique({ where: { id: eventId } })
   if (!event || event.weddingId !== wid) notFound()
 
   return (
@@ -30,10 +23,6 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
         startTime: event.startTime ?? undefined, endTime: event.endTime ?? undefined,
         isMain: event.isMain,
       }}
-      guestAttendances={guestAttendances.map(a => ({
-        id: a.id, rsvpStatus: a.rsvpStatus,
-        guest: { id: a.guest.id, name: a.guest.name, phone: a.guest.phone ?? undefined, side: a.guest.side },
-      }))}
     />
   )
 }
