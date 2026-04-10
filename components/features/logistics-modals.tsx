@@ -4,7 +4,7 @@ import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { Pencil, Trash2, Plus, Truck, Hotel } from 'lucide-react'
+import { Pencil, Trash2, Plus, Truck, Hotel, MapPin, Clock } from 'lucide-react'
 
 export interface TransportRoute {
   id: string; name: string; departureLocation: string; arrivalLocation: string
@@ -228,18 +228,24 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
 
   return (
     <>
-      <div className="group flex items-start gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+      <div className="group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
+        <div className="w-9 h-9 rounded-full bg-sky-50 flex items-center justify-center flex-shrink-0">
+          <Truck size={15} className="text-sky-500" />
+        </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#14161C]">{route.name}</p>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            {route.departureLocation} → {route.arrivalLocation} · {format(new Date(route.departureTime), 'MMM d, h:mm a')}
+          <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+            <MapPin size={10} /> {route.departureLocation} → {route.arrivalLocation}
+          </p>
+          <p className="text-xs text-zinc-400 flex items-center gap-1">
+            <Clock size={10} /> {format(new Date(route.departureTime), 'MMM d, h:mm a')}
             {route.capacity ? ` · ${route.capacity} seats` : ''}
           </p>
           {route.assignedVendor && <p className="text-xs text-violet-500 mt-0.5">{route.assignedVendor.name}</p>}
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
-          <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+        <div className="flex gap-1  flex-shrink-0">
+          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditRouteModal weddingId={weddingId} route={route} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -263,19 +269,24 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
 
   return (
     <>
-      <div className="group flex items-start gap-3 py-3 px-4 border border-zinc-100 rounded-xl">
+      <div className="group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
+        <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+          <Hotel size={15} className="text-emerald-500" />
+        </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#14161C]">{accommodation.hotelName}</p>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            {accommodation.address ? `${accommodation.address} · ` : ''}
-            {format(new Date(accommodation.checkIn), 'MMM d')} – {format(new Date(accommodation.checkOut), 'MMM d')}
+          {accommodation.address && (
+            <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {accommodation.address}</p>
+          )}
+          <p className="text-xs text-zinc-400">
+            {format(new Date(accommodation.checkIn), 'MMM d')} – {format(new Date(accommodation.checkOut), 'MMM d, yyyy')}
             {accommodation.roomsBlocked ? ` · ${accommodation.roomsBlocked} rooms` : ''}
           </p>
           {accommodation.notes && <p className="text-xs text-zinc-400 mt-0.5">{accommodation.notes}</p>}
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
-          <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+        <div className="flex gap-1  flex-shrink-0">
+          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditAccommodationModal weddingId={weddingId} accommodation={accommodation} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -293,7 +304,7 @@ export function RouteList({ routes, weddingId, onRefresh, onAdd }: Readonly<{
       action={<Button onClick={onAdd}><Plus size={14} /> Add route</Button>} />
   )
   return (
-    <div className="space-y-2">
+    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
       {routes.map(r => <RouteRow key={r.id} route={r} weddingId={weddingId} onRefresh={onRefresh} />)}
     </div>
   )
@@ -309,7 +320,7 @@ export function AccomList({ accommodations, weddingId, onRefresh, onAdd }: Reado
       action={<Button onClick={onAdd}><Plus size={14} /> Add accommodation</Button>} />
   )
   return (
-    <div className="space-y-2">
+    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
       {accommodations.map(a => <AccommodationRow key={a.id} accommodation={a} weddingId={weddingId} onRefresh={onRefresh} />)}
     </div>
   )

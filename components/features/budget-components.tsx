@@ -240,7 +240,7 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit }:
                     </div>
                   </div>
                   <span className="text-xs text-zinc-500 flex-shrink-0">{fmt(l.estimated)}</span>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                  <div className="flex items-center gap-1  flex-shrink-0">
                     <button onClick={() => onEdit(l)} className="p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={11} /></button>
                     <button onClick={() => handleDelete(l)} className="p-1 rounded hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={11} /></button>
                   </div>

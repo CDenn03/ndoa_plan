@@ -264,7 +264,7 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
               <UserCheck size={14} />
             </Button>
           )}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1 ">
             <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit guest"><Pencil size={13} /></button>
             <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Remove guest"><Trash2 size={13} /></button>
           </div>
@@ -334,7 +334,7 @@ export function AttendanceRow({ attendance, weddingId, eventId, onRefresh }: Rea
           <option value="MAYBE">Maybe</option>
           <option value="WAITLISTED">Waitlisted</option>
         </select>
-        <button onClick={remove} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all" aria-label="Remove from event">
+        <button onClick={remove} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 " aria-label="Remove from event">
           <Trash2 size={13} />
         </button>
       </div>
@@ -349,6 +349,22 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
   const [rsvpFilter, setRsvpFilter] = useState('all')
+
+  // Expected guests — stored in localStorage per event, no schema change needed
+  const storageKey = `expected-guests:${weddingId}:${eventId}`
+  const [expectedInput, setExpectedInput] = useState(() => {
+    if (typeof window === 'undefined') return ''
+    return localStorage.getItem(storageKey) ?? ''
+  })
+  const expected = Number.parseInt(expectedInput) || 0
+
+  const saveExpected = (val: string) => {
+    setExpectedInput(val)
+    if (typeof window !== 'undefined') {
+      if (val) localStorage.setItem(storageKey, val)
+      else localStorage.removeItem(storageKey)
+    }
+  }
 
   const { data: attendances = [], isLoading } = useQuery<EventAttendance[]>({
     queryKey: ['attendances', weddingId, eventId],
@@ -371,6 +387,9 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
   const declined = attendances.filter(a => a.rsvpStatus === 'DECLINED').length
   const checkedIn = attendances.filter(a => a.guest.checkedIn).length
 
+  // Delta vs expected
+  const delta = expected > 0 ? confirmed - expected : null
+
   const refresh = () => void qc.invalidateQueries({ queryKey: ['attendances', weddingId, eventId] })
 
   if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
@@ -390,6 +409,41 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
             <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
           </div>
         ))}
+      </div>
+
+      {/* Expected guests input */}
+      <div className="flex items-center gap-3 bg-zinc-50 rounded-xl px-4 py-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-zinc-500 mb-1">Expected guests</p>
+          <div className="flex items-center gap-2">
+            <input
+              type="number" min="0" value={expectedInput}
+              onChange={e => saveExpected(e.target.value)}
+              placeholder="Set target…"
+              className="w-24 text-sm font-semibold bg-white border border-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-300 text-[#14161C]"
+            />
+            {expected > 0 && (
+              <span className={`text-xs font-semibold ${
+                delta === null ? 'text-zinc-400' :
+                delta > 0 ? 'text-amber-500' :
+                delta < 0 ? 'text-zinc-400' :
+                'text-emerald-600'
+              }`}>
+                {delta === null ? '' :
+                 delta > 0 ? `${delta} over target` :
+                 delta < 0 ? `${Math.abs(delta)} below target` :
+                 'On target'}
+              </span>
+            )}
+          </div>
+        </div>
+        {expected > 0 && (
+          <div className="text-right flex-shrink-0">
+            <p className="text-xs text-zinc-400">Confirmed / Expected</p>
+            <p className="text-sm font-bold text-[#14161C]">{confirmed} / {expected}</p>
+            <p className="text-xs text-zinc-400 mt-0.5">{expected > 0 ? Math.round((confirmed / expected) * 100) : 0}% filled</p>
+          </div>
+        )}
       </div>
 
       {/* Filters + Add */}

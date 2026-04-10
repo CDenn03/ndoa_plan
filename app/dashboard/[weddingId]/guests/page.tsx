@@ -49,7 +49,7 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
   return (
     <div className="min-h-full">
       <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">People</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <div>
@@ -78,7 +78,7 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-8 py-10">
+      <div className="max-w-6xl mx-auto px-8 py-10">
         {activeTab === '__overall__' ? (
           <div className="space-y-8">
             <GuestsOverallTab weddingId={wid} events={events} />

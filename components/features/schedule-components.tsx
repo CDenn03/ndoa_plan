@@ -199,7 +199,7 @@ export function ProgramRow({ item, idx, onEdit, onDelete }: Readonly<{
         {item.assignedTo && <p className="text-xs text-violet-500 mt-0.5">→ {item.assignedTo}</p>}
       </div>
       {(onEdit ?? onDelete) && (
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+        <div className="flex gap-1  flex-shrink-0">
           {onEdit && <button onClick={onEdit} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>}
           {onDelete && <button onClick={onDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>}
         </div>
@@ -489,7 +489,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                       <p className="text-xs font-semibold text-[#14161C]">{item.title}</p>
                       {item.assignedTo && <span className="text-[10px] text-zinc-400">→ {item.assignedTo}</span>}
                       <button onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                        className="p-0.5 rounded opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-400 transition-all ml-1"
+                        className="p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all ml-1"
                         aria-label="Delete"><Trash2 size={10} /></button>
                     </div>
                   ))}
@@ -531,7 +531,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                             {/* Delete on hover */}
                             <button
                               onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                              className="absolute top-1 right-1 p-0.5 rounded opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-400 transition-all"
+                              className="absolute top-1 right-1 p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all"
                               aria-label="Delete">
                               <Trash2 size={10} />
                             </button>
@@ -603,7 +603,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                         <p className="text-xs font-semibold text-[#14161C]">{item.title}</p>
                         {item.assignedTo && <span className="text-[10px] text-zinc-400">→ {item.assignedTo}</span>}
                         <button onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                          className="p-0.5 rounded opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-400 transition-all ml-1"
+                          className="p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all ml-1"
                           aria-label="Delete"><Trash2 size={10} /></button>
                       </div>
                     ))}
@@ -653,7 +653,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                                 {item.assignedTo && <span className="text-xs text-violet-500">→ {item.assignedTo}</span>}
                               </div>
                             </div>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <div className="flex gap-1  flex-shrink-0">
                               <button onClick={() => setEditingItem(item)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
                               <button onClick={() => void deleteItem(item)} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
                             </div>

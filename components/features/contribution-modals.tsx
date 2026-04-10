@@ -236,7 +236,7 @@ export function ContribRow({ contrib, weddingId, events, onEdit }: Readonly<{
         <p className="text-sm font-bold text-[#14161C]">{fmt(contrib.paidAmount)} <span className="text-zinc-400 font-normal text-xs">/ {fmt(contrib.pledgeAmount)}</span></p>
         {contrib.dueDate && <p className={`text-xs mt-0.5 ${contrib.status === 'OVERDUE' ? 'text-red-500 font-semibold' : 'text-zinc-400'}`}>Due {format(new Date(contrib.dueDate), 'MMM d')}</p>}
       </div>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+      <div className="flex items-center gap-1  flex-shrink-0">
         <button onClick={() => onEdit(contrib)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
         <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
       </div>

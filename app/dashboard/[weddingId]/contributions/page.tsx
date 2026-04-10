@@ -47,7 +47,7 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
   return (
     <div className="min-h-full">
       <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Contributions</h1>
@@ -68,7 +68,7 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-8 py-10">
+      <div className="max-w-6xl mx-auto px-8 py-10">
         {/* Per-event tab — uses shared EventContributionsTab */}
         {activeEvent ? (
           <EventContributionsTab weddingId={wid} eventId={activeEvent.id} events={events} />

@@ -1,9 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { Button, Input, Label, Select, Modal } from '@/components/ui'
+import { Button, Input, Label, Select, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQueryClient } from '@tanstack/react-query'
-import { Pencil, Trash2 } from 'lucide-react'
+import { format } from 'date-fns'
+import { Pencil, Trash2, Plus, Heart, Gift, CheckCircle2 } from 'lucide-react'
 
 export interface GiftRegistryItem {
   id: string; name: string; description?: string | null; url?: string | null
@@ -167,7 +168,7 @@ export function RegistryItemRow({ item, weddingId, onRefresh }: Readonly<{
             {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-violet-500 hover:underline">Link</a>}
           </div>
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+        <div className="flex items-center gap-1  flex-shrink-0">
           <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
           <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
@@ -205,7 +206,7 @@ export function ReceivedGiftRow({ gift, weddingId, onRefresh }: Readonly<{
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {gift.estimatedValue != null && <p className="text-sm font-bold text-[#14161C]">{fmt(gift.estimatedValue)}</p>}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+          <div className="flex items-center gap-1 ">
             <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
             <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
           </div>
@@ -213,5 +214,170 @@ export function ReceivedGiftRow({ gift, weddingId, onRefresh }: Readonly<{
       </div>
       {editing && <AddReceivedGiftModal weddingId={weddingId} gift={gift} onClose={() => setEditing(false)} onDone={onRefresh} />}
     </>
+  )
+}
+
+// ─── Action buttons (edit/delete only, used inside rich list rows) ────────────
+
+function RegistryItemActions({ item, weddingId, onRefresh }: Readonly<{
+  item: GiftRegistryItem; weddingId: string; onRefresh: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [editing, setEditing] = useState(false)
+
+  const handleDelete = async () => {
+    if (!confirm('Delete this registry item?')) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/gifts/registry/${item.id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['gifts-registry', weddingId] })
+      toast('Item deleted', 'success'); onRefresh()
+    } catch { toast('Failed to delete', 'error') }
+  }
+
+  return (
+    <>
+      <div className="flex gap-1 ">
+        <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
+        <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+      </div>
+      {editing && <AddRegistryModal weddingId={weddingId} item={item} onClose={() => setEditing(false)} onDone={onRefresh} />}
+    </>
+  )
+}
+
+function ReceivedGiftActions({ gift, weddingId, onRefresh }: Readonly<{
+  gift: GiftReceived; weddingId: string; onRefresh: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [editing, setEditing] = useState(false)
+
+  const handleDelete = async () => {
+    if (!confirm('Delete this gift record?')) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['gifts-received', weddingId] })
+      toast('Gift deleted', 'success'); onRefresh()
+    } catch { toast('Failed to delete', 'error') }
+  }
+
+  return (
+    <>
+      <div className="flex gap-1 ">
+        <button onClick={() => setEditing(true)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
+        <button onClick={handleDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+      </div>
+      {editing && <AddReceivedGiftModal weddingId={weddingId} gift={gift} onClose={() => setEditing(false)} onDone={onRefresh} />}
+    </>
+  )
+}
+
+// ─── Registry List ────────────────────────────────────────────────────────────
+
+export function RegistryList({ items, weddingId, onRefresh, onAdd }: Readonly<{
+  items: GiftRegistryItem[]; weddingId: string; onRefresh: () => void; onAdd: () => void
+}>) {
+  if (items.length === 0) return (
+    <EmptyState icon={<Heart size={40} />} title="Registry is empty" description="Add items you'd love to receive as gifts"
+      action={<Button onClick={onAdd}><Plus size={14} /> Add item</Button>} />
+  )
+  return (
+    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+      {items.map(item => (
+        <div key={item.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 group">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-[#14161C]">{item.name}</p>
+            {item.description && <p className="text-xs text-zinc-400 mt-0.5">{item.description}</p>}
+            {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-violet-500 hover:underline mt-0.5 block">View item →</a>}
+          </div>
+          <div className="text-right flex-shrink-0 flex items-center gap-3">
+            <div>
+              {item.estimatedPrice != null && <p className="text-sm font-bold text-[#14161C]">{fmt(item.estimatedPrice)}</p>}
+              <p className="text-xs text-zinc-400">Qty: {item.quantity}</p>
+            </div>
+            <RegistryItemActions item={item} weddingId={weddingId} onRefresh={onRefresh} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Received List ────────────────────────────────────────────────────────────
+
+export function ReceivedList({ gifts, weddingId, onRefresh, onAdd }: Readonly<{
+  gifts: GiftReceived[]; weddingId: string; onRefresh: () => void; onAdd: () => void
+}>) {
+  if (gifts.length === 0) return (
+    <EmptyState icon={<Gift size={40} />} title="No gifts recorded" description="Track gifts received and send thank-yous"
+      action={<Button onClick={onAdd}><Plus size={14} /> Record gift</Button>} />
+  )
+  return (
+    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+      {gifts.map(gift => (
+        <div key={gift.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 group">
+          <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0">
+            {gift.giverName.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-[#14161C]">{gift.giverName}</p>
+            <p className="text-xs text-zinc-400 mt-0.5">{gift.description}</p>
+            {gift.receivedAt && <p className="text-xs text-zinc-400">{format(new Date(gift.receivedAt), 'MMM d, yyyy')}</p>}
+          </div>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="text-right">
+              {gift.estimatedValue != null && <p className="text-sm font-bold text-[#14161C]">{fmt(gift.estimatedValue)}</p>}
+              {gift.thankYouSent
+                ? <span className="flex items-center gap-1 text-xs text-emerald-500 font-semibold"><CheckCircle2 size={12} /> Thanked</span>
+                : <span className="text-xs text-amber-500 font-semibold">Thank-you pending</span>}
+            </div>
+            <ReceivedGiftActions gift={gift} weddingId={weddingId} onRefresh={onRefresh} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Event Gifts Tab (shared between event detail + gifts dashboard) ───────────
+
+export function EventGiftsTab({ weddingId, eventId, registry, received, onRefresh }: Readonly<{
+  weddingId: string; eventId: string
+  registry: GiftRegistryItem[]; received: GiftReceived[]; onRefresh: () => void
+}>) {
+  const [subTab, setSubTab] = useState<'registry' | 'received'>('registry')
+  const [showAddReg, setShowAddReg] = useState(false)
+  const [showAddRec, setShowAddRec] = useState(false)
+
+  const evReg = registry.filter(r => r.eventId === eventId)
+  const evRec = received.filter(r => r.eventId === eventId)
+  const pendingThankYous = evRec.filter(r => !r.thankYouSent).length
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+          {(['registry', 'received'] as const).map(t => (
+            <button key={t} onClick={() => setSubTab(t)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              {t === 'registry' ? 'Registry' : 'Received'}
+              {t === 'received' && pendingThankYous > 0 && (
+                <span className="ml-1.5 text-[10px] font-bold bg-amber-100 text-amber-600 rounded-full px-1.5 py-0.5">{pendingThankYous}</span>
+              )}
+            </button>
+          ))}
+        </div>
+        <Button size="sm" onClick={() => subTab === 'registry' ? setShowAddReg(true) : setShowAddRec(true)}>
+          <Plus size={14} /> {subTab === 'registry' ? 'Add item' : 'Record gift'}
+        </Button>
+      </div>
+
+      {subTab === 'registry' && <RegistryList items={evReg} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => setShowAddReg(true)} />}
+      {subTab === 'received' && <ReceivedList gifts={evRec} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => setShowAddRec(true)} />}
+
+      {showAddReg && <AddRegistryModal weddingId={weddingId} eventId={eventId} onClose={() => setShowAddReg(false)} onDone={onRefresh} />}
+      {showAddRec && <AddReceivedGiftModal weddingId={weddingId} eventId={eventId} onClose={() => setShowAddRec(false)} onDone={onRefresh} />}
+    </div>
   )
 }

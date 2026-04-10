@@ -50,14 +50,14 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
   return (
     <div className="min-h-full">
       <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Monitoring</p>
           <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Risk Alerts</h1>
           <p className="text-sm text-zinc-400 mt-2">{active.length} active · {resolved.length} resolved</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
+      <div className="max-w-6xl mx-auto px-8 py-10 space-y-10">
         {isLoading ? (
           <div className="flex justify-center py-16"><Spinner /></div>
         ) : active.length === 0 ? (
@@ -83,7 +83,7 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
                     <p className="text-sm text-zinc-700 leading-relaxed">{r.message}</p>
                   </div>
                   <Button size="sm" variant="secondary"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    className=" flex-shrink-0"
                     onClick={() => resolve(r.id)}>
                     <CheckCircle2 size={13} /> Resolve
                   </Button>

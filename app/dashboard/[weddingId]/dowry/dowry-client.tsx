@@ -85,7 +85,7 @@ export function DowryClient({ weddingId, items }: Readonly<Props>) {
   return (
     <div className="min-h-full">
       <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
-        <div className="max-w-3xl mx-auto flex items-end justify-between gap-4">
+        <div className="max-w-6xl mx-auto flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Traditional</p>
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Dowry Tracker</h1>
@@ -95,7 +95,7 @@ export function DowryClient({ weddingId, items }: Readonly<Props>) {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-8 py-10">
+      <div className="max-w-6xl mx-auto px-8 py-10">
         {items.length === 0 ? (
           <EmptyState
             icon={<Heart size={40} />}

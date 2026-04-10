@@ -1,10 +1,10 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Button, Input, Select, Label, Badge, Modal, Spinner, EmptyState } from '@/components/ui'
+import { Button, Input, Select, Label, Badge, Modal, Spinner, EmptyState, ProgressBar } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQueryClient } from '@tanstack/react-query'
-import { format, isFuture } from 'date-fns'
-import { MapPin, Clock, Pencil, Trash2, CheckCircle2, LayoutTemplate, Plus, Sparkles } from 'lucide-react'
+import { format } from 'date-fns'
+import { MapPin, Clock, Pencil, Trash2, CheckCircle2, XCircle, LayoutTemplate, Plus, Sparkles } from 'lucide-react'
 
 export interface Appointment {
   id: string; title: string; location?: string | null; notes?: string | null
@@ -141,27 +141,85 @@ export function AppointmentRow({ a, weddingId, vendors, onRefresh }: Readonly<{
   a: Appointment; weddingId: string; vendors: Vendor[]; onRefresh: () => void
 }>) {
   const { toast } = useToast()
+  const qc = useQueryClient()
   const [editing, setEditing] = useState(false)
+  const [updating, setUpdating] = useState(false)
+  const isCompleted = a.status === 'COMPLETED'
+  const isCancelled = a.status === 'CANCELLED'
+  const isDone = isCompleted || isCancelled
 
   const handleDelete = async () => {
     if (!confirm('Delete this appointment?')) return
     try {
-      const res = await fetch(`/api/weddings/${weddingId}/appointments/${a.id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Failed to delete')
+      await fetch(`/api/weddings/${weddingId}/appointments/${a.id}`, { method: 'DELETE' })
       toast('Appointment deleted', 'success'); onRefresh()
     } catch { toast('Failed to delete appointment', 'error') }
   }
 
+  const toggleComplete = async () => {
+    if (updating) return
+    setUpdating(true)
+    const newStatus = isCompleted ? 'SCHEDULED' : 'COMPLETED'
+    try {
+      await fetch(`/api/weddings/${weddingId}/appointments/${a.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      await qc.invalidateQueries({ queryKey: ['appointments', weddingId] })
+      onRefresh()
+    } catch { toast('Failed to update', 'error') } finally { setUpdating(false) }
+  }
+
+  const cancelAppt = async () => {
+    if (updating) return
+    setUpdating(true)
+    const newStatus = isCancelled ? 'SCHEDULED' : 'CANCELLED'
+    try {
+      await fetch(`/api/weddings/${weddingId}/appointments/${a.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      await qc.invalidateQueries({ queryKey: ['appointments', weddingId] })
+      onRefresh()
+    } catch { toast('Failed to update', 'error') } finally { setUpdating(false) }
+  }
+
   return (
     <>
-      <div className="group flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
-        <div className="w-10 h-10 rounded-xl bg-[#CDB5F7]/20 flex flex-col items-center justify-center flex-shrink-0">
+      <div className={`flex items-start gap-3 py-3.5 border-b border-zinc-100 last:border-0 ${isDone ? 'opacity-60' : ''}`}>
+        {/* Checkbox */}
+        <button onClick={toggleComplete} disabled={updating || isCancelled}
+          className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+            updating ? 'border-violet-300 bg-violet-100 animate-pulse cursor-wait' :
+            isCompleted ? 'bg-violet-500 border-violet-500' :
+            isCancelled ? 'bg-zinc-200 border-zinc-300 cursor-not-allowed' :
+            'border-zinc-300 hover:border-violet-400'
+          }`}
+          aria-label={isCompleted ? 'Mark incomplete' : 'Mark complete'}>
+          {updating ? (
+            <svg className="w-3 h-3 animate-spin text-violet-400" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          ) : isCompleted ? (
+            <svg viewBox="0 0 12 10" className="w-3 h-3">
+              <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : isCancelled ? (
+            <span className="text-[8px] font-bold text-zinc-400">✕</span>
+          ) : null}
+        </button>
+
+        {/* Date badge */}
+        <div className="w-9 h-9 rounded-xl bg-[#CDB5F7]/20 flex flex-col items-center justify-center flex-shrink-0">
           <p className="text-sm font-extrabold text-violet-600 leading-none">{format(new Date(a.startAt), 'd')}</p>
           <p className="text-[9px] font-semibold text-zinc-400 uppercase">{format(new Date(a.startAt), 'MMM')}</p>
         </div>
+
+        {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-[#14161C]">{a.title}</p>
+            <p className={`text-sm font-semibold ${isDone ? 'line-through text-zinc-400' : 'text-[#14161C]'}`}>{a.title}</p>
             <Badge variant={STATUS_BADGE[a.status] ?? 'default'}>{a.status}</Badge>
           </div>
           <div className="flex items-center gap-3 mt-0.5 flex-wrap">
@@ -174,9 +232,23 @@ export function AppointmentRow({ a, weddingId, vendors, onRefresh }: Readonly<{
           </div>
           {a.notes && <p className="text-xs text-zinc-400 mt-1">{a.notes}</p>}
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {!isCancelled && !isCompleted && (
+            <button onClick={cancelAppt} disabled={updating}
+              className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-red-500'}`} title="Cancel">
+              <XCircle size={13} />
+            </button>
+          )}
+          {isCancelled && (
+            <button onClick={cancelAppt} disabled={updating}
+              className={`p-1.5 rounded-lg hover:bg-zinc-100 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-zinc-600'}`} title="Restore">
+              <CheckCircle2 size={13} />
+            </button>
+          )}
+          <button onClick={() => setEditing(true)} disabled={updating} className={`p-1.5 rounded-lg hover:bg-zinc-100 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-zinc-600'}`} aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} disabled={updating} className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-red-500'}`} aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditAppointmentModal weddingId={weddingId} appointment={a} vendors={vendors} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -237,56 +309,81 @@ export function AppointmentLoadTemplateModal({ weddingId, eventId, onClose, onDo
   )
 }
 
-// ─── Appointment List (grouped by month + past section) ───────────────────────
+// ─── Appointment List (with filters matching task list style) ─────────────────
 
 export function AppointmentList({ appointments, weddingId, vendors, onRefresh }: Readonly<{
   appointments: Appointment[]; weddingId: string; vendors: Vendor[]; onRefresh: () => void
 }>) {
-  const upcoming = appointments.filter(a => a.status === 'SCHEDULED' && isFuture(new Date(a.startAt)))
-  const past = appointments.filter(a => a.status !== 'SCHEDULED' || !isFuture(new Date(a.startAt)))
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'done'>('all')
+
+  const completed = appointments.filter(a => a.status === 'COMPLETED').length
+  const pct = appointments.length > 0 ? Math.round((completed / appointments.length) * 100) : 0
+
+  const filtered = useMemo(() => appointments.filter(a => {
+    if (statusFilter === 'pending') return a.status === 'SCHEDULED'
+    if (statusFilter === 'done') return a.status === 'COMPLETED' || a.status === 'CANCELLED'
+    return true
+  }), [appointments, statusFilter])
+
+  // Group pending by month, done at bottom
+  const pending = filtered.filter(a => a.status === 'SCHEDULED').sort((a, b) => a.startAt.localeCompare(b.startAt))
+  const done = filtered.filter(a => a.status !== 'SCHEDULED').sort((a, b) => b.startAt.localeCompare(a.startAt))
 
   const grouped = useMemo(() =>
-    upcoming.reduce<Record<string, Appointment[]>>((acc, a) => {
+    pending.reduce<Record<string, Appointment[]>>((acc, a) => {
       const key = format(new Date(a.startAt), 'MMMM yyyy')
       if (!acc[key]) acc[key] = []
       acc[key].push(a)
       return acc
     }, {}),
-  [upcoming])
+  [pending])
 
   if (appointments.length === 0) return null
 
   return (
-    <div className="space-y-8">
-      {Object.entries(grouped).map(([month, appts]) => (
-        <div key={month}>
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">{month}</p>
-          <div className="space-y-0">
-            {appts.map(a => <AppointmentRow key={a.id} a={a} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />)}
-          </div>
+    <div className="space-y-6">
+      {/* Progress */}
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-zinc-500">Progress</span>
+          <span className="font-bold text-violet-600">{pct}% · {completed}/{appointments.length}</span>
         </div>
-      ))}
-      {past.length > 0 && (
-        <div>
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">Past</p>
-          <div className="space-y-0 opacity-60">
-            {past.slice(0, 5).map(a => (
-              <div key={a.id} className="group flex items-start gap-4 py-3 border-b border-zinc-100 last:border-0">
-                <CheckCircle2 size={15} className="text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-zinc-500 line-through">{a.title}</p>
-                  <p className="text-xs text-zinc-400">{format(new Date(a.startAt), 'MMM d, yyyy')}</p>
-                </div>
-                <button onClick={async () => {
-                  if (!confirm('Delete this appointment?')) return
-                  await fetch(`/api/weddings/${weddingId}/appointments/${a.id}`, { method: 'DELETE' })
-                  onRefresh()
-                }} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Delete">
-                  <Trash2 size={13} />
-                </button>
+        <ProgressBar value={completed} max={appointments.length} />
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+        {(['all', 'pending', 'done'] as const).map(f => (
+          <button key={f} onClick={() => setStatusFilter(f)}
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState icon={<Sparkles size={40} />} title="No appointments match" description="Try a different filter" />
+      ) : (
+        <div className="space-y-8">
+          {/* Pending grouped by month */}
+          {Object.entries(grouped).map(([month, appts]) => (
+            <div key={month}>
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">{month}</p>
+              <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                {appts.map(a => <AppointmentRow key={a.id} a={a} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />)}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+
+          {/* Done section */}
+          {done.length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Completed / Cancelled</p>
+              <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                {done.map(a => <AppointmentRow key={a.id} a={a} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />)}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -303,11 +400,14 @@ export function EventAppointmentsTab({ weddingId, userId, eventId, vendors, appo
   const [showTemplate, setShowTemplate] = useState(false)
 
   const eventAppts = useMemo(() => appointments.filter(a => a.eventId === eventId), [appointments, eventId])
+  const completed = eventAppts.filter(a => a.status === 'COMPLETED').length
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <p className="text-sm text-zinc-400">{eventAppts.length} appointment{eventAppts.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm text-zinc-400">
+          {completed}/{eventAppts.length} completed
+        </p>
         <div className="flex gap-2">
           <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
             <LayoutTemplate size={13} /> Load template
