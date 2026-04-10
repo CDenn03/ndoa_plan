@@ -128,7 +128,7 @@ export function DashboardClient({
           <Link href={`/dashboard/${wid}/budget`} className="px-8 hover:opacity-70 transition-opacity">
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Budget used</p>
             <p className={`text-4xl font-extrabold leading-none ${getBudgetColor(summary.budgetPercent)}`}>{summary.budgetPercent}%</p>
-            <p className="text-xs text-zinc-400 mt-1.5">{fmt(summary.totalCommitted)}</p>
+            <p className="text-xs text-zinc-400 mt-1.5">{fmt(summary.totalActual)}</p>
           </Link>
           <Link href={`/dashboard/${wid}/risks`} className="pl-8 hover:opacity-70 transition-opacity">
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Active risks</p>
@@ -149,16 +149,16 @@ export function DashboardClient({
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-zinc-500">Committed of total</span>
-                <span className="font-bold text-[#14161C]">{fmt(summary.totalCommitted)} <span className="text-zinc-400 font-normal">/ {fmt(summary.totalBudget)}</span></span>
+                <span className="text-zinc-500">Spent of total</span>
+                <span className="font-bold text-[#14161C]">{fmt(summary.totalActual)} <span className="text-zinc-400 font-normal">/ {fmt(summary.totalBudget)}</span></span>
               </div>
-              <ProgressBar value={summary.totalCommitted} max={summary.totalBudget} />
+              <ProgressBar value={summary.totalActual} max={summary.totalBudget} />
             </div>
             <div className="grid grid-cols-3 gap-4 pt-1">
               {[
                 { label: 'Spent', val: summary.totalSpent, color: 'text-red-500' },
-                { label: 'Committed', val: summary.totalCommitted - summary.totalSpent, color: 'text-amber-500' },
-                { label: 'Remaining', val: summary.totalBudget - summary.totalCommitted, color: 'text-emerald-600' },
+                { label: 'Spent', val: summary.totalActual, color: 'text-amber-500' },
+                { label: 'Remaining', val: summary.totalBudget - summary.totalActual, color: 'text-emerald-600' },
               ].map(({ label, val, color }) => (
                 <div key={label}>
                   <p className={`text-xl font-bold ${color}`}>{fmt(Math.max(0, val))}</p>
@@ -166,9 +166,9 @@ export function DashboardClient({
                 </div>
               ))}
             </div>
-            {summary.confirmedCount > 0 && summary.totalCommitted > 0 && (
+            {summary.confirmedCount > 0 && summary.totalActual > 0 && (
               <p className="text-xs text-zinc-400 pt-1">
-                Cost per confirmed guest: <span className="font-semibold text-[#14161C]">{fmt(summary.totalCommitted / summary.confirmedCount)}</span>
+                Cost per confirmed guest: <span className="font-semibold text-[#14161C]">{fmt(summary.totalActual / summary.confirmedCount)}</span>
               </p>
             )}
           </div>

@@ -69,12 +69,12 @@ async function main() {
   await db.budgetLine.createMany({
     skipDuplicates: true,
     data: [
-      { weddingId: wedding.id, category: 'CATERING', description: 'Food and beverages', estimated: 450_000, committed: 450_000, actual: 100_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'PHOTOGRAPHY', description: 'Photography + videography', estimated: 150_000, committed: 120_000, actual: 60_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'DECORATIONS', description: 'Flowers and decor', estimated: 120_000, committed: 80_000, actual: 0, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'MUSIC', description: 'DJ services', estimated: 50_000, committed: 35_000, actual: 0, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'TRANSPORT', description: 'Bridal car and buses', estimated: 60_000, committed: 45_000, actual: 20_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'ATTIRE', description: 'Wedding dress and suits', estimated: 200_000, committed: 150_000, actual: 150_000, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'CATERING', description: 'Food and beverages', estimated: 450_000, actual: 100_000, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'PHOTOGRAPHY', description: 'Photography + videography', estimated: 150_000, actual: 60_000, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'DECORATIONS', description: 'Flowers and decor', estimated: 120_000, actual: 0, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'MUSIC', description: 'DJ services', estimated: 50_000, actual: 0, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'TRANSPORT', description: 'Bridal car and buses', estimated: 60_000, actual: 20_000, version: 1, checksum: '' },
+      { weddingId: wedding.id, category: 'ATTIRE', description: 'Wedding dress and suits', estimated: 200_000, actual: 150_000, version: 1, checksum: '' },
     ],
   })
 

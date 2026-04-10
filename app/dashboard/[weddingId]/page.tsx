@@ -19,7 +19,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
     db.wedding.findUnique({ where: { id: wid } }),
     db.guest.groupBy({ by: ['rsvpStatus'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.vendor.groupBy({ by: ['status'], where: { weddingId: wid, deletedAt: null }, _count: true }),
-    db.budgetLine.findMany({ where: { weddingId: wid, deletedAt: null }, select: { estimated: true, actual: true, committed: true } }),
+    db.budgetLine.findMany({ where: { weddingId: wid, deletedAt: null }, select: { estimated: true, actual: true } }),
     db.riskAlert.findMany({ where: { weddingId: wid, isResolved: false }, orderBy: { severity: 'asc' }, take: 5 }),
     db.weddingEvent.findMany({
       where: { weddingId: wid, date: { gte: new Date() } },
@@ -47,7 +47,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
   const totalVendors = vendorCounts.reduce((s, v) => s + v._count, 0)
   const totalBudget = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
   const totalSpent = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
-  const totalCommitted = budgetLines.reduce((s, l) => s + Number(l.committed) + Number(l.actual), 0)
+  const totalActual = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
   const daysToWedding = differenceInDays(wedding.date, new Date())
 
   const now = new Date()
@@ -63,8 +63,8 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
         summary={{
           guestCount: totalGuests, confirmedCount: confirmed, pendingCount: pending, checkedInCount: 0,
           vendorCount: totalVendors, confirmedVendors,
-          totalBudget, totalSpent, totalCommitted,
-          budgetPercent: totalBudget > 0 ? Math.round((totalCommitted / totalBudget) * 100) : 0,
+          totalBudget, totalSpent, totalActual,
+          budgetPercent: totalBudget > 0 ? Math.round((totalActual / totalBudget) * 100) : 0,
           upcomingTasks: upcomingTasks.length, overdueTasks: 0,
           activeRisks: activeRisks.length,
           criticalRisks: activeRisks.filter(r => r.severity === 'CRITICAL').length,

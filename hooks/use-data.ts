@@ -128,15 +128,13 @@ export function useBudgetSummary(weddingId: string) {
   const { data: lines = [] } = useBudgetLines(weddingId)
   const totalEstimated = lines.reduce((s, l) => s + l.estimated, 0)
   const totalActual = lines.reduce((s, l) => s + l.actual, 0)
-  const totalCommitted = lines.reduce((s, l) => s + l.committed, 0)
-  const byCategory = lines.reduce<Record<string, { estimated: number; actual: number; committed: number }>>((acc, l) => {
-    if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, committed: 0 }
+  const byCategory = lines.reduce<Record<string, { estimated: number; actual: number }>>((acc, l) => {
+    if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0 }
     acc[l.category].estimated += l.estimated
     acc[l.category].actual += l.actual
-    acc[l.category].committed += l.committed
     return acc
   }, {})
-  return { totalEstimated, totalActual, totalCommitted, byCategory, lines }
+  return { totalEstimated, totalActual, byCategory, lines }
 }
 
 export function useAddBudgetLine(weddingId: string) {

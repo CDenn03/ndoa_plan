@@ -121,7 +121,7 @@ export interface DashboardSummary {
   confirmedVendors: number
   totalBudget: number
   totalSpent: number
-  totalCommitted: number
+  totalActual: number
   budgetPercent: number
   upcomingTasks: number
   overdueTasks: number
@@ -218,7 +218,6 @@ export interface LocalBudgetLine {
   description: string
   estimated: number
   actual: number
-  committed: number
   vendorId?: string
   vendorName?: string
   notes?: string

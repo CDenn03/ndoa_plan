@@ -9,8 +9,8 @@ interface Props {
   currency: string
   totalBudget: number
   totalSpent: number
-  totalCommitted: number
-  budgetByCategory: { name: string; estimated: number; actual: number; committed: number; total: number }[]
+  totalActual: number
+  budgetByCategory: { name: string; estimated: number; actual: number; total: number }[]
   guestStats: { confirmed: number; pending: number; declined: number; total: number }
   vendorStats: { confirmed: number; booked: number; total: number }
   checklistStats: { checked: number; total: number }
@@ -19,11 +19,11 @@ interface Props {
 }
 
 export function AnalyticsClient({
-  currency, totalBudget, totalSpent, totalCommitted,
+  currency, totalBudget, totalSpent, totalActual,
   budgetByCategory, guestStats, vendorStats, checklistStats, costPerGuest, payments,
 }: Readonly<Props>) {
   const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n)
-  const budgetPct = totalBudget > 0 ? Math.round((totalCommitted / totalBudget) * 100) : 0
+  const budgetPct = totalBudget > 0 ? Math.round((totalActual / totalBudget) * 100) : 0
   const checklistPct = checklistStats.total > 0 ? Math.round((checklistStats.checked / checklistStats.total) * 100) : 0
 
   // Spending trend by week

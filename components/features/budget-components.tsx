@@ -24,8 +24,8 @@ export const fmt = (n: number) =>
 
 export function summarise(lines: LocalBudgetLine[]) {
   return lines.reduce(
-    (acc, l) => ({ estimated: acc.estimated + l.estimated, actual: acc.actual + l.actual, committed: acc.committed + l.committed }),
-    { estimated: 0, actual: 0, committed: 0 },
+    (acc, l) => ({ estimated: acc.estimated + l.estimated, actual: acc.actual + l.actual }),
+    { estimated: 0, actual: 0 },
   )
 }
 
@@ -43,7 +43,6 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
     category: line?.category ?? 'VENUE',
     description: line?.description ?? '',
     estimated: line ? String(line.estimated) : '',
-    committed: line ? String(line.committed) : '',
     actual: line ? String(line.actual) : '',
     vendorId: line?.vendorId ?? '',
     vendorName: line?.vendorName ?? '',
@@ -63,7 +62,6 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
         weddingId, eventId: form.selectedEventId || undefined,
         category: form.category, description: form.description,
         estimated: Number.parseFloat(form.estimated) || 0,
-        committed: Number.parseFloat(form.committed) || 0,
         actual: Number.parseFloat(form.actual) || 0,
         vendorId: form.vendorId || undefined,
         vendorName: form.vendorName || undefined,
@@ -101,8 +99,8 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
           </Select></div>
         <div><Label htmlFor="bl-desc">Description *</Label>
           <Input id="bl-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Main hall rental" required /></div>
-        <div className="grid grid-cols-3 gap-3">
-          {[['estimated', 'Estimated'], ['committed', 'Committed'], ['actual', 'Actual']].map(([key, lbl]) => (
+        <div className="grid grid-cols-2 gap-3">
+          {[['estimated', 'Estimated'], ['actual', 'Actual (paid)']].map(([key, lbl]) => (
             <div key={key}><Label htmlFor={`bl-${key}`}>{lbl}</Label>
               <Input id={`bl-${key}`} type="number" value={form[key as keyof typeof form]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="0" min="0" /></div>
           ))}
@@ -196,10 +194,9 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit }:
   }
 
   const byCategory = useMemo(() =>
-    lines.reduce<Record<string, { estimated: number; actual: number; committed: number; lines: LocalBudgetLine[] }>>((acc, l) => {
-      if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, committed: 0, lines: [] }
-      acc[l.category].estimated += l.estimated; acc[l.category].actual += l.actual
-      acc[l.category].committed += l.committed; acc[l.category].lines.push(l)
+    lines.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, l) => {
+      if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, lines: [] }
+      acc[l.category].estimated += l.estimated; acc[l.category].actual += l.actual; acc[l.category].lines.push(l)
       return acc
     }, {}),
   [lines])
@@ -211,22 +208,21 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit }:
       <div className="grid grid-cols-4 gap-4 pb-2 border-b border-zinc-100">
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest col-span-1">Category</p>
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Estimated</p>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Committed</p>
+        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Actual</p>
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Variance</p>
       </div>
       {Object.entries(byCategory).sort((a, b) => b[1].estimated - a[1].estimated).map(([cat, totals]) => {
-        const committed = totals.actual + totals.committed
-        const variance = totals.estimated - committed
-        const catPct = totals.estimated > 0 ? Math.round((committed / totals.estimated) * 100) : 0
+        const variance = totals.estimated - totals.actual
+        const catPct = totals.estimated > 0 ? Math.round((totals.actual / totals.estimated) * 100) : 0
         return (
           <div key={cat} className="py-4 border-b border-zinc-100 last:border-0">
             <div className="grid grid-cols-4 gap-4 mb-2">
               <div className="col-span-1"><p className="text-sm font-semibold text-[#14161C]">{cat.replaceAll('_', ' ')}</p><p className="text-xs text-zinc-400 mt-0.5">{catPct}% used</p></div>
               <p className="text-sm font-medium text-zinc-500 text-right self-center">{fmt(totals.estimated)}</p>
-              <p className={`text-sm font-bold text-right self-center ${catPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(committed)}</p>
+              <p className={`text-sm font-bold text-right self-center ${catPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(totals.actual)}</p>
               <p className={`text-sm font-bold text-right self-center ${variance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{variance < 0 ? '-' : '+'}{fmt(Math.abs(variance))}</p>
             </div>
-            <ProgressBar value={committed} max={totals.estimated || 1} />
+            <ProgressBar value={totals.actual} max={totals.estimated || 1} />
             <div className="mt-2 space-y-1">
               {totals.lines.map(l => (
                 <div key={l.id} className="group flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-zinc-50">
@@ -266,8 +262,8 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
   const [editingLine, setEditingLine] = useState<LocalBudgetLine | null>(null)
 
   const lines = useMemo(() => allLines.filter(l => l.eventId === eventId), [allLines, eventId])
-  const { estimated: totalEstimated, actual: totalActual, committed: totalCommitted } = summarise(lines)
-  const pct = totalEstimated > 0 ? Math.round(((totalActual + totalCommitted) / totalEstimated) * 100) : 0
+  const { estimated: totalEstimated, actual: totalActual } = summarise(lines)
+  const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
   if (isLoading) return <div className="flex justify-center py-16"><Spinner /></div>
 
@@ -302,11 +298,10 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-zinc-100">
             {[
               { label: 'Estimated', val: fmt(totalEstimated), color: 'text-[#14161C]' },
-              { label: 'Spent', val: fmt(totalActual), color: 'text-red-500' },
-              { label: 'Committed', val: fmt(totalCommitted), color: 'text-amber-500' },
-              { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual - totalCommitted)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
+              { label: 'Actual (paid)', val: fmt(totalActual), color: 'text-red-500' },
+              { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
             ].map(({ label, val, color }, i) => (
-              <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
+              <div key={label} className={i === 0 ? 'pr-8' : i === 2 ? 'pl-8' : 'px-8'}>
                 <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
                 <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
               </div>
@@ -317,7 +312,7 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
               <span className="text-zinc-500">Budget utilisation</span>
               <span className={`font-bold ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>{pct}%</span>
             </div>
-            <ProgressBar value={totalActual + totalCommitted} max={totalEstimated} />
+            <ProgressBar value={totalActual} max={totalEstimated} />
           </div>
           <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} />
         </>

@@ -26,7 +26,7 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
     db.guest.count({ where: { weddingId: wid, checkedIn: true } }),
     db.budgetLine.aggregate({
       where: { weddingId: wid, deletedAt: null },
-      _sum: { estimated: true, actual: true, committed: true },
+      _sum: { estimated: true, actual: true },
     }),
     db.checklistItem.groupBy({ by: ['isChecked'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.riskAlert.groupBy({ by: ['severity', 'isResolved'], where: { weddingId: wid, isResolved: false }, _count: true }),
@@ -40,7 +40,7 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   const totalBudget = Number(budgetAgg._sum.estimated ?? 0)
   const totalEstimated = totalBudget
   const totalActual = Number(budgetAgg._sum.actual ?? 0)
-  const totalCommitted = Number(budgetAgg._sum.committed ?? 0) + totalActual
+  const totalActual2 = totalActual
   const checkedCount = checklistAgg.find(c => c.isChecked)?._count ?? 0
   const totalChecklist = checklistAgg.reduce((s, c) => s + c._count, 0)
   const activeRisks = riskCount.reduce((s, r) => s + r._count, 0)
@@ -56,8 +56,8 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
     totalBudget,
     totalEstimated,
     totalSpent: totalActual,
-    totalCommitted,
-    budgetPercent: totalBudget > 0 ? Math.round((totalCommitted / totalBudget) * 100) : 0,
+    totalActual,
+    budgetPercent: totalBudget > 0 ? Math.round((totalActual / totalBudget) * 100) : 0,
     upcomingTasks: totalChecklist - checkedCount,
     overdueTasks: 0,
     checklistProgress: totalChecklist > 0 ? Math.round((checkedCount / totalChecklist) * 100) : 0,

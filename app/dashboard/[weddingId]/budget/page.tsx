@@ -17,8 +17,8 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
   isLoading: boolean; weddingId: string; onAddLine: () => void
 }>) {
   const [editingLine, setEditingLine] = useState<LocalBudgetLine | null>(null)
-  const { estimated: totalEstimated, actual: totalActual, committed: totalCommitted } = summarise(lines)
-  const pct = totalEstimated > 0 ? Math.round(((totalActual + totalCommitted) / totalEstimated) * 100) : 0
+  const { estimated: totalEstimated, actual: totalActual } = summarise(lines)
+  const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
   const byEvent = useMemo(() => {
     const map = new Map<string, { event: WeddingEvent | null; lines: LocalBudgetLine[] }>()
@@ -44,11 +44,10 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-zinc-100">
         {[
           { label: 'Total budget', val: fmt(totalEstimated), color: 'text-[#14161C]' },
-          { label: 'Spent', val: fmt(totalActual), color: 'text-red-500' },
-          { label: 'Committed', val: fmt(totalCommitted), color: 'text-amber-500' },
-          { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual - totalCommitted)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
+          { label: 'Actual (paid)', val: fmt(totalActual), color: 'text-red-500' },
+          { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
         ].map(({ label, val, color }, i) => (
-          <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
+          <div key={label} className={i === 0 ? 'pr-8' : i === 2 ? 'pl-8' : 'px-8'}>
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
             <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
           </div>
@@ -59,15 +58,15 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
           <span className="text-zinc-500">Overall utilisation</span>
           <span className={`font-bold ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>{pct}%</span>
         </div>
-        <ProgressBar value={totalActual + totalCommitted} max={totalEstimated} />
+        <ProgressBar value={totalActual} max={totalEstimated} />
       </div>
       <div className="space-y-4">
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, lines: evLines }]) => {
           if (evLines.length === 0) return null
           const s = summarise(evLines)
-          const evPct = s.estimated > 0 ? Math.round(((s.actual + s.committed) / s.estimated) * 100) : 0
-          const evVariance = s.estimated - (s.actual + s.committed)
+          const evPct = s.estimated > 0 ? Math.round((s.actual / s.estimated) * 100) : 0
+          const evVariance = s.estimated - s.actual
           return (
             <div key={key} className="rounded-2xl border border-zinc-100 p-5 space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-3">
@@ -78,11 +77,11 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
                 </div>
                 <div className="flex gap-6 text-right">
                   <div><p className="text-xs text-zinc-400">Estimated</p><p className="text-sm font-bold text-[#14161C]">{fmt(s.estimated)}</p></div>
-                  <div><p className="text-xs text-zinc-400">Committed</p><p className={`text-sm font-bold ${evPct > 100 ? 'text-red-500' : 'text-amber-500'}`}>{fmt(s.actual + s.committed)}</p></div>
+                  <div><p className="text-xs text-zinc-400">Actual</p><p className={`text-sm font-bold ${evPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(s.actual)}</p></div>
                   <div><p className="text-xs text-zinc-400">Variance</p><p className={`text-sm font-bold ${evVariance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{evVariance < 0 ? '-' : '+'}{fmt(Math.abs(evVariance))}</p></div>
                 </div>
               </div>
-              <ProgressBar value={s.actual + s.committed} max={s.estimated || 1} />
+              <ProgressBar value={s.actual} max={s.estimated || 1} />
             </div>
           )
         })}

@@ -6,7 +6,7 @@ interface WeddingContext {
   guests: { id: string; rsvpStatus: string; lastContactAt?: Date }[]
   vendors: { id: string; name: string; status: string; lastContactAt?: Date; lastStatusChangeAt?: Date; amount?: number }[]
   payments: { amount: number; status: string }[]
-  budgetLines: { estimated: number; actual: number; committed: number }[]
+  budgetLines: { estimated: number; actual: number }[]
   checklistItems: { isChecked: boolean; dueDate?: Date; priority: number }[]
   confirmedGuests: number
   pendingRsvps: number
@@ -17,11 +17,11 @@ type RiskRule = (ctx: WeddingContext) => RiskRuleResult | null
 const rules: RiskRule[] = [
   // ── Budget overshoot ─────────────────────────────────────────────────────
   (ctx) => {
-    const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.committed + l.actual, 0)
+    const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.actual, 0)
     const pct = totalCommitted / ctx.wedding.budget
     if (pct > 1.0) return {
       ruleId: 'budget.overshoot', triggered: true, severity: 'CRITICAL', category: 'budget',
-      message: `Budget exceeded: ${Math.round(pct * 100)}% of total budget committed`,
+      message: `Budget exceeded: ${Math.round(pct * 100)}% of total budget spent`,
       data: { percent: Math.round(pct * 100), totalCommitted, budget: ctx.wedding.budget },
       suggestedAction: 'Review budget lines and defer or cancel non-essential items',
     }
@@ -31,7 +31,7 @@ const rules: RiskRule[] = [
         ruleId: 'budget.drift', triggered: true, severity: 'HIGH', category: 'budget',
         message: `Budget at ${Math.round(pct * 100)}% with ${daysLeft} days remaining`,
         data: { percent: Math.round(pct * 100), daysLeft },
-        suggestedAction: 'Review uncommitted vendor quotes before booking more',
+        suggestedAction: 'Review vendor quotes and payments before booking more',
       }
     }
     return null
@@ -137,15 +137,15 @@ const rules: RiskRule[] = [
     return null
   },
 
-  // ── Budget committed >90% with >3 months remaining ────────────────────────
+  // ── Budget spent >90% with >3 months remaining ────────────────────────
   (ctx) => {
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft < 90) return null
-    const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.committed + l.actual, 0)
+    const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.actual, 0)
     const pct = totalCommitted / ctx.wedding.budget
     if (pct > 0.9) return {
       ruleId: 'budget.early_overshoot', triggered: true, severity: 'HIGH', category: 'budget',
-      message: `${Math.round(pct * 100)}% of budget committed with ${daysLeft} days remaining`,
+      message: `${Math.round(pct * 100)}% of budget spent with ${daysLeft} days remaining`,
       data: { percent: Math.round(pct * 100), daysLeft },
       suggestedAction: 'Review budget — many costs are still to come',
     }

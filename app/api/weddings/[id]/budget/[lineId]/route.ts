@@ -12,7 +12,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { category, description, estimated, actual, committed, vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = body
+  const { category, description, estimated, actual,vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = body
 
   const line = await db.budgetLine.update({
     where: { id: lineId, weddingId: id },
@@ -21,7 +21,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       ...(description !== undefined && { description }),
       ...(estimated !== undefined && { estimated }),
       ...(actual !== undefined && { actual }),
-      ...(committed !== undefined && { committed }),
       ...(vendorId !== undefined && { vendorId: vendorId || null }),
       ...(vendorName !== undefined && { vendorName: vendorName || null }),
       ...(notes !== undefined && { notes: notes || null }),
@@ -35,7 +34,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   return NextResponse.json({
     id: line.id, weddingId: line.weddingId, eventId: line.eventId ?? undefined,
     category: line.category, description: line.description,
-    estimated: Number(line.estimated), actual: Number(line.actual), committed: Number(line.committed),
+    estimated: Number(line.estimated), actual: Number(line.actual),
     vendorId: line.vendorId ?? undefined, vendorName: line.vendorName ?? undefined,
     notes: line.notes ?? undefined,
     paymentDate: line.paymentDate?.toISOString() ?? undefined,

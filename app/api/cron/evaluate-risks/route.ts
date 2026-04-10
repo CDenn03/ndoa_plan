@@ -35,7 +35,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       const [guests, vendors, budgetLines, checklistItems] = await Promise.all([
         db.guest.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { id: true, rsvpStatus: true } }),
         db.vendor.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { id: true, name: true, status: true, lastContactAt: true, updatedAt: true, amount: true } }),
-        db.budgetLine.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { estimated: true, actual: true, committed: true } }),
+        db.budgetLine.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { estimated: true, actual: true } }),
         db.checklistItem.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { isChecked: true, dueDate: true, priority: true } }),
       ])
 
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         guests: guests.map(g => ({ id: g.id, rsvpStatus: g.rsvpStatus })),
         vendors: vendors.map(v => ({ id: v.id, name: v.name, status: v.status, lastContactAt: v.lastContactAt ?? undefined, lastStatusChangeAt: v.updatedAt, amount: v.amount ? Number(v.amount) : undefined })),
         payments: [],
-        budgetLines: budgetLines.map(l => ({ estimated: Number(l.estimated), actual: Number(l.actual), committed: Number(l.committed) })),
+        budgetLines: budgetLines.map(l => ({ estimated: Number(l.estimated), actual: Number(l.actual) })),
         checklistItems: checklistItems.map(i => ({ isChecked: i.isChecked, dueDate: i.dueDate ?? undefined, priority: i.priority })),
         confirmedGuests,
         pendingRsvps,

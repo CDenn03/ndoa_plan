@@ -13,7 +13,7 @@ export interface Vendor { id: string; name: string; category: string }
 
 interface BudgetLine {
   id: string; description: string; category: string; estimated: number
-  actual: number; committed: number; vendorId?: string | null; vendorName?: string | null
+  actual: number; vendorId?: string | null; vendorName?: string | null
   eventId?: string | null
 }
 
@@ -138,7 +138,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
   [allBudgetLines, activeEventId])
 
   const selectedLine = budgetLines.find(l => l.id === form.budgetLineId)
-  const remaining = selectedLine ? Math.max(0, selectedLine.estimated - selectedLine.actual - selectedLine.committed) : null
+  const remaining = selectedLine ? Math.max(0, selectedLine.estimated - selectedLine.actual) : null
 
   // When a budget line is selected, auto-fill fields
   const handleBudgetLineChange = (lineId: string) => {
@@ -147,7 +147,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
       setForm(f => ({ ...f, budgetLineId: '', vendorId: '', vendorNameOverride: '', description: '', amount: '' }))
       return
     }
-    const rem = Math.max(0, line.estimated - line.actual - line.committed)
+    const rem = Math.max(0, line.estimated - line.actual)
     setForm(f => ({
       ...f,
       budgetLineId: lineId,
@@ -162,7 +162,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
   const handlePaymentTypeChange = (type: 'full' | 'partial') => {
     setPaymentType(type)
     if (type === 'full' && selectedLine) {
-      const rem = Math.max(0, selectedLine.estimated - selectedLine.actual - selectedLine.committed)
+      const rem = Math.max(0, selectedLine.estimated - selectedLine.actual)
       setForm(f => ({ ...f, amount: String(rem || selectedLine.estimated) }))
     }
   }
@@ -222,7 +222,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
           <Select id="mp-budget" value={form.budgetLineId} onChange={e => handleBudgetLineChange(e.target.value)}>
             <option value="">No budget line</option>
             {budgetLines.map(l => {
-              const rem = Math.max(0, l.estimated - l.actual - l.committed)
+              const rem = Math.max(0, l.estimated - l.actual)
               return (
                 <option key={l.id} value={l.id}>
                   {l.description} — {fmt(rem)} remaining

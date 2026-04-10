@@ -78,7 +78,7 @@ export function resolveConflict(conflict: ConflictPayload): ResolveResult {
 
     case 'budget_line': {
       const { merged, serverWonFields } = fieldMerge(clientState, clientState, serverState)
-      const needsHuman = serverWonFields.includes('estimated') || serverWonFields.includes('actual') || serverWonFields.includes('committed')
+      const needsHuman = serverWonFields.includes('estimated') || serverWonFields.includes('actual') 
       return {
         resolution: needsHuman ? 'needs_human' : 'field_merge',
         mergedState: merged,

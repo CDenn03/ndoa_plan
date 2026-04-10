@@ -52,7 +52,6 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         description: line.description,
         estimated: line.estimated,
         actual: 0,
-        committed: 0,
         version: 1,
         checksum: '',
         updatedBy: userId,
