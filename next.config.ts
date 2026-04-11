@@ -2,6 +2,7 @@ import type { NextConfig } from 'next'
 
 const config: NextConfig = {
   output: 'standalone',
+  allowedDevOrigins: ['192.168.100.235', 'dreamboat-disparity-grub.ngrok-free.dev'],
   serverExternalPackages: ['@prisma/client', 'bcryptjs'],
   turbopack: { root: __dirname },
   images: {

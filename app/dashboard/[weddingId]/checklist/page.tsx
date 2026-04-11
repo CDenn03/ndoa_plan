@@ -121,12 +121,6 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Planning</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Tasks</h1>
-            <div className="flex gap-2">
-              <Button variant="lavender" onClick={() => setShowTemplate(true)} size="sm">
-                <LayoutTemplate size={13} /> Load template
-              </Button>
-              <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add task</Button>
-            </div>
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">{checked} of {items.length} completed</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
@@ -147,7 +141,20 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
           activeTab === '__overall__'
             ? <OverallTab weddingId={wid} items={items as TaskItem[]} events={events} onAdd={() => setShowAdd(true)} onSelectEvent={setActiveTab} />
             : activeEvent
-              ? <TaskList items={eventItems} weddingId={wid} onAdd={() => setShowAdd(true)} />
+              ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-zinc-500">{eventItems.filter(t => t.isChecked).length}/{eventItems.length} completed</p>
+                    <div className="flex gap-2">
+                      <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
+                        <LayoutTemplate size={13} /> Load template
+                      </Button>
+                      <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Add task</Button>
+                    </div>
+                  </div>
+                  <TaskList items={eventItems} weddingId={wid} onAdd={() => setShowAdd(true)} />
+                </div>
+              )
               : null}
       </div>
 

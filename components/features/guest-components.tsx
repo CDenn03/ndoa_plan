@@ -420,7 +420,7 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
               type="number" min="0" value={expectedInput}
               onChange={e => saveExpected(e.target.value)}
               placeholder="Set target…"
-              className="w-24 text-sm font-semibold bg-white border border-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-300 text-[#14161C]"
+              className="w-18 text-sm font-semibold bg-white border border-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-300 text-[#14161C]"
             />
             {expected > 0 && (
               <span className={`text-xs font-semibold ${

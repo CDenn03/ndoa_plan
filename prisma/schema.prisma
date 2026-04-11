@@ -68,6 +68,8 @@ enum UserRole {
 model Wedding {
   id                  String          @id @default(uuid())
   name                String
+  brideName           String?
+  groomName           String?
   date                DateTime
   venue               String?
   venueCapacity       Int?
@@ -78,6 +80,8 @@ model Wedding {
   themeAccent         String          @default("#F59E0B")
   coverImagePath      String?
   couplePhotoPath     String?
+  couplePhotoFocalX   Float           @default(50)
+  couplePhotoFocalY   Float           @default(50)
   expectedGuestCount  Int?
   uninvitedBuffer     Int             @default(15)
   palette             String[]        @default([])

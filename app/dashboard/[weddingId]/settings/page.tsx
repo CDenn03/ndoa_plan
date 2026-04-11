@@ -22,16 +22,12 @@ export default async function SettingsPage(props: Readonly<{ params: Promise<{ w
       weddingId={w.id}
       initialValues={{
         name: w.name,
-        date: w.date.toISOString().split('T')[0],
-        venue: w.venue ?? '',
-        venueCapacity: w.venueCapacity ?? '',
-        budget: Number(w.budget),
-        culturalType: w.culturalType,
-        themeColor: w.themeColor,
-        themeAccent: w.themeAccent,
+        brideName: w.brideName ?? '',
+        groomName: w.groomName ?? '',
         couplePhotoPath: w.couplePhotoPath ?? undefined,
-        currency: w.currency,
-        expectedGuestCount: w.expectedGuestCount ?? '',
+        couplePhotoFocalX: w.couplePhotoFocalX,
+        couplePhotoFocalY: w.couplePhotoFocalY,
+        palette: w.palette,
       }}
     />
   )

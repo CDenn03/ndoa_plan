@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
+import { Button, Input, Label, Select, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { Pencil, Trash2, Plus, Truck, Hotel, MapPin, Clock } from 'lucide-react'
 
@@ -118,14 +118,35 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
 }>) {
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ hotelName: '', address: '', checkIn: '', checkOut: '', roomsBlocked: '', notes: '' })
+  const [form, setForm] = useState({
+    hotelName: '', address: '', checkIn: '', checkOut: '', roomsBlocked: '', notes: '',
+    guestType: 'none' as 'none' | 'individual' | 'group',
+    guestId: '', guestName: '', groupSize: '',
+  })
+
+  const { data: guests = [] } = useQuery<{ id: string; name: string; phone?: string | null }[]>({
+    queryKey: ['guests', weddingId],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/guests`); if (!res.ok) return []; return res.json() },
+    staleTime: 60_000,
+  })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     try {
+      const assignedTo = form.guestType === 'individual'
+        ? (form.guestName || guests.find(g => g.id === form.guestId)?.name || null)
+        : form.guestType === 'group'
+          ? `${form.guestName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
+          : null
       const res = await fetch(`/api/weddings/${weddingId}/logistics/accommodations`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null, eventId: eventId ?? null }),
+        body: JSON.stringify({
+          hotelName: form.hotelName, address: form.address || null,
+          checkIn: form.checkIn, checkOut: form.checkOut,
+          roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null,
+          notes: [assignedTo ? `Assigned to: ${assignedTo}` : '', form.notes].filter(Boolean).join('\n') || null,
+          eventId: eventId ?? null,
+        }),
       })
       if (!res.ok) throw new Error('Failed to add accommodation')
       toast('Accommodation added', 'success'); onDone(); onClose()
@@ -145,12 +166,52 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
           <div><Label htmlFor="hotel-out">Check-out *</Label>
             <Input id="hotel-out" type="date" value={form.checkOut} onChange={e => setForm(f => ({ ...f, checkOut: e.target.value }))} required /></div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="hotel-rooms">Rooms blocked</Label>
-            <Input id="hotel-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} placeholder="10" min="1" /></div>
-          <div><Label htmlFor="hotel-notes">Notes</Label>
-            <Input id="hotel-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Breakfast included" /></div>
+        <div><Label htmlFor="hotel-rooms">Rooms blocked</Label>
+          <Input id="hotel-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} placeholder="1" min="1" /></div>
+
+        {/* Guest / group assignment */}
+        <div>
+          <Label>Assigned to</Label>
+          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+            {(['none', 'individual', 'group'] as const).map(t => (
+              <button key={t} type="button" onClick={() => setForm(f => ({ ...f, guestType: t, guestId: '', guestName: '', groupSize: '' }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual' : 'Group'}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {form.guestType === 'individual' && (
+          <div className="space-y-2">
+            <div><Label htmlFor="hotel-guest">Select guest</Label>
+              <Select id="hotel-guest" value={form.guestId} onChange={e => {
+                const g = guests.find(g => g.id === e.target.value)
+                setForm(f => ({ ...f, guestId: e.target.value, guestName: g?.name ?? '' }))
+              }}>
+                <option value="">Choose from guest list…</option>
+                {guests.map(g => <option key={g.id} value={g.id}>{g.name}{g.phone ? ` · ${g.phone}` : ''}</option>)}
+              </Select></div>
+            <div><Label htmlFor="hotel-gname">Or enter name</Label>
+              <Input id="hotel-gname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value, guestId: '' }))} placeholder="Guest name" /></div>
+          </div>
+        )}
+
+        {form.guestType === 'group' && (
+          <div className="space-y-2">
+            <div><Label htmlFor="hotel-grpname">Group name *</Label>
+              <Input id="hotel-grpname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value }))} placeholder="e.g. Bride's family, Groom's delegation" /></div>
+            <div><Label htmlFor="hotel-grpsize">Number of people</Label>
+              <Input id="hotel-grpsize" type="number" value={form.groupSize} onChange={e => setForm(f => ({ ...f, groupSize: e.target.value }))} placeholder="8" min="1" /></div>
+          </div>
+        )}
+
+        <div><Label htmlFor="hotel-notes">Notes</Label>
+          <textarea id="hotel-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+            placeholder="Breakfast included, special requests, room preferences…"
+            rows={4}
+            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
+
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
           <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Adding…' : 'Add accommodation'}</Button>
@@ -165,19 +226,46 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
 }>) {
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
+
+  // Parse existing notes to extract assignment info
+  const existingNotes = accommodation.notes ?? ''
+  const assignedMatch = existingNotes.match(/^Assigned to: (.+?)(?:\n|$)/)
+  const assignedLine = assignedMatch?.[1] ?? ''
+  const restNotes = existingNotes.replace(/^Assigned to: .+?\n?/, '')
+  const groupMatch = assignedLine.match(/^(.+?) \((\d+) people\)$/)
+
   const [form, setForm] = useState({
     hotelName: accommodation.hotelName, address: accommodation.address ?? '',
     checkIn: accommodation.checkIn.slice(0, 10), checkOut: accommodation.checkOut.slice(0, 10),
     roomsBlocked: accommodation.roomsBlocked ? String(accommodation.roomsBlocked) : '',
-    notes: accommodation.notes ?? '',
+    notes: restNotes,
+    guestType: (assignedLine ? (groupMatch ? 'group' : 'individual') : 'none') as 'none' | 'individual' | 'group',
+    guestId: '', guestName: groupMatch ? groupMatch[1] : assignedLine,
+    groupSize: groupMatch ? groupMatch[2] : '',
+  })
+
+  const { data: guests = [] } = useQuery<{ id: string; name: string; phone?: string | null }[]>({
+    queryKey: ['guests', weddingId],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/guests`); if (!res.ok) return []; return res.json() },
+    staleTime: 60_000,
   })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     try {
+      const assignedTo = form.guestType === 'individual'
+        ? (form.guestName || guests.find(g => g.id === form.guestId)?.name || null)
+        : form.guestType === 'group'
+          ? `${form.guestName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
+          : null
       const res = await fetch(`/api/weddings/${weddingId}/logistics/accommodations/${accommodation.id}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hotelName: form.hotelName, address: form.address || null, checkIn: form.checkIn, checkOut: form.checkOut, roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null, notes: form.notes || null }),
+        body: JSON.stringify({
+          hotelName: form.hotelName, address: form.address || null,
+          checkIn: form.checkIn, checkOut: form.checkOut,
+          roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null,
+          notes: [assignedTo ? `Assigned to: ${assignedTo}` : '', form.notes].filter(Boolean).join('\n') || null,
+        }),
       })
       if (!res.ok) throw new Error('Failed to update accommodation')
       toast('Accommodation updated', 'success'); onDone(); onClose()
@@ -197,12 +285,52 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
           <div><Label htmlFor="ea-out">Check-out *</Label>
             <Input id="ea-out" type="date" value={form.checkOut} onChange={e => setForm(f => ({ ...f, checkOut: e.target.value }))} required /></div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="ea-rooms">Rooms blocked</Label>
-            <Input id="ea-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} min="1" /></div>
-          <div><Label htmlFor="ea-notes">Notes</Label>
-            <Input id="ea-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} /></div>
+        <div><Label htmlFor="ea-rooms">Rooms blocked</Label>
+          <Input id="ea-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} min="1" /></div>
+
+        {/* Guest / group assignment */}
+        <div>
+          <Label>Assigned to</Label>
+          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+            {(['none', 'individual', 'group'] as const).map(t => (
+              <button key={t} type="button" onClick={() => setForm(f => ({ ...f, guestType: t, guestId: '', guestName: '', groupSize: '' }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual' : 'Group'}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {form.guestType === 'individual' && (
+          <div className="space-y-2">
+            <div><Label htmlFor="ea-guest">Select guest</Label>
+              <Select id="ea-guest" value={form.guestId} onChange={e => {
+                const g = guests.find(g => g.id === e.target.value)
+                setForm(f => ({ ...f, guestId: e.target.value, guestName: g?.name ?? '' }))
+              }}>
+                <option value="">Choose from guest list…</option>
+                {guests.map(g => <option key={g.id} value={g.id}>{g.name}{g.phone ? ` · ${g.phone}` : ''}</option>)}
+              </Select></div>
+            <div><Label htmlFor="ea-gname">Or enter name</Label>
+              <Input id="ea-gname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value, guestId: '' }))} placeholder="Guest name" /></div>
+          </div>
+        )}
+
+        {form.guestType === 'group' && (
+          <div className="space-y-2">
+            <div><Label htmlFor="ea-grpname">Group name</Label>
+              <Input id="ea-grpname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value }))} placeholder="e.g. Bride's family" /></div>
+            <div><Label htmlFor="ea-grpsize">Number of people</Label>
+              <Input id="ea-grpsize" type="number" value={form.groupSize} onChange={e => setForm(f => ({ ...f, groupSize: e.target.value }))} placeholder="8" min="1" /></div>
+          </div>
+        )}
+
+        <div><Label htmlFor="ea-notes">Notes</Label>
+          <textarea id="ea-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+            placeholder="Breakfast included, special requests, room preferences…"
+            rows={4}
+            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
+
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
           <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>

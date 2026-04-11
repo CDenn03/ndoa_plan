@@ -45,7 +45,6 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">People</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Vendors</h1>
-            <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add vendor</Button>
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">{stats.total} vendors · {fmt(stats.totalOwed)} outstanding</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">

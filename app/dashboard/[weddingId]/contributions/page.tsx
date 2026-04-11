@@ -1,12 +1,12 @@
 'use client'
-import { use, useMemo } from 'react'
+import { use } from 'react'
 import { Users, Plus, CalendarDays } from 'lucide-react'
 import { Button, EmptyState, Spinner } from '@/components/ui'
 import { useContributions } from '@/hooks/use-payments'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
-  ContributionModal, ContribRow, EventContributionsTab, fmt,
+  ContributionModal, DirectContributionModal, ContribRow, EventContributionsTab, fmt,
   type WeddingEvent,
 } from '@/components/features/contribution-modals'
 import type { Contribution } from '@/hooks/use-payments'
@@ -16,6 +16,7 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
   const wid = params.weddingId
   const { data: contributions = [], isLoading } = useContributions(wid)
   const [showAdd, setShowAdd] = useState(false)
+  const [showDirect, setShowDirect] = useState(false)
   const [editing, setEditing] = useState<Contribution | null>(null)
   const [activeTab, setActiveTab] = useState('__overall__')
 
@@ -33,16 +34,23 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
 
   const filtered = activeTab === '__overall__' ? contributions : contributions.filter(c => c.eventId === activeTab)
 
-  const byEvent = useMemo(() => {
-    const map = new Map<string, { event: WeddingEvent | null; contribs: Contribution[] }>()
-    for (const e of events) map.set(e.id, { event: e, contribs: [] })
-    for (const c of contributions) {
-      const k = c.eventId ?? '__unassigned__'
-      if (!map.has(k)) map.set(k, { event: null, contribs: [] })
-      map.get(k)?.contribs.push(c)
-    }
-    return map
-  }, [contributions, events])
+  const byEvent = (() => {
+    const eventMap = new Map(events.map(e => [e.id, e]))
+    const extraKeys = contributions
+      .map(c => c.eventId ?? '__unassigned__')
+      .filter(k => !eventMap.has(k))
+    const keys = [...eventMap.keys(), ...new Set(extraKeys)]
+
+    return new Map(
+      keys.map(k => [
+        k,
+        {
+          event: eventMap.get(k) ?? null,
+          contribs: contributions.filter(c => (c.eventId ?? '__unassigned__') === k),
+        },
+      ])
+    )
+  })()
 
   return (
     <div className="min-h-full">
@@ -51,7 +59,6 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Contributions</h1>
-            <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Add pledge</Button>
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">
             {contributions.length} pledges · {fmt(totalPaid)} of {fmt(totalPledged)} collected
@@ -107,12 +114,23 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
 
             {isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
               filtered.length === 0 ? (
-                <EmptyState icon={<Users size={40} />} title="No contributions yet"
-                  description="Record committee member pledges"
-                  action={<Button onClick={() => setShowAdd(true)}><Plus size={14} /> Add pledge</Button>} />
+                <div className="space-y-4">
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => setShowDirect(true)}><Plus size={14} /> Record contribution</Button>
+                    <Button onClick={() => setShowAdd(true)}><Plus size={14} /> Add pledge</Button>
+                  </div>
+                  <EmptyState icon={<Users size={40} />} title="No contributions yet"
+                    description="Add a pledge or record a direct contribution" />
+                </div>
               ) : (
-                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-                  {filtered.map(c => <ContribRow key={c.id} contrib={c} weddingId={wid} events={events} onEdit={setEditing} />)}
+                <div className="space-y-4">
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" size="sm" onClick={() => setShowDirect(true)}><Plus size={13} /> Record contribution</Button>
+                    <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add pledge</Button>
+                  </div>
+                  <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+                    {filtered.map(c => <ContribRow key={c.id} contrib={c} weddingId={wid} events={events} onEdit={setEditing} />)}
+                  </div>
                 </div>
               )}
           </div>
@@ -121,6 +139,7 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
 
       {/* Add modal — auto-selects event when on an event tab */}
       {showAdd && <ContributionModal weddingId={wid} events={events} eventId={activeEvent?.id} onClose={() => setShowAdd(false)} />}
+      {showDirect && <DirectContributionModal weddingId={wid} events={events} eventId={activeEvent?.id} onClose={() => setShowDirect(false)} />}
       {editing && <ContributionModal weddingId={wid} events={events} contrib={editing} onClose={() => setEditing(null)} />}
     </div>
   )

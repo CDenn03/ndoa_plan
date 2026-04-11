@@ -126,9 +126,6 @@ export default function BudgetPage(props: Readonly<{ params: Promise<{ weddingId
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Budget</h1>
-            {activeTab === '__overall__' && (
-              <Button size="sm" onClick={() => setShowAddFromOverall(true)}><Plus size={14} /> Add line</Button>
-            )}
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">{lines.length} total line items across {events.length} events</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">

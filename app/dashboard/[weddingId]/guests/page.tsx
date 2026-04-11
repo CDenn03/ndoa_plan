@@ -54,16 +54,7 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
           <div className="flex items-end justify-between gap-4 mb-1">
             <div>
               <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Guests</h1>
-              <p className="text-sm text-zinc-400 mt-2">
-                {stats.total} invited · {stats.confirmed} confirmed
-                {expectedCount != null && delta != null && (
-                  <span className={`ml-2 font-semibold ${delta === 0 ? 'text-emerald-500' : delta > 0 ? 'text-amber-500' : 'text-zinc-400'}`}>
-                    {delta > 0 ? `· ${delta} more than expected` : delta < 0 ? `· ${Math.abs(delta)} fewer than expected` : '· on target'}
-                  </span>
-                )}
-              </p>
             </div>
-            <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add guest</Button>
           </div>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (

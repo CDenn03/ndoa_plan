@@ -19,25 +19,26 @@ export function imgUrl(img: MoodImage) {
 
 // ─── Board Collage ────────────────────────────────────────────────────────────
 
-export function BoardCollage({ images }: Readonly<{ images: MoodImage[] }>) {
+export function BoardCollage({ images, tall }: Readonly<{ images: MoodImage[]; tall?: boolean }>) {
+  const aspect = tall ? 'aspect-[3/4]' : 'aspect-[4/3]'
   const previews = images.slice(0, 4)
   if (previews.length === 0) return (
-    <div className="w-full aspect-[4/3] bg-zinc-100 rounded-2xl flex items-center justify-center">
+    <div className={`w-full ${aspect} bg-zinc-100 rounded-2xl flex items-center justify-center`}>
       <ImageIcon size={36} className="text-zinc-300" />
     </div>
   )
   if (previews.length === 1) return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={imgUrl(previews[0])} alt="" className="w-full aspect-[4/3] object-cover rounded-2xl" loading="lazy" />
+    <img src={imgUrl(previews[0])} alt="" className={`w-full ${aspect} object-cover rounded-2xl`} loading="lazy" />
   )
   if (previews.length === 2) return (
-    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5">
+    <div className={`w-full ${aspect} rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {previews.map(img => <img key={img.id} src={imgUrl(img)} alt="" className="w-full h-full object-cover" loading="lazy" />)}
     </div>
   )
   if (previews.length === 3) return (
-    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5">
+    <div className={`w-full ${aspect} rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={imgUrl(previews[0])} alt="" className="w-full h-full object-cover row-span-2" loading="lazy" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -47,7 +48,7 @@ export function BoardCollage({ images }: Readonly<{ images: MoodImage[] }>) {
     </div>
   )
   return (
-    <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5">
+    <div className={`w-full ${aspect} rounded-2xl overflow-hidden grid grid-cols-2 gap-0.5`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {previews.map(img => <img key={img.id} src={imgUrl(img)} alt="" className="w-full h-full object-cover" loading="lazy" />)}
     </div>
@@ -56,9 +57,9 @@ export function BoardCollage({ images }: Readonly<{ images: MoodImage[] }>) {
 
 // ─── Board Card ───────────────────────────────────────────────────────────────
 
-export function BoardCard({ category, images, onOpen, onEdit, onDelete }: Readonly<{
+export function BoardCard({ category, images, onOpen, onEdit, onDelete, tall }: Readonly<{
   category: MoodCategory; images: MoodImage[]
-  onOpen: () => void; onEdit: () => void; onDelete: () => void
+  onOpen: () => void; onEdit: () => void; onDelete: () => void; tall?: boolean
 }>) {
   const [liked, setLiked] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
@@ -66,7 +67,7 @@ export function BoardCard({ category, images, onOpen, onEdit, onDelete }: Readon
     <div className="group relative">
       <button onClick={onOpen} className="text-left focus:outline-none w-full">
         <div className="overflow-hidden rounded-2xl transition-transform group-hover:scale-[1.02] duration-200">
-          <BoardCollage images={images} />
+          <BoardCollage images={images} tall={tall} />
         </div>
       </button>
       <div className="mt-2.5 flex items-start justify-between gap-2">
@@ -317,10 +318,13 @@ export function MoodboardTab({ weddingId, eventId }: Readonly<{ weddingId: strin
       {categories.length === 0
         ? <EmptyState icon={<ImageIcon size={40} className="text-zinc-200" />} title="No boards yet" description="Create boards to collect inspiration photos"
             action={<Button onClick={() => setShowCreate(true)}><Plus size={14} /> Create board</Button>} />
-        : <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-            {categories.map(cat => (
-              <BoardCard key={cat.id} category={cat} images={images.filter(i => i.linkedToId === cat.id)}
-                onOpen={() => setOpenBoard(cat)} onEdit={() => setEditBoard(cat)} onDelete={() => setDeleteBoard(cat)} />
+        : <div className="columns-2 sm:columns-3 gap-4">
+            {categories.map((cat, i) => (
+              <div key={cat.id} className="break-inside-avoid mb-4">
+                <BoardCard category={cat} images={images.filter(img => img.linkedToId === cat.id)}
+                  onOpen={() => setOpenBoard(cat)} onEdit={() => setEditBoard(cat)} onDelete={() => setDeleteBoard(cat)}
+                  tall={i % 3 === 0} />
+              </div>
             ))}
           </div>}
       {openBoard && <BoardDetailModal category={openBoard} images={images.filter(i => i.linkedToId === openBoard.id)} weddingId={weddingId} eventId={eventId} onClose={() => setOpenBoard(null)} onDeletePhoto={handleDeletePhoto} onRenamePhoto={handleRenamePhoto} onUpload={handleUpload} uploading={uploading} />}

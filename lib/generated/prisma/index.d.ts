@@ -9913,6 +9913,8 @@ export namespace Prisma {
   export type WeddingAvgAggregateOutputType = {
     venueCapacity: number | null
     budget: Decimal | null
+    couplePhotoFocalX: number | null
+    couplePhotoFocalY: number | null
     expectedGuestCount: number | null
     uninvitedBuffer: number | null
   }
@@ -9920,6 +9922,8 @@ export namespace Prisma {
   export type WeddingSumAggregateOutputType = {
     venueCapacity: number | null
     budget: Decimal | null
+    couplePhotoFocalX: number | null
+    couplePhotoFocalY: number | null
     expectedGuestCount: number | null
     uninvitedBuffer: number | null
   }
@@ -9927,6 +9931,8 @@ export namespace Prisma {
   export type WeddingMinAggregateOutputType = {
     id: string | null
     name: string | null
+    brideName: string | null
+    groomName: string | null
     date: Date | null
     venue: string | null
     venueCapacity: number | null
@@ -9937,6 +9943,8 @@ export namespace Prisma {
     themeAccent: string | null
     coverImagePath: string | null
     couplePhotoPath: string | null
+    couplePhotoFocalX: number | null
+    couplePhotoFocalY: number | null
     expectedGuestCount: number | null
     uninvitedBuffer: number | null
     setupComplete: boolean | null
@@ -9947,6 +9955,8 @@ export namespace Prisma {
   export type WeddingMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    brideName: string | null
+    groomName: string | null
     date: Date | null
     venue: string | null
     venueCapacity: number | null
@@ -9957,6 +9967,8 @@ export namespace Prisma {
     themeAccent: string | null
     coverImagePath: string | null
     couplePhotoPath: string | null
+    couplePhotoFocalX: number | null
+    couplePhotoFocalY: number | null
     expectedGuestCount: number | null
     uninvitedBuffer: number | null
     setupComplete: boolean | null
@@ -9967,6 +9979,8 @@ export namespace Prisma {
   export type WeddingCountAggregateOutputType = {
     id: number
     name: number
+    brideName: number
+    groomName: number
     date: number
     venue: number
     venueCapacity: number
@@ -9977,6 +9991,8 @@ export namespace Prisma {
     themeAccent: number
     coverImagePath: number
     couplePhotoPath: number
+    couplePhotoFocalX: number
+    couplePhotoFocalY: number
     expectedGuestCount: number
     uninvitedBuffer: number
     palette: number
@@ -9990,6 +10006,8 @@ export namespace Prisma {
   export type WeddingAvgAggregateInputType = {
     venueCapacity?: true
     budget?: true
+    couplePhotoFocalX?: true
+    couplePhotoFocalY?: true
     expectedGuestCount?: true
     uninvitedBuffer?: true
   }
@@ -9997,6 +10015,8 @@ export namespace Prisma {
   export type WeddingSumAggregateInputType = {
     venueCapacity?: true
     budget?: true
+    couplePhotoFocalX?: true
+    couplePhotoFocalY?: true
     expectedGuestCount?: true
     uninvitedBuffer?: true
   }
@@ -10004,6 +10024,8 @@ export namespace Prisma {
   export type WeddingMinAggregateInputType = {
     id?: true
     name?: true
+    brideName?: true
+    groomName?: true
     date?: true
     venue?: true
     venueCapacity?: true
@@ -10014,6 +10036,8 @@ export namespace Prisma {
     themeAccent?: true
     coverImagePath?: true
     couplePhotoPath?: true
+    couplePhotoFocalX?: true
+    couplePhotoFocalY?: true
     expectedGuestCount?: true
     uninvitedBuffer?: true
     setupComplete?: true
@@ -10024,6 +10048,8 @@ export namespace Prisma {
   export type WeddingMaxAggregateInputType = {
     id?: true
     name?: true
+    brideName?: true
+    groomName?: true
     date?: true
     venue?: true
     venueCapacity?: true
@@ -10034,6 +10060,8 @@ export namespace Prisma {
     themeAccent?: true
     coverImagePath?: true
     couplePhotoPath?: true
+    couplePhotoFocalX?: true
+    couplePhotoFocalY?: true
     expectedGuestCount?: true
     uninvitedBuffer?: true
     setupComplete?: true
@@ -10044,6 +10072,8 @@ export namespace Prisma {
   export type WeddingCountAggregateInputType = {
     id?: true
     name?: true
+    brideName?: true
+    groomName?: true
     date?: true
     venue?: true
     venueCapacity?: true
@@ -10054,6 +10084,8 @@ export namespace Prisma {
     themeAccent?: true
     coverImagePath?: true
     couplePhotoPath?: true
+    couplePhotoFocalX?: true
+    couplePhotoFocalY?: true
     expectedGuestCount?: true
     uninvitedBuffer?: true
     palette?: true
@@ -10152,6 +10184,8 @@ export namespace Prisma {
   export type WeddingGroupByOutputType = {
     id: string
     name: string
+    brideName: string | null
+    groomName: string | null
     date: Date
     venue: string | null
     venueCapacity: number | null
@@ -10162,6 +10196,8 @@ export namespace Prisma {
     themeAccent: string
     coverImagePath: string | null
     couplePhotoPath: string | null
+    couplePhotoFocalX: number
+    couplePhotoFocalY: number
     expectedGuestCount: number | null
     uninvitedBuffer: number
     palette: string[]
@@ -10192,6 +10228,8 @@ export namespace Prisma {
   export type WeddingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    brideName?: boolean
+    groomName?: boolean
     date?: boolean
     venue?: boolean
     venueCapacity?: boolean
@@ -10202,6 +10240,8 @@ export namespace Prisma {
     themeAccent?: boolean
     coverImagePath?: boolean
     couplePhotoPath?: boolean
+    couplePhotoFocalX?: boolean
+    couplePhotoFocalY?: boolean
     expectedGuestCount?: boolean
     uninvitedBuffer?: boolean
     palette?: boolean
@@ -10238,6 +10278,8 @@ export namespace Prisma {
   export type WeddingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    brideName?: boolean
+    groomName?: boolean
     date?: boolean
     venue?: boolean
     venueCapacity?: boolean
@@ -10248,6 +10290,8 @@ export namespace Prisma {
     themeAccent?: boolean
     coverImagePath?: boolean
     couplePhotoPath?: boolean
+    couplePhotoFocalX?: boolean
+    couplePhotoFocalY?: boolean
     expectedGuestCount?: boolean
     uninvitedBuffer?: boolean
     palette?: boolean
@@ -10259,6 +10303,8 @@ export namespace Prisma {
   export type WeddingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    brideName?: boolean
+    groomName?: boolean
     date?: boolean
     venue?: boolean
     venueCapacity?: boolean
@@ -10269,6 +10315,8 @@ export namespace Prisma {
     themeAccent?: boolean
     coverImagePath?: boolean
     couplePhotoPath?: boolean
+    couplePhotoFocalX?: boolean
+    couplePhotoFocalY?: boolean
     expectedGuestCount?: boolean
     uninvitedBuffer?: boolean
     palette?: boolean
@@ -10280,6 +10328,8 @@ export namespace Prisma {
   export type WeddingSelectScalar = {
     id?: boolean
     name?: boolean
+    brideName?: boolean
+    groomName?: boolean
     date?: boolean
     venue?: boolean
     venueCapacity?: boolean
@@ -10290,6 +10340,8 @@ export namespace Prisma {
     themeAccent?: boolean
     coverImagePath?: boolean
     couplePhotoPath?: boolean
+    couplePhotoFocalX?: boolean
+    couplePhotoFocalY?: boolean
     expectedGuestCount?: boolean
     uninvitedBuffer?: boolean
     palette?: boolean
@@ -10298,7 +10350,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type WeddingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "date" | "venue" | "venueCapacity" | "budget" | "currency" | "culturalType" | "themeColor" | "themeAccent" | "coverImagePath" | "couplePhotoPath" | "expectedGuestCount" | "uninvitedBuffer" | "palette" | "setupComplete" | "createdAt" | "updatedAt", ExtArgs["result"]["wedding"]>
+  export type WeddingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "brideName" | "groomName" | "date" | "venue" | "venueCapacity" | "budget" | "currency" | "culturalType" | "themeColor" | "themeAccent" | "coverImagePath" | "couplePhotoPath" | "couplePhotoFocalX" | "couplePhotoFocalY" | "expectedGuestCount" | "uninvitedBuffer" | "palette" | "setupComplete" | "createdAt" | "updatedAt", ExtArgs["result"]["wedding"]>
   export type WeddingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     members?: boolean | Wedding$membersArgs<ExtArgs>
     events?: boolean | Wedding$eventsArgs<ExtArgs>
@@ -10360,6 +10412,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      brideName: string | null
+      groomName: string | null
       date: Date
       venue: string | null
       venueCapacity: number | null
@@ -10370,6 +10424,8 @@ export namespace Prisma {
       themeAccent: string
       coverImagePath: string | null
       couplePhotoPath: string | null
+      couplePhotoFocalX: number
+      couplePhotoFocalY: number
       expectedGuestCount: number | null
       uninvitedBuffer: number
       palette: string[]
@@ -10825,6 +10881,8 @@ export namespace Prisma {
   interface WeddingFieldRefs {
     readonly id: FieldRef<"Wedding", 'String'>
     readonly name: FieldRef<"Wedding", 'String'>
+    readonly brideName: FieldRef<"Wedding", 'String'>
+    readonly groomName: FieldRef<"Wedding", 'String'>
     readonly date: FieldRef<"Wedding", 'DateTime'>
     readonly venue: FieldRef<"Wedding", 'String'>
     readonly venueCapacity: FieldRef<"Wedding", 'Int'>
@@ -10835,6 +10893,8 @@ export namespace Prisma {
     readonly themeAccent: FieldRef<"Wedding", 'String'>
     readonly coverImagePath: FieldRef<"Wedding", 'String'>
     readonly couplePhotoPath: FieldRef<"Wedding", 'String'>
+    readonly couplePhotoFocalX: FieldRef<"Wedding", 'Float'>
+    readonly couplePhotoFocalY: FieldRef<"Wedding", 'Float'>
     readonly expectedGuestCount: FieldRef<"Wedding", 'Int'>
     readonly uninvitedBuffer: FieldRef<"Wedding", 'Int'>
     readonly palette: FieldRef<"Wedding", 'String[]'>
@@ -53939,6 +53999,8 @@ export namespace Prisma {
   export const WeddingScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    brideName: 'brideName',
+    groomName: 'groomName',
     date: 'date',
     venue: 'venue',
     venueCapacity: 'venueCapacity',
@@ -53949,6 +54011,8 @@ export namespace Prisma {
     themeAccent: 'themeAccent',
     coverImagePath: 'coverImagePath',
     couplePhotoPath: 'couplePhotoPath',
+    couplePhotoFocalX: 'couplePhotoFocalX',
+    couplePhotoFocalY: 'couplePhotoFocalY',
     expectedGuestCount: 'expectedGuestCount',
     uninvitedBuffer: 'uninvitedBuffer',
     palette: 'palette',
@@ -54676,6 +54740,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -54875,20 +54953,6 @@ export namespace Prisma {
    * Reference to a field of type 'GiftStatus[]'
    */
   export type ListEnumGiftStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -55163,6 +55227,8 @@ export namespace Prisma {
     NOT?: WeddingWhereInput | WeddingWhereInput[]
     id?: StringFilter<"Wedding"> | string
     name?: StringFilter<"Wedding"> | string
+    brideName?: StringNullableFilter<"Wedding"> | string | null
+    groomName?: StringNullableFilter<"Wedding"> | string | null
     date?: DateTimeFilter<"Wedding"> | Date | string
     venue?: StringNullableFilter<"Wedding"> | string | null
     venueCapacity?: IntNullableFilter<"Wedding"> | number | null
@@ -55173,6 +55239,8 @@ export namespace Prisma {
     themeAccent?: StringFilter<"Wedding"> | string
     coverImagePath?: StringNullableFilter<"Wedding"> | string | null
     couplePhotoPath?: StringNullableFilter<"Wedding"> | string | null
+    couplePhotoFocalX?: FloatFilter<"Wedding"> | number
+    couplePhotoFocalY?: FloatFilter<"Wedding"> | number
     expectedGuestCount?: IntNullableFilter<"Wedding"> | number | null
     uninvitedBuffer?: IntFilter<"Wedding"> | number
     palette?: StringNullableListFilter<"Wedding">
@@ -55208,6 +55276,8 @@ export namespace Prisma {
   export type WeddingOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    brideName?: SortOrderInput | SortOrder
+    groomName?: SortOrderInput | SortOrder
     date?: SortOrder
     venue?: SortOrderInput | SortOrder
     venueCapacity?: SortOrderInput | SortOrder
@@ -55218,6 +55288,8 @@ export namespace Prisma {
     themeAccent?: SortOrder
     coverImagePath?: SortOrderInput | SortOrder
     couplePhotoPath?: SortOrderInput | SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrderInput | SortOrder
     uninvitedBuffer?: SortOrder
     palette?: SortOrder
@@ -55256,6 +55328,8 @@ export namespace Prisma {
     OR?: WeddingWhereInput[]
     NOT?: WeddingWhereInput | WeddingWhereInput[]
     name?: StringFilter<"Wedding"> | string
+    brideName?: StringNullableFilter<"Wedding"> | string | null
+    groomName?: StringNullableFilter<"Wedding"> | string | null
     date?: DateTimeFilter<"Wedding"> | Date | string
     venue?: StringNullableFilter<"Wedding"> | string | null
     venueCapacity?: IntNullableFilter<"Wedding"> | number | null
@@ -55266,6 +55340,8 @@ export namespace Prisma {
     themeAccent?: StringFilter<"Wedding"> | string
     coverImagePath?: StringNullableFilter<"Wedding"> | string | null
     couplePhotoPath?: StringNullableFilter<"Wedding"> | string | null
+    couplePhotoFocalX?: FloatFilter<"Wedding"> | number
+    couplePhotoFocalY?: FloatFilter<"Wedding"> | number
     expectedGuestCount?: IntNullableFilter<"Wedding"> | number | null
     uninvitedBuffer?: IntFilter<"Wedding"> | number
     palette?: StringNullableListFilter<"Wedding">
@@ -55301,6 +55377,8 @@ export namespace Prisma {
   export type WeddingOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    brideName?: SortOrderInput | SortOrder
+    groomName?: SortOrderInput | SortOrder
     date?: SortOrder
     venue?: SortOrderInput | SortOrder
     venueCapacity?: SortOrderInput | SortOrder
@@ -55311,6 +55389,8 @@ export namespace Prisma {
     themeAccent?: SortOrder
     coverImagePath?: SortOrderInput | SortOrder
     couplePhotoPath?: SortOrderInput | SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrderInput | SortOrder
     uninvitedBuffer?: SortOrder
     palette?: SortOrder
@@ -55330,6 +55410,8 @@ export namespace Prisma {
     NOT?: WeddingScalarWhereWithAggregatesInput | WeddingScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Wedding"> | string
     name?: StringWithAggregatesFilter<"Wedding"> | string
+    brideName?: StringNullableWithAggregatesFilter<"Wedding"> | string | null
+    groomName?: StringNullableWithAggregatesFilter<"Wedding"> | string | null
     date?: DateTimeWithAggregatesFilter<"Wedding"> | Date | string
     venue?: StringNullableWithAggregatesFilter<"Wedding"> | string | null
     venueCapacity?: IntNullableWithAggregatesFilter<"Wedding"> | number | null
@@ -55340,6 +55422,8 @@ export namespace Prisma {
     themeAccent?: StringWithAggregatesFilter<"Wedding"> | string
     coverImagePath?: StringNullableWithAggregatesFilter<"Wedding"> | string | null
     couplePhotoPath?: StringNullableWithAggregatesFilter<"Wedding"> | string | null
+    couplePhotoFocalX?: FloatWithAggregatesFilter<"Wedding"> | number
+    couplePhotoFocalY?: FloatWithAggregatesFilter<"Wedding"> | number
     expectedGuestCount?: IntNullableWithAggregatesFilter<"Wedding"> | number | null
     uninvitedBuffer?: IntWithAggregatesFilter<"Wedding"> | number
     palette?: StringNullableListFilter<"Wedding">
@@ -58760,6 +58844,8 @@ export namespace Prisma {
   export type WeddingCreateInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -58770,6 +58856,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -58805,6 +58893,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -58815,6 +58905,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -58850,6 +58942,8 @@ export namespace Prisma {
   export type WeddingUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58860,6 +58954,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -58895,6 +58991,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58905,6 +59003,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -58940,6 +59040,8 @@ export namespace Prisma {
   export type WeddingCreateManyInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -58950,6 +59052,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -58961,6 +59065,8 @@ export namespace Prisma {
   export type WeddingUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58971,6 +59077,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -58982,6 +59090,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -58992,6 +59102,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -62750,6 +62862,17 @@ export namespace Prisma {
     not?: NestedEnumCulturalTypeFilter<$PrismaModel> | $Enums.CulturalType
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -63007,6 +63130,8 @@ export namespace Prisma {
   export type WeddingCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    brideName?: SortOrder
+    groomName?: SortOrder
     date?: SortOrder
     venue?: SortOrder
     venueCapacity?: SortOrder
@@ -63017,6 +63142,8 @@ export namespace Prisma {
     themeAccent?: SortOrder
     coverImagePath?: SortOrder
     couplePhotoPath?: SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrder
     uninvitedBuffer?: SortOrder
     palette?: SortOrder
@@ -63028,6 +63155,8 @@ export namespace Prisma {
   export type WeddingAvgOrderByAggregateInput = {
     venueCapacity?: SortOrder
     budget?: SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrder
     uninvitedBuffer?: SortOrder
   }
@@ -63035,6 +63164,8 @@ export namespace Prisma {
   export type WeddingMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    brideName?: SortOrder
+    groomName?: SortOrder
     date?: SortOrder
     venue?: SortOrder
     venueCapacity?: SortOrder
@@ -63045,6 +63176,8 @@ export namespace Prisma {
     themeAccent?: SortOrder
     coverImagePath?: SortOrder
     couplePhotoPath?: SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrder
     uninvitedBuffer?: SortOrder
     setupComplete?: SortOrder
@@ -63055,6 +63188,8 @@ export namespace Prisma {
   export type WeddingMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    brideName?: SortOrder
+    groomName?: SortOrder
     date?: SortOrder
     venue?: SortOrder
     venueCapacity?: SortOrder
@@ -63065,6 +63200,8 @@ export namespace Prisma {
     themeAccent?: SortOrder
     coverImagePath?: SortOrder
     couplePhotoPath?: SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrder
     uninvitedBuffer?: SortOrder
     setupComplete?: SortOrder
@@ -63075,6 +63212,8 @@ export namespace Prisma {
   export type WeddingSumOrderByAggregateInput = {
     venueCapacity?: SortOrder
     budget?: SortOrder
+    couplePhotoFocalX?: SortOrder
+    couplePhotoFocalY?: SortOrder
     expectedGuestCount?: SortOrder
     uninvitedBuffer?: SortOrder
   }
@@ -63103,6 +63242,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCulturalTypeFilter<$PrismaModel>
     _max?: NestedEnumCulturalTypeFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -65818,6 +65973,14 @@ export namespace Prisma {
 
   export type EnumCulturalTypeFieldUpdateOperationsInput = {
     set?: $Enums.CulturalType
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -69244,6 +69407,17 @@ export namespace Prisma {
     not?: NestedEnumCulturalTypeFilter<$PrismaModel> | $Enums.CulturalType
   }
 
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -69275,6 +69449,22 @@ export namespace Prisma {
     _max?: NestedEnumCulturalTypeFilter<$PrismaModel>
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -69289,17 +69479,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -71741,6 +71920,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutMembersInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -71751,6 +71932,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -71785,6 +71968,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutMembersInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -71795,6 +71980,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -71876,6 +72063,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -71886,6 +72075,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -71920,6 +72111,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -71930,6 +72123,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -72001,6 +72196,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutEventsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -72011,6 +72208,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -72045,6 +72244,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutEventsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -72055,6 +72256,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -72765,6 +72968,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -72775,6 +72980,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -72809,6 +73016,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -72819,6 +73028,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -73879,6 +74090,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutGuestsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -73889,6 +74102,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -73923,6 +74138,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutGuestsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -73933,6 +74150,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -74104,6 +74323,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutGuestsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -74114,6 +74335,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -74148,6 +74371,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutGuestsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -74158,6 +74383,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -74298,6 +74525,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutHouseholdsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -74308,6 +74537,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -74342,6 +74573,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutHouseholdsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -74352,6 +74585,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -74474,6 +74709,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutHouseholdsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -74484,6 +74721,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -74518,6 +74757,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutHouseholdsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -74528,6 +74769,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -74578,6 +74821,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutVendorsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -74588,6 +74833,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -74622,6 +74869,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutVendorsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -74632,6 +74881,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -75000,6 +75251,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutVendorsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -75010,6 +75263,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -75044,6 +75299,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutVendorsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -75054,6 +75311,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -75741,6 +76000,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutPaymentSchedulesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -75751,6 +76012,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -75785,6 +76048,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutPaymentSchedulesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -75795,6 +76060,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -75924,6 +76191,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutPaymentSchedulesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -75934,6 +76203,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -75968,6 +76239,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutPaymentSchedulesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -75978,6 +76251,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -76012,6 +76287,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutPaymentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -76022,6 +76299,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -76056,6 +76335,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutPaymentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -76066,6 +76347,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -76291,6 +76574,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -76301,6 +76586,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -76335,6 +76622,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -76345,6 +76634,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -76630,6 +76921,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutContributionsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -76640,6 +76933,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -76674,6 +76969,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutContributionsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -76684,6 +76981,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -76815,6 +77114,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutContributionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -76825,6 +77126,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -76859,6 +77162,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutContributionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -76869,6 +77174,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -76974,6 +77281,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutChecklistItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -76984,6 +77293,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77018,6 +77329,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutChecklistItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -77028,6 +77341,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77190,6 +77505,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutChecklistItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77200,6 +77517,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -77234,6 +77553,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutChecklistItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77244,6 +77565,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -77404,6 +77727,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutActivityGroupsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -77414,6 +77739,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77448,6 +77775,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutActivityGroupsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -77458,6 +77787,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77572,6 +77903,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutActivityGroupsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77582,6 +77915,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -77616,6 +77951,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutActivityGroupsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77626,6 +77963,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -77676,6 +78015,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutBudgetLinesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -77686,6 +78027,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77720,6 +78063,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutBudgetLinesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -77730,6 +78075,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -77918,6 +78265,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutBudgetLinesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77928,6 +78277,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -77962,6 +78313,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutBudgetLinesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -77972,6 +78325,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78156,6 +78511,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutRiskAlertsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78166,6 +78523,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78200,6 +78559,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutRiskAlertsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78210,6 +78571,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78260,6 +78623,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutRiskAlertsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78270,6 +78635,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78304,6 +78671,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutRiskAlertsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78314,6 +78683,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78348,6 +78719,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutMediaItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78358,6 +78731,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78392,6 +78767,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutMediaItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78402,6 +78779,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78517,6 +78896,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutMediaItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78527,6 +78908,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78561,6 +78944,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutMediaItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78571,6 +78956,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78676,6 +79063,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutAuditLogsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78686,6 +79075,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78720,6 +79111,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutAuditLogsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78730,6 +79123,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78780,6 +79175,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78790,6 +79187,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78824,6 +79223,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -78834,6 +79235,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -78868,6 +79271,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutAppointmentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78878,6 +79283,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -78912,6 +79319,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutAppointmentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -78922,6 +79331,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -79136,6 +79547,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutAppointmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -79146,6 +79559,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -79180,6 +79595,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutAppointmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -79190,6 +79607,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -79606,6 +80025,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutIncidentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -79616,6 +80037,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -79650,6 +80073,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutIncidentsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -79660,6 +80085,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -79775,6 +80202,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -79785,6 +80214,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -79819,6 +80250,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -79829,6 +80262,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -79972,6 +80407,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutTemplateApplicationsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -79982,6 +80419,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80016,6 +80455,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutTemplateApplicationsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80026,6 +80467,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80105,6 +80548,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutTemplateApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80115,6 +80560,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80149,6 +80596,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutTemplateApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80159,6 +80608,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80228,6 +80679,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutDowryItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80238,6 +80691,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80272,6 +80727,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutDowryItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80282,6 +80739,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80332,6 +80791,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutDowryItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80342,6 +80803,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80376,6 +80839,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutDowryItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80386,6 +80851,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80420,6 +80887,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutAttireItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80430,6 +80899,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80464,6 +80935,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutAttireItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80474,6 +80947,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80597,6 +81072,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutAttireItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80607,6 +81084,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80641,6 +81120,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutAttireItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80651,6 +81132,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80764,6 +81247,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutGiftRegistryItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80774,6 +81259,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80808,6 +81295,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutGiftRegistryItemsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -80818,6 +81307,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -80933,6 +81424,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutGiftRegistryItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80943,6 +81436,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -80977,6 +81472,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutGiftRegistryItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -80987,6 +81484,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -81092,6 +81591,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutGiftsReceivedInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -81102,6 +81603,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -81136,6 +81639,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutGiftsReceivedInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -81146,6 +81651,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -81328,6 +81835,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutGiftsReceivedInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -81338,6 +81847,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -81372,6 +81883,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutGiftsReceivedInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -81382,6 +81895,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -81560,6 +82075,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutTransportRoutesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -81570,6 +82087,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -81604,6 +82123,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutTransportRoutesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -81614,6 +82135,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -81822,6 +82345,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutTransportRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -81832,6 +82357,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -81866,6 +82393,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutTransportRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -81876,6 +82405,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -82284,6 +82815,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutAccommodationsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -82294,6 +82827,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -82328,6 +82863,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutAccommodationsInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -82338,6 +82875,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -82475,6 +83014,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutAccommodationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -82485,6 +83026,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -82519,6 +83062,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutAccommodationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -82529,6 +83074,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -82994,6 +83541,8 @@ export namespace Prisma {
   export type WeddingCreateWithoutVisionBoardCategoriesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -83004,6 +83553,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -83038,6 +83589,8 @@ export namespace Prisma {
   export type WeddingUncheckedCreateWithoutVisionBoardCategoriesInput = {
     id?: string
     name: string
+    brideName?: string | null
+    groomName?: string | null
     date: Date | string
     venue?: string | null
     venueCapacity?: number | null
@@ -83048,6 +83601,8 @@ export namespace Prisma {
     themeAccent?: string
     coverImagePath?: string | null
     couplePhotoPath?: string | null
+    couplePhotoFocalX?: number
+    couplePhotoFocalY?: number
     expectedGuestCount?: number | null
     uninvitedBuffer?: number
     palette?: WeddingCreatepaletteInput | string[]
@@ -83098,6 +83653,8 @@ export namespace Prisma {
   export type WeddingUpdateWithoutVisionBoardCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -83108,6 +83665,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]
@@ -83142,6 +83701,8 @@ export namespace Prisma {
   export type WeddingUncheckedUpdateWithoutVisionBoardCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    brideName?: NullableStringFieldUpdateOperationsInput | string | null
+    groomName?: NullableStringFieldUpdateOperationsInput | string | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     venue?: NullableStringFieldUpdateOperationsInput | string | null
     venueCapacity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -83152,6 +83713,8 @@ export namespace Prisma {
     themeAccent?: StringFieldUpdateOperationsInput | string
     coverImagePath?: NullableStringFieldUpdateOperationsInput | string | null
     couplePhotoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    couplePhotoFocalX?: FloatFieldUpdateOperationsInput | number
+    couplePhotoFocalY?: FloatFieldUpdateOperationsInput | number
     expectedGuestCount?: NullableIntFieldUpdateOperationsInput | number | null
     uninvitedBuffer?: IntFieldUpdateOperationsInput | number
     palette?: WeddingUpdatepaletteInput | string[]

@@ -128,6 +128,10 @@ export interface DashboardSummary {
   activeRisks: number
   criticalRisks: number
   daysToWedding: number
+  // contributions
+  totalPledged: number
+  totalContribPaid: number
+  contributorCount: number
 }
 
 // ─── Local Dexie entity types ─────────────────────────────────────────────────

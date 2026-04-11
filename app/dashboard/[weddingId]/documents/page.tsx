@@ -4,8 +4,6 @@ import { db } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import { DocumentsClient } from './documents-client'
 
-const CATEGORIES = ['CONTRACT', 'PERMIT', 'ID', 'CERTIFICATE', 'OTHER']
-
 export default async function DocumentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
   const params = await props.params
   const session = await getServerSession(authOptions)
@@ -21,7 +19,6 @@ export default async function DocumentsPage(props: Readonly<{ params: Promise<{ 
   return (
     <DocumentsClient
       weddingId={wid}
-      categories={CATEGORIES}
       initialDocs={docs.map(d => ({
         id: d.id, path: d.path, bucket: d.bucket,
         title: d.title ?? undefined, mimeType: d.mimeType,

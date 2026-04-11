@@ -35,6 +35,8 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
     where: { id: params.id },
     data: {
       name: body.name,
+      brideName: body.brideName ?? undefined,
+      groomName: body.groomName ?? undefined,
       date: body.date ? new Date(body.date) : undefined,
       venue: body.venue ?? null,
       venueCapacity: body.venueCapacity ?? null,
@@ -44,8 +46,11 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       themeColor: body.themeColor ?? undefined,
       themeAccent: body.themeAccent ?? undefined,
       couplePhotoPath: body.couplePhotoPath ?? undefined,
+      couplePhotoFocalX: body.couplePhotoFocalX ?? undefined,
+      couplePhotoFocalY: body.couplePhotoFocalY ?? undefined,
       expectedGuestCount: body.expectedGuestCount ?? null,
       setupComplete: body.setupComplete ?? undefined,
+      ...(Array.isArray(body.palette) && { palette: body.palette }),
     },
   })
 

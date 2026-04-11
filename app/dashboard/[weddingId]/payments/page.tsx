@@ -95,10 +95,6 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Payments</h1>
-            <div className="flex gap-2">
-              <Button onClick={() => setShowManual(true)} size="sm" variant="secondary"><Plus size={14} /> Manual</Button>
-              <Button onClick={() => setShowStk(true)} size="sm"><Phone size={14} /> STK Push</Button>
-            </div>
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">{payments.length} payments · {fmt(totalReceived)} received</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">

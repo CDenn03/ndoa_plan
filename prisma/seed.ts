@@ -6,311 +6,332 @@ dotenv.config()
 
 const db = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL! }) })
 
+const WID = 'demo-wedding-id'
+const now = new Date()
+const d = (offsetDays: number) => new Date(now.getTime() + offsetDays * 86_400_000)
+
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Create a demo user
+  // ── User ──────────────────────────────────────────────────────────────────
   const user = await db.user.upsert({
     where: { email: 'demo@ndoa.app' },
     update: {},
-    create: {
-      email: 'demo@ndoa.app',
-      name: 'Demo User',
-      role: 'COUPLE',
-    },
+    create: { email: 'demo@ndoa.app', name: 'Wanjiku Kamau', role: 'COUPLE' },
   })
 
-  // Create a demo wedding
+  // ── Wedding ───────────────────────────────────────────────────────────────
   const wedding = await db.wedding.upsert({
-    where: { id: 'demo-wedding-id' },
+    where: { id: WID },
     update: {},
     create: {
-      id: 'demo-wedding-id',
-      name: "John & Jane's Wedding",
-      date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
+      id: WID,
+      name: "Wanjiku & Brian's Wedding",
+      date: d(112),
       venue: 'Safari Park Hotel, Nairobi',
-      venueCapacity: 300,
-      budget: 1_500_000, // 1.5M KES
+      venueCapacity: 350,
+      budget: 2_200_000,
       culturalType: 'KIKUYU',
       themeColor: '#8B5CF6',
-      members: {
-        create: { userId: user.id, role: 'COUPLE' },
-      },
+      themeAccent: '#F59E0B',
+      members: { create: { userId: user.id, role: 'COUPLE' } },
     },
   })
 
-  // Sample vendors
-  await db.vendor.createMany({
-    skipDuplicates: true,
-    data: [
-      { weddingId: wedding.id, name: 'Safari Park Catering', category: 'CATERING', status: 'CONFIRMED', amount: 450_000, paidAmount: 100_000, contactPhone: '+254712000001', version: 1, checksum: '' },
-      { weddingId: wedding.id, name: 'Moments Photography', category: 'PHOTOGRAPHY', status: 'BOOKED', amount: 120_000, paidAmount: 60_000, contactPhone: '+254712000002', version: 1, checksum: '' },
-      { weddingId: wedding.id, name: 'Bloom Florals', category: 'FLORIST', status: 'QUOTED', amount: 80_000, paidAmount: 0, contactPhone: '+254712000003', version: 1, checksum: '' },
-      { weddingId: wedding.id, name: 'DJ Smooth', category: 'MUSIC_DJ', status: 'ENQUIRED', amount: 35_000, paidAmount: 0, contactPhone: '+254712000004', version: 1, checksum: '' },
-      { weddingId: wedding.id, name: 'Royal Transport', category: 'TRANSPORT', status: 'BOOKED', amount: 45_000, paidAmount: 20_000, version: 1, checksum: '' },
-    ],
+  // ── Events ────────────────────────────────────────────────────────────────
+  const [ruracio, civil, wedding_ev, reception] = await Promise.all([
+    db.weddingEvent.upsert({ where: { id: 'ev-ruracio' }, update: {}, create: { id: 'ev-ruracio', weddingId: WID, name: 'Ruracio', type: 'RURACIO', date: d(18), venue: "Bride's Family Home, Nyeri", startTime: '10:00', endTime: '17:00' } }),
+    db.weddingEvent.upsert({ where: { id: 'ev-civil' }, update: {}, create: { id: 'ev-civil', weddingId: WID, name: 'Civil Ceremony', type: 'CIVIL', date: d(111), venue: 'AG Offices, Nairobi', startTime: '09:00', endTime: '11:00' } }),
+    db.weddingEvent.upsert({ where: { id: 'ev-wedding' }, update: {}, create: { id: 'ev-wedding', weddingId: WID, name: 'Wedding Ceremony', type: 'WEDDING', date: d(112), venue: 'Safari Park Hotel Chapel', startTime: '14:00', endTime: '16:00', isMain: true } }),
+    db.weddingEvent.upsert({ where: { id: 'ev-reception' }, update: {}, create: { id: 'ev-reception', weddingId: WID, name: 'Reception', type: 'RECEPTION', date: d(112), venue: 'Safari Park Hotel Ballroom', startTime: '17:00', endTime: '23:00' } }),
+  ])
+  // events created above — referenced by id strings in checklist/contrib data
+  const _evIds = [ruracio.id, civil.id, wedding_ev.id, reception.id]
+  void _evIds
+
+  // ── Guests ────────────────────────────────────────────────────────────────
+  const guestData = [
+    { name: 'Grace Muthoni', phone: '+254712001001', rsvpStatus: 'CONFIRMED', side: 'BRIDE' },
+    { name: 'Peter Njoroge', phone: '+254712001002', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Mary Wambui', phone: '+254712001003', rsvpStatus: 'CONFIRMED', side: 'BRIDE' },
+    { name: 'James Kariuki', phone: '+254712001004', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Faith Nyambura', phone: '+254712001005', rsvpStatus: 'CONFIRMED', side: 'BRIDE' },
+    { name: 'Samuel Gitau', phone: '+254712001006', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Esther Wanjiru', phone: '+254712001007', rsvpStatus: 'CONFIRMED', side: 'BOTH' },
+    { name: 'David Mwangi', phone: '+254712001008', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Ruth Wairimu', phone: '+254712001009', rsvpStatus: 'CONFIRMED', side: 'BRIDE' },
+    { name: 'Joseph Kamau', phone: '+254712001010', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Agnes Njeri', phone: '+254712001011', rsvpStatus: 'CONFIRMED', side: 'BRIDE' },
+    { name: 'Charles Kimani', phone: '+254712001012', rsvpStatus: 'CONFIRMED', side: 'GROOM' },
+    { name: 'Lydia Wangari', phone: '+254712001013', rsvpStatus: 'PENDING', side: 'BRIDE' },
+    { name: 'Michael Ndung\'u', phone: '+254712001014', rsvpStatus: 'PENDING', side: 'GROOM' },
+    { name: 'Tabitha Maina', phone: '+254712001015', rsvpStatus: 'PENDING', side: 'BOTH' },
+    { name: 'Francis Gacheru', phone: '+254712001016', rsvpStatus: 'PENDING', side: 'GROOM' },
+    { name: 'Priscilla Waweru', phone: '+254712001017', rsvpStatus: 'PENDING', side: 'BRIDE' },
+    { name: 'Stephen Mugo', phone: '+254712001018', rsvpStatus: 'DECLINED', side: 'GROOM' },
+    { name: 'Hannah Gathoni', phone: '+254712001019', rsvpStatus: 'DECLINED', side: 'BRIDE' },
+    { name: 'Daniel Kinyua', phone: '+254712001020', rsvpStatus: 'MAYBE', side: 'BOTH' },
+  ]
+  for (const g of guestData) {
+    await db.guest.upsert({
+      where: { id: `guest-${g.phone}` },
+      update: {},
+      create: { id: `guest-${g.phone}`, weddingId: WID, ...g, rsvpStatus: g.rsvpStatus as never, side: g.side as never, version: 1, checksum: '' },
+    })
+  }
+
+  // ── Vendors ───────────────────────────────────────────────────────────────
+  const vendorData = [
+    { id: 'v-catering', name: 'Safari Park Catering', category: 'CATERING', status: 'CONFIRMED', amount: 550_000, paidAmount: 150_000, contactName: 'Alice Odhiambo', contactPhone: '+254720001001' },
+    { id: 'v-photo', name: 'Moments Photography', category: 'PHOTOGRAPHY', status: 'CONFIRMED', amount: 130_000, paidAmount: 65_000, contactName: 'Kevin Otieno', contactPhone: '+254720001002' },
+    { id: 'v-video', name: 'Cinematic Films KE', category: 'VIDEOGRAPHY', status: 'BOOKED', amount: 90_000, paidAmount: 45_000, contactName: 'Brian Omondi', contactPhone: '+254720001003' },
+    { id: 'v-florist', name: 'Bloom & Petal Florals', category: 'FLORIST', status: 'BOOKED', amount: 95_000, paidAmount: 30_000, contactName: 'Mercy Achieng', contactPhone: '+254720001004' },
+    { id: 'v-dj', name: 'DJ Smooth Nairobi', category: 'MUSIC_DJ', status: 'CONFIRMED', amount: 40_000, paidAmount: 20_000, contactName: 'DJ Smooth', contactPhone: '+254720001005' },
+    { id: 'v-transport', name: 'Royal Coaches Ltd', category: 'TRANSPORT', status: 'BOOKED', amount: 55_000, paidAmount: 20_000, contactName: 'Tom Wekesa', contactPhone: '+254720001006' },
+    { id: 'v-cake', name: 'Sweet Creations Bakery', category: 'CAKE', status: 'QUOTED', amount: 28_000, paidAmount: 0, contactName: 'Purity Njoki', contactPhone: '+254720001007' },
+    { id: 'v-makeup', name: 'Glam by Zawadi', category: 'HAIR_MAKEUP', status: 'CONFIRMED', amount: 35_000, paidAmount: 15_000, contactName: 'Zawadi Auma', contactPhone: '+254720001008' },
+  ]
+  for (const v of vendorData) {
+    await db.vendor.upsert({
+      where: { id: v.id },
+      update: {},
+      create: { ...v, weddingId: WID, category: v.category as never, status: v.status as never, version: 1, checksum: '' },
+    })
+  }
+
+  // ── Budget Lines ──────────────────────────────────────────────────────────
+  const budgetData = [
+    { id: 'bl-catering', category: 'CATERING', description: 'Food & beverages (350 pax)', estimated: 550_000, actual: 150_000 },
+    { id: 'bl-venue', category: 'VENUE', description: 'Safari Park Hotel venue hire', estimated: 280_000, actual: 280_000 },
+    { id: 'bl-photo', category: 'PHOTOGRAPHY', description: 'Photography + second shooter', estimated: 130_000, actual: 65_000 },
+    { id: 'bl-video', category: 'VIDEOGRAPHY', description: 'Cinematic film + drone', estimated: 90_000, actual: 45_000 },
+    { id: 'bl-decor', category: 'DECORATIONS', description: 'Flowers, draping, centrepieces', estimated: 180_000, actual: 30_000 },
+    { id: 'bl-attire', category: 'ATTIRE', description: 'Wedding dress, suits, bridesmaids', estimated: 220_000, actual: 180_000 },
+    { id: 'bl-music', category: 'MUSIC', description: 'DJ + sound system', estimated: 40_000, actual: 20_000 },
+    { id: 'bl-transport', category: 'TRANSPORT', description: 'Bridal car + 3 guest buses', estimated: 55_000, actual: 20_000 },
+    { id: 'bl-cake', category: 'CAKE', description: '5-tier wedding cake', estimated: 28_000, actual: 0 },
+    { id: 'bl-makeup', category: 'BEAUTY', description: 'Bridal hair & makeup', estimated: 35_000, actual: 15_000 },
+    { id: 'bl-invites', category: 'STATIONERY', description: 'Invitations & programmes', estimated: 22_000, actual: 22_000 },
+    { id: 'bl-honeymoon', category: 'HONEYMOON', description: 'Diani Beach 5 nights', estimated: 120_000, actual: 60_000 },
+    { id: 'bl-misc', category: 'MISCELLANEOUS', description: 'Contingency buffer', estimated: 50_000, actual: 0 },
+  ]
+  for (const b of budgetData) {
+    await db.budgetLine.upsert({
+      where: { id: b.id },
+      update: {},
+      create: { ...b, weddingId: WID, version: 1, checksum: '' },
+    })
+  }
+
+  // ── Committee Contributions ───────────────────────────────────────────────
+  const contribData = [
+    { id: 'c-001', memberName: 'Kamau Family', memberId: 'mem-001', pledgeAmount: 80_000, paidAmount: 80_000, status: 'FULFILLED' },
+    { id: 'c-002', memberName: 'Njoroge Family', memberId: 'mem-002', pledgeAmount: 60_000, paidAmount: 60_000, status: 'FULFILLED' },
+    { id: 'c-003', memberName: 'Wambui Muthoni', memberId: 'mem-003', pledgeAmount: 30_000, paidAmount: 20_000, status: 'PARTIAL' },
+    { id: 'c-004', memberName: 'Gitau & Sons', memberId: 'mem-004', pledgeAmount: 50_000, paidAmount: 50_000, status: 'FULFILLED' },
+    { id: 'c-005', memberName: 'Kariuki Clan', memberId: 'mem-005', pledgeAmount: 40_000, paidAmount: 0, status: 'PLEDGED', dueDate: d(30) },
+    { id: 'c-006', memberName: 'Nyambura Grace', memberId: 'mem-006', pledgeAmount: 15_000, paidAmount: 15_000, status: 'FULFILLED' },
+    { id: 'c-007', memberName: 'Mwangi Brothers', memberId: 'mem-007', pledgeAmount: 25_000, paidAmount: 10_000, status: 'PARTIAL' },
+    { id: 'c-008', memberName: 'Wairimu Esther', memberId: 'mem-008', pledgeAmount: 20_000, paidAmount: 0, status: 'OVERDUE', dueDate: d(-5) },
+  ]
+  for (const c of contribData) {
+    await db.committeeContribution.upsert({
+      where: { id: c.id },
+      update: {},
+      create: { ...c, weddingId: WID, status: c.status as never, dueDate: c.dueDate ?? null },
+    })
+  }
+
+  // ── Checklist Items ───────────────────────────────────────────────────────
+  const checklistData = [
+    { id: 'cl-001', title: 'Confirm final guest headcount with caterer', category: 'CATERING', dueDate: d(-3), isChecked: false, priority: 1 },
+    { id: 'cl-002', title: 'Send remaining invitations (15 pending)', category: 'INVITATIONS', dueDate: d(-1), isChecked: false, priority: 1 },
+    { id: 'cl-003', title: 'Final dress fitting', category: 'ATTIRE', dueDate: d(5), isChecked: false, priority: 1 },
+    { id: 'cl-004', title: 'Confirm DJ playlist and do-not-play list', category: 'MUSIC', dueDate: d(7), isChecked: false, priority: 2 },
+    { id: 'cl-005', title: 'Book honeymoon accommodation (Diani)', category: 'HONEYMOON', dueDate: d(10), isChecked: false, priority: 2 },
+    { id: 'cl-006', title: 'Collect marriage certificate requirements', category: 'LEGAL', dueDate: d(14), isChecked: false, priority: 1 },
+    { id: 'cl-007', title: 'Confirm transport pickup points and times', category: 'TRANSPORT', dueDate: d(14), isChecked: false, priority: 1 },
+    { id: 'cl-008', title: 'Order wedding cake (final design approval)', category: 'CAKE', dueDate: d(21), isChecked: false, priority: 2 },
+    { id: 'cl-009', title: 'Prepare seating plan', category: 'OTHER', dueDate: d(21), isChecked: false, priority: 2 },
+    { id: 'cl-010', title: 'Confirm florist delivery time and setup', category: 'DECORATIONS', dueDate: d(28), isChecked: false, priority: 1 },
+  ]
+  for (const c of checklistData) {
+    await db.checklistItem.upsert({
+      where: { id: c.id },
+      update: {},
+      create: { ...c, weddingId: WID, version: 1, checksum: '' },
+    })
+  }
+
+  // ── Appointments ──────────────────────────────────────────────────────────
+  await db.appointment.upsert({
+    where: { id: 'apt-001' },
+    update: {},
+    create: {
+      id: 'apt-001', weddingId: WID, title: 'Final dress fitting — Bridal Boutique',
+      startAt: d(5), endAt: new Date(d(5).getTime() + 2 * 3600_000),
+      location: 'Bridal Boutique, Westlands', status: 'SCHEDULED', createdBy: user.id,
+      notes: 'Bring wedding shoes and undergarments. Confirm alterations from second fitting.',
+    },
+  })
+  await db.appointment.upsert({
+    where: { id: 'apt-002' },
+    update: {},
+    create: {
+      id: 'apt-002', weddingId: WID, title: 'Caterer tasting — final menu sign-off',
+      startAt: d(9), endAt: new Date(d(9).getTime() + 1.5 * 3600_000),
+      location: 'Safari Park Hotel Kitchen', status: 'SCHEDULED', createdBy: user.id,
+      notes: 'Bring dietary requirements list. Confirm vegetarian and halal options.',
+    },
+  })
+  await db.appointment.upsert({
+    where: { id: 'apt-003' },
+    update: {},
+    create: {
+      id: 'apt-003', weddingId: WID, title: 'Venue walkthrough & seating plan review',
+      startAt: d(20), endAt: new Date(d(20).getTime() + 2 * 3600_000),
+      location: 'Safari Park Hotel Ballroom', status: 'SCHEDULED', createdBy: user.id,
+    },
   })
 
-  // Sample guests
-  await db.guest.createMany({
-    skipDuplicates: true,
-    data: Array.from({ length: 20 }, (_, i) => ({
-      weddingId: wedding.id,
-      name: `Guest ${i + 1}`,
-      phone: `+2547${String(10000000 + i).padStart(8, '0')}`,
-      rsvpStatus: i < 12 ? 'CONFIRMED' : i < 16 ? 'PENDING' : 'DECLINED',
-      side: i % 3 === 0 ? 'BRIDE' : i % 3 === 1 ? 'GROOM' : 'BOTH',
-      version: 1,
-      checksum: '',
-    })),
+  // ── Risk Alerts ───────────────────────────────────────────────────────────
+  await db.riskAlert.upsert({
+    where: { id: 'risk-001' },
+    update: {},
+    create: {
+      id: 'risk-001', weddingId: WID, ruleId: 'budget-overrun',
+      severity: 'HIGH', category: 'budget', isResolved: false,
+      message: 'Attire spend (KES 180,000) has exceeded the estimated budget of KES 220,000 by 82%. Review remaining attire costs.',
+    },
+  })
+  await db.riskAlert.upsert({
+    where: { id: 'risk-002' },
+    update: {},
+    create: {
+      id: 'risk-002', weddingId: WID, ruleId: 'rsvp-low',
+      severity: 'MEDIUM', category: 'guests', isResolved: false,
+      message: '5 guests have not responded to invitations with less than 30 days to the Ruracio. Follow up required.',
+    },
+  })
+  await db.riskAlert.upsert({
+    where: { id: 'risk-003' },
+    update: {},
+    create: {
+      id: 'risk-003', weddingId: WID, ruleId: 'contrib-overdue',
+      severity: 'HIGH', category: 'payments', isResolved: false,
+      message: 'Wairimu Esther\'s contribution of KES 20,000 is 5 days overdue. Contact required.',
+    },
+  })
+  await db.riskAlert.upsert({
+    where: { id: 'risk-004' },
+    update: {},
+    create: {
+      id: 'risk-004', weddingId: WID, ruleId: 'vendor-unconfirmed',
+      severity: 'LOW', category: 'vendor', isResolved: false,
+      message: 'Sweet Creations Bakery is still at QUOTED status. Confirm booking before the 30-day deadline.',
+    },
   })
 
-  // Sample budget lines
-  await db.budgetLine.createMany({
-    skipDuplicates: true,
-    data: [
-      { weddingId: wedding.id, category: 'CATERING', description: 'Food and beverages', estimated: 450_000, actual: 100_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'PHOTOGRAPHY', description: 'Photography + videography', estimated: 150_000, actual: 60_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'DECORATIONS', description: 'Flowers and decor', estimated: 120_000, actual: 0, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'MUSIC', description: 'DJ services', estimated: 50_000, actual: 0, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'TRANSPORT', description: 'Bridal car and buses', estimated: 60_000, actual: 20_000, version: 1, checksum: '' },
-      { weddingId: wedding.id, category: 'ATTIRE', description: 'Wedding dress and suits', estimated: 200_000, actual: 150_000, version: 1, checksum: '' },
-    ],
-  })
+  // ── Vision Board Categories ───────────────────────────────────────────────
+  const vbCats = [
+    { id: 'vb-decor', name: 'Decor', color: '#8B5CF6', order: 0 },
+    { id: 'vb-attire', name: 'Outfits', color: '#EC4899', order: 1 },
+    { id: 'vb-flowers', name: 'Flowers', color: '#10B981', order: 2 },
+    { id: 'vb-venue', name: 'Venue', color: '#F59E0B', order: 3 },
+    { id: 'vb-food', name: 'Food', color: '#EF4444', order: 4 },
+    { id: 'vb-other', name: 'Other', color: '#6B7280', order: 5 },
+  ]
+  for (const v of vbCats) {
+    await db.visionBoardCategory.upsert({
+      where: { weddingId_name: { weddingId: WID, name: v.name } },
+      update: {},
+      create: { ...v, weddingId: WID },
+    })
+  }
 
-  console.log('✅ Seed complete')
-  console.log(`   Wedding ID: ${wedding.id}`)
-  console.log(`   Demo user:  demo@ndoa.app`)
+  console.log(`✅ Seed complete — Wedding ID: ${wedding.id}`)
+  console.log('   Demo user: demo@ndoa.app')
 
-  // ─── System Templates ────────────────────────────────────────────────────────
+  // ── System Templates (checklist + budget + appointment) ───────────────────
+  await seedTemplates()
+}
+
+async function seedTemplates() {
   console.log('🌱 Seeding system templates...')
 
   const checklistTemplates = [
-    {
-      name: '12-Month Master Checklist',
-      data: [
-        { title: 'Set overall wedding budget', category: 'LEGAL', priority: 1 },
-        { title: 'Decide on wedding size (intimate / medium / large)', category: 'OTHER', priority: 1 },
-        { title: 'Allocate budget by category', category: 'OTHER', priority: 1 },
-        { title: 'Open a dedicated wedding savings account', category: 'LEGAL', priority: 2 },
-        { title: 'Choose wedding date', category: 'OTHER', priority: 1 },
-        { title: 'Book main venue', category: 'VENUE', priority: 1 },
-        { title: 'Create guest list (first draft)', category: 'OTHER', priority: 1 },
-        { title: 'Book officiant / pastor / kadhi', category: 'LEGAL', priority: 1 },
-        { title: 'Book photographer', category: 'PHOTOGRAPHY', priority: 1 },
-        { title: 'Book videographer', category: 'PHOTOGRAPHY', priority: 2 },
-        { title: 'Book caterer', category: 'CATERING', priority: 1 },
-        { title: 'Book DJ / band', category: 'MUSIC', priority: 2 },
-        { title: 'Send save-the-dates', category: 'INVITATIONS', priority: 2 },
-        { title: 'Order wedding dress / attire', category: 'ATTIRE', priority: 1 },
-        { title: 'Book hair & makeup artist', category: 'ATTIRE', priority: 1 },
-        { title: 'Book florist', category: 'DECORATIONS', priority: 2 },
-        { title: 'Book transport (bridal car, guest buses)', category: 'TRANSPORT', priority: 2 },
-        { title: 'Send formal invitations', category: 'INVITATIONS', priority: 1 },
-        { title: 'Arrange accommodation for out-of-town guests', category: 'ACCOMMODATION', priority: 2 },
-        { title: 'Plan honeymoon', category: 'HONEYMOON', priority: 2 },
-        { title: 'Confirm all vendor bookings', category: 'OTHER', priority: 1 },
-        { title: 'Final dress fitting', category: 'ATTIRE', priority: 1 },
-        { title: 'Confirm guest RSVPs and final headcount', category: 'OTHER', priority: 1 },
-        { title: 'Confirm catering final menu and headcount', category: 'CATERING', priority: 1 },
-        { title: 'Prepare seating plan', category: 'OTHER', priority: 2 },
-        { title: 'Prepare wedding day timeline', category: 'OTHER', priority: 1 },
-        { title: 'Collect marriage certificate requirements', category: 'LEGAL', priority: 1 },
-        { title: 'Bride preparation', category: 'ATTIRE', priority: 1 },
-        { title: 'Groom preparation', category: 'ATTIRE', priority: 1 },
-        { title: 'Venue setup check', category: 'VENUE', priority: 1 },
-        { title: 'Confirm all vendors have arrived', category: 'OTHER', priority: 1, isFinalCheck: true },
-        { title: 'Ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
-        { title: 'Send thank-you notes to guests', category: 'OTHER', priority: 1 },
-        { title: 'Return rented items', category: 'OTHER', priority: 2 },
-        { title: 'Register marriage certificate', category: 'LEGAL', priority: 1 },
-        { title: 'Review and pay final vendor invoices', category: 'OTHER', priority: 1 },
-      ],
-    },
-    {
-      name: 'Ruracio Ceremony Checklist',
-      culturalType: 'KIKUYU',
-      data: [
-        { title: 'Agree on Ruracio date with both families', category: 'LEGAL', priority: 1 },
-        { title: 'Prepare dowry list (bride price items)', category: 'OTHER', priority: 1 },
-        { title: 'Book venue for Ruracio', category: 'VENUE', priority: 1 },
-        { title: 'Arrange catering for Ruracio guests', category: 'CATERING', priority: 1 },
-        { title: 'Prepare traditional attire (Kikuyu)', category: 'ATTIRE', priority: 1 },
-        { title: 'Confirm elders / spokespersons for negotiation', category: 'OTHER', priority: 1 },
-        { title: "Prepare gifts for bride's family", category: 'OTHER', priority: 2 },
-        { title: 'Ruracio ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
-        { title: 'Dowry items delivered and acknowledged', category: 'OTHER', priority: 1, isFinalCheck: true },
-      ],
-    },
-    {
-      name: 'Wedding Day Checklist',
-      data: [
-        { title: 'Wake up and have breakfast', category: 'OTHER', priority: 1 },
-        { title: 'Hair & makeup — bride', category: 'ATTIRE', priority: 1 },
-        { title: 'Groom and groomsmen dressed', category: 'ATTIRE', priority: 1 },
-        { title: 'Bouquets and buttonholes collected', category: 'DECORATIONS', priority: 1 },
-        { title: 'Venue decorated and ready', category: 'VENUE', priority: 1 },
-        { title: 'Photographer briefed', category: 'PHOTOGRAPHY', priority: 1 },
-        { title: 'Caterer confirmed on-site', category: 'CATERING', priority: 1 },
-        { title: 'DJ / band set up and sound-checked', category: 'MUSIC', priority: 1 },
-        { title: 'Transport confirmed and on schedule', category: 'TRANSPORT', priority: 1 },
-        { title: 'All vendors confirmed on-site', category: 'OTHER', priority: 1, isFinalCheck: true },
-        { title: 'Ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
-        { title: 'Rings exchanged', category: 'OTHER', priority: 1, isFinalCheck: true },
-      ],
-    },
-    {
-      name: 'Bride Preparation Checklist',
-      data: [
-        { title: 'Book hair & makeup trial', category: 'ATTIRE', priority: 1 },
-        { title: 'First dress fitting', category: 'ATTIRE', priority: 1 },
-        { title: 'Second dress fitting', category: 'ATTIRE', priority: 1 },
-        { title: 'Final dress fitting', category: 'ATTIRE', priority: 1, isFinalCheck: true },
-        { title: 'Choose bridesmaids attire', category: 'ATTIRE', priority: 2 },
-        { title: 'Buy wedding shoes', category: 'ATTIRE', priority: 2 },
-        { title: 'Buy wedding jewellery', category: 'ATTIRE', priority: 2 },
-        { title: 'Bridal shower', category: 'OTHER', priority: 3 },
-        { title: 'Confirm hair & makeup for wedding day', category: 'ATTIRE', priority: 1 },
-      ],
-    },
+    { name: '12-Month Master Checklist', data: [
+      { title: 'Set overall wedding budget', category: 'LEGAL', priority: 1 },
+      { title: 'Choose wedding date', category: 'OTHER', priority: 1 },
+      { title: 'Book main venue', category: 'VENUE', priority: 1 },
+      { title: 'Create guest list (first draft)', category: 'OTHER', priority: 1 },
+      { title: 'Book officiant / pastor / kadhi', category: 'LEGAL', priority: 1 },
+      { title: 'Book photographer', category: 'PHOTOGRAPHY', priority: 1 },
+      { title: 'Book caterer', category: 'CATERING', priority: 1 },
+      { title: 'Book DJ / band', category: 'MUSIC', priority: 2 },
+      { title: 'Send save-the-dates', category: 'INVITATIONS', priority: 2 },
+      { title: 'Order wedding dress / attire', category: 'ATTIRE', priority: 1 },
+      { title: 'Book hair & makeup artist', category: 'ATTIRE', priority: 1 },
+      { title: 'Book florist', category: 'DECORATIONS', priority: 2 },
+      { title: 'Book transport (bridal car, guest buses)', category: 'TRANSPORT', priority: 2 },
+      { title: 'Send formal invitations', category: 'INVITATIONS', priority: 1 },
+      { title: 'Confirm all vendor bookings', category: 'OTHER', priority: 1 },
+      { title: 'Final dress fitting', category: 'ATTIRE', priority: 1 },
+      { title: 'Confirm guest RSVPs and final headcount', category: 'OTHER', priority: 1 },
+      { title: 'Prepare seating plan', category: 'OTHER', priority: 2 },
+      { title: 'Collect marriage certificate requirements', category: 'LEGAL', priority: 1 },
+      { title: 'Confirm all vendors have arrived', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Register marriage certificate', category: 'LEGAL', priority: 1 },
+      { title: 'Review and pay final vendor invoices', category: 'OTHER', priority: 1 },
+    ]},
+    { name: 'Ruracio Ceremony Checklist', culturalType: 'KIKUYU', data: [
+      { title: 'Agree on Ruracio date with both families', category: 'LEGAL', priority: 1 },
+      { title: 'Prepare dowry list (bride price items)', category: 'OTHER', priority: 1 },
+      { title: 'Book venue for Ruracio', category: 'VENUE', priority: 1 },
+      { title: 'Arrange catering for Ruracio guests', category: 'CATERING', priority: 1 },
+      { title: 'Prepare traditional attire (Kikuyu)', category: 'ATTIRE', priority: 1 },
+      { title: 'Confirm elders / spokespersons for negotiation', category: 'OTHER', priority: 1 },
+      { title: "Prepare gifts for bride's family", category: 'OTHER', priority: 2 },
+      { title: 'Ruracio ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Dowry items delivered and acknowledged', category: 'OTHER', priority: 1, isFinalCheck: true },
+    ]},
+    { name: 'Wedding Day Checklist', data: [
+      { title: 'Hair & makeup — bride', category: 'ATTIRE', priority: 1 },
+      { title: 'Groom and groomsmen dressed', category: 'ATTIRE', priority: 1 },
+      { title: 'Venue decorated and ready', category: 'VENUE', priority: 1 },
+      { title: 'Photographer briefed', category: 'PHOTOGRAPHY', priority: 1 },
+      { title: 'Caterer confirmed on-site', category: 'CATERING', priority: 1 },
+      { title: 'DJ / band set up and sound-checked', category: 'MUSIC', priority: 1 },
+      { title: 'Transport confirmed and on schedule', category: 'TRANSPORT', priority: 1 },
+      { title: 'All vendors confirmed on-site', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Rings exchanged', category: 'OTHER', priority: 1, isFinalCheck: true },
+    ]},
   ]
 
   const budgetTemplates = [
-    {
-      name: 'Standard Wedding Budget',
-      data: [
-        { category: 'CATERING', description: 'Food and beverages', estimated: 675_000 },
-        { category: 'VENUE', description: 'Venue hire', estimated: 300_000 },
-        { category: 'DECORATIONS', description: 'Decor and flowers', estimated: 150_000 },
-        { category: 'PHOTOGRAPHY', description: 'Photography', estimated: 120_000 },
-        { category: 'VIDEOGRAPHY', description: 'Videography', estimated: 80_000 },
-        { category: 'ATTIRE', description: 'Wedding dress and suits', estimated: 200_000 },
-        { category: 'MUSIC', description: 'DJ / band', estimated: 60_000 },
-        { category: 'TRANSPORT', description: 'Bridal car and guest transport', estimated: 75_000 },
-        { category: 'INVITATIONS', description: 'Invitations and stationery', estimated: 20_000 },
-        { category: 'CAKE', description: 'Wedding cake', estimated: 30_000 },
-        { category: 'MISCELLANEOUS', description: 'Contingency buffer', estimated: 50_000 },
-      ],
-    },
-    {
-      name: 'Traditional Ceremony Budget',
-      data: [
-        { category: 'CATERING', description: 'Traditional food and drinks', estimated: 200_000 },
-        { category: 'VENUE', description: 'Family compound / venue', estimated: 50_000 },
-        { category: 'ATTIRE', description: 'Traditional attire (Ankara / Kitenge)', estimated: 80_000 },
-        { category: 'DECORATIONS', description: 'Traditional decor', estimated: 40_000 },
-        { category: 'TRANSPORT', description: 'Guest transport', estimated: 30_000 },
-        { category: 'MISCELLANEOUS', description: 'Dowry items and gifts', estimated: 100_000 },
-      ],
-    },
+    { name: 'Standard Wedding Budget', data: [
+      { category: 'CATERING', description: 'Food and beverages', estimated: 675_000 },
+      { category: 'VENUE', description: 'Venue hire', estimated: 300_000 },
+      { category: 'DECORATIONS', description: 'Decor and flowers', estimated: 150_000 },
+      { category: 'PHOTOGRAPHY', description: 'Photography', estimated: 120_000 },
+      { category: 'VIDEOGRAPHY', description: 'Videography', estimated: 80_000 },
+      { category: 'ATTIRE', description: 'Wedding dress and suits', estimated: 200_000 },
+      { category: 'MUSIC', description: 'DJ / band', estimated: 60_000 },
+      { category: 'TRANSPORT', description: 'Bridal car and guest transport', estimated: 75_000 },
+      { category: 'CAKE', description: 'Wedding cake', estimated: 30_000 },
+      { category: 'MISCELLANEOUS', description: 'Contingency buffer', estimated: 50_000 },
+    ]},
   ]
 
   for (const t of checklistTemplates) {
     const id = `sys-checklist-${t.name.toLowerCase().replace(/[\s']+/g, '-')}`
-    await db.template.upsert({
-      where: { id },
-      update: {},
-      create: {
-        id,
-        type: 'CHECKLIST',
-        name: t.name,
-        culturalType: (t as typeof t & { culturalType?: string }).culturalType as never ?? null,
-        isSystem: true,
-        data: t.data,
-      },
-    })
+    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'CHECKLIST', name: t.name, culturalType: (t as typeof t & { culturalType?: string }).culturalType as never ?? null, isSystem: true, data: t.data } })
   }
-
   for (const t of budgetTemplates) {
     const id = `sys-budget-${t.name.toLowerCase().replace(/\s+/g, '-')}`
-    await db.template.upsert({
-      where: { id },
-      update: {},
-      create: {
-        id,
-        type: 'BUDGET',
-        name: t.name,
-        isSystem: true,
-        data: t.data,
-      },
-    })
-  }
-
-  // ─── Appointment Templates ───────────────────────────────────────────────────
-  const appointmentTemplates = [
-    {
-      name: 'Venue Visits',
-      data: [
-        { title: 'Visit main reception venue', location: 'TBD', notes: 'Check capacity, parking, catering kitchen, AV setup', offsetDays: 0 },
-        { title: 'Visit backup / outdoor venue', location: 'TBD', notes: 'Confirm rain contingency plan', offsetDays: 3 },
-        { title: 'Final venue walkthrough', location: 'Main venue', notes: 'Confirm layout, seating plan, decor placement', offsetDays: 60 },
-      ],
-    },
-    {
-      name: 'Vendor Meetings',
-      data: [
-        { title: 'Caterer tasting & menu finalisation', notes: 'Bring guest dietary requirements list', offsetDays: 0 },
-        { title: 'Photographer portfolio review & contract signing', notes: 'Discuss shot list, timeline, second shooter', offsetDays: 2 },
-        { title: 'Florist consultation', notes: 'Bring colour palette and inspiration photos', offsetDays: 5 },
-        { title: 'DJ / band audition & playlist briefing', notes: 'Share must-play and do-not-play lists', offsetDays: 7 },
-        { title: 'Transport provider briefing', notes: 'Confirm pickup points, times, and vehicle count', offsetDays: 10 },
-        { title: 'Cake tasting', notes: 'Decide on flavours and design', offsetDays: 14 },
-      ],
-    },
-    {
-      name: 'Attire & Beauty',
-      data: [
-        { title: 'Bridal boutique — first dress appointment', notes: 'Bring 2-3 trusted people, wear nude underwear', offsetDays: 0 },
-        { title: 'First dress fitting', notes: 'Bring wedding shoes and undergarments', offsetDays: 30 },
-        { title: 'Second dress fitting', notes: 'Check alterations from first fitting', offsetDays: 50 },
-        { title: 'Final dress fitting & collection', notes: 'Confirm dress is ready to take home', offsetDays: 65 },
-        { title: 'Hair & makeup trial', notes: 'Bring inspiration photos, test full look', offsetDays: 20 },
-        { title: 'Groom suit fitting', notes: 'Confirm suit, shirt, tie, and shoes', offsetDays: 10 },
-      ],
-    },
-    {
-      name: 'Legal & Admin',
-      data: [
-        { title: 'Marriage registration office — document check', location: 'Attorney General offices', notes: 'Bring IDs, birth certificates, passport photos', offsetDays: 0 },
-        { title: 'Marriage licence application', location: 'Attorney General offices', notes: 'Submit all required documents', offsetDays: 7 },
-        { title: 'Collect marriage certificate', location: 'Attorney General offices', notes: 'Confirm certificate is ready before collecting', offsetDays: 30 },
-      ],
-    },
-    {
-      name: 'Ruracio Planning',
-      culturalType: 'KIKUYU',
-      data: [
-        { title: 'Family meeting — agree on Ruracio date', notes: 'Both families present; agree on venue and guest count', offsetDays: 0 },
-        { title: "Visit bride's family home", notes: 'Formal introduction of groom delegation', offsetDays: 7 },
-        { title: 'Dowry negotiation meeting', notes: 'Bring elders / spokesperson; prepare dowry list', offsetDays: 14 },
-        { title: 'Ruracio ceremony rehearsal', notes: 'Confirm order of events, roles, and gifts', offsetDays: 21 },
-      ],
-    },
-    {
-      name: 'Wedding Week',
-      data: [
-        { title: 'Final vendor confirmation calls', notes: 'Call every vendor to confirm time, location, and requirements', offsetDays: 0 },
-        { title: 'Rehearsal dinner', notes: 'Run through ceremony order with wedding party', offsetDays: 2 },
-        { title: 'Bridal party prep briefing', notes: 'Share final timeline, emergency contacts, and roles', offsetDays: 3 },
-        { title: 'Venue setup supervision', notes: 'Arrive early to oversee decor and seating setup', offsetDays: 4 },
-      ],
-    },
-  ]
-
-  for (const t of appointmentTemplates) {
-    const id = `sys-appointment-${t.name.toLowerCase().replace(/[\s&]+/g, '-')}`
-    await db.template.upsert({
-      where: { id },
-      update: { data: t.data },
-      create: {
-        id,
-        type: 'APPOINTMENT',
-        name: t.name,
-        culturalType: (t as typeof t & { culturalType?: string }).culturalType as never ?? null,
-        isSystem: true,
-        data: t.data,
-      },
-    })
+    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'BUDGET', name: t.name, isSystem: true, data: t.data } })
   }
 
   console.log('✅ Templates seeded')

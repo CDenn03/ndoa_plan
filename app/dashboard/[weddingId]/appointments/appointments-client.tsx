@@ -110,9 +110,7 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Planning</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Appointments</h1>
-            {activeTab === '__overall__' && (
-              <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Book appointment</Button>
-            )}
+            
           </div>
           <p className="text-sm text-zinc-400 mt-1 mb-6">
             {upcoming.length} upcoming
