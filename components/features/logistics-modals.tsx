@@ -1,19 +1,21 @@
 'use client'
-import { useState } from 'react'
-import { Button, Input, Label, Select, Modal, EmptyState } from '@/components/ui'
+import { useState, useMemo } from 'react'
+import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { Pencil, Trash2, Plus, Truck, Hotel, MapPin, Clock } from 'lucide-react'
+import { Pencil, Trash2, Plus, Truck, Hotel, MapPin, Clock, X, Search, CheckCircle2, Circle } from 'lucide-react'
 
 export interface TransportRoute {
   id: string; name: string; departureLocation: string; arrivalLocation: string
   departureTime: string; capacity?: number | null; eventId?: string | null
+  isCompleted?: boolean
   assignedVendor?: { id: string; name: string } | null
 }
 export interface Accommodation {
   id: string; hotelName: string; address?: string | null
   checkIn: string; checkOut: string; roomsBlocked?: number | null; notes?: string | null; eventId?: string | null
+  isCompleted?: boolean
 }
 
 export function AddRouteModal({ weddingId, eventId, onClose, onDone }: Readonly<{
@@ -113,7 +115,69 @@ export function EditRouteModal({ weddingId, route, onClose, onDone }: Readonly<{
   )
 }
 
-export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly<{
+export // ─── Guest Multi-Picker ───────────────────────────────────────────────────────
+
+function GuestMultiPicker({ guests, selected, onChange }: Readonly<{
+  guests: { id: string; name: string; phone?: string | null }[]
+  selected: string[]  // guest IDs
+  onChange: (ids: string[]) => void
+}>) {
+  const [search, setSearch] = useState('')
+  const filtered = useMemo(() =>
+    guests.filter(g => g.name.toLowerCase().includes(search.toLowerCase()) || (g.phone ?? '').includes(search)),
+  [guests, search])
+
+  const toggle = (id: string) =>
+    onChange(selected.includes(id) ? selected.filter(s => s !== id) : [...selected, id])
+
+  const selectedGuests = guests.filter(g => selected.includes(g.id))
+
+  return (
+    <div className="space-y-2">
+      {/* Selected pills */}
+      {selectedGuests.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {selectedGuests.map(g => (
+            <span key={g.id} className="inline-flex items-center gap-1 bg-violet-100 text-violet-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+              {g.name}
+              <button type="button" onClick={() => toggle(g.id)} className="hover:text-violet-900" aria-label={`Remove ${g.name}`}>
+                <X size={10} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      {/* Search + list */}
+      <div className="border border-zinc-200 rounded-xl overflow-hidden">
+        <div className="relative border-b border-zinc-100">
+          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <input
+            type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search guests…"
+            className="w-full pl-8 pr-3 py-2 text-sm bg-white focus:outline-none text-[#14161C] placeholder:text-zinc-400"
+          />
+        </div>
+        <div className="max-h-40 overflow-y-auto">
+          {filtered.length === 0
+            ? <p className="text-xs text-zinc-400 text-center py-3">No guests found</p>
+            : filtered.map(g => (
+              <label key={g.id} className="flex items-center gap-3 px-3 py-2 hover:bg-zinc-50 cursor-pointer">
+                <input type="checkbox" checked={selected.includes(g.id)} onChange={() => toggle(g.id)}
+                  className="rounded accent-violet-600" />
+                <span className="text-sm text-[#14161C] flex-1">{g.name}</span>
+                {g.phone && <span className="text-xs text-zinc-400">{g.phone}</span>}
+              </label>
+            ))}
+        </div>
+      </div>
+      {selectedGuests.length > 0 && (
+        <p className="text-xs text-zinc-400">{selectedGuests.length} guest{selectedGuests.length !== 1 ? 's' : ''} selected</p>
+      )}
+    </div>
+  )
+}
+
+function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly<{
   weddingId: string; eventId?: string; onClose: () => void; onDone: () => void
 }>) {
   const { toast } = useToast()
@@ -121,7 +185,8 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
   const [form, setForm] = useState({
     hotelName: '', address: '', checkIn: '', checkOut: '', roomsBlocked: '', notes: '',
     guestType: 'none' as 'none' | 'individual' | 'group',
-    guestId: '', guestName: '', groupSize: '',
+    selectedGuestIds: [] as string[],
+    groupName: '', groupSize: '',
   })
 
   const { data: guests = [] } = useQuery<{ id: string; name: string; phone?: string | null }[]>({
@@ -133,11 +198,13 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     try {
-      const assignedTo = form.guestType === 'individual'
-        ? (form.guestName || guests.find(g => g.id === form.guestId)?.name || null)
-        : form.guestType === 'group'
-          ? `${form.guestName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
-          : null
+      let assignedTo: string | null = null
+      if (form.guestType === 'individual' && form.selectedGuestIds.length > 0) {
+        const names = form.selectedGuestIds.map(id => guests.find(g => g.id === id)?.name ?? id)
+        assignedTo = names.join(', ')
+      } else if (form.guestType === 'group' && form.groupName) {
+        assignedTo = `${form.groupName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
+      }
       const res = await fetch(`/api/weddings/${weddingId}/logistics/accommodations`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,38 +236,32 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
         <div><Label htmlFor="hotel-rooms">Rooms blocked</Label>
           <Input id="hotel-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} placeholder="1" min="1" /></div>
 
-        {/* Guest / group assignment */}
+        {/* Assignment type */}
         <div>
           <Label>Assigned to</Label>
           <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
             {(['none', 'individual', 'group'] as const).map(t => (
-              <button key={t} type="button" onClick={() => setForm(f => ({ ...f, guestType: t, guestId: '', guestName: '', groupSize: '' }))}
+              <button key={t} type="button"
+                onClick={() => setForm(f => ({ ...f, guestType: t, selectedGuestIds: [], groupName: '', groupSize: '' }))}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
-                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual' : 'Group'}
+                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual(s)' : 'Group'}
               </button>
             ))}
           </div>
         </div>
 
         {form.guestType === 'individual' && (
-          <div className="space-y-2">
-            <div><Label htmlFor="hotel-guest">Select guest</Label>
-              <Select id="hotel-guest" value={form.guestId} onChange={e => {
-                const g = guests.find(g => g.id === e.target.value)
-                setForm(f => ({ ...f, guestId: e.target.value, guestName: g?.name ?? '' }))
-              }}>
-                <option value="">Choose from guest list…</option>
-                {guests.map(g => <option key={g.id} value={g.id}>{g.name}{g.phone ? ` · ${g.phone}` : ''}</option>)}
-              </Select></div>
-            <div><Label htmlFor="hotel-gname">Or enter name</Label>
-              <Input id="hotel-gname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value, guestId: '' }))} placeholder="Guest name" /></div>
+          <div>
+            <Label>Select guests</Label>
+            <GuestMultiPicker guests={guests} selected={form.selectedGuestIds}
+              onChange={ids => setForm(f => ({ ...f, selectedGuestIds: ids }))} />
           </div>
         )}
 
         {form.guestType === 'group' && (
           <div className="space-y-2">
             <div><Label htmlFor="hotel-grpname">Group name *</Label>
-              <Input id="hotel-grpname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value }))} placeholder="e.g. Bride's family, Groom's delegation" /></div>
+              <Input id="hotel-grpname" value={form.groupName} onChange={e => setForm(f => ({ ...f, groupName: e.target.value }))} placeholder="e.g. Bride's family, Groom's delegation" /></div>
             <div><Label htmlFor="hotel-grpsize">Number of people</Label>
               <Input id="hotel-grpsize" type="number" value={form.groupSize} onChange={e => setForm(f => ({ ...f, groupSize: e.target.value }))} placeholder="8" min="1" /></div>
           </div>
@@ -208,8 +269,7 @@ export function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: R
 
         <div><Label htmlFor="hotel-notes">Notes</Label>
           <textarea id="hotel-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-            placeholder="Breakfast included, special requests, room preferences…"
-            rows={4}
+            placeholder="Breakfast included, special requests, room preferences…" rows={3}
             className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
 
         <div className="flex gap-3 pt-2">
@@ -227,22 +287,11 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
 
-  // Parse existing notes to extract assignment info
   const existingNotes = accommodation.notes ?? ''
   const assignedMatch = existingNotes.match(/^Assigned to: (.+?)(?:\n|$)/)
   const assignedLine = assignedMatch?.[1] ?? ''
   const restNotes = existingNotes.replace(/^Assigned to: .+?\n?/, '')
   const groupMatch = assignedLine.match(/^(.+?) \((\d+) people\)$/)
-
-  const [form, setForm] = useState({
-    hotelName: accommodation.hotelName, address: accommodation.address ?? '',
-    checkIn: accommodation.checkIn.slice(0, 10), checkOut: accommodation.checkOut.slice(0, 10),
-    roomsBlocked: accommodation.roomsBlocked ? String(accommodation.roomsBlocked) : '',
-    notes: restNotes,
-    guestType: (assignedLine ? (groupMatch ? 'group' : 'individual') : 'none') as 'none' | 'individual' | 'group',
-    guestId: '', guestName: groupMatch ? groupMatch[1] : assignedLine,
-    groupSize: groupMatch ? groupMatch[2] : '',
-  })
 
   const { data: guests = [] } = useQuery<{ id: string; name: string; phone?: string | null }[]>({
     queryKey: ['guests', weddingId],
@@ -250,14 +299,33 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
     staleTime: 60_000,
   })
 
+  // Resolve previously saved names back to IDs where possible
+  const initialGuestIds = useMemo(() => {
+    if (!assignedLine || groupMatch) return []
+    return assignedLine.split(', ').map(name => guests.find(g => g.name === name)?.id).filter(Boolean) as string[]
+  }, [assignedLine, groupMatch, guests])
+
+  const [form, setForm] = useState({
+    hotelName: accommodation.hotelName, address: accommodation.address ?? '',
+    checkIn: accommodation.checkIn.slice(0, 10), checkOut: accommodation.checkOut.slice(0, 10),
+    roomsBlocked: accommodation.roomsBlocked ? String(accommodation.roomsBlocked) : '',
+    notes: restNotes,
+    guestType: (assignedLine ? (groupMatch ? 'group' : 'individual') : 'none') as 'none' | 'individual' | 'group',
+    selectedGuestIds: initialGuestIds,
+    groupName: groupMatch ? groupMatch[1] : '',
+    groupSize: groupMatch ? groupMatch[2] : '',
+  })
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     try {
-      const assignedTo = form.guestType === 'individual'
-        ? (form.guestName || guests.find(g => g.id === form.guestId)?.name || null)
-        : form.guestType === 'group'
-          ? `${form.guestName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
-          : null
+      let assignedTo: string | null = null
+      if (form.guestType === 'individual' && form.selectedGuestIds.length > 0) {
+        const names = form.selectedGuestIds.map(id => guests.find(g => g.id === id)?.name ?? id)
+        assignedTo = names.join(', ')
+      } else if (form.guestType === 'group' && form.groupName) {
+        assignedTo = `${form.groupName}${form.groupSize ? ` (${form.groupSize} people)` : ''}`
+      }
       const res = await fetch(`/api/weddings/${weddingId}/logistics/accommodations/${accommodation.id}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -288,38 +356,31 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
         <div><Label htmlFor="ea-rooms">Rooms blocked</Label>
           <Input id="ea-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} min="1" /></div>
 
-        {/* Guest / group assignment */}
         <div>
           <Label>Assigned to</Label>
           <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
             {(['none', 'individual', 'group'] as const).map(t => (
-              <button key={t} type="button" onClick={() => setForm(f => ({ ...f, guestType: t, guestId: '', guestName: '', groupSize: '' }))}
+              <button key={t} type="button"
+                onClick={() => setForm(f => ({ ...f, guestType: t, selectedGuestIds: [], groupName: '', groupSize: '' }))}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
-                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual' : 'Group'}
+                {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual(s)' : 'Group'}
               </button>
             ))}
           </div>
         </div>
 
         {form.guestType === 'individual' && (
-          <div className="space-y-2">
-            <div><Label htmlFor="ea-guest">Select guest</Label>
-              <Select id="ea-guest" value={form.guestId} onChange={e => {
-                const g = guests.find(g => g.id === e.target.value)
-                setForm(f => ({ ...f, guestId: e.target.value, guestName: g?.name ?? '' }))
-              }}>
-                <option value="">Choose from guest list…</option>
-                {guests.map(g => <option key={g.id} value={g.id}>{g.name}{g.phone ? ` · ${g.phone}` : ''}</option>)}
-              </Select></div>
-            <div><Label htmlFor="ea-gname">Or enter name</Label>
-              <Input id="ea-gname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value, guestId: '' }))} placeholder="Guest name" /></div>
+          <div>
+            <Label>Select guests</Label>
+            <GuestMultiPicker guests={guests} selected={form.selectedGuestIds}
+              onChange={ids => setForm(f => ({ ...f, selectedGuestIds: ids }))} />
           </div>
         )}
 
         {form.guestType === 'group' && (
           <div className="space-y-2">
             <div><Label htmlFor="ea-grpname">Group name</Label>
-              <Input id="ea-grpname" value={form.guestName} onChange={e => setForm(f => ({ ...f, guestName: e.target.value }))} placeholder="e.g. Bride's family" /></div>
+              <Input id="ea-grpname" value={form.groupName} onChange={e => setForm(f => ({ ...f, groupName: e.target.value }))} placeholder="e.g. Bride's family" /></div>
             <div><Label htmlFor="ea-grpsize">Number of people</Label>
               <Input id="ea-grpsize" type="number" value={form.groupSize} onChange={e => setForm(f => ({ ...f, groupSize: e.target.value }))} placeholder="8" min="1" /></div>
           </div>
@@ -327,8 +388,7 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
 
         <div><Label htmlFor="ea-notes">Notes</Label>
           <textarea id="ea-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-            placeholder="Breakfast included, special requests, room preferences…"
-            rows={4}
+            placeholder="Breakfast included, special requests, room preferences…" rows={3}
             className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
 
         <div className="flex gap-3 pt-2">
@@ -345,6 +405,7 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
 }>) {
   const { toast } = useToast()
   const [editing, setEditing] = useState(false)
+  const [toggling, setToggling] = useState(false)
 
   const handleDelete = async () => {
     if (!confirm('Delete this route?')) return
@@ -354,14 +415,29 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
     } catch { toast('Failed to delete route', 'error') }
   }
 
+  const toggleComplete = async () => {
+    setToggling(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/logistics/routes/${route.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isCompleted: !route.isCompleted }),
+      })
+      onRefresh()
+    } catch { toast('Failed to update', 'error') } finally { setToggling(false) }
+  }
+
   return (
     <>
-      <div className="group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-        <div className="w-9 h-9 rounded-full bg-sky-50 flex items-center justify-center flex-shrink-0">
-          <Truck size={15} className="text-sky-500" />
-        </div>
+      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 transition-colors ${route.isCompleted ? 'bg-emerald-50/40' : ''}`}>
+        <button onClick={toggleComplete} disabled={toggling}
+          className="mt-0.5 flex-shrink-0 text-zinc-300 hover:text-emerald-500 transition-colors disabled:opacity-50"
+          aria-label={route.isCompleted ? 'Mark incomplete' : 'Mark complete'}>
+          {route.isCompleted
+            ? <CheckCircle2 size={18} className="text-emerald-500" />
+            : <Circle size={18} />}
+        </button>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-[#14161C]">{route.name}</p>
+          <p className={`text-sm font-semibold ${route.isCompleted ? 'text-zinc-400 line-through' : 'text-[#14161C]'}`}>{route.name}</p>
           <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
             <MapPin size={10} /> {route.departureLocation} → {route.arrivalLocation}
           </p>
@@ -371,7 +447,8 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
           </p>
           {route.assignedVendor && <p className="text-xs text-violet-500 mt-0.5">{route.assignedVendor.name}</p>}
         </div>
-        <div className="flex gap-1  flex-shrink-0">
+        <div className="flex gap-1 flex-shrink-0">
+          {route.isCompleted && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full self-center">Done</span>}
           <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
           <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
@@ -386,6 +463,7 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
 }>) {
   const { toast } = useToast()
   const [editing, setEditing] = useState(false)
+  const [toggling, setToggling] = useState(false)
 
   const handleDelete = async () => {
     if (!confirm('Delete this accommodation?')) return
@@ -395,14 +473,34 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
     } catch { toast('Failed to delete accommodation', 'error') }
   }
 
+  const toggleComplete = async () => {
+    setToggling(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/logistics/accommodations/${accommodation.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isCompleted: !accommodation.isCompleted }),
+      })
+      onRefresh()
+    } catch { toast('Failed to update', 'error') } finally { setToggling(false) }
+  }
+
+  // Extract assigned-to line from notes for display
+  const assignedMatch = accommodation.notes?.match(/^Assigned to: (.+?)(?:\n|$)/)
+  const assignedTo = assignedMatch?.[1]
+  const restNotes = accommodation.notes?.replace(/^Assigned to: .+?\n?/, '') ?? ''
+
   return (
     <>
-      <div className="group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-        <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
-          <Hotel size={15} className="text-emerald-500" />
-        </div>
+      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 transition-colors ${accommodation.isCompleted ? 'bg-emerald-50/40' : ''}`}>
+        <button onClick={toggleComplete} disabled={toggling}
+          className="mt-0.5 flex-shrink-0 text-zinc-300 hover:text-emerald-500 transition-colors disabled:opacity-50"
+          aria-label={accommodation.isCompleted ? 'Mark incomplete' : 'Mark complete'}>
+          {accommodation.isCompleted
+            ? <CheckCircle2 size={18} className="text-emerald-500" />
+            : <Circle size={18} />}
+        </button>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-[#14161C]">{accommodation.hotelName}</p>
+          <p className={`text-sm font-semibold ${accommodation.isCompleted ? 'text-zinc-400 line-through' : 'text-[#14161C]'}`}>{accommodation.hotelName}</p>
           {accommodation.address && (
             <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {accommodation.address}</p>
           )}
@@ -410,9 +508,11 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
             {format(new Date(accommodation.checkIn), 'MMM d')} – {format(new Date(accommodation.checkOut), 'MMM d, yyyy')}
             {accommodation.roomsBlocked ? ` · ${accommodation.roomsBlocked} rooms` : ''}
           </p>
-          {accommodation.notes && <p className="text-xs text-zinc-400 mt-0.5">{accommodation.notes}</p>}
+          {assignedTo && <p className="text-xs text-violet-500 mt-0.5">👤 {assignedTo}</p>}
+          {restNotes && <p className="text-xs text-zinc-400 mt-0.5 italic">{restNotes}</p>}
         </div>
-        <div className="flex gap-1  flex-shrink-0">
+        <div className="flex gap-1 flex-shrink-0">
+          {accommodation.isCompleted && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full self-center">Done</span>}
           <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
           <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>

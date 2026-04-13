@@ -1,10 +1,10 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Button, Input, Label, Select, Modal, Badge, EmptyState, Spinner } from '@/components/ui'
-import { useInitiatePayment, usePayments } from '@/hooks/use-payments'
+import { Button, Input, Label, Select, Modal, Badge, EmptyState, Spinner, ConfirmDialog } from '@/components/ui'
+import { useInitiatePayment } from '@/hooks/use-payments'
 import { useToast } from '@/components/ui/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Phone, Plus, AlertCircle, CheckCircle2, Clock, DollarSign } from 'lucide-react'
+import { Phone, Plus, AlertCircle, CheckCircle2, Clock, DollarSign, Trash2, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Payment } from '@/hooks/use-payments'
 
@@ -39,10 +39,10 @@ function iconBg(status: string) {
 
 // ─── Payment Row ──────────────────────────────────────────────────────────────
 
-export function PaymentRow({ p }: Readonly<{ p: Payment }>) {
+export function PaymentRow({ p, onDelete }: Readonly<{ p: Payment; onDelete?: (p: Payment) => void }>) {
   const Icon = STATUS_ICON[p.status] ?? Clock
   return (
-    <div className="flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 px-6">
+    <div className="flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 px-6 group">
       <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconBg(p.status)}`}>
         <Icon size={15} />
       </div>
@@ -58,6 +58,11 @@ export function PaymentRow({ p }: Readonly<{ p: Payment }>) {
         <p className="text-sm font-bold text-[#14161C]">{fmt(p.amount)}</p>
         <Badge variant={STATUS_BADGE[p.status] ?? 'pending'} className="mt-1">{p.status}</Badge>
       </div>
+      {onDelete && (
+        <button onClick={() => onDelete(p)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-50 text-zinc-300 hover:text-red-500 transition-all flex-shrink-0" aria-label="Delete payment">
+          <Trash2 size={13} />
+        </button>
+      )}
     </div>
   )
 }
@@ -115,7 +120,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
   const [form, setForm] = useState({
     amount: '', description: '', payerName: '', mpesaRef: '', status: 'COMPLETED',
     selectedEventId: eventId ?? '', vendorId: '', vendorNameOverride: '',
-    budgetLineId: '',
+    budgetLineId: '', paymentDate: new Date().toISOString().split('T')[0],
   })
 
   // Load vendors
@@ -179,7 +184,6 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
           payerName: form.payerName || null,
           mpesaRef: form.mpesaRef || null,
           vendorId: form.vendorId || null,
-          vendorName: form.vendorNameOverride || null,
           status: form.status,
           eventId: form.selectedEventId || null,
           budgetLineId: form.budgetLineId || null,
@@ -197,6 +201,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
       }
 
       await qc.invalidateQueries({ queryKey: ['payments', weddingId] })
+      await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
       toast('Payment recorded', 'success'); onClose()
     } catch { toast('Failed to record payment', 'error') } finally { setSaving(false) }
   }
@@ -313,6 +318,9 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
             <option value="FAILED">Failed</option>
           </Select></div>
 
+        <div><Label htmlFor="mp-pdate">Payment date</Label>
+          <Input id="mp-pdate" type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))} /></div>
+
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
           <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving…' : 'Record payment'}</Button>
@@ -330,11 +338,39 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
 }>) {
   const [showManual, setShowManual] = useState(false)
   const [showStk, setShowStk] = useState(false)
+  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
+  const [confirmDelete, setConfirmDelete] = useState<Payment | null>(null)
   const qc = useQueryClient()
+  const { toast } = useToast()
 
   const eventPayments = useMemo(() => payments.filter(p => p.eventId === eventId), [payments, eventId])
   const total = eventPayments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
-  const pending = eventPayments.filter(p => p.status === 'PENDING').length
+  const pendingCount = eventPayments.filter(p => p.status === 'PENDING').length
+
+  // Load budget lines to surface unpaid items as pending
+  const { data: allBudgetLines = [] } = useQuery<BudgetLine[]>({
+    queryKey: ['budget', weddingId],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/budget`); if (!res.ok) return []; return res.json() as Promise<BudgetLine[]> },
+    staleTime: 30_000,
+  })
+  const pendingBudgetItems = useMemo(() =>
+    allBudgetLines.filter(l => l.eventId === eventId && l.estimated > l.actual),
+  [allBudgetLines, eventId])
+
+  const filtered = useMemo(() => {
+    if (filter === 'pending') return eventPayments.filter(p => p.status === 'PENDING')
+    if (filter === 'completed') return eventPayments.filter(p => p.status === 'COMPLETED')
+    return eventPayments
+  }, [eventPayments, filter])
+
+  const handleDelete = async (p: Payment) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/payments/${p.id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['payments', weddingId] })
+      toast('Payment deleted', 'success')
+    } catch { toast('Failed to delete payment', 'error') }
+    setConfirmDelete(null)
+  }
 
   const refresh = () => void qc.invalidateQueries({ queryKey: ['payments', weddingId] })
 
@@ -342,13 +378,13 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-sm text-zinc-500">{eventPayments.length} payment{eventPayments.length !== 1 ? 's' : ''}</p>
           {eventPayments.length > 0 && (
             <div className="flex gap-4 mt-0.5">
               <p className="text-xs font-bold text-emerald-600">{fmt(total)} received</p>
-              {pending > 0 && <p className="text-xs font-bold text-amber-500">{pending} pending</p>}
+              {pendingCount > 0 && <p className="text-xs font-bold text-amber-500">{pendingCount} pending</p>}
             </div>
           )}
         </div>
@@ -357,13 +393,65 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
           <Button size="sm" onClick={() => setShowStk(true)}><Phone size={13} /> STK Push</Button>
         </div>
       </div>
-      {eventPayments.length === 0
+
+      {/* Filter tabs */}
+      {eventPayments.length > 0 && (
+        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+          {(['all', 'pending', 'completed'] as const).map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              {f === 'all' ? `All (${eventPayments.length})` : f === 'pending' ? `Pending (${eventPayments.filter(p => p.status === 'PENDING').length})` : `Completed (${eventPayments.filter(p => p.status === 'COMPLETED').length})`}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Pending budget items */}
+      {(filter === 'all' || filter === 'pending') && pendingBudgetItems.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5"><AlertTriangle size={11} className="text-amber-400" /> Outstanding from budget</p>
+          <div className="bg-amber-50 rounded-2xl border border-amber-100 overflow-hidden">
+            {pendingBudgetItems.map(l => (
+              <div key={l.id} className="flex items-center gap-4 py-3 px-5 border-b border-amber-100 last:border-0">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{l.description}</p>
+                  <div className="flex gap-3 mt-0.5">
+                    <span className="text-xs text-zinc-500">{l.category.replaceAll('_', ' ')}</span>
+                    {l.vendorName && <span className="text-xs text-violet-500">{l.vendorName}</span>}
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-sm font-bold text-amber-600">{fmt(l.estimated - l.actual)} due</p>
+                  <p className="text-xs text-zinc-400">{fmt(l.actual)} of {fmt(l.estimated)} paid</p>
+                </div>
+                <Button size="sm" variant="secondary" onClick={() => setShowManual(true)} className="flex-shrink-0 text-xs">
+                  <Plus size={11} /> Pay
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {filtered.length === 0 && pendingBudgetItems.length === 0
         ? <EmptyState icon={<DollarSign size={32} className="text-zinc-200" />} title="No payments" description="Record M-Pesa or manual payments for this event" />
-        : <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-            {eventPayments.map(p => <PaymentRow key={p.id} p={p} />)}
-          </div>}
+        : filtered.length > 0
+          ? <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+              {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
+            </div>
+          : null}
+
       {showManual && <AddManualPaymentModal weddingId={weddingId} eventId={eventId} events={events} onClose={() => { setShowManual(false); refresh() }} />}
       {showStk && <StkPushModal weddingId={weddingId} onClose={() => { setShowStk(false); refresh() }} />}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete payment?"
+          description={`${fmt(confirmDelete.amount)} from ${confirmDelete.payerName ?? 'unknown'} will be removed.`}
+          confirmLabel="Delete"
+          onConfirm={() => void handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
     </div>
   )
 }

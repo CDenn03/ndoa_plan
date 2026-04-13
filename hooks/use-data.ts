@@ -103,23 +103,28 @@ export function useBudgetLines(weddingId: string) {
   return useQuery({
     queryKey: ['budget', weddingId],
     queryFn: async () => {
-      // Always fetch from server — items may have been created via the event detail
-      // page which posts directly to the API without going through Dexie
+      const sanitize = (l: LocalBudgetLine): LocalBudgetLine => ({
+        ...l,
+        estimated: Number(l.estimated) || 0,
+        actual: Number(l.actual) || 0,
+      })
+
       const res = await fetch(`/api/weddings/${weddingId}/budget`)
       if (!res.ok) {
         // Offline fallback: return whatever is in Dexie
-        return weddingDB.budgetLines.where('weddingId').equals(weddingId)
+        const local = await weddingDB.budgetLines.where('weddingId').equals(weddingId)
           .filter(l => !l.deletedAt).toArray()
+        return local.map(sanitize)
       }
-      const serverLines: LocalBudgetLine[] = await res.json()
+      const serverLines: LocalBudgetLine[] = (await res.json() as LocalBudgetLine[]).map(sanitize)
       // Preserve any dirty (unsynced) local lines not yet on the server
-      const dirty = await weddingDB.budgetLines.where('weddingId').equals(weddingId)
-        .filter(l => !!l.isDirty && !l.deletedAt).toArray()
+      const dirty = (await weddingDB.budgetLines.where('weddingId').equals(weddingId)
+        .filter(l => !!l.isDirty && !l.deletedAt).toArray()).map(sanitize)
       const dirtyIds = new Set(dirty.map(l => l.id))
       await weddingDB.budgetLines.bulkPut(serverLines.filter(l => !dirtyIds.has(l.id)))
       return [...serverLines.filter(l => !dirtyIds.has(l.id)), ...dirty]
     },
-    staleTime: 30_000,
+    staleTime: 0,
     gcTime: Infinity,
   })
 }

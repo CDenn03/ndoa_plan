@@ -1,9 +1,10 @@
 'use client'
 import { useState, use, useMemo } from 'react'
-import { DollarSign, Plus, Phone, CalendarDays } from 'lucide-react'
-import { Button, EmptyState, Spinner } from '@/components/ui'
+import { DollarSign, CalendarDays } from 'lucide-react'
+import { EmptyState, Spinner, ConfirmDialog } from '@/components/ui'
 import { usePayments } from '@/hooks/use-payments'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/components/ui/toast'
 import type { Payment } from '@/hooks/use-payments'
 import {
   PaymentRow, StkPushModal, AddManualPaymentModal, EventPaymentsTab, fmt,
@@ -12,20 +13,36 @@ import {
 
 // ─── Overall tab ──────────────────────────────────────────────────────────────
 
-function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events: WeddingEvent[] }>) {
+function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Payment[]; events: WeddingEvent[]; weddingId: string }>) {
+  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
+  const [confirmDelete, setConfirmDelete] = useState<Payment | null>(null)
+  const qc = useQueryClient()
+  const { toast } = useToast()
+
   const totalReceived = payments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
-  const pending = payments.filter(p => p.status === 'PENDING').length
+  const pendingCount = payments.filter(p => p.status === 'PENDING').length
 
   const byEvent = useMemo(() => {
-    const map = new Map<string, { event: WeddingEvent | null; payments: Payment[] }>()
-    for (const e of events) map.set(e.id, { event: e, payments: [] })
-    for (const p of payments) {
-      const k = p.eventId ?? '__unassigned__'
-      if (!map.has(k)) map.set(k, { event: null, payments: [] })
-      map.get(k)?.payments.push(p)
-    }
-    return map
+    const eventMap = new Map(events.map(e => [e.id, e]))
+    const extraKeys = payments.map(p => p.eventId ?? '__unassigned__').filter(k => !eventMap.has(k))
+    const keys = [...eventMap.keys(), ...new Set(extraKeys)]
+    return new Map(keys.map(k => [k, { event: eventMap.get(k) ?? null, payments: payments.filter(p => (p.eventId ?? '__unassigned__') === k) }]))
   }, [payments, events])
+
+  const filtered = useMemo(() => {
+    if (filter === 'pending') return payments.filter(p => p.status === 'PENDING')
+    if (filter === 'completed') return payments.filter(p => p.status === 'COMPLETED')
+    return payments
+  }, [payments, filter])
+
+  const handleDelete = async (p: Payment) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/payments/${p.id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['payments', weddingId] })
+      toast('Payment deleted', 'success')
+    } catch { toast('Failed to delete payment', 'error') }
+    setConfirmDelete(null)
+  }
 
   if (payments.length === 0) return (
     <EmptyState icon={<DollarSign size={40} />} title="No payments yet" description="Record payments inside each event tab" />
@@ -38,8 +55,8 @@ function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events
           <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalReceived)}</p></div>
         <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total payments</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{payments.length}</p></div>
-        {pending > 0 && <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Pending</p>
-          <p className="text-2xl font-extrabold text-amber-500">{pending}</p></div>}
+        {pendingCount > 0 && <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Pending</p>
+          <p className="text-2xl font-extrabold text-amber-500">{pendingCount}</p></div>}
       </div>
       <div className="space-y-3">
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
@@ -59,11 +76,32 @@ function OverallTab({ payments, events }: Readonly<{ payments: Payment[]; events
         })}
       </div>
       <div>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">All payments</p>
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-          {payments.map(p => <PaymentRow key={p.id} p={p} />)}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">All payments</p>
+          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+            {(['all', 'pending', 'completed'] as const).map(f => (
+              <button key={f} onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                {f === 'all' ? `All (${payments.length})` : f === 'pending' ? `Pending (${pendingCount})` : `Completed (${payments.filter(p => p.status === 'COMPLETED').length})`}
+              </button>
+            ))}
+          </div>
         </div>
+        {filtered.length === 0
+          ? <p className="text-sm text-zinc-400 text-center py-8">No {filter} payments</p>
+          : <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+              {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
+            </div>}
       </div>
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete payment?"
+          description={`${fmt(confirmDelete.amount)} from ${confirmDelete.payerName ?? 'unknown'} will be removed.`}
+          confirmLabel="Delete"
+          onConfirm={() => void handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
     </div>
   )
 }
@@ -113,7 +151,7 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
       <div className="max-w-6xl mx-auto px-8 py-10">
         {isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
           activeTab === '__overall__'
-            ? <OverallTab payments={payments} events={events} />
+            ? <OverallTab payments={payments} events={events} weddingId={wid} />
             : activeEvent
               ? <EventPaymentsTab weddingId={wid} eventId={activeEvent.id} events={events} payments={payments} isLoading={false} />
               : null}

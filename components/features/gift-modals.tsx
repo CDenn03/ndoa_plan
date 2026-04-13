@@ -11,7 +11,7 @@ export interface GiftRegistryItem {
   estimatedPrice?: number | null; quantity: number; priority: number; eventId?: string | null
 }
 export interface GiftReceived {
-  id: string; giverName: string; description: string; estimatedValue?: number | null
+  id: string; giverName: string; giverPhone?: string | null; description: string; estimatedValue?: number | null
   status: string; thankYouSent: boolean; eventId?: string | null; receivedAt?: string
 }
 
@@ -83,7 +83,7 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
   const qc = useQueryClient()
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
-    giverName: gift?.giverName ?? '', description: gift?.description ?? '',
+    giverName: gift?.giverName ?? '', giverPhone: gift?.giverPhone ?? '', description: gift?.description ?? '',
     estimatedValue: gift?.estimatedValue ? String(gift.estimatedValue) : '',
     status: gift?.status ?? 'RECEIVED', thankYouSent: gift?.thankYouSent ?? false,
   })
@@ -94,14 +94,14 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
       if (gift) {
         const res = await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, {
           method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ giverName: form.giverName, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, status: form.status, thankYouSent: form.thankYouSent }),
+          body: JSON.stringify({ giverName: form.giverName, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, status: form.status, thankYouSent: form.thankYouSent }),
         })
         if (!res.ok) throw new Error('Failed to update')
         toast('Gift updated', 'success')
       } else {
         const res = await fetch(`/api/weddings/${weddingId}/gifts/received`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ giverName: form.giverName, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, eventId: eventId ?? null }),
+          body: JSON.stringify({ giverName: form.giverName, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, eventId: eventId ?? null }),
         })
         if (!res.ok) throw new Error('Failed to record')
         toast('Gift recorded', 'success')
@@ -116,6 +116,8 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
       <form onSubmit={handleSubmit} className="space-y-4">
         <div><Label htmlFor="gift-giver">Giver name *</Label>
           <Input id="gift-giver" value={form.giverName} onChange={e => setForm(f => ({ ...f, giverName: e.target.value }))} placeholder="Aunt Jane" required /></div>
+        <div><Label htmlFor="gift-phone">Giver's phone (optional)</Label>
+          <Input id="gift-phone" value={form.giverPhone} onChange={e => setForm(f => ({ ...f, giverPhone: e.target.value }))} placeholder="+254712345678" /></div>
         <div><Label htmlFor="gift-desc">Description *</Label>
           <Input id="gift-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Dinner set" required /></div>
         <div className="grid grid-cols-2 gap-3">
@@ -323,6 +325,7 @@ export function ReceivedList({ gifts, weddingId, onRefresh, onAdd }: Readonly<{
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-[#14161C]">{gift.giverName}</p>
             <p className="text-xs text-zinc-400 mt-0.5">{gift.description}</p>
+            {gift.giverPhone && <p className="text-xs text-zinc-400">{gift.giverPhone}</p>}
             {gift.receivedAt && <p className="text-xs text-zinc-400">{format(new Date(gift.receivedAt), 'MMM d, yyyy')}</p>}
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">

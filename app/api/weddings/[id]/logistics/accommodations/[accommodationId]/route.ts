@@ -8,7 +8,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
-  const { hotelName, address, checkIn, checkOut, roomsBlocked, notes } = body
+  const { hotelName, address, checkIn, checkOut, roomsBlocked, notes, isCompleted } = body
   const accommodation = await db.accommodation.update({
     where: { id: accommodationId, weddingId: id },
     data: {
@@ -18,6 +18,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       ...(checkOut !== undefined && { checkOut: new Date(checkOut) }),
       ...(roomsBlocked !== undefined && { roomsBlocked: roomsBlocked ?? null }),
       ...(notes !== undefined && { notes: notes || null }),
+      ...(isCompleted !== undefined && { isCompleted }),
     },
   })
   return NextResponse.json({ ...accommodation, checkIn: accommodation.checkIn.toISOString(), checkOut: accommodation.checkOut.toISOString(), createdAt: accommodation.createdAt.toISOString() })

@@ -140,7 +140,8 @@ export function DashboardClient({
   const wid = wedding.id
   const weddingDate = new Date(wedding.date)
   const now = MODULE_NOW
-  const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(n)
+  const fmt = (n: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'KES', currencyDisplay: 'code', maximumFractionDigits: 0 }).format(n)
 
   const criticalHighRisks = recentRisks.filter(r => r.severity === 'CRITICAL' || r.severity === 'HIGH')
   const overdueTasks = upcomingTasks.filter(t => t.isOverdue)

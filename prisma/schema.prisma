@@ -170,7 +170,24 @@ model WeddingEvent {
   contributions     CommitteeContribution[]
   mediaItems        MediaItem[]
   vendorAssignments VendorEventAssignment[]
+  contacts          EventContact[]
   @@index([weddingId, date])
+}
+
+// ─── Event Contacts ───────────────────────────────────────────────────────────
+
+model EventContact {
+  id        String       @id @default(uuid())
+  eventId   String
+  name      String
+  role      String?
+  phone     String?
+  email     String?
+  notes     String?
+  event     WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  @@index([eventId])
 }
 
 // ─── Event Program (ordered day-of activities) ────────────────────────────────
@@ -441,6 +458,7 @@ model Payment {
   eventId           String?
   vendorId          String?
   contributionId    String?
+  budgetLineId      String?
   mpesaRef          String?       @unique
   checkoutRequestId String?       @unique
   idempotencyKey    String        @unique
@@ -450,6 +468,7 @@ model Payment {
   payerName         String?
   payerPhone        String?
   description       String?
+  paymentDate       DateTime?
   rawCallback       Json?
   processedAt       DateTime?
   reconciledAt      DateTime?
@@ -462,6 +481,7 @@ model Payment {
   event             WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   vendor            Vendor?       @relation(fields: [vendorId], references: [id])
   contribution      CommitteeContribution? @relation(fields: [contributionId], references: [id])
+  budgetLine        BudgetLine?   @relation(fields: [budgetLineId], references: [id], onDelete: SetNull)
 
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -470,6 +490,7 @@ model Payment {
   @@index([weddingId, status])
   @@index([vendorId])
   @@index([eventId])
+  @@index([budgetLineId])
 }
 
 enum PaymentStatus {
@@ -590,6 +611,7 @@ model BudgetLine {
   vendorName    String?
   notes         String?
   paymentDate   DateTime?
+  reminderDate  DateTime?
   paymentPlan   String?
   paymentType   String?
 
@@ -601,6 +623,7 @@ model BudgetLine {
   wedding     Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event       WeddingEvent?  @relation(fields: [eventId], references: [id])
   vendor      Vendor?        @relation(fields: [vendorId], references: [id])
+  payments    Payment[]
 
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -761,10 +784,21 @@ model Incident {
   resolvedAt  DateTime?
   resolvedBy  String?
   resolution  String?
+  notes       IncidentNote[]
   wedding     Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event       WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   @@index([weddingId])
   @@index([eventId])
+}
+
+model IncidentNote {
+  id          String   @id @default(uuid())
+  incidentId  String
+  content     String
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  incident    Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  @@index([incidentId])
 }
 
 // ─── Templates ────────────────────────────────────────────────────────────────
@@ -869,6 +903,7 @@ model GiftReceived {
   eventId         String?
   guestId         String?
   giverName       String
+  giverPhone      String?
   description     String
   estimatedValue  Decimal?
   status          GiftStatus  @default(RECEIVED)
@@ -902,6 +937,7 @@ model TransportRoute {
   departureTime     DateTime
   capacity          Int?
   assignedVendorId  String?
+  isCompleted       Boolean         @default(false)
   wedding           Wedding         @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event             WeddingEvent?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
   assignedVendor    Vendor?         @relation(fields: [assignedVendorId], references: [id])
@@ -930,6 +966,7 @@ model Accommodation {
   checkOut     DateTime
   roomsBlocked Int?
   notes        String?
+  isCompleted  Boolean              @default(false)
   wedding      Wedding              @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event        WeddingEvent?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
   guestAccommodations GuestAccommodation[]

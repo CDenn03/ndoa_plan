@@ -9,12 +9,13 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { giverName, description, estimatedValue, status, thankYouSent } = body
+  const { giverName, giverPhone, description, estimatedValue, status, thankYouSent } = body
 
   const gift = await db.giftReceived.update({
     where: { id: giftId, weddingId: id },
     data: {
       ...(giverName !== undefined && { giverName }),
+      ...(giverPhone !== undefined && { giverPhone: giverPhone ?? null }),
       ...(description !== undefined && { description }),
       ...(estimatedValue !== undefined && { estimatedValue: estimatedValue ?? null }),
       ...(status !== undefined && { status }),

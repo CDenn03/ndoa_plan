@@ -8,13 +8,20 @@ Offline-first, fault-tolerant wedding coordination platform built for real-world
 
 ```bash
 pnpm install
-cp .env.example .env.local   # fill in all values
-pnpm db:push                 # apply schema to dev DB
-pnpm db:seed                 # optional sample data
-pnpm dev                     # start dev server (Turbopack)
+cp .env.example .env        # fill in all values
+pnpm db:push                # apply schema to dev DB
+pnpm db:seed                # optional sample data
+pnpm dev                    # start dev server (Turbopack)
 ```
 
 Open http://localhost:3000 and sign in with Google.
+
+To test on a mobile device on the same network, use [ngrok](https://ngrok.com):
+
+```bash
+ngrok http 3000
+# then set NEXTAUTH_URL to the ngrok https URL in .env and restart
+```
 
 ---
 
@@ -63,9 +70,13 @@ Entities tracked offline: `guests`, `vendors`, `checklistItems`, `budgetLines`, 
 | Vendor status | Forward-only progression |
 | Payment/Contribution | Server-authoritative |
 | Checklist completed | OR-set |
-| Budget amounts | Field-level merge, human review on conflict |
+| Budget amounts | Server-authoritative (computed from payments) |
 
-### Payments
+### Budget & Payments
+
+`BudgetLine.actual` is server-computed — it is the SUM of all `COMPLETED` payments linked to that line via `Payment.budgetLineId`. It is never user-editable. The `lib/budget-helpers.ts` helper `recalculateBudgetLineActual()` is called automatically on every payment create, status update, and delete.
+
+Each budget line row has a Pay quick-action button that opens a pre-filled payment modal. Full and partial payments are both supported. The edit modal shows a read-only actual/remaining summary and a list of all linked payments with individual delete.
 
 M-Pesa STK Push via `lib/mpesa.ts`. Tokens cached for 1 hour. Callbacks hit `/api/mpesa/callback` (must remain unauthenticated and publicly accessible). Raw callbacks stored before processing. Idempotency enforced via unique `mpesaRef` + `idempotencyKey`.
 
@@ -83,6 +94,12 @@ app/
     auth/[...nextauth]/         NextAuth handler
     sync/batch/                 Sync engine — idempotency, conflict detection
     weddings/[id]/              Wedding CRUD + all sub-resources
+      budget/[lineId]/          Budget line CRUD + linked payments GET
+      payments/[paymentId]/     Payment PATCH (status) + DELETE
+      events/[eventId]/
+        contacts/               Event contact CRUD
+        program/                Day-of program items
+        attendances/            Guest check-in per event
     mpesa/                      STK push initiation + callback
     storage/                    Signed URL generation + upload
     cron/evaluate-risks/        Scheduled risk evaluation
@@ -92,38 +109,51 @@ app/
     page.tsx + dashboard-client.tsx
     guests/        vendors/     budget/       checklist/
     payments/      contributions/ risks/      settings/
-    timeline/      events/      appointments/ analytics/
-    moodboard/     documents/   dowry/        gifts/
-    logistics/     day-of/
+    events/        appointments/ moodboard/   documents/
+    dowry/         gifts/        logistics/   day-of/
+    schedule/
   login/                        Google OAuth entry
-  onboarding/                   Wedding creation wizard
 
 lib/
-  db.ts                         Prisma singleton (PgBouncer-aware)
-  db/dexie.ts                   IndexedDB schema (v3 migrations)
+  db.ts                         Prisma singleton (Neon adapter)
+  db/dexie.ts                   IndexedDB schema (versioned migrations)
   db/checksum.ts                Deterministic entity checksums
   sync/engine.ts                Queue writer, batch flusher, circuit breaker
   sync/conflict-resolver.ts     Per-entity conflict resolution
   storage/supabase-storage.ts   Private buckets, signed URLs
   risk-engine.ts                Modular rule-based risk evaluation
-  auth.ts                       NextAuth config
+  budget-helpers.ts             recalculateBudgetLineActual()
+  auth.ts                       NextAuth config (prompt: select_account)
   mpesa.ts                      Daraja API client
 
 hooks/
   use-guests.ts                 Offline-first guest CRUD
-  use-vendors.ts                Offline-first vendor CRUD
-  use-data.ts                   Checklist, budget, timeline
-  use-payments.ts               Payments + contributions
+  use-vendors.ts                Offline-first vendor CRUD + status update
+  use-data.ts                   Checklist, budget (staleTime: 0 for accuracy)
+  use-payments.ts               Payments + contributions + summary
   use-risks.ts                  Risk alerts
   use-atomic-write.ts           Dexie + TanStack Query atomic bridge
 
-store/
-  wedding-store.ts              Zustand: UI state, filters, offline status
+scripts/
+  migrate-budget-actuals.ts     One-time migration: manual actuals → payments
 
 components/
   sync-provider.tsx             Sync worker, offline banner, conflict toasts
   sidebar.tsx                   Navigation
   ui/index.tsx                  Design system (Radix + Tailwind)
+  features/
+    budget-components.tsx       Budget line modal, category breakdown, QuickPayModal
+    payment-modals.tsx          STK push, manual payment, event payments tab
+    schedule-components.tsx     Program, contacts (CRUD), incidents sub-tabs
+    guest-components.tsx        Guest list, check-in, RSVP
+    vendor-components.tsx       Vendor list, status, event assignments
+    contribution-modals.tsx     Committee pledge + payment tracking
+    logistics-modals.tsx        Transport routes + accommodation
+    appointment-modals.tsx      Vendor appointments
+    gift-modals.tsx             Gift registry + received gifts
+    moodboard-components.tsx    Vision board with image categories
+    photography-components.tsx  Photography planning tab
+    task-modals.tsx             Checklist tasks with templates
 ```
 
 ---
@@ -140,17 +170,152 @@ components/
 
 ---
 
+## Features
+
+### Events
+
+Each wedding can have multiple events (Ruracio, Wedding, Reception, etc.). Every event has its own set of tabs:
+
+| Tab | Description |
+|---|---|
+| Tasks | Checklist items scoped to the event, with template loading |
+| Schedule | Day-of program (daily/weekly view), contacts, incidents |
+| Budget | Line items with estimated/actual/variance, Pay quick-action |
+| Guests | RSVP and check-in per event |
+| Appointments | Vendor meetings linked to the event |
+| Payments | M-Pesa + manual payments, outstanding budget items surfaced |
+| Contributions | Committee pledges and payment tracking |
+| Logistics | Transport routes and accommodation |
+| Vendors | Vendor assignments for the event |
+| Gifts | Registry and received gifts |
+| Vision | Moodboard with image categories |
+| Photography | Photography planning and shot lists |
+
+### Schedule — Contacts Sub-tab
+consistent
+The Contacts tab within the Schedule view shows two types of contacts:
+
+- **Custom contacts** — added via "Add contact" button. Full CRUD (add, edit, delete). Fields: name, role, phone, email, notes.
+- **Vendor contacts** — auto-populated from confirmed/booked vendors. Read-only.
+
+### Budget & Finance
+
+- Budget lines grouped by category with estimated, actual (computed), and variance columns
+- `actual` is always server-computed from linked COMPLETED payments — never manually entered
+- Pay quick-action on each line row opens a pre-filled payment modal
+- Full and partial payment support with remaining balance auto-fill
+- Edit modal shows read-only actual/remaining summary and linked payments list with delete
+- Budget utilisation progress bar per category and overall
+- Suggested allocation percentages based on wedding budget total
+- Budget templates loadable per event
+
+### Payments
+
+- Manual payment recording with budget line linking
+- M-Pesa STK Push with callback handling
+- Payment date field for accurate record-keeping
+- Deleting a payment automatically recalculates the linked budget line's actual
+- Outstanding budget items surfaced in the Payments tab as pending items
+- Payment history per event with filter by status
+
+### Guests
+
+- Add, edit, RSVP, check-in (offline-first via Dexie)
+- Per-event attendance tracking
+- Guest priority (VIP / General / Overflow)
+- Side tracking (Bride / Groom / Both)
+
+### Vendors
+
+- Full CRUD with category and status tracking
+- Vendor snapshot on dashboard with confirm quick-action
+- Event assignment per vendor
+- Vendor notes log
+- Contact details (phone, email, contact name)
+
+### Checklist / Tasks
+
+- Tasks with due dates, priority, assignment, and check/uncheck
+- Event-scoped tasks
+- Template loading (BUDGET and CHECKLIST template types)
+- Final check flag for day-of critical items
+
+### Contributions
+
+- Committee member pledges with due dates
+- Partial and full payment tracking
+- Status: PLEDGED / PARTIAL / FULFILLED / OVERDUE / CANCELLED
+
+### Logistics
+
+- Transport routes with capacity and driver details
+- Accommodation bookings with room counts
+- Guest assignment to routes and accommodation
+
+### Moodboard / Vision
+
+- Image categories (e.g. Flowers, Venue, Attire)
+- Upload images per category via Supabase Storage
+- Vision board display per event
+
+### Photography
+
+- Photography planning tab per event
+- Shot list and photographer notes
+
+### Dowry
+
+- Traditional dowry item tracking (Ruracio-specific)
+- Item status and negotiation notes
+
+### Gifts
+
+- Gift registry with item wishlist
+- Received gifts log with thank-you tracking
+
+### Appointments
+
+- Vendor meeting scheduling with location and notes
+- Linked to events and vendors
+
+### Day-of
+
+- Live day-of execution view
+- Program timeline display
+- Incident logging with severity levels (CRITICAL / HIGH / MEDIUM / LOW)
+- Incident resolution tracking
+
+### Risk Alerts
+
+- Rule-based risk engine (`lib/risk-engine.ts`)
+- Cron-triggered evaluation (`/api/cron/evaluate-risks`)
+- Per-wedding manual trigger
+- Severity levels: CRITICAL / HIGH / MEDIUM / LOW
+- Resolved/unresolved tracking
+
+### Dashboard
+
+- Overview with guest count, budget utilisation, upcoming events, tasks
+- Vendor snapshot with confirm quick-action
+- Recent risk alerts
+- Countdown to wedding date
+- Next appointment display
+- Moodboard preview
+
+---
+
 ## Database
 
 Prisma schema at `prisma/schema.prisma`. All models include `version`, `checksum`, `updatedBy`, `deletedAt` for optimistic locking and soft-delete.
 
-Key models: `Wedding`, `WeddingMember`, `WeddingEvent`, `EventProgramItem`, `EventDependency`, `GuestEventAttendance`, `Guest`, `Household`, `Vendor`, `VendorEventAssignment`, `VendorNote`, `Payment`, `CommitteeContribution`, `ChecklistItem`, `ActivityGroup`, `BudgetLine`, `PaymentSchedule`, `RiskAlert`, `MediaItem`, `Appointment`, `Reminder`, `Incident`, `Template`, `DowryItem`, `AttireItem`, `GiftRegistryItem`, `GiftReceived`, `TransportRoute`, `Accommodation`, `HoneymoonDay`, `ProcessedOperation`, `AuditLog`.
+Key models: `Wedding`, `WeddingMember`, `WeddingEvent`, `EventContact`, `EventProgramItem`, `EventDependency`, `GuestEventAttendance`, `Guest`, `Household`, `Vendor`, `VendorEventAssignment`, `VendorNote`, `Payment`, `CommitteeContribution`, `ChecklistItem`, `BudgetLine`, `PaymentSchedule`, `RiskAlert`, `MediaItem`, `Appointment`, `Reminder`, `Incident`, `Template`, `DowryItem`, `AttireItem`, `GiftRegistryItem`, `GiftReceived`, `TransportRoute`, `Accommodation`, `HoneymoonDay`, `ProcessedOperation`, `AuditLog`.
 
 ```bash
 pnpm db:generate   # after schema changes
 pnpm db:migrate    # production migrations
 pnpm db:push       # dev schema push
 pnpm db:seed       # seed sample data
+pnpm tsx scripts/migrate-budget-actuals.ts  # one-time: migrate manual actuals to payments
 ```
 
 ---
@@ -162,9 +327,9 @@ See `.env.example` for all required values.
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | Neon pooled connection string |
-| `DIRECT_URL` | Neon direct connection (Prisma CLI only) |
-| `NEXTAUTH_SECRET` | JWT signing secret |
-| `NEXTAUTH_URL` | App base URL |
+| `DIRECT_URL` | Neon direct connection (Prisma CLI only — no `-pooler` in hostname) |
+| `NEXTAUTH_SECRET` | JWT signing secret (`openssl rand -base64 32`) |
+| `NEXTAUTH_URL` | App base URL (use ngrok URL for mobile testing) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
@@ -184,6 +349,7 @@ See `.env.example` for all required values.
 - Payments require `idempotencyKey` on every mutation
 - `/api/mpesa/callback` must remain unauthenticated
 - Soft-deleted records always filtered by `deletedAt: null`
+- `BudgetLine.actual` is never written directly by API clients — only via `recalculateBudgetLineActual()`
 
 ---
 
@@ -195,69 +361,15 @@ See `.env.example` for all required values.
 - Client components: named `*-client.tsx` alongside their page
 - Hooks: `hooks/use-[feature].ts` — wrap Dexie + sync enqueue logic
 - No `use client` on API routes or server components
+- Budget data uses `staleTime: 0` — always re-fetches to ensure computed actuals are current
 
 ---
 
-## Current State
+## Known Limitations
 
-### Implemented and Working
-
-- Auth (Google OAuth, JWT sessions, role-based `WeddingMember`)
-- Wedding CRUD + onboarding flow
-- Guests — list, add, edit, RSVP, check-in (offline-first)
-- Vendors — list, add, edit, status tracking (offline-first)
-- Budget — line items by category, estimated/actual/committed columns
-- Checklist — tasks with due dates, priority, assignment, check/uncheck
-- Payments — M-Pesa STK Push, callback handling, contribution tracking
-- Risk alerts — rule-based engine, cron + per-wedding manual trigger
-- Settings — wedding metadata, theme color picker
-- Offline sync engine — queue, batch flush, circuit breaker, conflict resolution
-- Supabase Storage — private buckets, signed URLs, upload API
-- Timeline page (minimal)
-
-### Pages Scaffolded (UI Incomplete or Placeholder)
-
-`analytics/`, `appointments/`, `events/`, `moodboard/`, `documents/`, `dowry/`, `gifts/`, `logistics/`, `day-of/`
-
-### Schema Exists, UI Not Built
-
-- `ActivityGroup` — task grouping with drag-and-drop
-- `GuestEventAttendance` — per-event RSVP
-- `EventDependency` — cross-event dependency graph
-- `PaymentSchedule` — vendor payment milestones
-- `Appointment` / `Reminder` — vendor meetings and notifications
-- `Incident` — day-of incident log
-- `Template` / `TemplateApplication` — reusable checklists/budgets
-- `DowryItem` — traditional dowry tracking
-- `AttireItem` — attire coordination
-- `GiftRegistryItem` / `GiftReceived` — gift registry and thank-you tracker
-- `TransportRoute` / `GuestTransport` — logistics
-- `Accommodation` / `GuestAccommodation` — hotel bookings
-- `HoneymoonDay` — honeymoon itinerary
-- `Household` — guest household grouping
-
-### Known Issues
-
-- `components/sidebar.tsx` has a corrupted duplicate navigation block
-- `app/dashboard/[weddingId]/timeline/page.tsx` has unused imports, untyped props, missing sort comparator
+- M-Pesa callbacks require a publicly accessible URL — use ngrok for local testing
 - Circuit breaker does not auto-reset after recovery (manual retry required)
 - Reminders cron job not implemented despite schema support
 - Multi-currency: `Wedding.currency` field exists but all UI renders KES only
 - No real-time collaboration — sync is eventual-consistent only
-- M-Pesa callbacks require a publicly accessible URL (not localhost)
-
-### Pending Features (see CHANGES.md for full detail)
-
-- Dashboard analytics widgets (charts, guest funnel, vendor readiness, cost-per-guest)
-- Planning phases (`BUDGETING | PLANNING | PRE_WEDDING | PROCUREMENT | DAY_OF | POST_WEDDING`)
-- Activity group UI with drag-and-drop reorder
-- Per-event budget and checklist scoping
-- Budget enhancements: variance column, smart allocation, receipt uploads, hidden cost suggestions
-- Guest enhancements: household grouping, CSV import, seating layout, per-event attendance
-- Vendor enhancements: notes log, contract upload, comparison tool, payment milestones
-- Template system with seeded defaults
-- Cultural/traditional module (dowry tracker, attire coordination)
-- Day-of execution page (live timeline, incident log, role assignment)
-- Role enforcement middleware and financial visibility gating
-- Google Calendar sync, WhatsApp templates
-- Multi-step onboarding wizard
+- Google Calendar sync not yet implemented

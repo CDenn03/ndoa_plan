@@ -226,6 +226,7 @@ export interface LocalBudgetLine {
   vendorName?: string
   notes?: string
   paymentDate?: string
+  reminderDate?: string
   paymentPlan?: string
   paymentType?: string
   version: number

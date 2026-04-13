@@ -32,6 +32,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     notes: l.notes ?? undefined,
     paymentDate: l.paymentDate?.toISOString() ?? undefined,
     paymentPlan: l.paymentPlan ?? undefined, paymentType: l.paymentType ?? undefined,
+    reminderDate: l.reminderDate?.toISOString() ?? undefined,
     version: l.version, checksum: l.checksum,
     syncedAt: l.updatedAt.getTime(), isDirty: false, updatedAt: l.updatedAt.getTime(),
   })))
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   const member = await db.weddingMember.findFirst({ where: { weddingId: params.id, userId } })
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { category, description, eventId, estimated, actual,vendorId, vendorName, notes, paymentDate, paymentPlan, paymentType } = await req.json()
+  const { category, description, eventId, estimated, actual, vendorId, vendorName, notes, paymentDate, reminderDate, paymentPlan, paymentType } = await req.json()
   if (!category || !description) return NextResponse.json({ error: 'category and description required' }, { status: 400 })
 
   const line = await db.budgetLine.create({
@@ -56,6 +57,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       vendorId: vendorId || null, vendorName: vendorName || null,
       notes: notes || null,
       paymentDate: paymentDate ? new Date(paymentDate) : null,
+      reminderDate: reminderDate ? new Date(reminderDate) : null,
       paymentPlan: paymentPlan || null, paymentType: paymentType || null,
       version: 1, checksum: '', updatedBy: userId,
     },
@@ -68,6 +70,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
     vendorId: line.vendorId ?? undefined, vendorName: line.vendorName ?? undefined,
     paymentDate: line.paymentDate?.toISOString() ?? undefined,
     paymentPlan: line.paymentPlan ?? undefined, paymentType: line.paymentType ?? undefined,
+    reminderDate: line.reminderDate?.toISOString() ?? undefined,
     version: line.version, checksum: line.checksum, isDirty: false, updatedAt: line.updatedAt.getTime(),
   }, { status: 201 })
 }

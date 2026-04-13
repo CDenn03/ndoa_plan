@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import { Users, Search, Plus, UserCheck, Star, Pencil, Trash2, X, CalendarDays } from 'lucide-react'
-import { Button, Input, Select, Label, EmptyState, Spinner, Modal, Badge } from '@/components/ui'
+import { Button, Input, Select, Label, EmptyState, Spinner, Modal, Badge, ConfirmDialog } from '@/components/ui'
 import { useGuests, useUpdateGuestRsvp, useCheckInGuest, useAddGuest } from '@/hooks/use-guests'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/toast'
@@ -14,16 +14,30 @@ export interface EventAttendance {
   guest: { id: string; name: string; phone?: string | null; side: string; rsvpStatus: string; checkedIn: boolean; mealPref?: string | null; tags: string[] }
 }
 
-export const PRESET_TAGS = ['VIP', 'Family', 'Work', 'Committee', 'Out-of-town', 'Bridal Party']
+export const PRESET_TAGS = [
+  'VIP', 'Family', 'Friends', 'Work', 'Committee',
+  'MOG', 'Church', 'Neighbours', 'Bridal Party', 'Out-of-town',
+  'Sponsor', 'Media', 'Kids',
+]
+
+const TAG_COLORS: Record<string, string> = {
+  VIP: 'bg-amber-50 text-amber-700',
+  Family: 'bg-violet-50 text-violet-700',
+  Friends: 'bg-pink-50 text-pink-700',
+  Work: 'bg-sky-50 text-sky-700',
+  Committee: 'bg-emerald-50 text-emerald-700',
+  MOG: 'bg-indigo-50 text-indigo-700',
+  Church: 'bg-indigo-50 text-indigo-600',
+  Neighbours: 'bg-teal-50 text-teal-700',
+  'Bridal Party': 'bg-rose-50 text-rose-700',
+  'Out-of-town': 'bg-orange-50 text-orange-700',
+  Sponsor: 'bg-yellow-50 text-yellow-700',
+  Media: 'bg-cyan-50 text-cyan-700',
+  Kids: 'bg-lime-50 text-lime-700',
+}
 
 export const RSVP_BADGE: Record<string, 'confirmed' | 'declined' | 'pending' | 'maybe'> = {
   CONFIRMED: 'confirmed', DECLINED: 'declined', PENDING: 'pending', MAYBE: 'maybe', WAITLISTED: 'pending',
-}
-
-const TAG_COLORS: Record<string, string> = {
-  VIP: 'bg-amber-50 text-amber-700', Family: 'bg-violet-50 text-violet-700',
-  Work: 'bg-sky-50 text-sky-700', Committee: 'bg-emerald-50 text-emerald-700',
-  'Out-of-town': 'bg-orange-50 text-orange-700', 'Bridal Party': 'bg-pink-50 text-pink-700',
 }
 
 // ─── Add Guest Modal ──────────────────────────────────────────────────────────
@@ -55,7 +69,7 @@ export function AddGuestModal({ weddingId, eventId, onClose, onDone }: Readonly<
         // Add to event attendance
         const payload = tab === 'existing'
           ? { guestId: selectedGuestId }
-          : { name: form.name.trim(), phone: form.phone || undefined, side: form.side }
+          : { name: form.name.trim(), phone: form.phone || undefined, side: form.side, tags: form.tags.length > 0 ? form.tags : undefined }
         await fetch(`/api/weddings/${weddingId}/events/${eventId}/attendances`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
         })
@@ -106,29 +120,27 @@ export function AddGuestModal({ weddingId, eventId, onClose, onDone }: Readonly<
                 </Select></div>
             </div>
             {!eventId && (
-              <>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label htmlFor="ag-meal">Meal preference</Label>
-                    <Input id="ag-meal" value={form.mealPref} onChange={e => setForm(f => ({ ...f, mealPref: e.target.value }))} placeholder="e.g. Vegetarian" /></div>
-                  <div><Label htmlFor="ag-priority">Priority</Label>
-                    <Select id="ag-priority" value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}>
-                      <option value="VIP">VIP</option>
-                      <option value="GENERAL">General</option>
-                      <option value="OVERFLOW">Overflow</option>
-                    </Select></div>
-                </div>
-                <div><Label>Tags</Label>
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {PRESET_TAGS.map(tag => (
-                      <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                        className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label htmlFor="ag-meal">Meal preference</Label>
+                  <Input id="ag-meal" value={form.mealPref} onChange={e => setForm(f => ({ ...f, mealPref: e.target.value }))} placeholder="e.g. Vegetarian" /></div>
+                <div><Label htmlFor="ag-priority">Priority</Label>
+                  <Select id="ag-priority" value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}>
+                    <option value="VIP">VIP</option>
+                    <option value="GENERAL">General</option>
+                    <option value="OVERFLOW">Overflow</option>
+                  </Select></div>
+              </div>
             )}
+            <div><Label>Categories / Tags</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {PRESET_TAGS.map(tag => (
+                  <button key={tag} type="button" onClick={() => toggleTag(tag)}
+                    className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-violet-100 text-violet-700') + ' ring-1 ring-current' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
@@ -187,11 +199,11 @@ export function EditGuestModal({ guest, weddingId, onClose }: Readonly<{ guest: 
           <Input id="eg-meal" value={form.mealPref} onChange={e => setForm(f => ({ ...f, mealPref: e.target.value }))} placeholder="e.g. Vegetarian" /></div>
         <div><Label htmlFor="eg-notes">Notes</Label>
           <Input id="eg-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} /></div>
-        <div><Label>Tags</Label>
+        <div><Label>Categories / Tags</Label>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {PRESET_TAGS.map(tag => (
               <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+                className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-violet-100 text-violet-700') + ' ring-1 ring-current' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
                 {tag}
               </button>
             ))}
@@ -214,15 +226,16 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
   const qc = useQueryClient()
   const { toast } = useToast()
   const [editing, setEditing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const extGuest = guest as LocalGuest & { priority?: string; plusOneOf?: string }
 
   const handleDelete = async () => {
-    if (!confirm(`Remove ${guest.name} from guest list?`)) return
     try {
       await fetch(`/api/weddings/${weddingId}/guests/${guest.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['guests', weddingId] })
       toast('Guest removed', 'success')
     } catch { toast('Failed to remove guest', 'error') }
+    setConfirmDelete(false)
   }
 
   return (
@@ -239,11 +252,11 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
             {guest.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
             {guest.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
           </div>
-          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
             {guest.phone && <p className="text-xs text-zinc-400">{guest.phone}</p>}
             {guest.mealPref && <p className="text-xs text-zinc-400">🍽 {guest.mealPref}</p>}
             {guest.tags?.map(tag => (
-              <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>{tag}</span>
+              <span key={tag} className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>{tag}</span>
             ))}
           </div>
         </div>
@@ -264,13 +277,22 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
               <UserCheck size={14} />
             </Button>
           )}
-          <div className="flex items-center gap-1 ">
+          <div className="flex items-center gap-1">
             <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit guest"><Pencil size={13} /></button>
-            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Remove guest"><Trash2 size={13} /></button>
+            <button onClick={() => setConfirmDelete(true)} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Remove guest"><Trash2 size={13} /></button>
           </div>
         </div>
       </div>
       {editing && <EditGuestModal guest={guest} weddingId={weddingId} onClose={() => setEditing(false)} />}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Remove guest?"
+          description={`${guest.name} will be removed from the guest list.`}
+          confirmLabel="Remove"
+          onConfirm={() => void handleDelete()}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
     </>
   )
 }
@@ -349,6 +371,7 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
   const [showAdd, setShowAdd] = useState(false)
   const [search, setSearch] = useState('')
   const [rsvpFilter, setRsvpFilter] = useState('all')
+  const [tagFilter, setTagFilter] = useState('all')
 
   // Expected guests — stored in localStorage per event, no schema change needed
   const storageKey = `expected-guests:${weddingId}:${eventId}`
@@ -379,8 +402,9 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
   const filtered = useMemo(() => attendances.filter(a => {
     if (search && !a.guest.name.toLowerCase().includes(search.toLowerCase())) return false
     if (rsvpFilter !== 'all' && a.rsvpStatus !== rsvpFilter) return false
+    if (tagFilter !== 'all' && !(a.guest.tags ?? []).includes(tagFilter)) return false
     return true
-  }), [attendances, search, rsvpFilter])
+  }), [attendances, search, rsvpFilter, tagFilter])
 
   const confirmed = attendances.filter(a => a.rsvpStatus === 'CONFIRMED').length
   const pending = attendances.filter(a => a.rsvpStatus === 'PENDING').length
@@ -459,8 +483,12 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
           <option value="DECLINED">Declined</option>
           <option value="MAYBE">Maybe</option>
         </Select>
-        {(search || rsvpFilter !== 'all') && (
-          <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setRsvpFilter('all') }}><X size={12} /> Clear</Button>
+        <Select value={tagFilter} onChange={e => setTagFilter(e.target.value)} className="w-auto text-sm" aria-label="Filter by category">
+          <option value="all">All categories</option>
+          {PRESET_TAGS.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+        </Select>
+        {(search || rsvpFilter !== 'all' || tagFilter !== 'all') && (
+          <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setRsvpFilter('all'); setTagFilter('all') }}><X size={12} /> Clear</Button>
         )}
         <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add guest</Button>
       </div>
@@ -501,6 +529,17 @@ export function GuestsOverallTab({ weddingId, events }: Readonly<{ weddingId: st
   const declined = guests.filter(g => g.rsvpStatus === 'DECLINED').length
   const checkedIn = guests.filter(g => g.checkedIn).length
 
+  // Category breakdown
+  const byCategory = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const g of guests) {
+      for (const tag of g.tags ?? []) {
+        counts[tag] = (counts[tag] ?? 0) + 1
+      }
+    }
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])
+  }, [guests])
+
   if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
 
   return (
@@ -518,6 +557,21 @@ export function GuestsOverallTab({ weddingId, events }: Readonly<{ weddingId: st
           </div>
         ))}
       </div>
+
+      {byCategory.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By category</p>
+          <div className="flex flex-wrap gap-2">
+            {byCategory.map(([tag, count]) => (
+              <div key={tag} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-600'}`}>
+                {tag}
+                <span className="opacity-60">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {events.length > 0 && (
         <div className="space-y-3">
           <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>

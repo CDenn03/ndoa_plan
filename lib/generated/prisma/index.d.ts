@@ -49,6 +49,11 @@ export type WeddingMember = $Result.DefaultSelection<Prisma.$WeddingMemberPayloa
  */
 export type WeddingEvent = $Result.DefaultSelection<Prisma.$WeddingEventPayload>
 /**
+ * Model EventContact
+ * 
+ */
+export type EventContact = $Result.DefaultSelection<Prisma.$EventContactPayload>
+/**
  * Model EventProgramItem
  * 
  */
@@ -153,6 +158,11 @@ export type Reminder = $Result.DefaultSelection<Prisma.$ReminderPayload>
  * 
  */
 export type Incident = $Result.DefaultSelection<Prisma.$IncidentPayload>
+/**
+ * Model IncidentNote
+ * 
+ */
+export type IncidentNote = $Result.DefaultSelection<Prisma.$IncidentNotePayload>
 /**
  * Model Template
  * 
@@ -646,6 +656,16 @@ export class PrismaClient<
   get weddingEvent(): Prisma.WeddingEventDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.eventContact`: Exposes CRUD operations for the **EventContact** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EventContacts
+    * const eventContacts = await prisma.eventContact.findMany()
+    * ```
+    */
+  get eventContact(): Prisma.EventContactDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.eventProgramItem`: Exposes CRUD operations for the **EventProgramItem** model.
     * Example usage:
     * ```ts
@@ -854,6 +874,16 @@ export class PrismaClient<
     * ```
     */
   get incident(): Prisma.IncidentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.incidentNote`: Exposes CRUD operations for the **IncidentNote** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IncidentNotes
+    * const incidentNotes = await prisma.incidentNote.findMany()
+    * ```
+    */
+  get incidentNote(): Prisma.IncidentNoteDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.template`: Exposes CRUD operations for the **Template** model.
@@ -1415,6 +1445,7 @@ export namespace Prisma {
     Wedding: 'Wedding',
     WeddingMember: 'WeddingMember',
     WeddingEvent: 'WeddingEvent',
+    EventContact: 'EventContact',
     EventProgramItem: 'EventProgramItem',
     EventDependency: 'EventDependency',
     GuestEventAttendance: 'GuestEventAttendance',
@@ -1436,6 +1467,7 @@ export namespace Prisma {
     Appointment: 'Appointment',
     Reminder: 'Reminder',
     Incident: 'Incident',
+    IncidentNote: 'IncidentNote',
     Template: 'Template',
     TemplateApplication: 'TemplateApplication',
     DowryItem: 'DowryItem',
@@ -1463,7 +1495,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "wedding" | "weddingMember" | "weddingEvent" | "eventProgramItem" | "eventDependency" | "guestEventAttendance" | "guest" | "household" | "vendor" | "vendorEventAssignment" | "vendorNote" | "paymentSchedule" | "payment" | "committeeContribution" | "checklistItem" | "activityGroup" | "budgetLine" | "riskAlert" | "mediaItem" | "processedOperation" | "auditLog" | "appointment" | "reminder" | "incident" | "template" | "templateApplication" | "dowryItem" | "attireItem" | "giftRegistryItem" | "giftReceived" | "transportRoute" | "guestTransport" | "accommodation" | "guestAccommodation" | "honeymoonDay" | "visionBoardCategory"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "wedding" | "weddingMember" | "weddingEvent" | "eventContact" | "eventProgramItem" | "eventDependency" | "guestEventAttendance" | "guest" | "household" | "vendor" | "vendorEventAssignment" | "vendorNote" | "paymentSchedule" | "payment" | "committeeContribution" | "checklistItem" | "activityGroup" | "budgetLine" | "riskAlert" | "mediaItem" | "processedOperation" | "auditLog" | "appointment" | "reminder" | "incident" | "incidentNote" | "template" | "templateApplication" | "dowryItem" | "attireItem" | "giftRegistryItem" | "giftReceived" | "transportRoute" | "guestTransport" | "accommodation" | "guestAccommodation" | "honeymoonDay" | "visionBoardCategory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1982,6 +2014,80 @@ export namespace Prisma {
           count: {
             args: Prisma.WeddingEventCountArgs<ExtArgs>
             result: $Utils.Optional<WeddingEventCountAggregateOutputType> | number
+          }
+        }
+      }
+      EventContact: {
+        payload: Prisma.$EventContactPayload<ExtArgs>
+        fields: Prisma.EventContactFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EventContactFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EventContactFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          findFirst: {
+            args: Prisma.EventContactFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EventContactFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          findMany: {
+            args: Prisma.EventContactFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>[]
+          }
+          create: {
+            args: Prisma.EventContactCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          createMany: {
+            args: Prisma.EventContactCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EventContactCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>[]
+          }
+          delete: {
+            args: Prisma.EventContactDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          update: {
+            args: Prisma.EventContactUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          deleteMany: {
+            args: Prisma.EventContactDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EventContactUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EventContactUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>[]
+          }
+          upsert: {
+            args: Prisma.EventContactUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventContactPayload>
+          }
+          aggregate: {
+            args: Prisma.EventContactAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEventContact>
+          }
+          groupBy: {
+            args: Prisma.EventContactGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EventContactGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EventContactCountArgs<ExtArgs>
+            result: $Utils.Optional<EventContactCountAggregateOutputType> | number
           }
         }
       }
@@ -3539,6 +3645,80 @@ export namespace Prisma {
           }
         }
       }
+      IncidentNote: {
+        payload: Prisma.$IncidentNotePayload<ExtArgs>
+        fields: Prisma.IncidentNoteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IncidentNoteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IncidentNoteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          findFirst: {
+            args: Prisma.IncidentNoteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IncidentNoteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          findMany: {
+            args: Prisma.IncidentNoteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>[]
+          }
+          create: {
+            args: Prisma.IncidentNoteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          createMany: {
+            args: Prisma.IncidentNoteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IncidentNoteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>[]
+          }
+          delete: {
+            args: Prisma.IncidentNoteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          update: {
+            args: Prisma.IncidentNoteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          deleteMany: {
+            args: Prisma.IncidentNoteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IncidentNoteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IncidentNoteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>[]
+          }
+          upsert: {
+            args: Prisma.IncidentNoteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentNotePayload>
+          }
+          aggregate: {
+            args: Prisma.IncidentNoteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIncidentNote>
+          }
+          groupBy: {
+            args: Prisma.IncidentNoteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IncidentNoteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IncidentNoteCountArgs<ExtArgs>
+            result: $Utils.Optional<IncidentNoteCountAggregateOutputType> | number
+          }
+        }
+      }
       Template: {
         payload: Prisma.$TemplatePayload<ExtArgs>
         fields: Prisma.TemplateFieldRefs
@@ -4542,6 +4722,7 @@ export namespace Prisma {
     wedding?: WeddingOmit
     weddingMember?: WeddingMemberOmit
     weddingEvent?: WeddingEventOmit
+    eventContact?: EventContactOmit
     eventProgramItem?: EventProgramItemOmit
     eventDependency?: EventDependencyOmit
     guestEventAttendance?: GuestEventAttendanceOmit
@@ -4563,6 +4744,7 @@ export namespace Prisma {
     appointment?: AppointmentOmit
     reminder?: ReminderOmit
     incident?: IncidentOmit
+    incidentNote?: IncidentNoteOmit
     template?: TemplateOmit
     templateApplication?: TemplateApplicationOmit
     dowryItem?: DowryItemOmit
@@ -4959,6 +5141,7 @@ export namespace Prisma {
     contributions: number
     mediaItems: number
     vendorAssignments: number
+    contacts: number
   }
 
   export type WeddingEventCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4979,6 +5162,7 @@ export namespace Prisma {
     contributions?: boolean | WeddingEventCountOutputTypeCountContributionsArgs
     mediaItems?: boolean | WeddingEventCountOutputTypeCountMediaItemsArgs
     vendorAssignments?: boolean | WeddingEventCountOutputTypeCountVendorAssignmentsArgs
+    contacts?: boolean | WeddingEventCountOutputTypeCountContactsArgs
   }
 
   // Custom InputTypes
@@ -5109,6 +5293,13 @@ export namespace Prisma {
    */
   export type WeddingEventCountOutputTypeCountVendorAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VendorEventAssignmentWhereInput
+  }
+
+  /**
+   * WeddingEventCountOutputType without action
+   */
+  export type WeddingEventCountOutputTypeCountContactsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventContactWhereInput
   }
 
 
@@ -5389,6 +5580,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type BudgetLineCountOutputType
+   */
+
+  export type BudgetLineCountOutputType = {
+    payments: number
+  }
+
+  export type BudgetLineCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    payments?: boolean | BudgetLineCountOutputTypeCountPaymentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BudgetLineCountOutputType without action
+   */
+  export type BudgetLineCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BudgetLineCountOutputType
+     */
+    select?: BudgetLineCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BudgetLineCountOutputType without action
+   */
+  export type BudgetLineCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
+  }
+
+
+  /**
    * Count Type AppointmentCountOutputType
    */
 
@@ -5416,6 +5638,37 @@ export namespace Prisma {
    */
   export type AppointmentCountOutputTypeCountRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ReminderWhereInput
+  }
+
+
+  /**
+   * Count Type IncidentCountOutputType
+   */
+
+  export type IncidentCountOutputType = {
+    notes: number
+  }
+
+  export type IncidentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notes?: boolean | IncidentCountOutputTypeCountNotesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * IncidentCountOutputType without action
+   */
+  export type IncidentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentCountOutputType
+     */
+    select?: IncidentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * IncidentCountOutputType without action
+   */
+  export type IncidentCountOutputTypeCountNotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentNoteWhereInput
   }
 
 
@@ -13189,6 +13442,7 @@ export namespace Prisma {
     contributions?: boolean | WeddingEvent$contributionsArgs<ExtArgs>
     mediaItems?: boolean | WeddingEvent$mediaItemsArgs<ExtArgs>
     vendorAssignments?: boolean | WeddingEvent$vendorAssignmentsArgs<ExtArgs>
+    contacts?: boolean | WeddingEvent$contactsArgs<ExtArgs>
     _count?: boolean | WeddingEventCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["weddingEvent"]>
 
@@ -13256,6 +13510,7 @@ export namespace Prisma {
     contributions?: boolean | WeddingEvent$contributionsArgs<ExtArgs>
     mediaItems?: boolean | WeddingEvent$mediaItemsArgs<ExtArgs>
     vendorAssignments?: boolean | WeddingEvent$vendorAssignmentsArgs<ExtArgs>
+    contacts?: boolean | WeddingEvent$contactsArgs<ExtArgs>
     _count?: boolean | WeddingEventCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WeddingEventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13286,6 +13541,7 @@ export namespace Prisma {
       contributions: Prisma.$CommitteeContributionPayload<ExtArgs>[]
       mediaItems: Prisma.$MediaItemPayload<ExtArgs>[]
       vendorAssignments: Prisma.$VendorEventAssignmentPayload<ExtArgs>[]
+      contacts: Prisma.$EventContactPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13711,6 +13967,7 @@ export namespace Prisma {
     contributions<T extends WeddingEvent$contributionsArgs<ExtArgs> = {}>(args?: Subset<T, WeddingEvent$contributionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitteeContributionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     mediaItems<T extends WeddingEvent$mediaItemsArgs<ExtArgs> = {}>(args?: Subset<T, WeddingEvent$mediaItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MediaItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     vendorAssignments<T extends WeddingEvent$vendorAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, WeddingEvent$vendorAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VendorEventAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    contacts<T extends WeddingEvent$contactsArgs<ExtArgs> = {}>(args?: Subset<T, WeddingEvent$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14560,6 +14817,30 @@ export namespace Prisma {
   }
 
   /**
+   * WeddingEvent.contacts
+   */
+  export type WeddingEvent$contactsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    where?: EventContactWhereInput
+    orderBy?: EventContactOrderByWithRelationInput | EventContactOrderByWithRelationInput[]
+    cursor?: EventContactWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventContactScalarFieldEnum | EventContactScalarFieldEnum[]
+  }
+
+  /**
    * WeddingEvent without action
    */
   export type WeddingEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14575,6 +14856,1121 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: WeddingEventInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EventContact
+   */
+
+  export type AggregateEventContact = {
+    _count: EventContactCountAggregateOutputType | null
+    _min: EventContactMinAggregateOutputType | null
+    _max: EventContactMaxAggregateOutputType | null
+  }
+
+  export type EventContactMinAggregateOutputType = {
+    id: string | null
+    eventId: string | null
+    name: string | null
+    role: string | null
+    phone: string | null
+    email: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventContactMaxAggregateOutputType = {
+    id: string | null
+    eventId: string | null
+    name: string | null
+    role: string | null
+    phone: string | null
+    email: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventContactCountAggregateOutputType = {
+    id: number
+    eventId: number
+    name: number
+    role: number
+    phone: number
+    email: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EventContactMinAggregateInputType = {
+    id?: true
+    eventId?: true
+    name?: true
+    role?: true
+    phone?: true
+    email?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventContactMaxAggregateInputType = {
+    id?: true
+    eventId?: true
+    name?: true
+    role?: true
+    phone?: true
+    email?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventContactCountAggregateInputType = {
+    id?: true
+    eventId?: true
+    name?: true
+    role?: true
+    phone?: true
+    email?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EventContactAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventContact to aggregate.
+     */
+    where?: EventContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventContacts to fetch.
+     */
+    orderBy?: EventContactOrderByWithRelationInput | EventContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EventContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EventContacts
+    **/
+    _count?: true | EventContactCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EventContactMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EventContactMaxAggregateInputType
+  }
+
+  export type GetEventContactAggregateType<T extends EventContactAggregateArgs> = {
+        [P in keyof T & keyof AggregateEventContact]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEventContact[P]>
+      : GetScalarType<T[P], AggregateEventContact[P]>
+  }
+
+
+
+
+  export type EventContactGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventContactWhereInput
+    orderBy?: EventContactOrderByWithAggregationInput | EventContactOrderByWithAggregationInput[]
+    by: EventContactScalarFieldEnum[] | EventContactScalarFieldEnum
+    having?: EventContactScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EventContactCountAggregateInputType | true
+    _min?: EventContactMinAggregateInputType
+    _max?: EventContactMaxAggregateInputType
+  }
+
+  export type EventContactGroupByOutputType = {
+    id: string
+    eventId: string
+    name: string
+    role: string | null
+    phone: string | null
+    email: string | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: EventContactCountAggregateOutputType | null
+    _min: EventContactMinAggregateOutputType | null
+    _max: EventContactMaxAggregateOutputType | null
+  }
+
+  type GetEventContactGroupByPayload<T extends EventContactGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EventContactGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EventContactGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EventContactGroupByOutputType[P]>
+            : GetScalarType<T[P], EventContactGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EventContactSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    name?: boolean
+    role?: boolean
+    phone?: boolean
+    email?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventContact"]>
+
+  export type EventContactSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    name?: boolean
+    role?: boolean
+    phone?: boolean
+    email?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventContact"]>
+
+  export type EventContactSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    name?: boolean
+    role?: boolean
+    phone?: boolean
+    email?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventContact"]>
+
+  export type EventContactSelectScalar = {
+    id?: boolean
+    eventId?: boolean
+    name?: boolean
+    role?: boolean
+    phone?: boolean
+    email?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EventContactOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventId" | "name" | "role" | "phone" | "email" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["eventContact"]>
+  export type EventContactInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }
+  export type EventContactIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }
+  export type EventContactIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | WeddingEventDefaultArgs<ExtArgs>
+  }
+
+  export type $EventContactPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EventContact"
+    objects: {
+      event: Prisma.$WeddingEventPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      eventId: string
+      name: string
+      role: string | null
+      phone: string | null
+      email: string | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["eventContact"]>
+    composites: {}
+  }
+
+  type EventContactGetPayload<S extends boolean | null | undefined | EventContactDefaultArgs> = $Result.GetResult<Prisma.$EventContactPayload, S>
+
+  type EventContactCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EventContactFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EventContactCountAggregateInputType | true
+    }
+
+  export interface EventContactDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EventContact'], meta: { name: 'EventContact' } }
+    /**
+     * Find zero or one EventContact that matches the filter.
+     * @param {EventContactFindUniqueArgs} args - Arguments to find a EventContact
+     * @example
+     * // Get one EventContact
+     * const eventContact = await prisma.eventContact.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EventContactFindUniqueArgs>(args: SelectSubset<T, EventContactFindUniqueArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EventContact that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EventContactFindUniqueOrThrowArgs} args - Arguments to find a EventContact
+     * @example
+     * // Get one EventContact
+     * const eventContact = await prisma.eventContact.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EventContactFindUniqueOrThrowArgs>(args: SelectSubset<T, EventContactFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventContact that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactFindFirstArgs} args - Arguments to find a EventContact
+     * @example
+     * // Get one EventContact
+     * const eventContact = await prisma.eventContact.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EventContactFindFirstArgs>(args?: SelectSubset<T, EventContactFindFirstArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventContact that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactFindFirstOrThrowArgs} args - Arguments to find a EventContact
+     * @example
+     * // Get one EventContact
+     * const eventContact = await prisma.eventContact.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EventContactFindFirstOrThrowArgs>(args?: SelectSubset<T, EventContactFindFirstOrThrowArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EventContacts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EventContacts
+     * const eventContacts = await prisma.eventContact.findMany()
+     * 
+     * // Get first 10 EventContacts
+     * const eventContacts = await prisma.eventContact.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eventContactWithIdOnly = await prisma.eventContact.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EventContactFindManyArgs>(args?: SelectSubset<T, EventContactFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EventContact.
+     * @param {EventContactCreateArgs} args - Arguments to create a EventContact.
+     * @example
+     * // Create one EventContact
+     * const EventContact = await prisma.eventContact.create({
+     *   data: {
+     *     // ... data to create a EventContact
+     *   }
+     * })
+     * 
+     */
+    create<T extends EventContactCreateArgs>(args: SelectSubset<T, EventContactCreateArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EventContacts.
+     * @param {EventContactCreateManyArgs} args - Arguments to create many EventContacts.
+     * @example
+     * // Create many EventContacts
+     * const eventContact = await prisma.eventContact.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EventContactCreateManyArgs>(args?: SelectSubset<T, EventContactCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EventContacts and returns the data saved in the database.
+     * @param {EventContactCreateManyAndReturnArgs} args - Arguments to create many EventContacts.
+     * @example
+     * // Create many EventContacts
+     * const eventContact = await prisma.eventContact.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EventContacts and only return the `id`
+     * const eventContactWithIdOnly = await prisma.eventContact.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EventContactCreateManyAndReturnArgs>(args?: SelectSubset<T, EventContactCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EventContact.
+     * @param {EventContactDeleteArgs} args - Arguments to delete one EventContact.
+     * @example
+     * // Delete one EventContact
+     * const EventContact = await prisma.eventContact.delete({
+     *   where: {
+     *     // ... filter to delete one EventContact
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EventContactDeleteArgs>(args: SelectSubset<T, EventContactDeleteArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EventContact.
+     * @param {EventContactUpdateArgs} args - Arguments to update one EventContact.
+     * @example
+     * // Update one EventContact
+     * const eventContact = await prisma.eventContact.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EventContactUpdateArgs>(args: SelectSubset<T, EventContactUpdateArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EventContacts.
+     * @param {EventContactDeleteManyArgs} args - Arguments to filter EventContacts to delete.
+     * @example
+     * // Delete a few EventContacts
+     * const { count } = await prisma.eventContact.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EventContactDeleteManyArgs>(args?: SelectSubset<T, EventContactDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EventContacts
+     * const eventContact = await prisma.eventContact.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EventContactUpdateManyArgs>(args: SelectSubset<T, EventContactUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventContacts and returns the data updated in the database.
+     * @param {EventContactUpdateManyAndReturnArgs} args - Arguments to update many EventContacts.
+     * @example
+     * // Update many EventContacts
+     * const eventContact = await prisma.eventContact.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EventContacts and only return the `id`
+     * const eventContactWithIdOnly = await prisma.eventContact.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EventContactUpdateManyAndReturnArgs>(args: SelectSubset<T, EventContactUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EventContact.
+     * @param {EventContactUpsertArgs} args - Arguments to update or create a EventContact.
+     * @example
+     * // Update or create a EventContact
+     * const eventContact = await prisma.eventContact.upsert({
+     *   create: {
+     *     // ... data to create a EventContact
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EventContact we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EventContactUpsertArgs>(args: SelectSubset<T, EventContactUpsertArgs<ExtArgs>>): Prisma__EventContactClient<$Result.GetResult<Prisma.$EventContactPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EventContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactCountArgs} args - Arguments to filter EventContacts to count.
+     * @example
+     * // Count the number of EventContacts
+     * const count = await prisma.eventContact.count({
+     *   where: {
+     *     // ... the filter for the EventContacts we want to count
+     *   }
+     * })
+    **/
+    count<T extends EventContactCountArgs>(
+      args?: Subset<T, EventContactCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EventContactCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EventContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EventContactAggregateArgs>(args: Subset<T, EventContactAggregateArgs>): Prisma.PrismaPromise<GetEventContactAggregateType<T>>
+
+    /**
+     * Group by EventContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventContactGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EventContactGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EventContactGroupByArgs['orderBy'] }
+        : { orderBy?: EventContactGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EventContactGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventContactGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EventContact model
+   */
+  readonly fields: EventContactFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EventContact.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EventContactClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    event<T extends WeddingEventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WeddingEventDefaultArgs<ExtArgs>>): Prisma__WeddingEventClient<$Result.GetResult<Prisma.$WeddingEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EventContact model
+   */
+  interface EventContactFieldRefs {
+    readonly id: FieldRef<"EventContact", 'String'>
+    readonly eventId: FieldRef<"EventContact", 'String'>
+    readonly name: FieldRef<"EventContact", 'String'>
+    readonly role: FieldRef<"EventContact", 'String'>
+    readonly phone: FieldRef<"EventContact", 'String'>
+    readonly email: FieldRef<"EventContact", 'String'>
+    readonly notes: FieldRef<"EventContact", 'String'>
+    readonly createdAt: FieldRef<"EventContact", 'DateTime'>
+    readonly updatedAt: FieldRef<"EventContact", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EventContact findUnique
+   */
+  export type EventContactFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter, which EventContact to fetch.
+     */
+    where: EventContactWhereUniqueInput
+  }
+
+  /**
+   * EventContact findUniqueOrThrow
+   */
+  export type EventContactFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter, which EventContact to fetch.
+     */
+    where: EventContactWhereUniqueInput
+  }
+
+  /**
+   * EventContact findFirst
+   */
+  export type EventContactFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter, which EventContact to fetch.
+     */
+    where?: EventContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventContacts to fetch.
+     */
+    orderBy?: EventContactOrderByWithRelationInput | EventContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventContacts.
+     */
+    cursor?: EventContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventContacts.
+     */
+    distinct?: EventContactScalarFieldEnum | EventContactScalarFieldEnum[]
+  }
+
+  /**
+   * EventContact findFirstOrThrow
+   */
+  export type EventContactFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter, which EventContact to fetch.
+     */
+    where?: EventContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventContacts to fetch.
+     */
+    orderBy?: EventContactOrderByWithRelationInput | EventContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventContacts.
+     */
+    cursor?: EventContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventContacts.
+     */
+    distinct?: EventContactScalarFieldEnum | EventContactScalarFieldEnum[]
+  }
+
+  /**
+   * EventContact findMany
+   */
+  export type EventContactFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter, which EventContacts to fetch.
+     */
+    where?: EventContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventContacts to fetch.
+     */
+    orderBy?: EventContactOrderByWithRelationInput | EventContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EventContacts.
+     */
+    cursor?: EventContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventContacts.
+     */
+    distinct?: EventContactScalarFieldEnum | EventContactScalarFieldEnum[]
+  }
+
+  /**
+   * EventContact create
+   */
+  export type EventContactCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EventContact.
+     */
+    data: XOR<EventContactCreateInput, EventContactUncheckedCreateInput>
+  }
+
+  /**
+   * EventContact createMany
+   */
+  export type EventContactCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EventContacts.
+     */
+    data: EventContactCreateManyInput | EventContactCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EventContact createManyAndReturn
+   */
+  export type EventContactCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * The data used to create many EventContacts.
+     */
+    data: EventContactCreateManyInput | EventContactCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventContact update
+   */
+  export type EventContactUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EventContact.
+     */
+    data: XOR<EventContactUpdateInput, EventContactUncheckedUpdateInput>
+    /**
+     * Choose, which EventContact to update.
+     */
+    where: EventContactWhereUniqueInput
+  }
+
+  /**
+   * EventContact updateMany
+   */
+  export type EventContactUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EventContacts.
+     */
+    data: XOR<EventContactUpdateManyMutationInput, EventContactUncheckedUpdateManyInput>
+    /**
+     * Filter which EventContacts to update
+     */
+    where?: EventContactWhereInput
+    /**
+     * Limit how many EventContacts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventContact updateManyAndReturn
+   */
+  export type EventContactUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * The data used to update EventContacts.
+     */
+    data: XOR<EventContactUpdateManyMutationInput, EventContactUncheckedUpdateManyInput>
+    /**
+     * Filter which EventContacts to update
+     */
+    where?: EventContactWhereInput
+    /**
+     * Limit how many EventContacts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventContact upsert
+   */
+  export type EventContactUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EventContact to update in case it exists.
+     */
+    where: EventContactWhereUniqueInput
+    /**
+     * In case the EventContact found by the `where` argument doesn't exist, create a new EventContact with this data.
+     */
+    create: XOR<EventContactCreateInput, EventContactUncheckedCreateInput>
+    /**
+     * In case the EventContact was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EventContactUpdateInput, EventContactUncheckedUpdateInput>
+  }
+
+  /**
+   * EventContact delete
+   */
+  export type EventContactDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
+    /**
+     * Filter which EventContact to delete.
+     */
+    where: EventContactWhereUniqueInput
+  }
+
+  /**
+   * EventContact deleteMany
+   */
+  export type EventContactDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventContacts to delete
+     */
+    where?: EventContactWhereInput
+    /**
+     * Limit how many EventContacts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventContact without action
+   */
+  export type EventContactDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventContact
+     */
+    select?: EventContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventContact
+     */
+    omit?: EventContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventContactInclude<ExtArgs> | null
   }
 
 
@@ -25451,6 +26847,7 @@ export namespace Prisma {
     eventId: string | null
     vendorId: string | null
     contributionId: string | null
+    budgetLineId: string | null
     mpesaRef: string | null
     checkoutRequestId: string | null
     idempotencyKey: string | null
@@ -25460,6 +26857,7 @@ export namespace Prisma {
     payerName: string | null
     payerPhone: string | null
     description: string | null
+    paymentDate: Date | null
     processedAt: Date | null
     reconciledAt: Date | null
     version: number | null
@@ -25475,6 +26873,7 @@ export namespace Prisma {
     eventId: string | null
     vendorId: string | null
     contributionId: string | null
+    budgetLineId: string | null
     mpesaRef: string | null
     checkoutRequestId: string | null
     idempotencyKey: string | null
@@ -25484,6 +26883,7 @@ export namespace Prisma {
     payerName: string | null
     payerPhone: string | null
     description: string | null
+    paymentDate: Date | null
     processedAt: Date | null
     reconciledAt: Date | null
     version: number | null
@@ -25499,6 +26899,7 @@ export namespace Prisma {
     eventId: number
     vendorId: number
     contributionId: number
+    budgetLineId: number
     mpesaRef: number
     checkoutRequestId: number
     idempotencyKey: number
@@ -25508,6 +26909,7 @@ export namespace Prisma {
     payerName: number
     payerPhone: number
     description: number
+    paymentDate: number
     rawCallback: number
     processedAt: number
     reconciledAt: number
@@ -25536,6 +26938,7 @@ export namespace Prisma {
     eventId?: true
     vendorId?: true
     contributionId?: true
+    budgetLineId?: true
     mpesaRef?: true
     checkoutRequestId?: true
     idempotencyKey?: true
@@ -25545,6 +26948,7 @@ export namespace Prisma {
     payerName?: true
     payerPhone?: true
     description?: true
+    paymentDate?: true
     processedAt?: true
     reconciledAt?: true
     version?: true
@@ -25560,6 +26964,7 @@ export namespace Prisma {
     eventId?: true
     vendorId?: true
     contributionId?: true
+    budgetLineId?: true
     mpesaRef?: true
     checkoutRequestId?: true
     idempotencyKey?: true
@@ -25569,6 +26974,7 @@ export namespace Prisma {
     payerName?: true
     payerPhone?: true
     description?: true
+    paymentDate?: true
     processedAt?: true
     reconciledAt?: true
     version?: true
@@ -25584,6 +26990,7 @@ export namespace Prisma {
     eventId?: true
     vendorId?: true
     contributionId?: true
+    budgetLineId?: true
     mpesaRef?: true
     checkoutRequestId?: true
     idempotencyKey?: true
@@ -25593,6 +27000,7 @@ export namespace Prisma {
     payerName?: true
     payerPhone?: true
     description?: true
+    paymentDate?: true
     rawCallback?: true
     processedAt?: true
     reconciledAt?: true
@@ -25696,6 +27104,7 @@ export namespace Prisma {
     eventId: string | null
     vendorId: string | null
     contributionId: string | null
+    budgetLineId: string | null
     mpesaRef: string | null
     checkoutRequestId: string | null
     idempotencyKey: string
@@ -25705,6 +27114,7 @@ export namespace Prisma {
     payerName: string | null
     payerPhone: string | null
     description: string | null
+    paymentDate: Date | null
     rawCallback: JsonValue | null
     processedAt: Date | null
     reconciledAt: Date | null
@@ -25740,6 +27150,7 @@ export namespace Prisma {
     eventId?: boolean
     vendorId?: boolean
     contributionId?: boolean
+    budgetLineId?: boolean
     mpesaRef?: boolean
     checkoutRequestId?: boolean
     idempotencyKey?: boolean
@@ -25749,6 +27160,7 @@ export namespace Prisma {
     payerName?: boolean
     payerPhone?: boolean
     description?: boolean
+    paymentDate?: boolean
     rawCallback?: boolean
     processedAt?: boolean
     reconciledAt?: boolean
@@ -25761,6 +27173,7 @@ export namespace Prisma {
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -25769,6 +27182,7 @@ export namespace Prisma {
     eventId?: boolean
     vendorId?: boolean
     contributionId?: boolean
+    budgetLineId?: boolean
     mpesaRef?: boolean
     checkoutRequestId?: boolean
     idempotencyKey?: boolean
@@ -25778,6 +27192,7 @@ export namespace Prisma {
     payerName?: boolean
     payerPhone?: boolean
     description?: boolean
+    paymentDate?: boolean
     rawCallback?: boolean
     processedAt?: boolean
     reconciledAt?: boolean
@@ -25790,6 +27205,7 @@ export namespace Prisma {
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -25798,6 +27214,7 @@ export namespace Prisma {
     eventId?: boolean
     vendorId?: boolean
     contributionId?: boolean
+    budgetLineId?: boolean
     mpesaRef?: boolean
     checkoutRequestId?: boolean
     idempotencyKey?: boolean
@@ -25807,6 +27224,7 @@ export namespace Prisma {
     payerName?: boolean
     payerPhone?: boolean
     description?: boolean
+    paymentDate?: boolean
     rawCallback?: boolean
     processedAt?: boolean
     reconciledAt?: boolean
@@ -25819,6 +27237,7 @@ export namespace Prisma {
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectScalar = {
@@ -25827,6 +27246,7 @@ export namespace Prisma {
     eventId?: boolean
     vendorId?: boolean
     contributionId?: boolean
+    budgetLineId?: boolean
     mpesaRef?: boolean
     checkoutRequestId?: boolean
     idempotencyKey?: boolean
@@ -25836,6 +27256,7 @@ export namespace Prisma {
     payerName?: boolean
     payerPhone?: boolean
     description?: boolean
+    paymentDate?: boolean
     rawCallback?: boolean
     processedAt?: boolean
     reconciledAt?: boolean
@@ -25846,24 +27267,27 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "vendorId" | "contributionId" | "mpesaRef" | "checkoutRequestId" | "idempotencyKey" | "amount" | "currency" | "status" | "payerName" | "payerPhone" | "description" | "rawCallback" | "processedAt" | "reconciledAt" | "version" | "createdBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "vendorId" | "contributionId" | "budgetLineId" | "mpesaRef" | "checkoutRequestId" | "idempotencyKey" | "amount" | "currency" | "status" | "payerName" | "payerPhone" | "description" | "paymentDate" | "rawCallback" | "processedAt" | "reconciledAt" | "version" | "createdBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }
   export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }
   export type PaymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Payment$eventArgs<ExtArgs>
     vendor?: boolean | Payment$vendorArgs<ExtArgs>
     contribution?: boolean | Payment$contributionArgs<ExtArgs>
+    budgetLine?: boolean | Payment$budgetLineArgs<ExtArgs>
   }
 
   export type $PaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -25873,6 +27297,7 @@ export namespace Prisma {
       event: Prisma.$WeddingEventPayload<ExtArgs> | null
       vendor: Prisma.$VendorPayload<ExtArgs> | null
       contribution: Prisma.$CommitteeContributionPayload<ExtArgs> | null
+      budgetLine: Prisma.$BudgetLinePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -25880,6 +27305,7 @@ export namespace Prisma {
       eventId: string | null
       vendorId: string | null
       contributionId: string | null
+      budgetLineId: string | null
       mpesaRef: string | null
       checkoutRequestId: string | null
       idempotencyKey: string
@@ -25889,6 +27315,7 @@ export namespace Prisma {
       payerName: string | null
       payerPhone: string | null
       description: string | null
+      paymentDate: Date | null
       rawCallback: Prisma.JsonValue | null
       processedAt: Date | null
       reconciledAt: Date | null
@@ -26295,6 +27722,7 @@ export namespace Prisma {
     event<T extends Payment$eventArgs<ExtArgs> = {}>(args?: Subset<T, Payment$eventArgs<ExtArgs>>): Prisma__WeddingEventClient<$Result.GetResult<Prisma.$WeddingEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     vendor<T extends Payment$vendorArgs<ExtArgs> = {}>(args?: Subset<T, Payment$vendorArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     contribution<T extends Payment$contributionArgs<ExtArgs> = {}>(args?: Subset<T, Payment$contributionArgs<ExtArgs>>): Prisma__CommitteeContributionClient<$Result.GetResult<Prisma.$CommitteeContributionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    budgetLine<T extends Payment$budgetLineArgs<ExtArgs> = {}>(args?: Subset<T, Payment$budgetLineArgs<ExtArgs>>): Prisma__BudgetLineClient<$Result.GetResult<Prisma.$BudgetLinePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -26329,6 +27757,7 @@ export namespace Prisma {
     readonly eventId: FieldRef<"Payment", 'String'>
     readonly vendorId: FieldRef<"Payment", 'String'>
     readonly contributionId: FieldRef<"Payment", 'String'>
+    readonly budgetLineId: FieldRef<"Payment", 'String'>
     readonly mpesaRef: FieldRef<"Payment", 'String'>
     readonly checkoutRequestId: FieldRef<"Payment", 'String'>
     readonly idempotencyKey: FieldRef<"Payment", 'String'>
@@ -26338,6 +27767,7 @@ export namespace Prisma {
     readonly payerName: FieldRef<"Payment", 'String'>
     readonly payerPhone: FieldRef<"Payment", 'String'>
     readonly description: FieldRef<"Payment", 'String'>
+    readonly paymentDate: FieldRef<"Payment", 'DateTime'>
     readonly rawCallback: FieldRef<"Payment", 'Json'>
     readonly processedAt: FieldRef<"Payment", 'DateTime'>
     readonly reconciledAt: FieldRef<"Payment", 'DateTime'>
@@ -26801,6 +28231,25 @@ export namespace Prisma {
      */
     include?: CommitteeContributionInclude<ExtArgs> | null
     where?: CommitteeContributionWhereInput
+  }
+
+  /**
+   * Payment.budgetLine
+   */
+  export type Payment$budgetLineArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BudgetLine
+     */
+    select?: BudgetLineSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BudgetLine
+     */
+    omit?: BudgetLineOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BudgetLineInclude<ExtArgs> | null
+    where?: BudgetLineWhereInput
   }
 
   /**
@@ -30686,6 +32135,7 @@ export namespace Prisma {
     vendorName: string | null
     notes: string | null
     paymentDate: Date | null
+    reminderDate: Date | null
     paymentPlan: string | null
     paymentType: string | null
     version: number | null
@@ -30709,6 +32159,7 @@ export namespace Prisma {
     vendorName: string | null
     notes: string | null
     paymentDate: Date | null
+    reminderDate: Date | null
     paymentPlan: string | null
     paymentType: string | null
     version: number | null
@@ -30732,6 +32183,7 @@ export namespace Prisma {
     vendorName: number
     notes: number
     paymentDate: number
+    reminderDate: number
     paymentPlan: number
     paymentType: number
     version: number
@@ -30771,6 +32223,7 @@ export namespace Prisma {
     vendorName?: true
     notes?: true
     paymentDate?: true
+    reminderDate?: true
     paymentPlan?: true
     paymentType?: true
     version?: true
@@ -30794,6 +32247,7 @@ export namespace Prisma {
     vendorName?: true
     notes?: true
     paymentDate?: true
+    reminderDate?: true
     paymentPlan?: true
     paymentType?: true
     version?: true
@@ -30817,6 +32271,7 @@ export namespace Prisma {
     vendorName?: true
     notes?: true
     paymentDate?: true
+    reminderDate?: true
     paymentPlan?: true
     paymentType?: true
     version?: true
@@ -30927,6 +32382,7 @@ export namespace Prisma {
     vendorName: string | null
     notes: string | null
     paymentDate: Date | null
+    reminderDate: Date | null
     paymentPlan: string | null
     paymentType: string | null
     version: number
@@ -30969,6 +32425,7 @@ export namespace Prisma {
     vendorName?: boolean
     notes?: boolean
     paymentDate?: boolean
+    reminderDate?: boolean
     paymentPlan?: boolean
     paymentType?: boolean
     version?: boolean
@@ -30980,6 +32437,8 @@ export namespace Prisma {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | BudgetLine$eventArgs<ExtArgs>
     vendor?: boolean | BudgetLine$vendorArgs<ExtArgs>
+    payments?: boolean | BudgetLine$paymentsArgs<ExtArgs>
+    _count?: boolean | BudgetLineCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["budgetLine"]>
 
   export type BudgetLineSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -30995,6 +32454,7 @@ export namespace Prisma {
     vendorName?: boolean
     notes?: boolean
     paymentDate?: boolean
+    reminderDate?: boolean
     paymentPlan?: boolean
     paymentType?: boolean
     version?: boolean
@@ -31021,6 +32481,7 @@ export namespace Prisma {
     vendorName?: boolean
     notes?: boolean
     paymentDate?: boolean
+    reminderDate?: boolean
     paymentPlan?: boolean
     paymentType?: boolean
     version?: boolean
@@ -31047,6 +32508,7 @@ export namespace Prisma {
     vendorName?: boolean
     notes?: boolean
     paymentDate?: boolean
+    reminderDate?: boolean
     paymentPlan?: boolean
     paymentType?: boolean
     version?: boolean
@@ -31057,11 +32519,13 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BudgetLineOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "category" | "description" | "estimated" | "actual" | "committed" | "vendorId" | "vendorName" | "notes" | "paymentDate" | "paymentPlan" | "paymentType" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["budgetLine"]>
+  export type BudgetLineOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "category" | "description" | "estimated" | "actual" | "committed" | "vendorId" | "vendorName" | "notes" | "paymentDate" | "reminderDate" | "paymentPlan" | "paymentType" | "version" | "checksum" | "updatedBy" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["budgetLine"]>
   export type BudgetLineInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | BudgetLine$eventArgs<ExtArgs>
     vendor?: boolean | BudgetLine$vendorArgs<ExtArgs>
+    payments?: boolean | BudgetLine$paymentsArgs<ExtArgs>
+    _count?: boolean | BudgetLineCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BudgetLineIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -31080,6 +32544,7 @@ export namespace Prisma {
       wedding: Prisma.$WeddingPayload<ExtArgs>
       event: Prisma.$WeddingEventPayload<ExtArgs> | null
       vendor: Prisma.$VendorPayload<ExtArgs> | null
+      payments: Prisma.$PaymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -31094,6 +32559,7 @@ export namespace Prisma {
       vendorName: string | null
       notes: string | null
       paymentDate: Date | null
+      reminderDate: Date | null
       paymentPlan: string | null
       paymentType: string | null
       version: number
@@ -31499,6 +32965,7 @@ export namespace Prisma {
     wedding<T extends WeddingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WeddingDefaultArgs<ExtArgs>>): Prisma__WeddingClient<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     event<T extends BudgetLine$eventArgs<ExtArgs> = {}>(args?: Subset<T, BudgetLine$eventArgs<ExtArgs>>): Prisma__WeddingEventClient<$Result.GetResult<Prisma.$WeddingEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     vendor<T extends BudgetLine$vendorArgs<ExtArgs> = {}>(args?: Subset<T, BudgetLine$vendorArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    payments<T extends BudgetLine$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, BudgetLine$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -31540,6 +33007,7 @@ export namespace Prisma {
     readonly vendorName: FieldRef<"BudgetLine", 'String'>
     readonly notes: FieldRef<"BudgetLine", 'String'>
     readonly paymentDate: FieldRef<"BudgetLine", 'DateTime'>
+    readonly reminderDate: FieldRef<"BudgetLine", 'DateTime'>
     readonly paymentPlan: FieldRef<"BudgetLine", 'String'>
     readonly paymentType: FieldRef<"BudgetLine", 'String'>
     readonly version: FieldRef<"BudgetLine", 'Int'>
@@ -31984,6 +33452,30 @@ export namespace Prisma {
      */
     include?: VendorInclude<ExtArgs> | null
     where?: VendorWhereInput
+  }
+
+  /**
+   * BudgetLine.payments
+   */
+  export type BudgetLine$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
   }
 
   /**
@@ -39183,8 +40675,10 @@ export namespace Prisma {
     resolvedAt?: boolean
     resolvedBy?: boolean
     resolution?: boolean
+    notes?: boolean | Incident$notesArgs<ExtArgs>
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Incident$eventArgs<ExtArgs>
+    _count?: boolean | IncidentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["incident"]>
 
   export type IncidentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -39229,8 +40723,10 @@ export namespace Prisma {
 
   export type IncidentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "reportedAt" | "description" | "severity" | "resolvedAt" | "resolvedBy" | "resolution", ExtArgs["result"]["incident"]>
   export type IncidentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notes?: boolean | Incident$notesArgs<ExtArgs>
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Incident$eventArgs<ExtArgs>
+    _count?: boolean | IncidentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type IncidentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -39244,6 +40740,7 @@ export namespace Prisma {
   export type $IncidentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Incident"
     objects: {
+      notes: Prisma.$IncidentNotePayload<ExtArgs>[]
       wedding: Prisma.$WeddingPayload<ExtArgs>
       event: Prisma.$WeddingEventPayload<ExtArgs> | null
     }
@@ -39651,6 +41148,7 @@ export namespace Prisma {
    */
   export interface Prisma__IncidentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    notes<T extends Incident$notesArgs<ExtArgs> = {}>(args?: Subset<T, Incident$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     wedding<T extends WeddingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WeddingDefaultArgs<ExtArgs>>): Prisma__WeddingClient<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     event<T extends Incident$eventArgs<ExtArgs> = {}>(args?: Subset<T, Incident$eventArgs<ExtArgs>>): Prisma__WeddingEventClient<$Result.GetResult<Prisma.$WeddingEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -40092,6 +41590,30 @@ export namespace Prisma {
   }
 
   /**
+   * Incident.notes
+   */
+  export type Incident$notesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    where?: IncidentNoteWhereInput
+    orderBy?: IncidentNoteOrderByWithRelationInput | IncidentNoteOrderByWithRelationInput[]
+    cursor?: IncidentNoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IncidentNoteScalarFieldEnum | IncidentNoteScalarFieldEnum[]
+  }
+
+  /**
    * Incident.event
    */
   export type Incident$eventArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -40126,6 +41648,1069 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: IncidentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model IncidentNote
+   */
+
+  export type AggregateIncidentNote = {
+    _count: IncidentNoteCountAggregateOutputType | null
+    _min: IncidentNoteMinAggregateOutputType | null
+    _max: IncidentNoteMaxAggregateOutputType | null
+  }
+
+  export type IncidentNoteMinAggregateOutputType = {
+    id: string | null
+    incidentId: string | null
+    content: string | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type IncidentNoteMaxAggregateOutputType = {
+    id: string | null
+    incidentId: string | null
+    content: string | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type IncidentNoteCountAggregateOutputType = {
+    id: number
+    incidentId: number
+    content: number
+    createdBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type IncidentNoteMinAggregateInputType = {
+    id?: true
+    incidentId?: true
+    content?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type IncidentNoteMaxAggregateInputType = {
+    id?: true
+    incidentId?: true
+    content?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type IncidentNoteCountAggregateInputType = {
+    id?: true
+    incidentId?: true
+    content?: true
+    createdBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type IncidentNoteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncidentNote to aggregate.
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentNotes to fetch.
+     */
+    orderBy?: IncidentNoteOrderByWithRelationInput | IncidentNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IncidentNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IncidentNotes
+    **/
+    _count?: true | IncidentNoteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IncidentNoteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IncidentNoteMaxAggregateInputType
+  }
+
+  export type GetIncidentNoteAggregateType<T extends IncidentNoteAggregateArgs> = {
+        [P in keyof T & keyof AggregateIncidentNote]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIncidentNote[P]>
+      : GetScalarType<T[P], AggregateIncidentNote[P]>
+  }
+
+
+
+
+  export type IncidentNoteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentNoteWhereInput
+    orderBy?: IncidentNoteOrderByWithAggregationInput | IncidentNoteOrderByWithAggregationInput[]
+    by: IncidentNoteScalarFieldEnum[] | IncidentNoteScalarFieldEnum
+    having?: IncidentNoteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IncidentNoteCountAggregateInputType | true
+    _min?: IncidentNoteMinAggregateInputType
+    _max?: IncidentNoteMaxAggregateInputType
+  }
+
+  export type IncidentNoteGroupByOutputType = {
+    id: string
+    incidentId: string
+    content: string
+    createdBy: string | null
+    createdAt: Date
+    _count: IncidentNoteCountAggregateOutputType | null
+    _min: IncidentNoteMinAggregateOutputType | null
+    _max: IncidentNoteMaxAggregateOutputType | null
+  }
+
+  type GetIncidentNoteGroupByPayload<T extends IncidentNoteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IncidentNoteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IncidentNoteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IncidentNoteGroupByOutputType[P]>
+            : GetScalarType<T[P], IncidentNoteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IncidentNoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    content?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentNote"]>
+
+  export type IncidentNoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    content?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentNote"]>
+
+  export type IncidentNoteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    content?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentNote"]>
+
+  export type IncidentNoteSelectScalar = {
+    id?: boolean
+    incidentId?: boolean
+    content?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+  }
+
+  export type IncidentNoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "incidentId" | "content" | "createdBy" | "createdAt", ExtArgs["result"]["incidentNote"]>
+  export type IncidentNoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }
+  export type IncidentNoteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }
+  export type IncidentNoteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+  }
+
+  export type $IncidentNotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IncidentNote"
+    objects: {
+      incident: Prisma.$IncidentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      incidentId: string
+      content: string
+      createdBy: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["incidentNote"]>
+    composites: {}
+  }
+
+  type IncidentNoteGetPayload<S extends boolean | null | undefined | IncidentNoteDefaultArgs> = $Result.GetResult<Prisma.$IncidentNotePayload, S>
+
+  type IncidentNoteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IncidentNoteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IncidentNoteCountAggregateInputType | true
+    }
+
+  export interface IncidentNoteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IncidentNote'], meta: { name: 'IncidentNote' } }
+    /**
+     * Find zero or one IncidentNote that matches the filter.
+     * @param {IncidentNoteFindUniqueArgs} args - Arguments to find a IncidentNote
+     * @example
+     * // Get one IncidentNote
+     * const incidentNote = await prisma.incidentNote.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IncidentNoteFindUniqueArgs>(args: SelectSubset<T, IncidentNoteFindUniqueArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IncidentNote that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IncidentNoteFindUniqueOrThrowArgs} args - Arguments to find a IncidentNote
+     * @example
+     * // Get one IncidentNote
+     * const incidentNote = await prisma.incidentNote.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IncidentNoteFindUniqueOrThrowArgs>(args: SelectSubset<T, IncidentNoteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncidentNote that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteFindFirstArgs} args - Arguments to find a IncidentNote
+     * @example
+     * // Get one IncidentNote
+     * const incidentNote = await prisma.incidentNote.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IncidentNoteFindFirstArgs>(args?: SelectSubset<T, IncidentNoteFindFirstArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncidentNote that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteFindFirstOrThrowArgs} args - Arguments to find a IncidentNote
+     * @example
+     * // Get one IncidentNote
+     * const incidentNote = await prisma.incidentNote.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IncidentNoteFindFirstOrThrowArgs>(args?: SelectSubset<T, IncidentNoteFindFirstOrThrowArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IncidentNotes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IncidentNotes
+     * const incidentNotes = await prisma.incidentNote.findMany()
+     * 
+     * // Get first 10 IncidentNotes
+     * const incidentNotes = await prisma.incidentNote.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const incidentNoteWithIdOnly = await prisma.incidentNote.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IncidentNoteFindManyArgs>(args?: SelectSubset<T, IncidentNoteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IncidentNote.
+     * @param {IncidentNoteCreateArgs} args - Arguments to create a IncidentNote.
+     * @example
+     * // Create one IncidentNote
+     * const IncidentNote = await prisma.incidentNote.create({
+     *   data: {
+     *     // ... data to create a IncidentNote
+     *   }
+     * })
+     * 
+     */
+    create<T extends IncidentNoteCreateArgs>(args: SelectSubset<T, IncidentNoteCreateArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IncidentNotes.
+     * @param {IncidentNoteCreateManyArgs} args - Arguments to create many IncidentNotes.
+     * @example
+     * // Create many IncidentNotes
+     * const incidentNote = await prisma.incidentNote.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IncidentNoteCreateManyArgs>(args?: SelectSubset<T, IncidentNoteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IncidentNotes and returns the data saved in the database.
+     * @param {IncidentNoteCreateManyAndReturnArgs} args - Arguments to create many IncidentNotes.
+     * @example
+     * // Create many IncidentNotes
+     * const incidentNote = await prisma.incidentNote.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IncidentNotes and only return the `id`
+     * const incidentNoteWithIdOnly = await prisma.incidentNote.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IncidentNoteCreateManyAndReturnArgs>(args?: SelectSubset<T, IncidentNoteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IncidentNote.
+     * @param {IncidentNoteDeleteArgs} args - Arguments to delete one IncidentNote.
+     * @example
+     * // Delete one IncidentNote
+     * const IncidentNote = await prisma.incidentNote.delete({
+     *   where: {
+     *     // ... filter to delete one IncidentNote
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IncidentNoteDeleteArgs>(args: SelectSubset<T, IncidentNoteDeleteArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IncidentNote.
+     * @param {IncidentNoteUpdateArgs} args - Arguments to update one IncidentNote.
+     * @example
+     * // Update one IncidentNote
+     * const incidentNote = await prisma.incidentNote.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IncidentNoteUpdateArgs>(args: SelectSubset<T, IncidentNoteUpdateArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IncidentNotes.
+     * @param {IncidentNoteDeleteManyArgs} args - Arguments to filter IncidentNotes to delete.
+     * @example
+     * // Delete a few IncidentNotes
+     * const { count } = await prisma.incidentNote.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IncidentNoteDeleteManyArgs>(args?: SelectSubset<T, IncidentNoteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncidentNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IncidentNotes
+     * const incidentNote = await prisma.incidentNote.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IncidentNoteUpdateManyArgs>(args: SelectSubset<T, IncidentNoteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncidentNotes and returns the data updated in the database.
+     * @param {IncidentNoteUpdateManyAndReturnArgs} args - Arguments to update many IncidentNotes.
+     * @example
+     * // Update many IncidentNotes
+     * const incidentNote = await prisma.incidentNote.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IncidentNotes and only return the `id`
+     * const incidentNoteWithIdOnly = await prisma.incidentNote.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IncidentNoteUpdateManyAndReturnArgs>(args: SelectSubset<T, IncidentNoteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IncidentNote.
+     * @param {IncidentNoteUpsertArgs} args - Arguments to update or create a IncidentNote.
+     * @example
+     * // Update or create a IncidentNote
+     * const incidentNote = await prisma.incidentNote.upsert({
+     *   create: {
+     *     // ... data to create a IncidentNote
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IncidentNote we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IncidentNoteUpsertArgs>(args: SelectSubset<T, IncidentNoteUpsertArgs<ExtArgs>>): Prisma__IncidentNoteClient<$Result.GetResult<Prisma.$IncidentNotePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IncidentNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteCountArgs} args - Arguments to filter IncidentNotes to count.
+     * @example
+     * // Count the number of IncidentNotes
+     * const count = await prisma.incidentNote.count({
+     *   where: {
+     *     // ... the filter for the IncidentNotes we want to count
+     *   }
+     * })
+    **/
+    count<T extends IncidentNoteCountArgs>(
+      args?: Subset<T, IncidentNoteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IncidentNoteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IncidentNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IncidentNoteAggregateArgs>(args: Subset<T, IncidentNoteAggregateArgs>): Prisma.PrismaPromise<GetIncidentNoteAggregateType<T>>
+
+    /**
+     * Group by IncidentNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentNoteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IncidentNoteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IncidentNoteGroupByArgs['orderBy'] }
+        : { orderBy?: IncidentNoteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IncidentNoteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIncidentNoteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IncidentNote model
+   */
+  readonly fields: IncidentNoteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IncidentNote.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IncidentNoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    incident<T extends IncidentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, IncidentDefaultArgs<ExtArgs>>): Prisma__IncidentClient<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IncidentNote model
+   */
+  interface IncidentNoteFieldRefs {
+    readonly id: FieldRef<"IncidentNote", 'String'>
+    readonly incidentId: FieldRef<"IncidentNote", 'String'>
+    readonly content: FieldRef<"IncidentNote", 'String'>
+    readonly createdBy: FieldRef<"IncidentNote", 'String'>
+    readonly createdAt: FieldRef<"IncidentNote", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IncidentNote findUnique
+   */
+  export type IncidentNoteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentNote to fetch.
+     */
+    where: IncidentNoteWhereUniqueInput
+  }
+
+  /**
+   * IncidentNote findUniqueOrThrow
+   */
+  export type IncidentNoteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentNote to fetch.
+     */
+    where: IncidentNoteWhereUniqueInput
+  }
+
+  /**
+   * IncidentNote findFirst
+   */
+  export type IncidentNoteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentNote to fetch.
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentNotes to fetch.
+     */
+    orderBy?: IncidentNoteOrderByWithRelationInput | IncidentNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncidentNotes.
+     */
+    cursor?: IncidentNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncidentNotes.
+     */
+    distinct?: IncidentNoteScalarFieldEnum | IncidentNoteScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentNote findFirstOrThrow
+   */
+  export type IncidentNoteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentNote to fetch.
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentNotes to fetch.
+     */
+    orderBy?: IncidentNoteOrderByWithRelationInput | IncidentNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncidentNotes.
+     */
+    cursor?: IncidentNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncidentNotes.
+     */
+    distinct?: IncidentNoteScalarFieldEnum | IncidentNoteScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentNote findMany
+   */
+  export type IncidentNoteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentNotes to fetch.
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentNotes to fetch.
+     */
+    orderBy?: IncidentNoteOrderByWithRelationInput | IncidentNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IncidentNotes.
+     */
+    cursor?: IncidentNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncidentNotes.
+     */
+    distinct?: IncidentNoteScalarFieldEnum | IncidentNoteScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentNote create
+   */
+  export type IncidentNoteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IncidentNote.
+     */
+    data: XOR<IncidentNoteCreateInput, IncidentNoteUncheckedCreateInput>
+  }
+
+  /**
+   * IncidentNote createMany
+   */
+  export type IncidentNoteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IncidentNotes.
+     */
+    data: IncidentNoteCreateManyInput | IncidentNoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IncidentNote createManyAndReturn
+   */
+  export type IncidentNoteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * The data used to create many IncidentNotes.
+     */
+    data: IncidentNoteCreateManyInput | IncidentNoteCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncidentNote update
+   */
+  export type IncidentNoteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IncidentNote.
+     */
+    data: XOR<IncidentNoteUpdateInput, IncidentNoteUncheckedUpdateInput>
+    /**
+     * Choose, which IncidentNote to update.
+     */
+    where: IncidentNoteWhereUniqueInput
+  }
+
+  /**
+   * IncidentNote updateMany
+   */
+  export type IncidentNoteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IncidentNotes.
+     */
+    data: XOR<IncidentNoteUpdateManyMutationInput, IncidentNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which IncidentNotes to update
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * Limit how many IncidentNotes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncidentNote updateManyAndReturn
+   */
+  export type IncidentNoteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * The data used to update IncidentNotes.
+     */
+    data: XOR<IncidentNoteUpdateManyMutationInput, IncidentNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which IncidentNotes to update
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * Limit how many IncidentNotes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncidentNote upsert
+   */
+  export type IncidentNoteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IncidentNote to update in case it exists.
+     */
+    where: IncidentNoteWhereUniqueInput
+    /**
+     * In case the IncidentNote found by the `where` argument doesn't exist, create a new IncidentNote with this data.
+     */
+    create: XOR<IncidentNoteCreateInput, IncidentNoteUncheckedCreateInput>
+    /**
+     * In case the IncidentNote was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IncidentNoteUpdateInput, IncidentNoteUncheckedUpdateInput>
+  }
+
+  /**
+   * IncidentNote delete
+   */
+  export type IncidentNoteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
+    /**
+     * Filter which IncidentNote to delete.
+     */
+    where: IncidentNoteWhereUniqueInput
+  }
+
+  /**
+   * IncidentNote deleteMany
+   */
+  export type IncidentNoteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncidentNotes to delete
+     */
+    where?: IncidentNoteWhereInput
+    /**
+     * Limit how many IncidentNotes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncidentNote without action
+   */
+  export type IncidentNoteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentNote
+     */
+    select?: IncidentNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentNote
+     */
+    omit?: IncidentNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentNoteInclude<ExtArgs> | null
   }
 
 
@@ -45909,6 +48494,7 @@ export namespace Prisma {
     eventId: string | null
     guestId: string | null
     giverName: string | null
+    giverPhone: string | null
     description: string | null
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus | null
@@ -45925,6 +48511,7 @@ export namespace Prisma {
     eventId: string | null
     guestId: string | null
     giverName: string | null
+    giverPhone: string | null
     description: string | null
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus | null
@@ -45941,6 +48528,7 @@ export namespace Prisma {
     eventId: number
     guestId: number
     giverName: number
+    giverPhone: number
     description: number
     estimatedValue: number
     status: number
@@ -45967,6 +48555,7 @@ export namespace Prisma {
     eventId?: true
     guestId?: true
     giverName?: true
+    giverPhone?: true
     description?: true
     estimatedValue?: true
     status?: true
@@ -45983,6 +48572,7 @@ export namespace Prisma {
     eventId?: true
     guestId?: true
     giverName?: true
+    giverPhone?: true
     description?: true
     estimatedValue?: true
     status?: true
@@ -45999,6 +48589,7 @@ export namespace Prisma {
     eventId?: true
     guestId?: true
     giverName?: true
+    giverPhone?: true
     description?: true
     estimatedValue?: true
     status?: true
@@ -46102,6 +48693,7 @@ export namespace Prisma {
     eventId: string | null
     guestId: string | null
     giverName: string
+    giverPhone: string | null
     description: string
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus
@@ -46137,6 +48729,7 @@ export namespace Prisma {
     eventId?: boolean
     guestId?: boolean
     giverName?: boolean
+    giverPhone?: boolean
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
@@ -46156,6 +48749,7 @@ export namespace Prisma {
     eventId?: boolean
     guestId?: boolean
     giverName?: boolean
+    giverPhone?: boolean
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
@@ -46175,6 +48769,7 @@ export namespace Prisma {
     eventId?: boolean
     guestId?: boolean
     giverName?: boolean
+    giverPhone?: boolean
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
@@ -46194,6 +48789,7 @@ export namespace Prisma {
     eventId?: boolean
     guestId?: boolean
     giverName?: boolean
+    giverPhone?: boolean
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
@@ -46204,7 +48800,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GiftReceivedOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "guestId" | "giverName" | "description" | "estimatedValue" | "status" | "receivedAt" | "thankYouSent" | "thankYouSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["giftReceived"]>
+  export type GiftReceivedOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "guestId" | "giverName" | "giverPhone" | "description" | "estimatedValue" | "status" | "receivedAt" | "thankYouSent" | "thankYouSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["giftReceived"]>
   export type GiftReceivedInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | GiftReceived$eventArgs<ExtArgs>
@@ -46234,6 +48830,7 @@ export namespace Prisma {
       eventId: string | null
       guestId: string | null
       giverName: string
+      giverPhone: string | null
       description: string
       estimatedValue: Prisma.Decimal | null
       status: $Enums.GiftStatus
@@ -46673,6 +49270,7 @@ export namespace Prisma {
     readonly eventId: FieldRef<"GiftReceived", 'String'>
     readonly guestId: FieldRef<"GiftReceived", 'String'>
     readonly giverName: FieldRef<"GiftReceived", 'String'>
+    readonly giverPhone: FieldRef<"GiftReceived", 'String'>
     readonly description: FieldRef<"GiftReceived", 'String'>
     readonly estimatedValue: FieldRef<"GiftReceived", 'Decimal'>
     readonly status: FieldRef<"GiftReceived", 'GiftStatus'>
@@ -47168,6 +49766,7 @@ export namespace Prisma {
     departureTime: Date | null
     capacity: number | null
     assignedVendorId: string | null
+    isCompleted: boolean | null
     createdAt: Date | null
   }
 
@@ -47181,6 +49780,7 @@ export namespace Prisma {
     departureTime: Date | null
     capacity: number | null
     assignedVendorId: string | null
+    isCompleted: boolean | null
     createdAt: Date | null
   }
 
@@ -47194,6 +49794,7 @@ export namespace Prisma {
     departureTime: number
     capacity: number
     assignedVendorId: number
+    isCompleted: number
     createdAt: number
     _all: number
   }
@@ -47217,6 +49818,7 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    isCompleted?: true
     createdAt?: true
   }
 
@@ -47230,6 +49832,7 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    isCompleted?: true
     createdAt?: true
   }
 
@@ -47243,6 +49846,7 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    isCompleted?: true
     createdAt?: true
     _all?: true
   }
@@ -47343,6 +49947,7 @@ export namespace Prisma {
     departureTime: Date
     capacity: number | null
     assignedVendorId: string | null
+    isCompleted: boolean
     createdAt: Date
     _count: TransportRouteCountAggregateOutputType | null
     _avg: TransportRouteAvgAggregateOutputType | null
@@ -47375,6 +49980,7 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | TransportRoute$eventArgs<ExtArgs>
@@ -47393,6 +49999,7 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | TransportRoute$eventArgs<ExtArgs>
@@ -47409,6 +50016,7 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | TransportRoute$eventArgs<ExtArgs>
@@ -47425,10 +50033,11 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
   }
 
-  export type TransportRouteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "name" | "departureLocation" | "arrivalLocation" | "departureTime" | "capacity" | "assignedVendorId" | "createdAt", ExtArgs["result"]["transportRoute"]>
+  export type TransportRouteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "name" | "departureLocation" | "arrivalLocation" | "departureTime" | "capacity" | "assignedVendorId" | "isCompleted" | "createdAt", ExtArgs["result"]["transportRoute"]>
   export type TransportRouteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | TransportRoute$eventArgs<ExtArgs>
@@ -47465,6 +50074,7 @@ export namespace Prisma {
       departureTime: Date
       capacity: number | null
       assignedVendorId: string | null
+      isCompleted: boolean
       createdAt: Date
     }, ExtArgs["result"]["transportRoute"]>
     composites: {}
@@ -47902,6 +50512,7 @@ export namespace Prisma {
     readonly departureTime: FieldRef<"TransportRoute", 'DateTime'>
     readonly capacity: FieldRef<"TransportRoute", 'Int'>
     readonly assignedVendorId: FieldRef<"TransportRoute", 'String'>
+    readonly isCompleted: FieldRef<"TransportRoute", 'Boolean'>
     readonly createdAt: FieldRef<"TransportRoute", 'DateTime'>
   }
     
@@ -49459,6 +52070,7 @@ export namespace Prisma {
     checkOut: Date | null
     roomsBlocked: number | null
     notes: string | null
+    isCompleted: boolean | null
     createdAt: Date | null
   }
 
@@ -49472,6 +52084,7 @@ export namespace Prisma {
     checkOut: Date | null
     roomsBlocked: number | null
     notes: string | null
+    isCompleted: boolean | null
     createdAt: Date | null
   }
 
@@ -49485,6 +52098,7 @@ export namespace Prisma {
     checkOut: number
     roomsBlocked: number
     notes: number
+    isCompleted: number
     createdAt: number
     _all: number
   }
@@ -49508,6 +52122,7 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    isCompleted?: true
     createdAt?: true
   }
 
@@ -49521,6 +52136,7 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    isCompleted?: true
     createdAt?: true
   }
 
@@ -49534,6 +52150,7 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    isCompleted?: true
     createdAt?: true
     _all?: true
   }
@@ -49634,6 +52251,7 @@ export namespace Prisma {
     checkOut: Date
     roomsBlocked: number | null
     notes: string | null
+    isCompleted: boolean
     createdAt: Date
     _count: AccommodationCountAggregateOutputType | null
     _avg: AccommodationAvgAggregateOutputType | null
@@ -49666,6 +52284,7 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Accommodation$eventArgs<ExtArgs>
@@ -49683,6 +52302,7 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Accommodation$eventArgs<ExtArgs>
@@ -49698,6 +52318,7 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Accommodation$eventArgs<ExtArgs>
@@ -49713,10 +52334,11 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    isCompleted?: boolean
     createdAt?: boolean
   }
 
-  export type AccommodationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "hotelName" | "address" | "checkIn" | "checkOut" | "roomsBlocked" | "notes" | "createdAt", ExtArgs["result"]["accommodation"]>
+  export type AccommodationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "hotelName" | "address" | "checkIn" | "checkOut" | "roomsBlocked" | "notes" | "isCompleted" | "createdAt", ExtArgs["result"]["accommodation"]>
   export type AccommodationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Accommodation$eventArgs<ExtArgs>
@@ -49749,6 +52371,7 @@ export namespace Prisma {
       checkOut: Date
       roomsBlocked: number | null
       notes: string | null
+      isCompleted: boolean
       createdAt: Date
     }, ExtArgs["result"]["accommodation"]>
     composites: {}
@@ -50185,6 +52808,7 @@ export namespace Prisma {
     readonly checkOut: FieldRef<"Accommodation", 'DateTime'>
     readonly roomsBlocked: FieldRef<"Accommodation", 'Int'>
     readonly notes: FieldRef<"Accommodation", 'String'>
+    readonly isCompleted: FieldRef<"Accommodation", 'Boolean'>
     readonly createdAt: FieldRef<"Accommodation", 'DateTime'>
   }
     
@@ -54052,6 +56676,21 @@ export namespace Prisma {
   export type WeddingEventScalarFieldEnum = (typeof WeddingEventScalarFieldEnum)[keyof typeof WeddingEventScalarFieldEnum]
 
 
+  export const EventContactScalarFieldEnum: {
+    id: 'id',
+    eventId: 'eventId',
+    name: 'name',
+    role: 'role',
+    phone: 'phone',
+    email: 'email',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EventContactScalarFieldEnum = (typeof EventContactScalarFieldEnum)[keyof typeof EventContactScalarFieldEnum]
+
+
   export const EventProgramItemScalarFieldEnum: {
     id: 'id',
     eventId: 'eventId',
@@ -54208,6 +56847,7 @@ export namespace Prisma {
     eventId: 'eventId',
     vendorId: 'vendorId',
     contributionId: 'contributionId',
+    budgetLineId: 'budgetLineId',
     mpesaRef: 'mpesaRef',
     checkoutRequestId: 'checkoutRequestId',
     idempotencyKey: 'idempotencyKey',
@@ -54217,6 +56857,7 @@ export namespace Prisma {
     payerName: 'payerName',
     payerPhone: 'payerPhone',
     description: 'description',
+    paymentDate: 'paymentDate',
     rawCallback: 'rawCallback',
     processedAt: 'processedAt',
     reconciledAt: 'reconciledAt',
@@ -54303,6 +56944,7 @@ export namespace Prisma {
     vendorName: 'vendorName',
     notes: 'notes',
     paymentDate: 'paymentDate',
+    reminderDate: 'reminderDate',
     paymentPlan: 'paymentPlan',
     paymentType: 'paymentType',
     version: 'version',
@@ -54431,6 +57073,17 @@ export namespace Prisma {
   export type IncidentScalarFieldEnum = (typeof IncidentScalarFieldEnum)[keyof typeof IncidentScalarFieldEnum]
 
 
+  export const IncidentNoteScalarFieldEnum: {
+    id: 'id',
+    incidentId: 'incidentId',
+    content: 'content',
+    createdBy: 'createdBy',
+    createdAt: 'createdAt'
+  };
+
+  export type IncidentNoteScalarFieldEnum = (typeof IncidentNoteScalarFieldEnum)[keyof typeof IncidentNoteScalarFieldEnum]
+
+
   export const TemplateScalarFieldEnum: {
     id: 'id',
     type: 'type',
@@ -54511,6 +57164,7 @@ export namespace Prisma {
     eventId: 'eventId',
     guestId: 'guestId',
     giverName: 'giverName',
+    giverPhone: 'giverPhone',
     description: 'description',
     estimatedValue: 'estimatedValue',
     status: 'status',
@@ -54534,6 +57188,7 @@ export namespace Prisma {
     departureTime: 'departureTime',
     capacity: 'capacity',
     assignedVendorId: 'assignedVendorId',
+    isCompleted: 'isCompleted',
     createdAt: 'createdAt'
   };
 
@@ -54559,6 +57214,7 @@ export namespace Prisma {
     checkOut: 'checkOut',
     roomsBlocked: 'roomsBlocked',
     notes: 'notes',
+    isCompleted: 'isCompleted',
     createdAt: 'createdAt'
   };
 
@@ -55524,6 +58180,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionListRelationFilter
     mediaItems?: MediaItemListRelationFilter
     vendorAssignments?: VendorEventAssignmentListRelationFilter
+    contacts?: EventContactListRelationFilter
   }
 
   export type WeddingEventOrderByWithRelationInput = {
@@ -55556,6 +58213,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionOrderByRelationAggregateInput
     mediaItems?: MediaItemOrderByRelationAggregateInput
     vendorAssignments?: VendorEventAssignmentOrderByRelationAggregateInput
+    contacts?: EventContactOrderByRelationAggregateInput
   }
 
   export type WeddingEventWhereUniqueInput = Prisma.AtLeast<{
@@ -55591,6 +58249,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionListRelationFilter
     mediaItems?: MediaItemListRelationFilter
     vendorAssignments?: VendorEventAssignmentListRelationFilter
+    contacts?: EventContactListRelationFilter
   }, "id">
 
   export type WeddingEventOrderByWithAggregationInput = {
@@ -55625,6 +58284,81 @@ export namespace Prisma {
     mapUrl?: StringNullableWithAggregatesFilter<"WeddingEvent"> | string | null
     description?: StringNullableWithAggregatesFilter<"WeddingEvent"> | string | null
     isMain?: BoolWithAggregatesFilter<"WeddingEvent"> | boolean
+  }
+
+  export type EventContactWhereInput = {
+    AND?: EventContactWhereInput | EventContactWhereInput[]
+    OR?: EventContactWhereInput[]
+    NOT?: EventContactWhereInput | EventContactWhereInput[]
+    id?: StringFilter<"EventContact"> | string
+    eventId?: StringFilter<"EventContact"> | string
+    name?: StringFilter<"EventContact"> | string
+    role?: StringNullableFilter<"EventContact"> | string | null
+    phone?: StringNullableFilter<"EventContact"> | string | null
+    email?: StringNullableFilter<"EventContact"> | string | null
+    notes?: StringNullableFilter<"EventContact"> | string | null
+    createdAt?: DateTimeFilter<"EventContact"> | Date | string
+    updatedAt?: DateTimeFilter<"EventContact"> | Date | string
+    event?: XOR<WeddingEventScalarRelationFilter, WeddingEventWhereInput>
+  }
+
+  export type EventContactOrderByWithRelationInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    name?: SortOrder
+    role?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    event?: WeddingEventOrderByWithRelationInput
+  }
+
+  export type EventContactWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EventContactWhereInput | EventContactWhereInput[]
+    OR?: EventContactWhereInput[]
+    NOT?: EventContactWhereInput | EventContactWhereInput[]
+    eventId?: StringFilter<"EventContact"> | string
+    name?: StringFilter<"EventContact"> | string
+    role?: StringNullableFilter<"EventContact"> | string | null
+    phone?: StringNullableFilter<"EventContact"> | string | null
+    email?: StringNullableFilter<"EventContact"> | string | null
+    notes?: StringNullableFilter<"EventContact"> | string | null
+    createdAt?: DateTimeFilter<"EventContact"> | Date | string
+    updatedAt?: DateTimeFilter<"EventContact"> | Date | string
+    event?: XOR<WeddingEventScalarRelationFilter, WeddingEventWhereInput>
+  }, "id">
+
+  export type EventContactOrderByWithAggregationInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    name?: SortOrder
+    role?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EventContactCountOrderByAggregateInput
+    _max?: EventContactMaxOrderByAggregateInput
+    _min?: EventContactMinOrderByAggregateInput
+  }
+
+  export type EventContactScalarWhereWithAggregatesInput = {
+    AND?: EventContactScalarWhereWithAggregatesInput | EventContactScalarWhereWithAggregatesInput[]
+    OR?: EventContactScalarWhereWithAggregatesInput[]
+    NOT?: EventContactScalarWhereWithAggregatesInput | EventContactScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EventContact"> | string
+    eventId?: StringWithAggregatesFilter<"EventContact"> | string
+    name?: StringWithAggregatesFilter<"EventContact"> | string
+    role?: StringNullableWithAggregatesFilter<"EventContact"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"EventContact"> | string | null
+    email?: StringNullableWithAggregatesFilter<"EventContact"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"EventContact"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EventContact"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EventContact"> | Date | string
   }
 
   export type EventProgramItemWhereInput = {
@@ -56452,6 +59186,7 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"Payment"> | string | null
     vendorId?: StringNullableFilter<"Payment"> | string | null
     contributionId?: StringNullableFilter<"Payment"> | string | null
+    budgetLineId?: StringNullableFilter<"Payment"> | string | null
     mpesaRef?: StringNullableFilter<"Payment"> | string | null
     checkoutRequestId?: StringNullableFilter<"Payment"> | string | null
     idempotencyKey?: StringFilter<"Payment"> | string
@@ -56461,6 +59196,7 @@ export namespace Prisma {
     payerName?: StringNullableFilter<"Payment"> | string | null
     payerPhone?: StringNullableFilter<"Payment"> | string | null
     description?: StringNullableFilter<"Payment"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Payment"> | Date | string | null
     rawCallback?: JsonNullableFilter<"Payment">
     processedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -56473,6 +59209,7 @@ export namespace Prisma {
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
     vendor?: XOR<VendorNullableScalarRelationFilter, VendorWhereInput> | null
     contribution?: XOR<CommitteeContributionNullableScalarRelationFilter, CommitteeContributionWhereInput> | null
+    budgetLine?: XOR<BudgetLineNullableScalarRelationFilter, BudgetLineWhereInput> | null
   }
 
   export type PaymentOrderByWithRelationInput = {
@@ -56481,6 +59218,7 @@ export namespace Prisma {
     eventId?: SortOrderInput | SortOrder
     vendorId?: SortOrderInput | SortOrder
     contributionId?: SortOrderInput | SortOrder
+    budgetLineId?: SortOrderInput | SortOrder
     mpesaRef?: SortOrderInput | SortOrder
     checkoutRequestId?: SortOrderInput | SortOrder
     idempotencyKey?: SortOrder
@@ -56490,6 +59228,7 @@ export namespace Prisma {
     payerName?: SortOrderInput | SortOrder
     payerPhone?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    paymentDate?: SortOrderInput | SortOrder
     rawCallback?: SortOrderInput | SortOrder
     processedAt?: SortOrderInput | SortOrder
     reconciledAt?: SortOrderInput | SortOrder
@@ -56502,6 +59241,7 @@ export namespace Prisma {
     event?: WeddingEventOrderByWithRelationInput
     vendor?: VendorOrderByWithRelationInput
     contribution?: CommitteeContributionOrderByWithRelationInput
+    budgetLine?: BudgetLineOrderByWithRelationInput
   }
 
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
@@ -56516,12 +59256,14 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"Payment"> | string | null
     vendorId?: StringNullableFilter<"Payment"> | string | null
     contributionId?: StringNullableFilter<"Payment"> | string | null
+    budgetLineId?: StringNullableFilter<"Payment"> | string | null
     amount?: DecimalFilter<"Payment"> | Decimal | DecimalJsLike | number | string
     currency?: StringFilter<"Payment"> | string
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     payerName?: StringNullableFilter<"Payment"> | string | null
     payerPhone?: StringNullableFilter<"Payment"> | string | null
     description?: StringNullableFilter<"Payment"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Payment"> | Date | string | null
     rawCallback?: JsonNullableFilter<"Payment">
     processedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -56534,6 +59276,7 @@ export namespace Prisma {
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
     vendor?: XOR<VendorNullableScalarRelationFilter, VendorWhereInput> | null
     contribution?: XOR<CommitteeContributionNullableScalarRelationFilter, CommitteeContributionWhereInput> | null
+    budgetLine?: XOR<BudgetLineNullableScalarRelationFilter, BudgetLineWhereInput> | null
   }, "id" | "mpesaRef" | "checkoutRequestId" | "idempotencyKey">
 
   export type PaymentOrderByWithAggregationInput = {
@@ -56542,6 +59285,7 @@ export namespace Prisma {
     eventId?: SortOrderInput | SortOrder
     vendorId?: SortOrderInput | SortOrder
     contributionId?: SortOrderInput | SortOrder
+    budgetLineId?: SortOrderInput | SortOrder
     mpesaRef?: SortOrderInput | SortOrder
     checkoutRequestId?: SortOrderInput | SortOrder
     idempotencyKey?: SortOrder
@@ -56551,6 +59295,7 @@ export namespace Prisma {
     payerName?: SortOrderInput | SortOrder
     payerPhone?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    paymentDate?: SortOrderInput | SortOrder
     rawCallback?: SortOrderInput | SortOrder
     processedAt?: SortOrderInput | SortOrder
     reconciledAt?: SortOrderInput | SortOrder
@@ -56575,6 +59320,7 @@ export namespace Prisma {
     eventId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     vendorId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     contributionId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    budgetLineId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     mpesaRef?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     checkoutRequestId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     idempotencyKey?: StringWithAggregatesFilter<"Payment"> | string
@@ -56584,6 +59330,7 @@ export namespace Prisma {
     payerName?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     payerPhone?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     description?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    paymentDate?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
     rawCallback?: JsonNullableWithAggregatesFilter<"Payment">
     processedAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
     reconciledAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
@@ -56934,6 +59681,7 @@ export namespace Prisma {
     vendorName?: StringNullableFilter<"BudgetLine"> | string | null
     notes?: StringNullableFilter<"BudgetLine"> | string | null
     paymentDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
+    reminderDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
     paymentPlan?: StringNullableFilter<"BudgetLine"> | string | null
     paymentType?: StringNullableFilter<"BudgetLine"> | string | null
     version?: IntFilter<"BudgetLine"> | number
@@ -56945,6 +59693,7 @@ export namespace Prisma {
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
     vendor?: XOR<VendorNullableScalarRelationFilter, VendorWhereInput> | null
+    payments?: PaymentListRelationFilter
   }
 
   export type BudgetLineOrderByWithRelationInput = {
@@ -56960,6 +59709,7 @@ export namespace Prisma {
     vendorName?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     paymentDate?: SortOrderInput | SortOrder
+    reminderDate?: SortOrderInput | SortOrder
     paymentPlan?: SortOrderInput | SortOrder
     paymentType?: SortOrderInput | SortOrder
     version?: SortOrder
@@ -56971,6 +59721,7 @@ export namespace Prisma {
     wedding?: WeddingOrderByWithRelationInput
     event?: WeddingEventOrderByWithRelationInput
     vendor?: VendorOrderByWithRelationInput
+    payments?: PaymentOrderByRelationAggregateInput
   }
 
   export type BudgetLineWhereUniqueInput = Prisma.AtLeast<{
@@ -56989,6 +59740,7 @@ export namespace Prisma {
     vendorName?: StringNullableFilter<"BudgetLine"> | string | null
     notes?: StringNullableFilter<"BudgetLine"> | string | null
     paymentDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
+    reminderDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
     paymentPlan?: StringNullableFilter<"BudgetLine"> | string | null
     paymentType?: StringNullableFilter<"BudgetLine"> | string | null
     version?: IntFilter<"BudgetLine"> | number
@@ -57000,6 +59752,7 @@ export namespace Prisma {
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
     vendor?: XOR<VendorNullableScalarRelationFilter, VendorWhereInput> | null
+    payments?: PaymentListRelationFilter
   }, "id">
 
   export type BudgetLineOrderByWithAggregationInput = {
@@ -57015,6 +59768,7 @@ export namespace Prisma {
     vendorName?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     paymentDate?: SortOrderInput | SortOrder
+    reminderDate?: SortOrderInput | SortOrder
     paymentPlan?: SortOrderInput | SortOrder
     paymentType?: SortOrderInput | SortOrder
     version?: SortOrder
@@ -57046,6 +59800,7 @@ export namespace Prisma {
     vendorName?: StringNullableWithAggregatesFilter<"BudgetLine"> | string | null
     notes?: StringNullableWithAggregatesFilter<"BudgetLine"> | string | null
     paymentDate?: DateTimeNullableWithAggregatesFilter<"BudgetLine"> | Date | string | null
+    reminderDate?: DateTimeNullableWithAggregatesFilter<"BudgetLine"> | Date | string | null
     paymentPlan?: StringNullableWithAggregatesFilter<"BudgetLine"> | string | null
     paymentType?: StringNullableWithAggregatesFilter<"BudgetLine"> | string | null
     version?: IntWithAggregatesFilter<"BudgetLine"> | number
@@ -57585,6 +60340,7 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     resolvedBy?: StringNullableFilter<"Incident"> | string | null
     resolution?: StringNullableFilter<"Incident"> | string | null
+    notes?: IncidentNoteListRelationFilter
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
   }
@@ -57599,6 +60355,7 @@ export namespace Prisma {
     resolvedAt?: SortOrderInput | SortOrder
     resolvedBy?: SortOrderInput | SortOrder
     resolution?: SortOrderInput | SortOrder
+    notes?: IncidentNoteOrderByRelationAggregateInput
     wedding?: WeddingOrderByWithRelationInput
     event?: WeddingEventOrderByWithRelationInput
   }
@@ -57616,6 +60373,7 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     resolvedBy?: StringNullableFilter<"Incident"> | string | null
     resolution?: StringNullableFilter<"Incident"> | string | null
+    notes?: IncidentNoteListRelationFilter
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
   }, "id">
@@ -57648,6 +60406,61 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
     resolvedBy?: StringNullableWithAggregatesFilter<"Incident"> | string | null
     resolution?: StringNullableWithAggregatesFilter<"Incident"> | string | null
+  }
+
+  export type IncidentNoteWhereInput = {
+    AND?: IncidentNoteWhereInput | IncidentNoteWhereInput[]
+    OR?: IncidentNoteWhereInput[]
+    NOT?: IncidentNoteWhereInput | IncidentNoteWhereInput[]
+    id?: StringFilter<"IncidentNote"> | string
+    incidentId?: StringFilter<"IncidentNote"> | string
+    content?: StringFilter<"IncidentNote"> | string
+    createdBy?: StringNullableFilter<"IncidentNote"> | string | null
+    createdAt?: DateTimeFilter<"IncidentNote"> | Date | string
+    incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
+  }
+
+  export type IncidentNoteOrderByWithRelationInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    content?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    incident?: IncidentOrderByWithRelationInput
+  }
+
+  export type IncidentNoteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: IncidentNoteWhereInput | IncidentNoteWhereInput[]
+    OR?: IncidentNoteWhereInput[]
+    NOT?: IncidentNoteWhereInput | IncidentNoteWhereInput[]
+    incidentId?: StringFilter<"IncidentNote"> | string
+    content?: StringFilter<"IncidentNote"> | string
+    createdBy?: StringNullableFilter<"IncidentNote"> | string | null
+    createdAt?: DateTimeFilter<"IncidentNote"> | Date | string
+    incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
+  }, "id">
+
+  export type IncidentNoteOrderByWithAggregationInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    content?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: IncidentNoteCountOrderByAggregateInput
+    _max?: IncidentNoteMaxOrderByAggregateInput
+    _min?: IncidentNoteMinOrderByAggregateInput
+  }
+
+  export type IncidentNoteScalarWhereWithAggregatesInput = {
+    AND?: IncidentNoteScalarWhereWithAggregatesInput | IncidentNoteScalarWhereWithAggregatesInput[]
+    OR?: IncidentNoteScalarWhereWithAggregatesInput[]
+    NOT?: IncidentNoteScalarWhereWithAggregatesInput | IncidentNoteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IncidentNote"> | string
+    incidentId?: StringWithAggregatesFilter<"IncidentNote"> | string
+    content?: StringWithAggregatesFilter<"IncidentNote"> | string
+    createdBy?: StringNullableWithAggregatesFilter<"IncidentNote"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"IncidentNote"> | Date | string
   }
 
   export type TemplateWhereInput = {
@@ -58044,6 +60857,7 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
     giverName?: StringFilter<"GiftReceived"> | string
+    giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
@@ -58063,6 +60877,7 @@ export namespace Prisma {
     eventId?: SortOrderInput | SortOrder
     guestId?: SortOrderInput | SortOrder
     giverName?: SortOrder
+    giverPhone?: SortOrderInput | SortOrder
     description?: SortOrder
     estimatedValue?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -58085,6 +60900,7 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
     giverName?: StringFilter<"GiftReceived"> | string
+    giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
@@ -58104,6 +60920,7 @@ export namespace Prisma {
     eventId?: SortOrderInput | SortOrder
     guestId?: SortOrderInput | SortOrder
     giverName?: SortOrder
+    giverPhone?: SortOrderInput | SortOrder
     description?: SortOrder
     estimatedValue?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -58128,6 +60945,7 @@ export namespace Prisma {
     eventId?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     guestId?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     giverName?: StringWithAggregatesFilter<"GiftReceived"> | string
+    giverPhone?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     description?: StringWithAggregatesFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableWithAggregatesFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusWithAggregatesFilter<"GiftReceived"> | $Enums.GiftStatus
@@ -58151,6 +60969,7 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
@@ -58168,6 +60987,7 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrderInput | SortOrder
     assignedVendorId?: SortOrderInput | SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
     wedding?: WeddingOrderByWithRelationInput
     event?: WeddingEventOrderByWithRelationInput
@@ -58188,6 +61008,7 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
@@ -58205,6 +61026,7 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrderInput | SortOrder
     assignedVendorId?: SortOrderInput | SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
     _count?: TransportRouteCountOrderByAggregateInput
     _avg?: TransportRouteAvgOrderByAggregateInput
@@ -58226,6 +61048,7 @@ export namespace Prisma {
     departureTime?: DateTimeWithAggregatesFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableWithAggregatesFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableWithAggregatesFilter<"TransportRoute"> | string | null
+    isCompleted?: BoolWithAggregatesFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"TransportRoute"> | Date | string
   }
 
@@ -58291,6 +61114,7 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
@@ -58307,6 +61131,7 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
     wedding?: WeddingOrderByWithRelationInput
     event?: WeddingEventOrderByWithRelationInput
@@ -58326,6 +61151,7 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
     event?: XOR<WeddingEventNullableScalarRelationFilter, WeddingEventWhereInput> | null
@@ -58342,6 +61168,7 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
     _count?: AccommodationCountOrderByAggregateInput
     _avg?: AccommodationAvgOrderByAggregateInput
@@ -58363,6 +61190,7 @@ export namespace Prisma {
     checkOut?: DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableWithAggregatesFilter<"Accommodation"> | number | null
     notes?: StringNullableWithAggregatesFilter<"Accommodation"> | string | null
+    isCompleted?: BoolWithAggregatesFilter<"Accommodation"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
   }
 
@@ -59195,6 +62023,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateInput = {
@@ -59226,6 +62055,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUpdateInput = {
@@ -59257,6 +62087,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateInput = {
@@ -59288,6 +62119,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventCreateManyInput = {
@@ -59329,6 +62161,89 @@ export namespace Prisma {
     mapUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isMain?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventContactCreateInput = {
+    id?: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    event: WeddingEventCreateNestedOneWithoutContactsInput
+  }
+
+  export type EventContactUncheckedCreateInput = {
+    id?: string
+    eventId: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventContactUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    event?: WeddingEventUpdateOneRequiredWithoutContactsNestedInput
+  }
+
+  export type EventContactUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventContactCreateManyInput = {
+    id?: string
+    eventId: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventContactUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventContactUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EventProgramItemCreateInput = {
@@ -60241,6 +63156,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -60253,6 +63169,7 @@ export namespace Prisma {
     event?: WeddingEventCreateNestedOneWithoutPaymentsInput
     vendor?: VendorCreateNestedOneWithoutPaymentsInput
     contribution?: CommitteeContributionCreateNestedOneWithoutPaymentsInput
+    budgetLine?: BudgetLineCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateInput = {
@@ -60261,6 +63178,7 @@ export namespace Prisma {
     eventId?: string | null
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -60270,6 +63188,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -60291,6 +63210,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60303,6 +63223,7 @@ export namespace Prisma {
     event?: WeddingEventUpdateOneWithoutPaymentsNestedInput
     vendor?: VendorUpdateOneWithoutPaymentsNestedInput
     contribution?: CommitteeContributionUpdateOneWithoutPaymentsNestedInput
+    budgetLine?: BudgetLineUpdateOneWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateInput = {
@@ -60311,6 +63232,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -60320,6 +63242,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60336,6 +63259,7 @@ export namespace Prisma {
     eventId?: string | null
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -60345,6 +63269,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -60366,6 +63291,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60382,6 +63308,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -60391,6 +63318,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60774,6 +63702,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -60785,6 +63714,7 @@ export namespace Prisma {
     wedding: WeddingCreateNestedOneWithoutBudgetLinesInput
     event?: WeddingEventCreateNestedOneWithoutBudgetLinesInput
     vendor?: VendorCreateNestedOneWithoutBudgetLinesInput
+    payments?: PaymentCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineUncheckedCreateInput = {
@@ -60800,6 +63730,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -60808,6 +63739,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    payments?: PaymentUncheckedCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineUpdateInput = {
@@ -60820,6 +63752,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -60831,6 +63764,7 @@ export namespace Prisma {
     wedding?: WeddingUpdateOneRequiredWithoutBudgetLinesNestedInput
     event?: WeddingEventUpdateOneWithoutBudgetLinesNestedInput
     vendor?: VendorUpdateOneWithoutBudgetLinesNestedInput
+    payments?: PaymentUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateInput = {
@@ -60846,6 +63780,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -60854,6 +63789,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: PaymentUncheckedUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineCreateManyInput = {
@@ -60869,6 +63805,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -60889,6 +63826,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -60912,6 +63850,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -61499,6 +64438,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteCreateNestedManyWithoutIncidentInput
     wedding: WeddingCreateNestedOneWithoutIncidentsInput
     event?: WeddingEventCreateNestedOneWithoutIncidentsInput
   }
@@ -61513,6 +64453,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentUpdateInput = {
@@ -61523,6 +64464,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUpdateManyWithoutIncidentNestedInput
     wedding?: WeddingUpdateOneRequiredWithoutIncidentsNestedInput
     event?: WeddingEventUpdateOneWithoutIncidentsNestedInput
   }
@@ -61537,6 +64479,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentCreateManyInput = {
@@ -61571,6 +64514,61 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IncidentNoteCreateInput = {
+    id?: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+    incident: IncidentCreateNestedOneWithoutNotesInput
+  }
+
+  export type IncidentNoteUncheckedCreateInput = {
+    id?: string
+    incidentId: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type IncidentNoteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    incident?: IncidentUpdateOneRequiredWithoutNotesNestedInput
+  }
+
+  export type IncidentNoteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentNoteCreateManyInput = {
+    id?: string
+    incidentId: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type IncidentNoteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentNoteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateCreateInput = {
@@ -61986,6 +64984,7 @@ export namespace Prisma {
   export type GiftReceivedCreateInput = {
     id?: string
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -62005,6 +65004,7 @@ export namespace Prisma {
     eventId?: string | null
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -62018,6 +65018,7 @@ export namespace Prisma {
   export type GiftReceivedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -62037,6 +65038,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -62053,6 +65055,7 @@ export namespace Prisma {
     eventId?: string | null
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -62066,6 +65069,7 @@ export namespace Prisma {
   export type GiftReceivedUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -62082,6 +65086,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -62099,6 +65104,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
     event?: WeddingEventCreateNestedOneWithoutTransportRoutesInput
@@ -62116,6 +65122,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -62127,6 +65134,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
     event?: WeddingEventUpdateOneWithoutTransportRoutesNestedInput
@@ -62144,6 +65152,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -62158,6 +65167,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -62168,6 +65178,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -62181,6 +65192,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -62232,6 +65244,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
     event?: WeddingEventCreateNestedOneWithoutAccommodationsInput
@@ -62248,6 +65261,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
   }
@@ -62260,6 +65274,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
     event?: WeddingEventUpdateOneWithoutAccommodationsNestedInput
@@ -62276,6 +65291,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
   }
@@ -62290,6 +65306,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -62301,6 +65318,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -62314,6 +65332,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -63355,6 +66374,12 @@ export namespace Prisma {
     none?: VendorEventAssignmentWhereInput
   }
 
+  export type EventContactListRelationFilter = {
+    every?: EventContactWhereInput
+    some?: EventContactWhereInput
+    none?: EventContactWhereInput
+  }
+
   export type GuestEventAttendanceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -63372,6 +66397,10 @@ export namespace Prisma {
   }
 
   export type VendorEventAssignmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EventContactOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -63430,6 +66459,42 @@ export namespace Prisma {
   export type WeddingEventScalarRelationFilter = {
     is?: WeddingEventWhereInput
     isNot?: WeddingEventWhereInput
+  }
+
+  export type EventContactCountOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventContactMaxOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventContactMinOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EventProgramItemCountOrderByAggregateInput = {
@@ -64061,12 +67126,18 @@ export namespace Prisma {
     isNot?: CommitteeContributionWhereInput | null
   }
 
+  export type BudgetLineNullableScalarRelationFilter = {
+    is?: BudgetLineWhereInput | null
+    isNot?: BudgetLineWhereInput | null
+  }
+
   export type PaymentCountOrderByAggregateInput = {
     id?: SortOrder
     weddingId?: SortOrder
     eventId?: SortOrder
     vendorId?: SortOrder
     contributionId?: SortOrder
+    budgetLineId?: SortOrder
     mpesaRef?: SortOrder
     checkoutRequestId?: SortOrder
     idempotencyKey?: SortOrder
@@ -64076,6 +67147,7 @@ export namespace Prisma {
     payerName?: SortOrder
     payerPhone?: SortOrder
     description?: SortOrder
+    paymentDate?: SortOrder
     rawCallback?: SortOrder
     processedAt?: SortOrder
     reconciledAt?: SortOrder
@@ -64097,6 +67169,7 @@ export namespace Prisma {
     eventId?: SortOrder
     vendorId?: SortOrder
     contributionId?: SortOrder
+    budgetLineId?: SortOrder
     mpesaRef?: SortOrder
     checkoutRequestId?: SortOrder
     idempotencyKey?: SortOrder
@@ -64106,6 +67179,7 @@ export namespace Prisma {
     payerName?: SortOrder
     payerPhone?: SortOrder
     description?: SortOrder
+    paymentDate?: SortOrder
     processedAt?: SortOrder
     reconciledAt?: SortOrder
     version?: SortOrder
@@ -64121,6 +67195,7 @@ export namespace Prisma {
     eventId?: SortOrder
     vendorId?: SortOrder
     contributionId?: SortOrder
+    budgetLineId?: SortOrder
     mpesaRef?: SortOrder
     checkoutRequestId?: SortOrder
     idempotencyKey?: SortOrder
@@ -64130,6 +67205,7 @@ export namespace Prisma {
     payerName?: SortOrder
     payerPhone?: SortOrder
     description?: SortOrder
+    paymentDate?: SortOrder
     processedAt?: SortOrder
     reconciledAt?: SortOrder
     version?: SortOrder
@@ -64408,6 +67484,7 @@ export namespace Prisma {
     vendorName?: SortOrder
     notes?: SortOrder
     paymentDate?: SortOrder
+    reminderDate?: SortOrder
     paymentPlan?: SortOrder
     paymentType?: SortOrder
     version?: SortOrder
@@ -64438,6 +67515,7 @@ export namespace Prisma {
     vendorName?: SortOrder
     notes?: SortOrder
     paymentDate?: SortOrder
+    reminderDate?: SortOrder
     paymentPlan?: SortOrder
     paymentType?: SortOrder
     version?: SortOrder
@@ -64461,6 +67539,7 @@ export namespace Prisma {
     vendorName?: SortOrder
     notes?: SortOrder
     paymentDate?: SortOrder
+    reminderDate?: SortOrder
     paymentPlan?: SortOrder
     paymentType?: SortOrder
     version?: SortOrder
@@ -64784,6 +67863,16 @@ export namespace Prisma {
     sent?: SortOrder
   }
 
+  export type IncidentNoteListRelationFilter = {
+    every?: IncidentNoteWhereInput
+    some?: IncidentNoteWhereInput
+    none?: IncidentNoteWhereInput
+  }
+
+  export type IncidentNoteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type IncidentCountOrderByAggregateInput = {
     id?: SortOrder
     weddingId?: SortOrder
@@ -64818,6 +67907,35 @@ export namespace Prisma {
     resolvedAt?: SortOrder
     resolvedBy?: SortOrder
     resolution?: SortOrder
+  }
+
+  export type IncidentScalarRelationFilter = {
+    is?: IncidentWhereInput
+    isNot?: IncidentWhereInput
+  }
+
+  export type IncidentNoteCountOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    content?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type IncidentNoteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    content?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type IncidentNoteMinOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    content?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type EnumTemplateTypeFilter<$PrismaModel = never> = {
@@ -65152,6 +68270,7 @@ export namespace Prisma {
     eventId?: SortOrder
     guestId?: SortOrder
     giverName?: SortOrder
+    giverPhone?: SortOrder
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
@@ -65172,6 +68291,7 @@ export namespace Prisma {
     eventId?: SortOrder
     guestId?: SortOrder
     giverName?: SortOrder
+    giverPhone?: SortOrder
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
@@ -65188,6 +68308,7 @@ export namespace Prisma {
     eventId?: SortOrder
     guestId?: SortOrder
     giverName?: SortOrder
+    giverPhone?: SortOrder
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
@@ -65222,6 +68343,7 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -65239,6 +68361,7 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -65252,6 +68375,7 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -65297,6 +68421,7 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -65314,6 +68439,7 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -65327,6 +68453,7 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    isCompleted?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -66825,6 +69952,13 @@ export namespace Prisma {
     connect?: VendorEventAssignmentWhereUniqueInput | VendorEventAssignmentWhereUniqueInput[]
   }
 
+  export type EventContactCreateNestedManyWithoutEventInput = {
+    create?: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput> | EventContactCreateWithoutEventInput[] | EventContactUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventContactCreateOrConnectWithoutEventInput | EventContactCreateOrConnectWithoutEventInput[]
+    createMany?: EventContactCreateManyEventInputEnvelope
+    connect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+  }
+
   export type GuestEventAttendanceUncheckedCreateNestedManyWithoutEventInput = {
     create?: XOR<GuestEventAttendanceCreateWithoutEventInput, GuestEventAttendanceUncheckedCreateWithoutEventInput> | GuestEventAttendanceCreateWithoutEventInput[] | GuestEventAttendanceUncheckedCreateWithoutEventInput[]
     connectOrCreate?: GuestEventAttendanceCreateOrConnectWithoutEventInput | GuestEventAttendanceCreateOrConnectWithoutEventInput[]
@@ -66942,6 +70076,13 @@ export namespace Prisma {
     connectOrCreate?: VendorEventAssignmentCreateOrConnectWithoutEventInput | VendorEventAssignmentCreateOrConnectWithoutEventInput[]
     createMany?: VendorEventAssignmentCreateManyEventInputEnvelope
     connect?: VendorEventAssignmentWhereUniqueInput | VendorEventAssignmentWhereUniqueInput[]
+  }
+
+  export type EventContactUncheckedCreateNestedManyWithoutEventInput = {
+    create?: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput> | EventContactCreateWithoutEventInput[] | EventContactUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventContactCreateOrConnectWithoutEventInput | EventContactCreateOrConnectWithoutEventInput[]
+    createMany?: EventContactCreateManyEventInputEnvelope
+    connect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
   }
 
   export type EnumEventTypeFieldUpdateOperationsInput = {
@@ -67194,6 +70335,20 @@ export namespace Prisma {
     deleteMany?: VendorEventAssignmentScalarWhereInput | VendorEventAssignmentScalarWhereInput[]
   }
 
+  export type EventContactUpdateManyWithoutEventNestedInput = {
+    create?: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput> | EventContactCreateWithoutEventInput[] | EventContactUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventContactCreateOrConnectWithoutEventInput | EventContactCreateOrConnectWithoutEventInput[]
+    upsert?: EventContactUpsertWithWhereUniqueWithoutEventInput | EventContactUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: EventContactCreateManyEventInputEnvelope
+    set?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    disconnect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    delete?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    connect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    update?: EventContactUpdateWithWhereUniqueWithoutEventInput | EventContactUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: EventContactUpdateManyWithWhereWithoutEventInput | EventContactUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: EventContactScalarWhereInput | EventContactScalarWhereInput[]
+  }
+
   export type GuestEventAttendanceUncheckedUpdateManyWithoutEventNestedInput = {
     create?: XOR<GuestEventAttendanceCreateWithoutEventInput, GuestEventAttendanceUncheckedCreateWithoutEventInput> | GuestEventAttendanceCreateWithoutEventInput[] | GuestEventAttendanceUncheckedCreateWithoutEventInput[]
     connectOrCreate?: GuestEventAttendanceCreateOrConnectWithoutEventInput | GuestEventAttendanceCreateOrConnectWithoutEventInput[]
@@ -67430,6 +70585,34 @@ export namespace Prisma {
     update?: VendorEventAssignmentUpdateWithWhereUniqueWithoutEventInput | VendorEventAssignmentUpdateWithWhereUniqueWithoutEventInput[]
     updateMany?: VendorEventAssignmentUpdateManyWithWhereWithoutEventInput | VendorEventAssignmentUpdateManyWithWhereWithoutEventInput[]
     deleteMany?: VendorEventAssignmentScalarWhereInput | VendorEventAssignmentScalarWhereInput[]
+  }
+
+  export type EventContactUncheckedUpdateManyWithoutEventNestedInput = {
+    create?: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput> | EventContactCreateWithoutEventInput[] | EventContactUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventContactCreateOrConnectWithoutEventInput | EventContactCreateOrConnectWithoutEventInput[]
+    upsert?: EventContactUpsertWithWhereUniqueWithoutEventInput | EventContactUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: EventContactCreateManyEventInputEnvelope
+    set?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    disconnect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    delete?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    connect?: EventContactWhereUniqueInput | EventContactWhereUniqueInput[]
+    update?: EventContactUpdateWithWhereUniqueWithoutEventInput | EventContactUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: EventContactUpdateManyWithWhereWithoutEventInput | EventContactUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: EventContactScalarWhereInput | EventContactScalarWhereInput[]
+  }
+
+  export type WeddingEventCreateNestedOneWithoutContactsInput = {
+    create?: XOR<WeddingEventCreateWithoutContactsInput, WeddingEventUncheckedCreateWithoutContactsInput>
+    connectOrCreate?: WeddingEventCreateOrConnectWithoutContactsInput
+    connect?: WeddingEventWhereUniqueInput
+  }
+
+  export type WeddingEventUpdateOneRequiredWithoutContactsNestedInput = {
+    create?: XOR<WeddingEventCreateWithoutContactsInput, WeddingEventUncheckedCreateWithoutContactsInput>
+    connectOrCreate?: WeddingEventCreateOrConnectWithoutContactsInput
+    upsert?: WeddingEventUpsertWithoutContactsInput
+    connect?: WeddingEventWhereUniqueInput
+    update?: XOR<XOR<WeddingEventUpdateToOneWithWhereWithoutContactsInput, WeddingEventUpdateWithoutContactsInput>, WeddingEventUncheckedUpdateWithoutContactsInput>
   }
 
   export type WeddingEventCreateNestedOneWithoutProgramItemsInput = {
@@ -68237,6 +71420,12 @@ export namespace Prisma {
     connect?: CommitteeContributionWhereUniqueInput
   }
 
+  export type BudgetLineCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<BudgetLineCreateWithoutPaymentsInput, BudgetLineUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: BudgetLineCreateOrConnectWithoutPaymentsInput
+    connect?: BudgetLineWhereUniqueInput
+  }
+
   export type EnumPaymentStatusFieldUpdateOperationsInput = {
     set?: $Enums.PaymentStatus
   }
@@ -68277,6 +71466,16 @@ export namespace Prisma {
     delete?: CommitteeContributionWhereInput | boolean
     connect?: CommitteeContributionWhereUniqueInput
     update?: XOR<XOR<CommitteeContributionUpdateToOneWithWhereWithoutPaymentsInput, CommitteeContributionUpdateWithoutPaymentsInput>, CommitteeContributionUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type BudgetLineUpdateOneWithoutPaymentsNestedInput = {
+    create?: XOR<BudgetLineCreateWithoutPaymentsInput, BudgetLineUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: BudgetLineCreateOrConnectWithoutPaymentsInput
+    upsert?: BudgetLineUpsertWithoutPaymentsInput
+    disconnect?: BudgetLineWhereInput | boolean
+    delete?: BudgetLineWhereInput | boolean
+    connect?: BudgetLineWhereUniqueInput
+    update?: XOR<XOR<BudgetLineUpdateToOneWithWhereWithoutPaymentsInput, BudgetLineUpdateWithoutPaymentsInput>, BudgetLineUncheckedUpdateWithoutPaymentsInput>
   }
 
   export type PaymentCreateNestedManyWithoutContributionInput = {
@@ -68517,6 +71716,20 @@ export namespace Prisma {
     connect?: VendorWhereUniqueInput
   }
 
+  export type PaymentCreateNestedManyWithoutBudgetLineInput = {
+    create?: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput> | PaymentCreateWithoutBudgetLineInput[] | PaymentUncheckedCreateWithoutBudgetLineInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutBudgetLineInput | PaymentCreateOrConnectWithoutBudgetLineInput[]
+    createMany?: PaymentCreateManyBudgetLineInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
+  export type PaymentUncheckedCreateNestedManyWithoutBudgetLineInput = {
+    create?: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput> | PaymentCreateWithoutBudgetLineInput[] | PaymentUncheckedCreateWithoutBudgetLineInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutBudgetLineInput | PaymentCreateOrConnectWithoutBudgetLineInput[]
+    createMany?: PaymentCreateManyBudgetLineInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type WeddingUpdateOneRequiredWithoutBudgetLinesNestedInput = {
     create?: XOR<WeddingCreateWithoutBudgetLinesInput, WeddingUncheckedCreateWithoutBudgetLinesInput>
     connectOrCreate?: WeddingCreateOrConnectWithoutBudgetLinesInput
@@ -68543,6 +71756,34 @@ export namespace Prisma {
     delete?: VendorWhereInput | boolean
     connect?: VendorWhereUniqueInput
     update?: XOR<XOR<VendorUpdateToOneWithWhereWithoutBudgetLinesInput, VendorUpdateWithoutBudgetLinesInput>, VendorUncheckedUpdateWithoutBudgetLinesInput>
+  }
+
+  export type PaymentUpdateManyWithoutBudgetLineNestedInput = {
+    create?: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput> | PaymentCreateWithoutBudgetLineInput[] | PaymentUncheckedCreateWithoutBudgetLineInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutBudgetLineInput | PaymentCreateOrConnectWithoutBudgetLineInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutBudgetLineInput | PaymentUpsertWithWhereUniqueWithoutBudgetLineInput[]
+    createMany?: PaymentCreateManyBudgetLineInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutBudgetLineInput | PaymentUpdateWithWhereUniqueWithoutBudgetLineInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutBudgetLineInput | PaymentUpdateManyWithWhereWithoutBudgetLineInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutBudgetLineNestedInput = {
+    create?: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput> | PaymentCreateWithoutBudgetLineInput[] | PaymentUncheckedCreateWithoutBudgetLineInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutBudgetLineInput | PaymentCreateOrConnectWithoutBudgetLineInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutBudgetLineInput | PaymentUpsertWithWhereUniqueWithoutBudgetLineInput[]
+    createMany?: PaymentCreateManyBudgetLineInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutBudgetLineInput | PaymentUpdateWithWhereUniqueWithoutBudgetLineInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutBudgetLineInput | PaymentUpdateManyWithWhereWithoutBudgetLineInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
   export type WeddingCreateNestedOneWithoutRiskAlertsInput = {
@@ -68731,6 +71972,13 @@ export namespace Prisma {
     update?: XOR<XOR<AppointmentUpdateToOneWithWhereWithoutRemindersInput, AppointmentUpdateWithoutRemindersInput>, AppointmentUncheckedUpdateWithoutRemindersInput>
   }
 
+  export type IncidentNoteCreateNestedManyWithoutIncidentInput = {
+    create?: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput> | IncidentNoteCreateWithoutIncidentInput[] | IncidentNoteUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentNoteCreateOrConnectWithoutIncidentInput | IncidentNoteCreateOrConnectWithoutIncidentInput[]
+    createMany?: IncidentNoteCreateManyIncidentInputEnvelope
+    connect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+  }
+
   export type WeddingCreateNestedOneWithoutIncidentsInput = {
     create?: XOR<WeddingCreateWithoutIncidentsInput, WeddingUncheckedCreateWithoutIncidentsInput>
     connectOrCreate?: WeddingCreateOrConnectWithoutIncidentsInput
@@ -68741,6 +71989,27 @@ export namespace Prisma {
     create?: XOR<WeddingEventCreateWithoutIncidentsInput, WeddingEventUncheckedCreateWithoutIncidentsInput>
     connectOrCreate?: WeddingEventCreateOrConnectWithoutIncidentsInput
     connect?: WeddingEventWhereUniqueInput
+  }
+
+  export type IncidentNoteUncheckedCreateNestedManyWithoutIncidentInput = {
+    create?: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput> | IncidentNoteCreateWithoutIncidentInput[] | IncidentNoteUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentNoteCreateOrConnectWithoutIncidentInput | IncidentNoteCreateOrConnectWithoutIncidentInput[]
+    createMany?: IncidentNoteCreateManyIncidentInputEnvelope
+    connect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+  }
+
+  export type IncidentNoteUpdateManyWithoutIncidentNestedInput = {
+    create?: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput> | IncidentNoteCreateWithoutIncidentInput[] | IncidentNoteUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentNoteCreateOrConnectWithoutIncidentInput | IncidentNoteCreateOrConnectWithoutIncidentInput[]
+    upsert?: IncidentNoteUpsertWithWhereUniqueWithoutIncidentInput | IncidentNoteUpsertWithWhereUniqueWithoutIncidentInput[]
+    createMany?: IncidentNoteCreateManyIncidentInputEnvelope
+    set?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    disconnect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    delete?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    connect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    update?: IncidentNoteUpdateWithWhereUniqueWithoutIncidentInput | IncidentNoteUpdateWithWhereUniqueWithoutIncidentInput[]
+    updateMany?: IncidentNoteUpdateManyWithWhereWithoutIncidentInput | IncidentNoteUpdateManyWithWhereWithoutIncidentInput[]
+    deleteMany?: IncidentNoteScalarWhereInput | IncidentNoteScalarWhereInput[]
   }
 
   export type WeddingUpdateOneRequiredWithoutIncidentsNestedInput = {
@@ -68759,6 +72028,34 @@ export namespace Prisma {
     delete?: WeddingEventWhereInput | boolean
     connect?: WeddingEventWhereUniqueInput
     update?: XOR<XOR<WeddingEventUpdateToOneWithWhereWithoutIncidentsInput, WeddingEventUpdateWithoutIncidentsInput>, WeddingEventUncheckedUpdateWithoutIncidentsInput>
+  }
+
+  export type IncidentNoteUncheckedUpdateManyWithoutIncidentNestedInput = {
+    create?: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput> | IncidentNoteCreateWithoutIncidentInput[] | IncidentNoteUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentNoteCreateOrConnectWithoutIncidentInput | IncidentNoteCreateOrConnectWithoutIncidentInput[]
+    upsert?: IncidentNoteUpsertWithWhereUniqueWithoutIncidentInput | IncidentNoteUpsertWithWhereUniqueWithoutIncidentInput[]
+    createMany?: IncidentNoteCreateManyIncidentInputEnvelope
+    set?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    disconnect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    delete?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    connect?: IncidentNoteWhereUniqueInput | IncidentNoteWhereUniqueInput[]
+    update?: IncidentNoteUpdateWithWhereUniqueWithoutIncidentInput | IncidentNoteUpdateWithWhereUniqueWithoutIncidentInput[]
+    updateMany?: IncidentNoteUpdateManyWithWhereWithoutIncidentInput | IncidentNoteUpdateManyWithWhereWithoutIncidentInput[]
+    deleteMany?: IncidentNoteScalarWhereInput | IncidentNoteScalarWhereInput[]
+  }
+
+  export type IncidentCreateNestedOneWithoutNotesInput = {
+    create?: XOR<IncidentCreateWithoutNotesInput, IncidentUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: IncidentCreateOrConnectWithoutNotesInput
+    connect?: IncidentWhereUniqueInput
+  }
+
+  export type IncidentUpdateOneRequiredWithoutNotesNestedInput = {
+    create?: XOR<IncidentCreateWithoutNotesInput, IncidentUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: IncidentCreateOrConnectWithoutNotesInput
+    upsert?: IncidentUpsertWithoutNotesInput
+    connect?: IncidentWhereUniqueInput
+    update?: XOR<XOR<IncidentUpdateToOneWithWhereWithoutNotesInput, IncidentUpdateWithoutNotesInput>, IncidentUncheckedUpdateWithoutNotesInput>
   }
 
   export type TemplateApplicationCreateNestedManyWithoutTemplateInput = {
@@ -70159,6 +73456,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutWeddingInput = {
@@ -70189,6 +73487,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutWeddingInput = {
@@ -70362,6 +73661,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -70373,6 +73673,7 @@ export namespace Prisma {
     event?: WeddingEventCreateNestedOneWithoutPaymentsInput
     vendor?: VendorCreateNestedOneWithoutPaymentsInput
     contribution?: CommitteeContributionCreateNestedOneWithoutPaymentsInput
+    budgetLine?: BudgetLineCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateWithoutWeddingInput = {
@@ -70380,6 +73681,7 @@ export namespace Prisma {
     eventId?: string | null
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -70389,6 +73691,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -70525,6 +73828,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -70535,6 +73839,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     event?: WeddingEventCreateNestedOneWithoutBudgetLinesInput
     vendor?: VendorCreateNestedOneWithoutBudgetLinesInput
+    payments?: PaymentCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineUncheckedCreateWithoutWeddingInput = {
@@ -70549,6 +73854,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -70557,6 +73863,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    payments?: PaymentUncheckedCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineCreateOrConnectWithoutWeddingInput = {
@@ -70866,6 +74173,7 @@ export namespace Prisma {
   export type GiftReceivedCreateWithoutWeddingInput = {
     id?: string
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -70883,6 +74191,7 @@ export namespace Prisma {
     eventId?: string | null
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -70910,6 +74219,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     event?: WeddingEventCreateNestedOneWithoutTransportRoutesInput
     assignedVendor?: VendorCreateNestedOneWithoutTransportRoutesInput
@@ -70925,6 +74235,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -70947,6 +74258,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     event?: WeddingEventCreateNestedOneWithoutAccommodationsInput
     guestAccommodations?: GuestAccommodationCreateNestedManyWithoutAccommodationInput
@@ -70961,6 +74273,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
   }
@@ -71031,6 +74344,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteCreateNestedManyWithoutIncidentInput
     event?: WeddingEventCreateNestedOneWithoutIncidentsInput
   }
 
@@ -71043,6 +74357,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentCreateOrConnectWithoutWeddingInput = {
@@ -71272,6 +74587,7 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"Payment"> | string | null
     vendorId?: StringNullableFilter<"Payment"> | string | null
     contributionId?: StringNullableFilter<"Payment"> | string | null
+    budgetLineId?: StringNullableFilter<"Payment"> | string | null
     mpesaRef?: StringNullableFilter<"Payment"> | string | null
     checkoutRequestId?: StringNullableFilter<"Payment"> | string | null
     idempotencyKey?: StringFilter<"Payment"> | string
@@ -71281,6 +74597,7 @@ export namespace Prisma {
     payerName?: StringNullableFilter<"Payment"> | string | null
     payerPhone?: StringNullableFilter<"Payment"> | string | null
     description?: StringNullableFilter<"Payment"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Payment"> | Date | string | null
     rawCallback?: JsonNullableFilter<"Payment">
     processedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -71404,6 +74721,7 @@ export namespace Prisma {
     vendorName?: StringNullableFilter<"BudgetLine"> | string | null
     notes?: StringNullableFilter<"BudgetLine"> | string | null
     paymentDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
+    reminderDate?: DateTimeNullableFilter<"BudgetLine"> | Date | string | null
     paymentPlan?: StringNullableFilter<"BudgetLine"> | string | null
     paymentType?: StringNullableFilter<"BudgetLine"> | string | null
     version?: IntFilter<"BudgetLine"> | number
@@ -71704,6 +75022,7 @@ export namespace Prisma {
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
     giverName?: StringFilter<"GiftReceived"> | string
+    giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
@@ -71743,6 +75062,7 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
   }
 
@@ -71775,6 +75095,7 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
   }
 
@@ -72504,6 +75825,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -72514,6 +75836,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutBudgetLinesInput
     vendor?: VendorCreateNestedOneWithoutBudgetLinesInput
+    payments?: PaymentCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineUncheckedCreateWithoutEventInput = {
@@ -72528,6 +75851,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -72536,6 +75860,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    payments?: PaymentUncheckedCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineCreateOrConnectWithoutEventInput = {
@@ -72603,6 +75928,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
     assignedVendor?: VendorCreateNestedOneWithoutTransportRoutesInput
@@ -72618,6 +75944,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -72640,6 +75967,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
     guestAccommodations?: GuestAccommodationCreateNestedManyWithoutAccommodationInput
@@ -72654,6 +75982,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
   }
@@ -72707,6 +76036,7 @@ export namespace Prisma {
   export type GiftReceivedCreateWithoutEventInput = {
     id?: string
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -72724,6 +76054,7 @@ export namespace Prisma {
     weddingId: string
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -72752,6 +76083,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteCreateNestedManyWithoutIncidentInput
     wedding: WeddingCreateNestedOneWithoutIncidentsInput
   }
 
@@ -72764,6 +76096,7 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolvedBy?: string | null
     resolution?: string | null
+    notes?: IncidentNoteUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentCreateOrConnectWithoutEventInput = {
@@ -72787,6 +76120,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -72798,6 +76132,7 @@ export namespace Prisma {
     wedding: WeddingCreateNestedOneWithoutPaymentsInput
     vendor?: VendorCreateNestedOneWithoutPaymentsInput
     contribution?: CommitteeContributionCreateNestedOneWithoutPaymentsInput
+    budgetLine?: BudgetLineCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateWithoutEventInput = {
@@ -72805,6 +76140,7 @@ export namespace Prisma {
     weddingId: string
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -72814,6 +76150,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -72951,6 +76288,38 @@ export namespace Prisma {
 
   export type VendorEventAssignmentCreateManyEventInputEnvelope = {
     data: VendorEventAssignmentCreateManyEventInput | VendorEventAssignmentCreateManyEventInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventContactCreateWithoutEventInput = {
+    id?: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventContactUncheckedCreateWithoutEventInput = {
+    id?: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventContactCreateOrConnectWithoutEventInput = {
+    where: EventContactWhereUniqueInput
+    create: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput>
+  }
+
+  export type EventContactCreateManyEventInputEnvelope = {
+    data: EventContactCreateManyEventInput | EventContactCreateManyEventInput[]
     skipDuplicates?: boolean
   }
 
@@ -73403,6 +76772,177 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"VendorEventAssignment"> | Date | string
   }
 
+  export type EventContactUpsertWithWhereUniqueWithoutEventInput = {
+    where: EventContactWhereUniqueInput
+    update: XOR<EventContactUpdateWithoutEventInput, EventContactUncheckedUpdateWithoutEventInput>
+    create: XOR<EventContactCreateWithoutEventInput, EventContactUncheckedCreateWithoutEventInput>
+  }
+
+  export type EventContactUpdateWithWhereUniqueWithoutEventInput = {
+    where: EventContactWhereUniqueInput
+    data: XOR<EventContactUpdateWithoutEventInput, EventContactUncheckedUpdateWithoutEventInput>
+  }
+
+  export type EventContactUpdateManyWithWhereWithoutEventInput = {
+    where: EventContactScalarWhereInput
+    data: XOR<EventContactUpdateManyMutationInput, EventContactUncheckedUpdateManyWithoutEventInput>
+  }
+
+  export type EventContactScalarWhereInput = {
+    AND?: EventContactScalarWhereInput | EventContactScalarWhereInput[]
+    OR?: EventContactScalarWhereInput[]
+    NOT?: EventContactScalarWhereInput | EventContactScalarWhereInput[]
+    id?: StringFilter<"EventContact"> | string
+    eventId?: StringFilter<"EventContact"> | string
+    name?: StringFilter<"EventContact"> | string
+    role?: StringNullableFilter<"EventContact"> | string | null
+    phone?: StringNullableFilter<"EventContact"> | string | null
+    email?: StringNullableFilter<"EventContact"> | string | null
+    notes?: StringNullableFilter<"EventContact"> | string | null
+    createdAt?: DateTimeFilter<"EventContact"> | Date | string
+    updatedAt?: DateTimeFilter<"EventContact"> | Date | string
+  }
+
+  export type WeddingEventCreateWithoutContactsInput = {
+    id?: string
+    name: string
+    type: $Enums.EventType
+    date: Date | string
+    startTime?: string | null
+    endTime?: string | null
+    venue?: string | null
+    mapUrl?: string | null
+    description?: string | null
+    isMain?: boolean
+    wedding: WeddingCreateNestedOneWithoutEventsInput
+    guestAttendances?: GuestEventAttendanceCreateNestedManyWithoutEventInput
+    fromDependencies?: EventDependencyCreateNestedManyWithoutFromEventInput
+    toDependencies?: EventDependencyCreateNestedManyWithoutToEventInput
+    honeymoonDays?: HoneymoonDayCreateNestedManyWithoutEventInput
+    programItems?: EventProgramItemCreateNestedManyWithoutEventInput
+    checklistItems?: ChecklistItemCreateNestedManyWithoutEventInput
+    budgetLines?: BudgetLineCreateNestedManyWithoutEventInput
+    appointments?: AppointmentCreateNestedManyWithoutEventInput
+    transportRoutes?: TransportRouteCreateNestedManyWithoutEventInput
+    accommodations?: AccommodationCreateNestedManyWithoutEventInput
+    giftRegistry?: GiftRegistryItemCreateNestedManyWithoutEventInput
+    giftsReceived?: GiftReceivedCreateNestedManyWithoutEventInput
+    incidents?: IncidentCreateNestedManyWithoutEventInput
+    payments?: PaymentCreateNestedManyWithoutEventInput
+    contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
+    mediaItems?: MediaItemCreateNestedManyWithoutEventInput
+    vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+  }
+
+  export type WeddingEventUncheckedCreateWithoutContactsInput = {
+    id?: string
+    weddingId: string
+    name: string
+    type: $Enums.EventType
+    date: Date | string
+    startTime?: string | null
+    endTime?: string | null
+    venue?: string | null
+    mapUrl?: string | null
+    description?: string | null
+    isMain?: boolean
+    guestAttendances?: GuestEventAttendanceUncheckedCreateNestedManyWithoutEventInput
+    fromDependencies?: EventDependencyUncheckedCreateNestedManyWithoutFromEventInput
+    toDependencies?: EventDependencyUncheckedCreateNestedManyWithoutToEventInput
+    honeymoonDays?: HoneymoonDayUncheckedCreateNestedManyWithoutEventInput
+    programItems?: EventProgramItemUncheckedCreateNestedManyWithoutEventInput
+    checklistItems?: ChecklistItemUncheckedCreateNestedManyWithoutEventInput
+    budgetLines?: BudgetLineUncheckedCreateNestedManyWithoutEventInput
+    appointments?: AppointmentUncheckedCreateNestedManyWithoutEventInput
+    transportRoutes?: TransportRouteUncheckedCreateNestedManyWithoutEventInput
+    accommodations?: AccommodationUncheckedCreateNestedManyWithoutEventInput
+    giftRegistry?: GiftRegistryItemUncheckedCreateNestedManyWithoutEventInput
+    giftsReceived?: GiftReceivedUncheckedCreateNestedManyWithoutEventInput
+    incidents?: IncidentUncheckedCreateNestedManyWithoutEventInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
+    contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
+    mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
+    vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+  }
+
+  export type WeddingEventCreateOrConnectWithoutContactsInput = {
+    where: WeddingEventWhereUniqueInput
+    create: XOR<WeddingEventCreateWithoutContactsInput, WeddingEventUncheckedCreateWithoutContactsInput>
+  }
+
+  export type WeddingEventUpsertWithoutContactsInput = {
+    update: XOR<WeddingEventUpdateWithoutContactsInput, WeddingEventUncheckedUpdateWithoutContactsInput>
+    create: XOR<WeddingEventCreateWithoutContactsInput, WeddingEventUncheckedCreateWithoutContactsInput>
+    where?: WeddingEventWhereInput
+  }
+
+  export type WeddingEventUpdateToOneWithWhereWithoutContactsInput = {
+    where?: WeddingEventWhereInput
+    data: XOR<WeddingEventUpdateWithoutContactsInput, WeddingEventUncheckedUpdateWithoutContactsInput>
+  }
+
+  export type WeddingEventUpdateWithoutContactsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: NullableStringFieldUpdateOperationsInput | string | null
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    mapUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isMain?: BoolFieldUpdateOperationsInput | boolean
+    wedding?: WeddingUpdateOneRequiredWithoutEventsNestedInput
+    guestAttendances?: GuestEventAttendanceUpdateManyWithoutEventNestedInput
+    fromDependencies?: EventDependencyUpdateManyWithoutFromEventNestedInput
+    toDependencies?: EventDependencyUpdateManyWithoutToEventNestedInput
+    honeymoonDays?: HoneymoonDayUpdateManyWithoutEventNestedInput
+    programItems?: EventProgramItemUpdateManyWithoutEventNestedInput
+    checklistItems?: ChecklistItemUpdateManyWithoutEventNestedInput
+    budgetLines?: BudgetLineUpdateManyWithoutEventNestedInput
+    appointments?: AppointmentUpdateManyWithoutEventNestedInput
+    transportRoutes?: TransportRouteUpdateManyWithoutEventNestedInput
+    accommodations?: AccommodationUpdateManyWithoutEventNestedInput
+    giftRegistry?: GiftRegistryItemUpdateManyWithoutEventNestedInput
+    giftsReceived?: GiftReceivedUpdateManyWithoutEventNestedInput
+    incidents?: IncidentUpdateManyWithoutEventNestedInput
+    payments?: PaymentUpdateManyWithoutEventNestedInput
+    contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
+    mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
+    vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+  }
+
+  export type WeddingEventUncheckedUpdateWithoutContactsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: NullableStringFieldUpdateOperationsInput | string | null
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    mapUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isMain?: BoolFieldUpdateOperationsInput | boolean
+    guestAttendances?: GuestEventAttendanceUncheckedUpdateManyWithoutEventNestedInput
+    fromDependencies?: EventDependencyUncheckedUpdateManyWithoutFromEventNestedInput
+    toDependencies?: EventDependencyUncheckedUpdateManyWithoutToEventNestedInput
+    honeymoonDays?: HoneymoonDayUncheckedUpdateManyWithoutEventNestedInput
+    programItems?: EventProgramItemUncheckedUpdateManyWithoutEventNestedInput
+    checklistItems?: ChecklistItemUncheckedUpdateManyWithoutEventNestedInput
+    budgetLines?: BudgetLineUncheckedUpdateManyWithoutEventNestedInput
+    appointments?: AppointmentUncheckedUpdateManyWithoutEventNestedInput
+    transportRoutes?: TransportRouteUncheckedUpdateManyWithoutEventNestedInput
+    accommodations?: AccommodationUncheckedUpdateManyWithoutEventNestedInput
+    giftRegistry?: GiftRegistryItemUncheckedUpdateManyWithoutEventNestedInput
+    giftsReceived?: GiftReceivedUncheckedUpdateManyWithoutEventNestedInput
+    incidents?: IncidentUncheckedUpdateManyWithoutEventNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
+    contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
+    mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
+    vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+  }
+
   export type WeddingEventCreateWithoutProgramItemsInput = {
     id?: string
     name: string
@@ -73431,6 +76971,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutProgramItemsInput = {
@@ -73461,6 +77002,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutProgramItemsInput = {
@@ -73507,6 +77049,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutProgramItemsInput = {
@@ -73537,6 +77080,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventCreateWithoutFromDependenciesInput = {
@@ -73567,6 +77111,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutFromDependenciesInput = {
@@ -73597,6 +77142,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutFromDependenciesInput = {
@@ -73632,6 +77178,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutToDependenciesInput = {
@@ -73662,6 +77209,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutToDependenciesInput = {
@@ -73708,6 +77256,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutFromDependenciesInput = {
@@ -73738,6 +77287,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUpsertWithoutToDependenciesInput = {
@@ -73779,6 +77329,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutToDependenciesInput = {
@@ -73809,6 +77360,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type GuestCreateWithoutEventAttendancesInput = {
@@ -73906,6 +77458,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutGuestAttendancesInput = {
@@ -73936,6 +77489,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutGuestAttendancesInput = {
@@ -74055,6 +77609,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutGuestAttendancesInput = {
@@ -74085,6 +77640,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingCreateWithoutGuestsInput = {
@@ -74272,6 +77828,7 @@ export namespace Prisma {
   export type GiftReceivedCreateWithoutGuestInput = {
     id?: string
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -74289,6 +77846,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -74930,6 +78488,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -74941,6 +78500,7 @@ export namespace Prisma {
     wedding: WeddingCreateNestedOneWithoutPaymentsInput
     event?: WeddingEventCreateNestedOneWithoutPaymentsInput
     contribution?: CommitteeContributionCreateNestedOneWithoutPaymentsInput
+    budgetLine?: BudgetLineCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateWithoutVendorInput = {
@@ -74948,6 +78508,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -74957,6 +78518,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -75084,6 +78646,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
     event?: WeddingEventCreateNestedOneWithoutTransportRoutesInput
@@ -75099,6 +78662,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -75157,6 +78721,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -75167,6 +78732,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutBudgetLinesInput
     event?: WeddingEventCreateNestedOneWithoutBudgetLinesInput
+    payments?: PaymentCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineUncheckedCreateWithoutVendorInput = {
@@ -75181,6 +78747,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -75189,6 +78756,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    payments?: PaymentUncheckedCreateNestedManyWithoutBudgetLineInput
   }
 
   export type BudgetLineCreateOrConnectWithoutVendorInput = {
@@ -75585,6 +79153,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutEventInput
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutVendorAssignmentsInput = {
@@ -75615,6 +79184,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutVendorAssignmentsInput = {
@@ -75740,6 +79310,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutEventNestedInput
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutVendorAssignmentsInput = {
@@ -75770,6 +79341,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type VendorCreateWithoutVendorNotesInput = {
@@ -76413,6 +79985,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutPaymentsInput = {
@@ -76443,6 +80016,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutPaymentsInput = {
@@ -76558,6 +80132,59 @@ export namespace Prisma {
   export type CommitteeContributionCreateOrConnectWithoutPaymentsInput = {
     where: CommitteeContributionWhereUniqueInput
     create: XOR<CommitteeContributionCreateWithoutPaymentsInput, CommitteeContributionUncheckedCreateWithoutPaymentsInput>
+  }
+
+  export type BudgetLineCreateWithoutPaymentsInput = {
+    id?: string
+    category: string
+    description: string
+    estimated?: Decimal | DecimalJsLike | number | string
+    actual?: Decimal | DecimalJsLike | number | string
+    committed?: Decimal | DecimalJsLike | number | string
+    vendorName?: string | null
+    notes?: string | null
+    paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
+    paymentPlan?: string | null
+    paymentType?: string | null
+    version?: number
+    checksum?: string
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    wedding: WeddingCreateNestedOneWithoutBudgetLinesInput
+    event?: WeddingEventCreateNestedOneWithoutBudgetLinesInput
+    vendor?: VendorCreateNestedOneWithoutBudgetLinesInput
+  }
+
+  export type BudgetLineUncheckedCreateWithoutPaymentsInput = {
+    id?: string
+    weddingId: string
+    eventId?: string | null
+    category: string
+    description: string
+    estimated?: Decimal | DecimalJsLike | number | string
+    actual?: Decimal | DecimalJsLike | number | string
+    committed?: Decimal | DecimalJsLike | number | string
+    vendorId?: string | null
+    vendorName?: string | null
+    notes?: string | null
+    paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
+    paymentPlan?: string | null
+    paymentType?: string | null
+    version?: number
+    checksum?: string
+    updatedBy?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BudgetLineCreateOrConnectWithoutPaymentsInput = {
+    where: BudgetLineWhereUniqueInput
+    create: XOR<BudgetLineCreateWithoutPaymentsInput, BudgetLineUncheckedCreateWithoutPaymentsInput>
   }
 
   export type WeddingUpsertWithoutPaymentsInput = {
@@ -76706,6 +80333,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutPaymentsInput = {
@@ -76736,6 +80364,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type VendorUpsertWithoutPaymentsInput = {
@@ -76860,6 +80489,65 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BudgetLineUpsertWithoutPaymentsInput = {
+    update: XOR<BudgetLineUpdateWithoutPaymentsInput, BudgetLineUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<BudgetLineCreateWithoutPaymentsInput, BudgetLineUncheckedCreateWithoutPaymentsInput>
+    where?: BudgetLineWhereInput
+  }
+
+  export type BudgetLineUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: BudgetLineWhereInput
+    data: XOR<BudgetLineUpdateWithoutPaymentsInput, BudgetLineUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type BudgetLineUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    actual?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    committed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    vendorName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentType?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    checksum?: StringFieldUpdateOperationsInput | string
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    wedding?: WeddingUpdateOneRequiredWithoutBudgetLinesNestedInput
+    event?: WeddingEventUpdateOneWithoutBudgetLinesNestedInput
+    vendor?: VendorUpdateOneWithoutBudgetLinesNestedInput
+  }
+
+  export type BudgetLineUncheckedUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    eventId?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    estimated?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    actual?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    committed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    vendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentType?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    checksum?: StringFieldUpdateOperationsInput | string
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PaymentCreateWithoutContributionInput = {
     id?: string
     mpesaRef?: string | null
@@ -76871,6 +80559,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -76882,6 +80571,7 @@ export namespace Prisma {
     wedding: WeddingCreateNestedOneWithoutPaymentsInput
     event?: WeddingEventCreateNestedOneWithoutPaymentsInput
     vendor?: VendorCreateNestedOneWithoutPaymentsInput
+    budgetLine?: BudgetLineCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateWithoutContributionInput = {
@@ -76889,6 +80579,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     vendorId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -76898,6 +80589,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -77047,6 +80739,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutContributionsInput = {
@@ -77077,6 +80770,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutContributionsInput = {
@@ -77246,6 +80940,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutContributionsInput = {
@@ -77276,6 +80971,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingCreateWithoutChecklistItemsInput = {
@@ -77407,6 +81103,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutChecklistItemsInput = {
@@ -77437,6 +81134,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutChecklistItemsInput = {
@@ -77637,6 +81335,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutChecklistItemsInput = {
@@ -77667,6 +81366,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type ActivityGroupUpsertWithoutChecklistItemsInput = {
@@ -78141,6 +81841,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutBudgetLinesInput = {
@@ -78171,6 +81872,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutBudgetLinesInput = {
@@ -78249,6 +81951,68 @@ export namespace Prisma {
   export type VendorCreateOrConnectWithoutBudgetLinesInput = {
     where: VendorWhereUniqueInput
     create: XOR<VendorCreateWithoutBudgetLinesInput, VendorUncheckedCreateWithoutBudgetLinesInput>
+  }
+
+  export type PaymentCreateWithoutBudgetLineInput = {
+    id?: string
+    mpesaRef?: string | null
+    checkoutRequestId?: string | null
+    idempotencyKey: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.PaymentStatus
+    payerName?: string | null
+    payerPhone?: string | null
+    description?: string | null
+    paymentDate?: Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    reconciledAt?: Date | string | null
+    version?: number
+    createdBy?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    wedding: WeddingCreateNestedOneWithoutPaymentsInput
+    event?: WeddingEventCreateNestedOneWithoutPaymentsInput
+    vendor?: VendorCreateNestedOneWithoutPaymentsInput
+    contribution?: CommitteeContributionCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutBudgetLineInput = {
+    id?: string
+    weddingId: string
+    eventId?: string | null
+    vendorId?: string | null
+    contributionId?: string | null
+    mpesaRef?: string | null
+    checkoutRequestId?: string | null
+    idempotencyKey: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.PaymentStatus
+    payerName?: string | null
+    payerPhone?: string | null
+    description?: string | null
+    paymentDate?: Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    reconciledAt?: Date | string | null
+    version?: number
+    createdBy?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentCreateOrConnectWithoutBudgetLineInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput>
+  }
+
+  export type PaymentCreateManyBudgetLineInputEnvelope = {
+    data: PaymentCreateManyBudgetLineInput | PaymentCreateManyBudgetLineInput[]
+    skipDuplicates?: boolean
   }
 
   export type WeddingUpsertWithoutBudgetLinesInput = {
@@ -78397,6 +82161,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutBudgetLinesInput = {
@@ -78427,6 +82192,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type VendorUpsertWithoutBudgetLinesInput = {
@@ -78506,6 +82272,22 @@ export namespace Prisma {
     transportRoutes?: TransportRouteUncheckedUpdateManyWithoutAssignedVendorNestedInput
     attireItems?: AttireItemUncheckedUpdateManyWithoutTailorNestedInput
     eventAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutVendorNestedInput
+  }
+
+  export type PaymentUpsertWithWhereUniqueWithoutBudgetLineInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutBudgetLineInput, PaymentUncheckedUpdateWithoutBudgetLineInput>
+    create: XOR<PaymentCreateWithoutBudgetLineInput, PaymentUncheckedCreateWithoutBudgetLineInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutBudgetLineInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutBudgetLineInput, PaymentUncheckedUpdateWithoutBudgetLineInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutBudgetLineInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutBudgetLineInput>
   }
 
   export type WeddingCreateWithoutRiskAlertsInput = {
@@ -78845,6 +82627,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutEventInput
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutMediaItemsInput = {
@@ -78875,6 +82658,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutMediaItemsInput = {
@@ -79028,6 +82812,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutEventNestedInput
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutMediaItemsInput = {
@@ -79058,6 +82843,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingCreateWithoutAuditLogsInput = {
@@ -79397,6 +83183,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutAppointmentsInput = {
@@ -79427,6 +83214,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutAppointmentsInput = {
@@ -79679,6 +83467,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutAppointmentsInput = {
@@ -79709,6 +83498,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type VendorUpsertWithoutAppointmentsInput = {
@@ -80022,6 +83812,30 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type IncidentNoteCreateWithoutIncidentInput = {
+    id?: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type IncidentNoteUncheckedCreateWithoutIncidentInput = {
+    id?: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type IncidentNoteCreateOrConnectWithoutIncidentInput = {
+    where: IncidentNoteWhereUniqueInput
+    create: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput>
+  }
+
+  export type IncidentNoteCreateManyIncidentInputEnvelope = {
+    data: IncidentNoteCreateManyIncidentInput | IncidentNoteCreateManyIncidentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WeddingCreateWithoutIncidentsInput = {
     id?: string
     name: string
@@ -80151,6 +83965,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutIncidentsInput = {
@@ -80181,11 +83996,39 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutIncidentsInput = {
     where: WeddingEventWhereUniqueInput
     create: XOR<WeddingEventCreateWithoutIncidentsInput, WeddingEventUncheckedCreateWithoutIncidentsInput>
+  }
+
+  export type IncidentNoteUpsertWithWhereUniqueWithoutIncidentInput = {
+    where: IncidentNoteWhereUniqueInput
+    update: XOR<IncidentNoteUpdateWithoutIncidentInput, IncidentNoteUncheckedUpdateWithoutIncidentInput>
+    create: XOR<IncidentNoteCreateWithoutIncidentInput, IncidentNoteUncheckedCreateWithoutIncidentInput>
+  }
+
+  export type IncidentNoteUpdateWithWhereUniqueWithoutIncidentInput = {
+    where: IncidentNoteWhereUniqueInput
+    data: XOR<IncidentNoteUpdateWithoutIncidentInput, IncidentNoteUncheckedUpdateWithoutIncidentInput>
+  }
+
+  export type IncidentNoteUpdateManyWithWhereWithoutIncidentInput = {
+    where: IncidentNoteScalarWhereInput
+    data: XOR<IncidentNoteUpdateManyMutationInput, IncidentNoteUncheckedUpdateManyWithoutIncidentInput>
+  }
+
+  export type IncidentNoteScalarWhereInput = {
+    AND?: IncidentNoteScalarWhereInput | IncidentNoteScalarWhereInput[]
+    OR?: IncidentNoteScalarWhereInput[]
+    NOT?: IncidentNoteScalarWhereInput | IncidentNoteScalarWhereInput[]
+    id?: StringFilter<"IncidentNote"> | string
+    incidentId?: StringFilter<"IncidentNote"> | string
+    content?: StringFilter<"IncidentNote"> | string
+    createdBy?: StringNullableFilter<"IncidentNote"> | string | null
+    createdAt?: DateTimeFilter<"IncidentNote"> | Date | string
   }
 
   export type WeddingUpsertWithoutIncidentsInput = {
@@ -80334,6 +84177,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutIncidentsInput = {
@@ -80364,6 +84208,71 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
+  }
+
+  export type IncidentCreateWithoutNotesInput = {
+    id?: string
+    reportedAt?: Date | string
+    description: string
+    severity: string
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    resolution?: string | null
+    wedding: WeddingCreateNestedOneWithoutIncidentsInput
+    event?: WeddingEventCreateNestedOneWithoutIncidentsInput
+  }
+
+  export type IncidentUncheckedCreateWithoutNotesInput = {
+    id?: string
+    weddingId: string
+    eventId?: string | null
+    reportedAt?: Date | string
+    description: string
+    severity: string
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type IncidentCreateOrConnectWithoutNotesInput = {
+    where: IncidentWhereUniqueInput
+    create: XOR<IncidentCreateWithoutNotesInput, IncidentUncheckedCreateWithoutNotesInput>
+  }
+
+  export type IncidentUpsertWithoutNotesInput = {
+    update: XOR<IncidentUpdateWithoutNotesInput, IncidentUncheckedUpdateWithoutNotesInput>
+    create: XOR<IncidentCreateWithoutNotesInput, IncidentUncheckedCreateWithoutNotesInput>
+    where?: IncidentWhereInput
+  }
+
+  export type IncidentUpdateToOneWithWhereWithoutNotesInput = {
+    where?: IncidentWhereInput
+    data: XOR<IncidentUpdateWithoutNotesInput, IncidentUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type IncidentUpdateWithoutNotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reportedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: StringFieldUpdateOperationsInput | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    wedding?: WeddingUpdateOneRequiredWithoutIncidentsNestedInput
+    event?: WeddingEventUpdateOneWithoutIncidentsNestedInput
+  }
+
+  export type IncidentUncheckedUpdateWithoutNotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    eventId?: NullableStringFieldUpdateOperationsInput | string | null
+    reportedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: StringFieldUpdateOperationsInput | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TemplateApplicationCreateWithoutTemplateInput = {
@@ -81373,6 +85282,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutGiftRegistryInput = {
@@ -81403,6 +85313,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutGiftRegistryInput = {
@@ -81556,6 +85467,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutGiftRegistryInput = {
@@ -81586,6 +85498,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingCreateWithoutGiftsReceivedInput = {
@@ -81717,6 +85630,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutGiftsReceivedInput = {
@@ -81747,6 +85661,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutGiftsReceivedInput = {
@@ -81967,6 +85882,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutGiftsReceivedInput = {
@@ -81997,6 +85913,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type GuestUpsertWithoutGiftsReceivedInput = {
@@ -82201,6 +86118,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutTransportRoutesInput = {
@@ -82231,6 +86149,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutTransportRoutesInput = {
@@ -82477,6 +86396,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutTransportRoutesInput = {
@@ -82507,6 +86427,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type VendorUpsertWithoutTransportRoutesInput = {
@@ -82678,6 +86599,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
     event?: WeddingEventCreateNestedOneWithoutTransportRoutesInput
@@ -82694,6 +86616,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -82793,6 +86716,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
     event?: WeddingEventUpdateOneWithoutTransportRoutesNestedInput
@@ -82809,6 +86733,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -82941,6 +86866,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutAccommodationsInput = {
@@ -82971,6 +86897,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutAccommodationsInput = {
@@ -83146,6 +87073,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutAccommodationsInput = {
@@ -83176,6 +87104,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type GuestAccommodationUpsertWithWhereUniqueWithoutAccommodationInput = {
@@ -83269,6 +87198,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
     event?: WeddingEventCreateNestedOneWithoutAccommodationsInput
@@ -83284,6 +87214,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -83384,6 +87315,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
     event?: WeddingEventUpdateOneWithoutAccommodationsNestedInput
@@ -83399,6 +87331,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -83430,6 +87363,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentCreateNestedManyWithoutEventInput
+    contacts?: EventContactCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventUncheckedCreateWithoutHoneymoonDaysInput = {
@@ -83460,6 +87394,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedCreateNestedManyWithoutEventInput
     mediaItems?: MediaItemUncheckedCreateNestedManyWithoutEventInput
     vendorAssignments?: VendorEventAssignmentUncheckedCreateNestedManyWithoutEventInput
+    contacts?: EventContactUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type WeddingEventCreateOrConnectWithoutHoneymoonDaysInput = {
@@ -83506,6 +87441,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutHoneymoonDaysInput = {
@@ -83536,6 +87472,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingCreateWithoutVisionBoardCategoriesInput = {
@@ -83932,6 +87869,7 @@ export namespace Prisma {
     eventId?: string | null
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -83941,6 +87879,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -84004,6 +87943,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -84124,6 +88064,7 @@ export namespace Prisma {
     eventId?: string | null
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -84143,6 +88084,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -84155,6 +88097,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -84246,6 +88189,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateWithoutWeddingInput = {
@@ -84276,6 +88220,7 @@ export namespace Prisma {
     contributions?: CommitteeContributionUncheckedUpdateManyWithoutEventNestedInput
     mediaItems?: MediaItemUncheckedUpdateManyWithoutEventNestedInput
     vendorAssignments?: VendorEventAssignmentUncheckedUpdateManyWithoutEventNestedInput
+    contacts?: EventContactUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type WeddingEventUncheckedUpdateManyWithoutWeddingInput = {
@@ -84485,6 +88430,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -84496,6 +88442,7 @@ export namespace Prisma {
     event?: WeddingEventUpdateOneWithoutPaymentsNestedInput
     vendor?: VendorUpdateOneWithoutPaymentsNestedInput
     contribution?: CommitteeContributionUpdateOneWithoutPaymentsNestedInput
+    budgetLine?: BudgetLineUpdateOneWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutWeddingInput = {
@@ -84503,6 +88450,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -84512,6 +88460,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -84527,6 +88476,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -84536,6 +88486,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -84683,6 +88634,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -84693,6 +88645,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: WeddingEventUpdateOneWithoutBudgetLinesNestedInput
     vendor?: VendorUpdateOneWithoutBudgetLinesNestedInput
+    payments?: PaymentUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateWithoutWeddingInput = {
@@ -84707,6 +88660,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -84715,6 +88669,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: PaymentUncheckedUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateManyWithoutWeddingInput = {
@@ -84729,6 +88684,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -85061,6 +89017,7 @@ export namespace Prisma {
   export type GiftReceivedUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -85078,6 +89035,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -85093,6 +89051,7 @@ export namespace Prisma {
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -85110,6 +89069,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: WeddingEventUpdateOneWithoutTransportRoutesNestedInput
     assignedVendor?: VendorUpdateOneWithoutTransportRoutesNestedInput
@@ -85125,6 +89085,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -85138,6 +89099,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -85149,6 +89111,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: WeddingEventUpdateOneWithoutAccommodationsNestedInput
     guestAccommodations?: GuestAccommodationUpdateManyWithoutAccommodationNestedInput
@@ -85163,6 +89126,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
   }
@@ -85176,6 +89140,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -85228,6 +89193,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUpdateManyWithoutIncidentNestedInput
     event?: WeddingEventUpdateOneWithoutIncidentsNestedInput
   }
 
@@ -85240,6 +89206,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateManyWithoutWeddingInput = {
@@ -85379,6 +89346,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -85416,6 +89384,7 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -85428,6 +89397,7 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -85449,6 +89419,7 @@ export namespace Prisma {
     weddingId: string
     guestId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -85475,6 +89446,7 @@ export namespace Prisma {
     weddingId: string
     vendorId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -85484,6 +89456,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -85534,6 +89507,17 @@ export namespace Prisma {
     updatedBy?: string | null
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventContactCreateManyEventInput = {
+    id?: string
+    name: string
+    role?: string | null
+    phone?: string | null
+    email?: string | null
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -85757,6 +89741,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -85767,6 +89752,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutBudgetLinesNestedInput
     vendor?: VendorUpdateOneWithoutBudgetLinesNestedInput
+    payments?: PaymentUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateWithoutEventInput = {
@@ -85781,6 +89767,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -85789,6 +89776,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: PaymentUncheckedUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateManyWithoutEventInput = {
@@ -85803,6 +89791,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -85876,6 +89865,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
     assignedVendor?: VendorUpdateOneWithoutTransportRoutesNestedInput
@@ -85891,6 +89881,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -85904,6 +89895,7 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -85915,6 +89907,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
     guestAccommodations?: GuestAccommodationUpdateManyWithoutAccommodationNestedInput
@@ -85929,6 +89922,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
   }
@@ -85942,6 +89936,7 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -85987,6 +89982,7 @@ export namespace Prisma {
   export type GiftReceivedUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86004,6 +90000,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86019,6 +90016,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86037,6 +90035,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUpdateManyWithoutIncidentNestedInput
     wedding?: WeddingUpdateOneRequiredWithoutIncidentsNestedInput
   }
 
@@ -86049,6 +90048,7 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
     resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: IncidentNoteUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateManyWithoutEventInput = {
@@ -86073,6 +90073,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86084,6 +90085,7 @@ export namespace Prisma {
     wedding?: WeddingUpdateOneRequiredWithoutPaymentsNestedInput
     vendor?: VendorUpdateOneWithoutPaymentsNestedInput
     contribution?: CommitteeContributionUpdateOneWithoutPaymentsNestedInput
+    budgetLine?: BudgetLineUpdateOneWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutEventInput = {
@@ -86091,6 +90093,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -86100,6 +90103,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86115,6 +90119,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -86124,6 +90129,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86268,6 +90274,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EventContactUpdateWithoutEventInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventContactUncheckedUpdateWithoutEventInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventContactUncheckedUpdateManyWithoutEventInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type GuestEventAttendanceCreateManyGuestInput = {
     id?: string
     eventId: string
@@ -86290,6 +90329,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     giverName: string
+    giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
@@ -86354,6 +90394,7 @@ export namespace Prisma {
   export type GiftReceivedUpdateWithoutGuestInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86371,6 +90412,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86386,6 +90428,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     giverName?: StringFieldUpdateOperationsInput | string
+    giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
@@ -86517,6 +90560,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     contributionId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -86526,6 +90570,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -86579,6 +90624,7 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    isCompleted?: boolean
     createdAt?: Date | string
   }
 
@@ -86606,6 +90652,7 @@ export namespace Prisma {
     vendorName?: string | null
     notes?: string | null
     paymentDate?: Date | string | null
+    reminderDate?: Date | string | null
     paymentPlan?: string | null
     paymentType?: string | null
     version?: number
@@ -86640,6 +90687,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86651,6 +90699,7 @@ export namespace Prisma {
     wedding?: WeddingUpdateOneRequiredWithoutPaymentsNestedInput
     event?: WeddingEventUpdateOneWithoutPaymentsNestedInput
     contribution?: CommitteeContributionUpdateOneWithoutPaymentsNestedInput
+    budgetLine?: BudgetLineUpdateOneWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutVendorInput = {
@@ -86658,6 +90707,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -86667,6 +90717,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86682,6 +90733,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -86691,6 +90743,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -86812,6 +90865,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
     event?: WeddingEventUpdateOneWithoutTransportRoutesNestedInput
@@ -86827,6 +90881,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -86840,6 +90895,7 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -86889,6 +90945,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -86899,6 +90956,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutBudgetLinesNestedInput
     event?: WeddingEventUpdateOneWithoutBudgetLinesNestedInput
+    payments?: PaymentUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateWithoutVendorInput = {
@@ -86913,6 +90971,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -86921,6 +90980,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: PaymentUncheckedUpdateManyWithoutBudgetLineNestedInput
   }
 
   export type BudgetLineUncheckedUpdateManyWithoutVendorInput = {
@@ -86935,6 +90995,7 @@ export namespace Prisma {
     vendorName?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminderDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     paymentPlan?: NullableStringFieldUpdateOperationsInput | string | null
     paymentType?: NullableStringFieldUpdateOperationsInput | string | null
     version?: IntFieldUpdateOperationsInput | number
@@ -86989,6 +91050,7 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     vendorId?: string | null
+    budgetLineId?: string | null
     mpesaRef?: string | null
     checkoutRequestId?: string | null
     idempotencyKey: string
@@ -86998,6 +91060,7 @@ export namespace Prisma {
     payerName?: string | null
     payerPhone?: string | null
     description?: string | null
+    paymentDate?: Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: Date | string | null
     reconciledAt?: Date | string | null
@@ -87019,6 +91082,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -87030,6 +91094,7 @@ export namespace Prisma {
     wedding?: WeddingUpdateOneRequiredWithoutPaymentsNestedInput
     event?: WeddingEventUpdateOneWithoutPaymentsNestedInput
     vendor?: VendorUpdateOneWithoutPaymentsNestedInput
+    budgetLine?: BudgetLineUpdateOneWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutContributionInput = {
@@ -87037,6 +91102,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -87046,6 +91112,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -87061,6 +91128,7 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     vendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetLineId?: NullableStringFieldUpdateOperationsInput | string | null
     mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
     checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -87070,6 +91138,7 @@ export namespace Prisma {
     payerName?: NullableStringFieldUpdateOperationsInput | string | null
     payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rawCallback?: NullableJsonNullValueInput | InputJsonValue
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -87218,6 +91287,110 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PaymentCreateManyBudgetLineInput = {
+    id?: string
+    weddingId: string
+    eventId?: string | null
+    vendorId?: string | null
+    contributionId?: string | null
+    mpesaRef?: string | null
+    checkoutRequestId?: string | null
+    idempotencyKey: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.PaymentStatus
+    payerName?: string | null
+    payerPhone?: string | null
+    description?: string | null
+    paymentDate?: Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    reconciledAt?: Date | string | null
+    version?: number
+    createdBy?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentUpdateWithoutBudgetLineInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
+    checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    wedding?: WeddingUpdateOneRequiredWithoutPaymentsNestedInput
+    event?: WeddingEventUpdateOneWithoutPaymentsNestedInput
+    vendor?: VendorUpdateOneWithoutPaymentsNestedInput
+    contribution?: CommitteeContributionUpdateOneWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutBudgetLineInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    eventId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
+    checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutBudgetLineInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weddingId?: StringFieldUpdateOperationsInput | string
+    eventId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contributionId?: NullableStringFieldUpdateOperationsInput | string | null
+    mpesaRef?: NullableStringFieldUpdateOperationsInput | string | null
+    checkoutRequestId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    payerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rawCallback?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ReminderCreateManyAppointmentInput = {
     id?: string
     checklistItemId?: string | null
@@ -87248,6 +91421,34 @@ export namespace Prisma {
     triggerAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channel?: StringFieldUpdateOperationsInput | string
     sent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type IncidentNoteCreateManyIncidentInput = {
+    id?: string
+    content: string
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type IncidentNoteUpdateWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentNoteUncheckedUpdateWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentNoteUncheckedUpdateManyWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateApplicationCreateManyTemplateInput = {

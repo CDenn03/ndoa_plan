@@ -1,7 +1,7 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { Calendar, Phone, AlertTriangle, CheckCircle2, CalendarDays, List, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button, EmptyState, Modal, Input, Label, Select, Spinner } from '@/components/ui'
+import { Button, EmptyState, Modal, Input, Label, Select, Spinner, Textarea } from '@/components/ui'
 import { format, parseISO, addDays, startOfWeek, isSameDay } from 'date-fns'
 import { useToast } from '@/components/ui/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -94,6 +94,62 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
 
   const isWeekly = form.scope === 'weekly'
 
+  // ── Time arithmetic helpers ──────────────────────────────────────────────
+  const toMins = (hhmm: string) => {
+    const [h, m] = hhmm.split(':').map(Number)
+    return h * 60 + m
+  }
+  const fromMins = (mins: number) => {
+    const h = Math.floor(((mins % 1440) + 1440) % 1440 / 60)
+    const m = ((mins % 1440) + 1440) % 1440 % 60
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+  }
+
+  // Derive the third field whenever two are set
+  const handleTimeChange = (field: 'startTime' | 'endTime' | 'duration', value: string) => {
+    setForm(prev => {
+      const next = { ...prev, [field]: value }
+      const hasStart = next.startTime !== ''
+      const hasEnd = next.endTime !== ''
+      const hasDur = next.duration !== '' && Number(next.duration) > 0
+
+      if (field === 'startTime' && hasEnd) {
+        // start + end → duration
+        const d = toMins(next.endTime) - toMins(next.startTime)
+        next.duration = d > 0 ? String(d) : prev.duration
+      } else if (field === 'startTime' && hasDur) {
+        // start + duration → end
+        next.endTime = fromMins(toMins(next.startTime) + Number(next.duration))
+      } else if (field === 'endTime' && hasStart) {
+        // end + start → duration
+        const d = toMins(next.endTime) - toMins(next.startTime)
+        next.duration = d > 0 ? String(d) : prev.duration
+      } else if (field === 'endTime' && hasDur) {
+        // end + duration → start
+        next.startTime = fromMins(toMins(next.endTime) - Number(next.duration))
+      } else if (field === 'duration' && hasStart) {
+        // duration + start → end
+        next.endTime = fromMins(toMins(next.startTime) + Number(value))
+      } else if (field === 'duration' && hasEnd) {
+        // duration + end → start
+        next.startTime = fromMins(toMins(next.endTime) - Number(value))
+      }
+
+      return next
+    })
+  }
+
+  // Which field is auto-derived (disable it)
+  const derived = (() => {
+    const hasStart = form.startTime !== ''
+    const hasEnd = form.endTime !== ''
+    const hasDur = form.duration !== '' && Number(form.duration) > 0
+    if (hasStart && hasEnd) return 'duration'
+    if (hasStart && hasDur) return 'endTime'
+    if (hasEnd && hasDur) return 'startTime'
+    return null
+  })()
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     const startAt = (!isWeekly && form.startTime) ? new Date(`${form.date}T${form.startTime}`).toISOString() : null
@@ -147,22 +203,44 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
           <Input id="pi-date" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} /></div>
 
         {!isWeekly && (
-          <div className="grid grid-cols-2 gap-3">
-            <div><Label htmlFor="pi-start">Start time</Label>
-              <Input id="pi-start" type="time" value={form.startTime} onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))} /></div>
-            <div><Label htmlFor="pi-end">End time</Label>
-              <Input id="pi-end" type="time" value={form.endTime} onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))} /></div>
-          </div>
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <Label htmlFor="pi-start">
+                  Start time {derived === 'startTime' && <span className="text-[10px] text-violet-400 font-normal">(auto)</span>}
+                </Label>
+                <Input id="pi-start" type="time" value={form.startTime}
+                  onChange={e => handleTimeChange('startTime', e.target.value)}
+                  className={derived === 'startTime' ? 'bg-violet-50 text-violet-700' : ''} />
+              </div>
+              <div>
+                <Label htmlFor="pi-end">
+                  End time {derived === 'endTime' && <span className="text-[10px] text-violet-400 font-normal">(auto)</span>}
+                </Label>
+                <Input id="pi-end" type="time" value={form.endTime}
+                  onChange={e => handleTimeChange('endTime', e.target.value)}
+                  className={derived === 'endTime' ? 'bg-violet-50 text-violet-700' : ''} />
+              </div>
+              <div>
+                <Label htmlFor="pi-dur">
+                  Duration (min) {derived === 'duration' && <span className="text-[10px] text-violet-400 font-normal">(auto)</span>}
+                </Label>
+                <Input id="pi-dur" type="number" value={form.duration}
+                  onChange={e => handleTimeChange('duration', e.target.value)}
+                  placeholder="30" min="1"
+                  className={derived === 'duration' ? 'bg-violet-50 text-violet-700' : ''} />
+              </div>
+            </div>
+            {(form.startTime || form.endTime || form.duration) && (
+              <p className="text-xs text-zinc-400 -mt-2">
+                Fill any two — the third is calculated automatically.
+              </p>
+            )}
+          </>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
-          {!isWeekly && (
-            <div><Label htmlFor="pi-dur">Duration (min)</Label>
-              <Input id="pi-dur" type="number" value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} placeholder="30" min="1" /></div>
-          )}
-          <div className={isWeekly ? 'col-span-2' : ''}><Label htmlFor="pi-assign">Assigned to</Label>
-            <Input id="pi-assign" value={form.assignedTo} onChange={e => setForm(f => ({ ...f, assignedTo: e.target.value }))} placeholder="MC, Coordinator…" /></div>
-        </div>
+        <div><Label htmlFor="pi-assign">Assigned to</Label>
+          <Input id="pi-assign" value={form.assignedTo} onChange={e => setForm(f => ({ ...f, assignedTo: e.target.value }))} placeholder="MC, Coordinator…" /></div>
 
         <div><Label htmlFor="pi-desc">Description</Label>
           <Input id="pi-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Additional details" /></div>
@@ -276,49 +354,423 @@ export function WeekProgram({ items, eventDate, onEdit, onDelete }: Readonly<{
 
 // ─── Contacts Sub-tab ─────────────────────────────────────────────────────────
 
-export function ContactsTab({ vendors }: Readonly<{ vendors: Vendor[] }>) {
-  if (vendors.length === 0) return (
-    <EmptyState icon={<Phone size={40} />} title="No confirmed vendors" description="Confirmed and booked vendors appear here" />
-  )
+interface EventContact {
+  id: string; name: string; role?: string | null; phone?: string | null
+  email?: string | null; notes?: string | null
+}
+
+function ContactModal({ weddingId, eventId, contact, onClose, onDone }: Readonly<{
+  weddingId: string; eventId: string; contact?: EventContact; onClose: () => void; onDone: () => void
+}>) {
+  const { toast } = useToast()
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState({
+    name: contact?.name ?? '',
+    role: contact?.role ?? '',
+    phone: contact?.phone ?? '',
+    email: contact?.email ?? '',
+    notes: contact?.notes ?? '',
+  })
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm(f => ({ ...f, [k]: e.target.value }))
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); setSaving(true)
+    try {
+      const url = contact
+        ? `/api/weddings/${weddingId}/events/${eventId}/contacts/${contact.id}`
+        : `/api/weddings/${weddingId}/events/${eventId}/contacts`
+      const res = await fetch(url, {
+        method: contact ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Failed to save contact')
+      toast(contact ? 'Contact updated' : 'Contact added', 'success')
+      onDone(); onClose()
+    } catch { toast('Failed to save contact', 'error') }
+    finally { setSaving(false) }
+  }
+
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-      {vendors.map(v => (
-        <div key={v.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#14161C]">{v.name}</p>
-            <p className="text-xs text-zinc-400">{v.category.replaceAll('_', ' ')}</p>
-          </div>
-          {v.contactPhone && (
-            <a href={`tel:${v.contactPhone}`} className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors flex-shrink-0">
-              <Phone size={13} /> {v.contactPhone}
-            </a>
-          )}
+    <Modal title={contact ? 'Edit contact' : 'Add contact'} onClose={onClose}>
+      <form onSubmit={e => void handleSubmit(e)} className="space-y-4">
+        <div><Label>Name *</Label><Input value={form.name} onChange={set('name')} required placeholder="e.g. John Kamau" /></div>
+        <div><Label>Role / Title</Label><Input value={form.role} onChange={set('role')} placeholder="e.g. MC, Caterer, Coordinator" /></div>
+        <div><Label>Phone</Label><Input value={form.phone} onChange={set('phone')} placeholder="+254 7XX XXX XXX" /></div>
+        <div><Label>Email</Label><Input value={form.email} onChange={set('email')} type="email" placeholder="email@example.com" /></div>
+        <div><Label>Notes</Label><Input value={form.notes} onChange={set('notes')} placeholder="Any extra info" /></div>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button type="submit" disabled={saving}>{saving ? 'Saving…' : contact ? 'Save changes' : 'Add contact'}</Button>
         </div>
-      ))}
+      </form>
+    </Modal>
+  )
+}
+
+export function ContactsTab({ weddingId, eventId, vendors, showAdd, onCloseAdd }: Readonly<{
+  weddingId: string; eventId: string; vendors: Vendor[]
+  showAdd?: boolean; onCloseAdd?: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [subTab, setSubTab] = useState<'key-people' | 'vendors-on-duty'>('vendors-on-duty')
+  const [editing, setEditing] = useState<EventContact | null>(null)
+  const [deleting, setDeleting] = useState<EventContact | null>(null)
+
+  const { data: contacts = [], isLoading } = useQuery<EventContact[]>({
+    queryKey: ['event-contacts', eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/events/${eventId}/contacts`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<EventContact[]>
+    },
+    staleTime: 30_000,
+  })
+
+  const refresh = () => void qc.invalidateQueries({ queryKey: ['event-contacts', eventId] })
+
+  const handleDelete = async (c: EventContact) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/events/${eventId}/contacts/${c.id}`, { method: 'DELETE' })
+      toast('Contact deleted', 'success'); refresh()
+    } catch { toast('Failed to delete', 'error') }
+    setDeleting(null)
+  }
+
+  if (isLoading) return <div className="flex justify-center py-8"><Spinner /></div>
+
+  return (
+    <div className="space-y-4">
+      {/* Sub-tabs */}
+      <div className="flex gap-1 bg-zinc-100 rounded-2xl p-1 w-fit">
+        {([
+          { key: 'vendors-on-duty', label: 'Vendors on Duty', count: vendors.length },
+          { key: 'key-people',      label: 'Key People',      count: contacts.length },
+        ] as const).map(t => (
+          <button key={t.key} type="button" onClick={() => setSubTab(t.key)}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs transition-all ${subTab === t.key ? 'bg-white text-[#14161C] font-bold shadow-sm' : 'text-zinc-400 font-medium hover:text-zinc-600'}`}>
+            {t.label}
+            {t.count > 0 && <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${subTab === t.key ? 'bg-zinc-100 text-zinc-500' : 'bg-zinc-200 text-zinc-400'}`}>{t.count}</span>}
+          </button>
+        ))}
+      </div>
+
+      {/* Vendors on Duty */}
+      {subTab === 'vendors-on-duty' && (
+        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+          {vendors.length === 0 ? (
+            <div className="py-12 text-center">
+              <Phone size={32} className="mx-auto text-zinc-200 mb-3" />
+              <p className="text-sm font-semibold text-zinc-400">No vendors assigned to this event</p>
+              <p className="text-xs text-zinc-300 mt-1">Assign vendors from the Vendors tab</p>
+            </div>
+          ) : vendors.map(v => (
+            <div key={v.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
+              <div className="w-8 h-8 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0">
+                {v.name.charAt(0)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#14161C]">{v.name}</p>
+                <p className="text-xs text-zinc-400">{v.category.replaceAll('_', ' ')}</p>
+              </div>
+              {v.contactPhone && (
+                <a href={`tel:${v.contactPhone}`} className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors flex-shrink-0">
+                  <Phone size={13} /> {v.contactPhone}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Key People */}
+      {subTab === 'key-people' && (
+        <div className="space-y-3">
+          <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+            {contacts.length === 0 ? (
+              <div className="py-12 text-center">
+                <Phone size={32} className="mx-auto text-zinc-200 mb-3" />
+                <p className="text-sm font-semibold text-zinc-400">No key people added yet</p>
+                <p className="text-xs text-zinc-300 mt-1">Add the MC, pastor, family coordinator or anyone else to call on the day</p>
+              </div>
+            ) : contacts.map(c => (
+              <div key={c.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
+                <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500 flex-shrink-0">
+                  {c.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C]">{c.name}</p>
+                  {c.role && <p className="text-xs text-zinc-400">{c.role}</p>}
+                  {c.notes && <p className="text-xs text-zinc-400 italic mt-0.5">{c.notes}</p>}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {c.phone && (
+                    <a href={`tel:${c.phone}`} className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors">
+                      <Phone size={13} /> {c.phone}
+                    </a>
+                  )}
+                  <button onClick={() => setEditing(c)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+                  <button onClick={() => setDeleting(c)} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Add contact modal — only for Key People */}
+      {showAdd && (
+        <ContactModal
+          weddingId={weddingId} eventId={eventId}
+          onClose={() => { onCloseAdd?.(); setSubTab('key-people') }}
+          onDone={refresh}
+        />
+      )}
+      {editing && (
+        <ContactModal
+          weddingId={weddingId} eventId={eventId}
+          contact={editing}
+          onClose={() => setEditing(null)}
+          onDone={refresh}
+        />
+      )}
+      {deleting && (
+        <Modal title="Delete contact?" onClose={() => setDeleting(null)}>
+          <p className="text-sm text-zinc-600 mb-6">"{deleting.name}" will be permanently removed.</p>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setDeleting(null)}>Cancel</Button>
+            <Button variant="danger" onClick={() => void handleDelete(deleting)}>Delete</Button>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
 
 // ─── Incidents Sub-tab ────────────────────────────────────────────────────────
 
-export function IncidentsTab({ incidents }: Readonly<{ incidents: Incident[] }>) {
+interface IncidentNote { id: string; content: string; createdBy?: string | null; createdAt: string }
+
+function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, onRefresh, onDeleted }: Readonly<{
+  incident: Incident; weddingId: string
+  onClose: () => void; onRefresh: () => void; onDeleted: () => void
+}>) {
+  const { toast } = useToast()
+  // Own a local copy so UI updates immediately without waiting for parent re-fetch
+  const [inc, setInc] = useState(initialIncident)
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ description: inc.description, severity: inc.severity, resolution: inc.resolution ?? '' })
+  const [saving, setSaving] = useState(false)
+  const [noteText, setNoteText] = useState('')
+  const [addingNote, setAddingNote] = useState(false)
+  const noteRef = useRef<HTMLTextAreaElement>(null)
+
+  const { data: notes = [], refetch: refetchNotes } = useQuery<IncidentNote[]>({
+    queryKey: ['incident-notes', inc.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}/notes`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<IncidentNote[]>
+    },
+    staleTime: 0,
+  })
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Failed')
+      // Update local state immediately
+      setInc(prev => ({ ...prev, description: form.description, severity: form.severity, resolution: form.resolution || null }))
+      setEditing(false)
+      toast('Incident updated', 'success')
+      onRefresh()
+    } catch { toast('Failed to update', 'error') }
+    finally { setSaving(false) }
+  }
+
+  const handleResolve = async () => {
+    try {
+      const resolvedAt = new Date().toISOString()
+      await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resolvedAt }),
+      })
+      // Update local state — modal stays open showing resolved status
+      setInc(prev => ({ ...prev, resolvedAt }))
+      toast('Marked as resolved', 'success')
+      onRefresh()
+    } catch { toast('Failed', 'error') }
+  }
+
+  const handleDelete = async () => {
+    if (!confirm('Delete this incident?')) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}`, { method: 'DELETE' })
+      toast('Incident deleted', 'success')
+      onDeleted()
+      onClose()
+    } catch { toast('Failed to delete', 'error') }
+  }
+
+  const handleAddNote = async () => {
+    if (!noteText.trim()) return
+    setAddingNote(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}/notes`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: noteText.trim() }),
+      })
+      setNoteText('')
+      await refetchNotes()
+      toast('Note added', 'success')
+    } catch { toast('Failed to add note', 'error') }
+    finally { setAddingNote(false) }
+  }
+
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}/notes/${noteId}`, { method: 'DELETE' })
+      await refetchNotes()
+    } catch { toast('Failed to delete note', 'error') }
+  }
+
+  const sevColor: Record<string, string> = { LOW: 'text-zinc-500', MEDIUM: 'text-amber-600', HIGH: 'text-orange-600', CRITICAL: 'text-red-600' }
+
+  return (
+    <Modal title="Incident" onClose={onClose}>
+      <div className="space-y-5">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className={`text-xs font-bold uppercase ${sevColor[inc.severity] ?? 'text-zinc-500'}`}>{inc.severity}</span>
+            <span className="text-xs text-zinc-400">{format(new Date(inc.reportedAt), 'MMM d · h:mm a')}</span>
+            {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setEditing(v => !v)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+          </div>
+        </div>
+
+        {/* Edit form or read view */}
+        {editing ? (
+          <div className="space-y-3 bg-zinc-50 rounded-xl p-4">
+            <div>
+              <Label>Severity</Label>
+              <Select value={form.severity} onChange={e => setForm(f => ({ ...f, severity: e.target.value }))}>
+                {['LOW','MEDIUM','HIGH','CRITICAL'].map(s => <option key={s} value={s}>{s}</option>)}
+              </Select>
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} />
+            </div>
+            <div>
+              <Label>Resolution notes</Label>
+              <Textarea value={form.resolution} onChange={e => setForm(f => ({ ...f, resolution: e.target.value }))} rows={2} placeholder="How was this resolved?" />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
+              <Button size="sm" onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <p className="text-sm text-zinc-700">{inc.description}</p>
+            {inc.resolution && <p className="text-xs text-zinc-500 mt-1.5 italic border-l-2 border-zinc-200 pl-2">{inc.resolution}</p>}
+          </div>
+        )}
+
+        {!inc.resolvedAt && !editing && (
+          <button onClick={handleResolve} className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">
+            <CheckCircle2 size={13} /> Mark as resolved
+          </button>
+        )}
+
+        <hr className="border-zinc-100" />
+
+        {/* Activity log */}
+        <div>
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Activity log</p>
+          {notes.length === 0 ? (
+            <p className="text-xs text-zinc-400 py-2">No notes yet — log updates, actions taken, or follow-ups.</p>
+          ) : (
+            <div className="space-y-2 mb-3 max-h-48 overflow-y-auto scrollbar-thin">
+              {notes.map(n => (
+                <div key={n.id} className="flex items-start gap-2 group">
+                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-1.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-zinc-700 leading-relaxed">{n.content}</p>
+                    <p className="text-[10px] text-zinc-400 mt-0.5">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
+                  </div>
+                  <button onClick={() => void handleDeleteNote(n.id)}
+                    className="p-1 rounded text-zinc-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                    aria-label="Delete note"><Trash2 size={11} /></button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2 items-end">
+            <textarea ref={noteRef} value={noteText} onChange={e => setNoteText(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleAddNote() } }}
+              placeholder="Log an update or action taken… (Enter to submit)"
+              rows={2}
+              className="flex-1 text-sm rounded-xl border border-zinc-200 px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+            <Button size="sm" variant="lavender" onClick={handleAddNote} disabled={addingNote || !noteText.trim()}>
+              {addingNote ? '…' : 'Add'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
+export function IncidentsTab({ incidents, weddingId, onRefresh }: Readonly<{
+  incidents: Incident[]; weddingId: string; onRefresh: () => void
+}>) {
+  const [selected, setSelected] = useState<Incident | null>(null)
+
   if (incidents.length === 0) return (
     <EmptyState icon={<AlertTriangle size={40} />} title="No incidents" description="Log any issues that arise" />
   )
+
   return (
-    <div className="space-y-3">
-      {incidents.map(inc => (
-        <div key={inc.id} className={`rounded-xl p-4 ${SEV_COLOR[inc.severity] ?? 'border-l-4 border-zinc-300'}`}>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold text-zinc-500 uppercase">{inc.severity}</span>
-            <span className="text-xs text-zinc-400">{format(new Date(inc.reportedAt), 'h:mm a')}</span>
-            {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
-          </div>
-          <p className="text-sm text-zinc-700">{inc.description}</p>
-          {inc.resolution && <p className="text-xs text-zinc-500 mt-1 italic">{inc.resolution}</p>}
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="space-y-2">
+        {incidents.map(inc => (
+          <button key={inc.id} onClick={() => setSelected(inc)}
+            className={`w-full text-left rounded-xl p-4 transition-all hover:opacity-90 active:scale-[0.99] ${SEV_COLOR[inc.severity] ?? 'border-l-4 border-zinc-300'}`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-zinc-500 uppercase">{inc.severity}</span>
+                <span className="text-xs text-zinc-400">{format(new Date(inc.reportedAt), 'h:mm a')}</span>
+                {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
+              </div>
+              <Pencil size={12} className="text-zinc-300 flex-shrink-0" />
+            </div>
+            <p className="text-sm text-zinc-700 mt-1">{inc.description}</p>
+            {inc.resolution && <p className="text-xs text-zinc-500 mt-1 italic">{inc.resolution}</p>}
+          </button>
+        ))}
+      </div>
+
+      {selected && (
+        <IncidentDetailModal
+          incident={selected}
+          weddingId={weddingId}
+          onClose={() => setSelected(null)}
+          onRefresh={onRefresh}
+          onDeleted={() => { onRefresh(); setSelected(null) }}
+        />
+      )}
+    </>
   )
 }
 
@@ -333,6 +785,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
   const [subTab, setSubTab] = useState<'program' | 'contacts' | 'incidents'>('program')
   const [showIncident, setShowIncident] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
+  const [showAddContact, setShowAddContact] = useState(false)
   const [editingItem, setEditingItem] = useState<ProgramItem | null>(null)
   const [selectedDay, setSelectedDay] = useState(new Date(event.date))
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(event.date), { weekStartsOn: 1 }))
@@ -443,9 +896,10 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
               </div>
             </>
           )}
-          <Button size="sm" variant="danger" onClick={() => setShowIncident(true)}>
-            <AlertTriangle size={14} /> Log incident
-          </Button>
+          {subTab === 'contacts'
+            ? <Button size="sm" onClick={() => setShowAddContact(true)}><Plus size={13} /> Add contact</Button>
+            : <Button size="sm" variant="danger" onClick={() => setShowIncident(true)}><AlertTriangle size={14} /> Log incident</Button>
+          }
         </div>
       </div>
 
@@ -623,8 +1077,13 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                 <div className="absolute left-[2.75rem] top-0 bottom-0 w-px bg-zinc-100" />
                 <div className="space-y-0">
                   {dayItems.map((item, idx) => {
-                    const st = item.startTime ? format(new Date(item.startTime), 'HH:mm') : null
-                    const et = item.endTime ? format(new Date(item.endTime), 'HH:mm') : null
+                    const parseTime = (v: unknown) => {
+                      if (!v) return null
+                      const d = new Date(v as string)
+                      return isNaN(d.getTime()) ? null : format(d, 'HH:mm')
+                    }
+                    const st = parseTime(item.startTime)
+                    const et = parseTime(item.endTime)
                     return (
                       <div key={item.id} className="flex gap-3 py-2.5 group">
                         {/* Time column */}
@@ -669,8 +1128,8 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
         )
       )}
 
-      {subTab === 'contacts' && <ContactsTab vendors={vendors} />}
-      {subTab === 'incidents' && <IncidentsTab incidents={evIncidents} />}
+      {subTab === 'contacts' && <ContactsTab weddingId={weddingId} eventId={event.id} vendors={vendors} showAdd={showAddContact} onCloseAdd={() => setShowAddContact(false)} />}
+      {subTab === 'incidents' && <IncidentsTab incidents={evIncidents} weddingId={weddingId} onRefresh={onRefresh} />}
 
       {showAdd && (
         <ProgramItemModal

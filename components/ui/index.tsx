@@ -261,6 +261,27 @@ export function Spinner({ size = 'md' }: Readonly<{ size?: 'sm' | 'md' | 'lg' }>
   )
 }
 
+// ─── Confirm Dialog ───────────────────────────────────────────────────────────
+export function ConfirmDialog({ title, description, confirmLabel = 'Delete', onConfirm, onCancel, danger = true }: Readonly<{
+  title: string; description?: string; confirmLabel?: string
+  onConfirm: () => void; onCancel: () => void; danger?: boolean
+}>) {
+  return (
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-sm shadow-sm p-6 space-y-4">
+        <div>
+          <h2 className="font-bold text-base text-[#14161C]">{title}</h2>
+          {description && <p className="text-sm text-zinc-500 mt-1">{description}</p>}
+        </div>
+        <div className="flex gap-3">
+          <Button type="button" variant="secondary" onClick={onCancel} className="flex-1">Cancel</Button>
+          <Button type="button" variant={danger ? 'danger' : 'primary'} onClick={onConfirm} className="flex-1">{confirmLabel}</Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Modal Shell ──────────────────────────────────────────────────────────────
 export function Modal({ onClose, title, children }: Readonly<{
   onClose: () => void; title: string; children: React.ReactNode

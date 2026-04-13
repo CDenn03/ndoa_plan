@@ -30,7 +30,7 @@ export async function POST(req: NextRequest, props: Params) {
   const member = await db.weddingMember.findFirst({ where: { weddingId: id, userId } })
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const body = await req.json() as { guestId?: string; name?: string; phone?: string; side?: string; rsvpStatus?: string }
+  const body = await req.json() as { guestId?: string; name?: string; phone?: string; side?: string; rsvpStatus?: string; tags?: string[] }
 
   // If guestId provided, link existing guest; otherwise create a new guest first
   let guestId = body.guestId
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest, props: Params) {
       data: {
         weddingId: id, name: body.name,
         phone: body.phone ?? null, side: body.side ?? 'BOTH',
+        tags: body.tags ?? [],
         rsvpStatus: 'PENDING', version: 1, checksum: '', updatedBy: userId,
       },
     })

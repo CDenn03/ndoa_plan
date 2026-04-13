@@ -6,7 +6,7 @@ import { useGuests, useGuestStats } from '@/hooks/use-guests'
 import { useWeddingStore } from '@/store/wedding-store'
 import { useQuery } from '@tanstack/react-query'
 import {
-  GuestRow, AddGuestModal, EventGuestsTab, GuestsOverallTab,
+  GuestRow, AddGuestModal, EventGuestsTab, GuestsOverallTab, PRESET_TAGS,
 } from '@/components/features/guest-components'
 
 interface WeddingEvent { id: string; name: string; type: string; date: string }
@@ -19,6 +19,7 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
   const { guestFilter, setGuestFilter } = useWeddingStore()
   const [showAdd, setShowAdd] = useState(false)
   const [activeTab, setActiveTab] = useState('__overall__')
+  const [tagFilter, setTagFilter] = useState('all')
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
     queryKey: ['events', wid],
@@ -39,10 +40,11 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
     if (guestFilter.search && !g.name.toLowerCase().includes(guestFilter.search.toLowerCase())) return false
     if (guestFilter.rsvpStatus !== 'all' && g.rsvpStatus !== guestFilter.rsvpStatus) return false
     if (guestFilter.side !== 'all' && g.side !== guestFilter.side) return false
+    if (tagFilter !== 'all' && !(g.tags ?? []).includes(tagFilter)) return false
     return true
-  }), [guests, guestFilter])
+  }), [guests, guestFilter, tagFilter])
 
-  const hasFilter = guestFilter.search || guestFilter.rsvpStatus !== 'all' || guestFilter.side !== 'all'
+  const hasFilter = guestFilter.search || guestFilter.rsvpStatus !== 'all' || guestFilter.side !== 'all' || tagFilter !== 'all'
   const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
 
@@ -93,8 +95,12 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
                 <option value="GROOM">Groom</option>
                 <option value="BOTH">Both</option>
               </Select>
+              <Select value={tagFilter} onChange={e => setTagFilter(e.target.value)} className="w-auto" aria-label="Filter by category">
+                <option value="all">All categories</option>
+                {PRESET_TAGS.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+              </Select>
               {hasFilter && (
-                <Button variant="ghost" size="sm" onClick={() => setGuestFilter({ search: '', rsvpStatus: 'all', side: 'all' })}>
+                <Button variant="ghost" size="sm" onClick={() => { setGuestFilter({ search: '', rsvpStatus: 'all', side: 'all' }); setTagFilter('all') }}>
                   <X size={13} /> Clear
                 </Button>
               )}

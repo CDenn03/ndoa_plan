@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import {
   MapPin, Clock, Plus, DollarSign, Users,
-  ArrowLeft, CreditCard, Sparkles, Truck, Gift,
+  ArrowLeft, CreditCard, Sparkles, Truck, Gift, Camera,
   CalendarDays, LayoutTemplate, CheckSquare,
 } from 'lucide-react'
 import { Button, Spinner } from '@/components/ui'
@@ -25,6 +25,7 @@ import { EventGiftsTab } from '@/components/features/gift-modals'
 import type { GiftRegistryItem, GiftReceived } from '@/components/features/gift-modals'
 import { EventVendorsTab } from '@/components/features/vendor-components'
 import { MoodboardTab } from '@/components/features/moodboard-components'
+import { PhotographyTab } from '@/components/features/photography-components'
 import { EventBudgetTab } from '@/components/features/budget-components'
 import { EventScheduleTab } from '@/components/features/schedule-components'
 import type { Incident } from '@/components/features/schedule-components'
@@ -40,7 +41,7 @@ interface Props {
   }
 }
 
-type Tab = 'tasks' | 'budget' | 'guests' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule'
+type Tab = 'tasks' | 'budget' | 'guests' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule' | 'photography'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -237,6 +238,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'vendors', label: 'Vendors', icon: <Users size={13} /> },
   { key: 'gifts', label: 'Gifts', icon: <Gift size={13} /> },
   { key: 'vision', label: 'Vision', icon: <Sparkles size={13} /> },
+  { key: 'photography', label: 'Photography', icon: <Camera size={13} /> },
 ]
 
 export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
@@ -292,6 +294,7 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
         {activeTab === 'vendors' && <VendorsTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'gifts' && <GiftsTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'vision' && <MoodboardTab weddingId={weddingId} eventId={event.id} />}
+        {activeTab === 'photography' && <PhotographyTab weddingId={weddingId} eventId={event.id} />}
       </div>
     </div>
   )

@@ -5,7 +5,7 @@ import {
   Users, ShoppingBag, DollarSign, CheckSquare, AlertTriangle,
   LayoutDashboard, Menu, X, Heart, LogOut, Settings, UserCheck,
   CreditCard, Calendar, BarChart2, Image, FileText, Gift,
-  Truck, Zap, Sparkles, ChevronDown, ChevronRight,
+  Truck, Zap, Sparkles, ChevronDown, ChevronRight, Camera,
 } from 'lucide-react'
 import { cn } from '@/components/ui'
 import { useWeddingStore } from '@/store/wedding-store'
@@ -222,6 +222,7 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
             <SectionLabel>Content</SectionLabel>
             <div className="space-y-0.5">
               <NavLink href="/moodboard" label="Vision Board" icon={Image} />
+              <NavLink href="/photography" label="Photography" icon={Camera} />
               <NavLink href="/gifts" label="Gifts" icon={Gift} />
               <NavLink href="/documents" label="Documents" icon={FileText} />
             </div>

@@ -6,7 +6,7 @@ import { useBudgetLines } from '@/hooks/use-data'
 import { useQuery } from '@tanstack/react-query'
 import type { LocalBudgetLine } from '@/types'
 import {
-  BudgetLineModal, EventBudgetTab, CategoryBreakdown,
+  BudgetLineModal, EventBudgetTab, CategoryBreakdown, QuickPayModal,
   summarise, fmt, type WeddingEvent, type Vendor,
 } from '@/components/features/budget-components'
 
@@ -17,6 +17,7 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
   isLoading: boolean; weddingId: string; onAddLine: () => void
 }>) {
   const [editingLine, setEditingLine] = useState<LocalBudgetLine | null>(null)
+  const [payingLine, setPayingLine] = useState<LocalBudgetLine | null>(null)
   const { estimated: totalEstimated, actual: totalActual } = summarise(lines)
   const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
@@ -88,9 +89,10 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
       </div>
       <div>
         <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">All categories</p>
-        <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} />
+        <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} onPay={setPayingLine} />
       </div>
-      {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} />}
+      {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} onPay={setPayingLine} />}
+      {payingLine && <QuickPayModal weddingId={weddingId} line={payingLine} onClose={() => setPayingLine(null)} />}
     </div>
   )
 }
