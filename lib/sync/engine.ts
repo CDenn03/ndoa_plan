@@ -9,6 +9,9 @@ const BATCH_SIZE = 10
 const IN_FLIGHT_TIMEOUT_MS = 30_000
 const CIRCUIT_BREAK_THRESHOLD = 5
 const PRUNE_AFTER_MS = 72 * 60 * 60 * 1000
+// Half-open probe: after circuit opens, attempt a single probe after this delay.
+// Each failed probe doubles the cooldown up to 5 minutes.
+const CIRCUIT_BASE_PROBE_MS = 30_000
 
 function backoffMs(n: number): number {
   const expo = Math.min(2000 * Math.pow(2, n), 300_000)
@@ -17,15 +20,44 @@ function backoffMs(n: number): number {
 
 let consecutiveFailures = 0
 let circuitOpen = false
+let probeTimeout: ReturnType<typeof setTimeout> | null = null
+let probeAttempts = 0
+
+function scheduleProbe(weddingId: string): void {
+  if (probeTimeout) return
+  const delay = Math.min(CIRCUIT_BASE_PROBE_MS * Math.pow(2, probeAttempts), 300_000)
+  probeTimeout = setTimeout(async () => {
+    probeTimeout = null
+    // Half-open: try one real flush; recordSuccess/recordFailure will handle state
+    try {
+      const res = await fetch('/api/sync/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weddingId, operations: [], clientTimestamp: Date.now() }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      probeAttempts = 0
+      recordSuccess()
+    } catch {
+      probeAttempts++
+      scheduleProbe(weddingId)
+    }
+  }, delay)
+}
 
 function recordSuccess() {
   consecutiveFailures = 0
+  probeAttempts = 0
+  if (probeTimeout) { clearTimeout(probeTimeout); probeTimeout = null }
   if (circuitOpen) { circuitOpen = false; window.dispatchEvent(new CustomEvent('sync:circuit-closed')) }
 }
-function recordFailure() {
+
+function recordFailure(weddingId?: string) {
   consecutiveFailures++
   if (consecutiveFailures >= CIRCUIT_BREAK_THRESHOLD && !circuitOpen) {
-    circuitOpen = true; window.dispatchEvent(new CustomEvent('sync:circuit-open'))
+    circuitOpen = true
+    window.dispatchEvent(new CustomEvent('sync:circuit-open'))
+    if (weddingId) scheduleProbe(weddingId)
   }
 }
 
@@ -94,7 +126,7 @@ export async function flushBatch(weddingId: string): Promise<number> {
   } catch {
     await weddingDB.syncQueue.where('operationId').anyOf(opIds)
       .modify((op: SyncOperation) => { op.status = 'pending'; op.attemptCount = (op.attemptCount ?? 0) + 1; op.lastAttemptAt = Date.now() })
-    recordFailure()
+    recordFailure(weddingId)
     return 0
   }
 
@@ -149,6 +181,7 @@ export function startSyncWorker(weddingId: string, ms = 15_000): void {
 
 export function stopSyncWorker(): void {
   if (_interval) { clearInterval(_interval); _interval = null }
+  if (probeTimeout) { clearTimeout(probeTimeout); probeTimeout = null }
 }
 
 export function getSyncCircuitOpen(): boolean { return circuitOpen }

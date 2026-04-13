@@ -85,7 +85,7 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
                   <Button size="sm" variant="secondary"
                     className=" flex-shrink-0"
                     onClick={() => resolve(r.id)}>
-                    <CheckCircle2 size={13} /> Resolve
+                    <CheckCircle2 size={13} /> Mark as Resolved
                   </Button>
                 </div>
               ))}

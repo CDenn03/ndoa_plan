@@ -11,7 +11,7 @@ import { cn } from '@/components/ui'
 import { useWeddingStore } from '@/store/wedding-store'
 import { signOut } from 'next-auth/react'
 import { useSync } from '@/components/sync-provider'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 interface WeddingEvent { id: string; name: string; type: string }
@@ -20,6 +20,36 @@ const EVENT_TYPE_COLORS: Record<string, string> = {
   WEDDING: 'bg-violet-400', RURACIO: 'bg-amber-400', RECEPTION: 'bg-sky-400',
   ENGAGEMENT: 'bg-pink-400', TRADITIONAL: 'bg-orange-400', CIVIL: 'bg-emerald-400',
   AFTER_PARTY: 'bg-purple-400', HONEYMOON: 'bg-rose-400', MOVING: 'bg-zinc-400',
+}
+
+interface NavLinkProps {
+  href: string; label: string; icon: React.ElementType; indent?: boolean
+  base: string; pathname: string; toggleSidebar: () => void
+}
+
+function NavLink({ href, label, icon: Icon, indent = false, base, pathname, toggleSidebar }: NavLinkProps) {
+  const to = `${base}${href}`
+  const active = href === '' ? pathname === base : pathname === to || pathname.startsWith(to + '/')
+  return (
+    <Link
+      href={to}
+      onClick={() => { if (window.innerWidth < 1024) toggleSidebar() }}
+      className={cn(
+        'flex items-center gap-2.5 py-2 rounded-xl text-sm transition-colors',
+        indent ? 'px-2.5 ml-4 text-xs' : 'px-3',
+        active
+          ? 'bg-[#CDB5F7]/20 text-violet-700 font-semibold'
+          : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium'
+      )}
+    >
+      <Icon size={indent ? 13 : 15} className={active ? 'text-violet-600' : 'text-zinc-400'} />
+      <span className="flex-1 truncate">{label}</span>
+    </Link>
+  )
+}
+
+function SectionLabel({ children }: { children: string }) {
+  return <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 px-3 pt-3 pb-1">{children}</p>
 }
 
 interface SidebarProps {
@@ -33,10 +63,9 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
   const { sidebarOpen, toggleSidebar } = useWeddingStore()
   const { isOnline, circuitOpen } = useSync()
   const base = `/dashboard/${weddingId}`
-  const [mounted, setMounted] = useState(false)
+  const [mounted] = useState(() => typeof window !== 'undefined')
   const [eventsExpanded, setEventsExpanded] = useState(true)
 
-  useEffect(() => { setMounted(true) }, [])
   const open = mounted && sidebarOpen
 
   const { data: events = [] } = useQuery<WeddingEvent[]>({
@@ -49,38 +78,6 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
     staleTime: 60_000,
     enabled: mounted,
   })
-
-  const isActive = (href: string) => {
-    if (href === '') return pathname === base
-    const to = `${base}${href}`
-    return pathname === to || pathname.startsWith(to + '/')
-  }
-
-  const NavLink = ({ href, label, icon: Icon, indent = false }: {
-    href: string; label: string; icon: React.ElementType; indent?: boolean
-  }) => {
-    const active = isActive(href)
-    return (
-      <Link
-        href={`${base}${href}`}
-        onClick={() => { if (window.innerWidth < 1024) toggleSidebar() }}
-        className={cn(
-          'flex items-center gap-2.5 py-2 rounded-xl text-sm transition-colors',
-          indent ? 'px-2.5 ml-4 text-xs' : 'px-3',
-          active
-            ? 'bg-[#CDB5F7]/20 text-violet-700 font-semibold'
-            : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium'
-        )}
-      >
-        <Icon size={indent ? 13 : 15} className={active ? 'text-violet-600' : 'text-zinc-400'} />
-        <span className="flex-1 truncate">{label}</span>
-      </Link>
-    )
-  }
-
-  const SectionLabel = ({ children }: { children: string }) => (
-    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 px-3 pt-3 pb-1">{children}</p>
-  )
 
   return (
     <>
@@ -130,7 +127,7 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
         <nav className="flex-1 px-3 py-3 overflow-y-auto scrollbar-thin">
 
           {/* Overview — always first */}
-          <NavLink href="" label="Overview" icon={LayoutDashboard} />
+          <NavLink href="" label="Overview" icon={LayoutDashboard} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
 
           {/* ── Events ── collapsible with dynamic sub-items */}
           <div className="mt-1">
@@ -141,7 +138,7 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
                 {eventsExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
               </button>
             </div>
-            <NavLink href="/events" label="All events" icon={Calendar} />
+            <NavLink href="/events" label="All events" icon={Calendar} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             {eventsExpanded && events.length > 0 && (
               <ul className="mt-0.5 space-y-0.5">
                 {events.map(ev => {
@@ -171,10 +168,10 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Planning</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/checklist" label="Tasks" icon={CheckSquare} />
-              <NavLink href="/appointments" label="Appointments" icon={Sparkles} />
+              <NavLink href="/checklist" label="Tasks" icon={CheckSquare} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/appointments" label="Appointments" icon={Sparkles} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               {culturalType && culturalType !== 'STANDARD' && (
-                <NavLink href="/dowry" label="Dowry" icon={Heart} />
+                <NavLink href="/dowry" label="Dowry" icon={Heart} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               )}
             </div>
           </div>
@@ -183,9 +180,9 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>People</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/guests" label="Guests" icon={Users} />
-              <NavLink href="/guests/check-in" label="Check-in" icon={UserCheck} indent />
-              <NavLink href="/vendors" label="Vendors" icon={ShoppingBag} />
+              <NavLink href="/guests" label="Guests" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/guests/check-in" label="Check-in" icon={UserCheck} indent base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/vendors" label="Vendors" icon={ShoppingBag} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
@@ -193,9 +190,9 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Finance</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/budget" label="Budget" icon={DollarSign} />
-              <NavLink href="/payments" label="Payments" icon={CreditCard} />
-              <NavLink href="/contributions" label="Contributions" icon={Users} />
+              <NavLink href="/budget" label="Budget" icon={DollarSign} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/payments" label="Payments" icon={CreditCard} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/contributions" label="Contributions" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
@@ -203,8 +200,8 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Execution</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/logistics" label="Logistics" icon={Truck} />
-              <NavLink href="/day-of" label="Schedule" icon={Zap} />
+              <NavLink href="/logistics" label="Logistics" icon={Truck} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/day-of" label="Schedule" icon={Zap} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
@@ -212,8 +209,8 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Insights</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/risks" label="Risk Alerts" icon={AlertTriangle} />
-              <NavLink href="/analytics" label="Analytics" icon={BarChart2} />
+              <NavLink href="/risks" label="Risk Alerts" icon={AlertTriangle} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/analytics" label="Analytics" icon={BarChart2} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
@@ -221,17 +218,17 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Content</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/moodboard" label="Vision Board" icon={Image} />
-              <NavLink href="/photography" label="Photography" icon={Camera} />
-              <NavLink href="/gifts" label="Gifts" icon={Gift} />
-              <NavLink href="/documents" label="Documents" icon={FileText} />
+              <NavLink href="/moodboard" label="Vision Board" icon={Image} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/photography" label="Photography" icon={Camera} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/gifts" label="Gifts" icon={Gift} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/documents" label="Documents" icon={FileText} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
           {/* ── Settings */}
           <div className="mt-1 pb-2">
             <SectionLabel>Settings</SectionLabel>
-            <NavLink href="/settings" label="Settings" icon={Settings} />
+            <NavLink href="/settings" label="Settings" icon={Settings} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
           </div>
 
         </nav>

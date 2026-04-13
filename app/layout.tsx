@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import './globals.css'
 
@@ -7,6 +7,13 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-jakarta',
   weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -25,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jakarta.variable} suppressHydrationWarning>
+    <html lang="en" className={`${jakarta.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-stone-50 text-[#14161C] antialiased font-jakarta">
         <Providers>{children}</Providers>
       </body>

@@ -54,6 +54,13 @@ const config: Config = {
         'risk-high': '#BA7517',
         'risk-medium': '#378ADD',
         'risk-low': '#639922',
+        // Brand tokens
+        'brand-green':      '#1F4D3A',
+        'brand-green-dark': '#16382B',
+        'brand-gold':       '#D4A94F',
+        'brand-gold-light': '#E6C878',
+        'brand-bg':         '#F7F5F2',
+        'brand-dark':       '#0F172A',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -63,7 +70,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
         jakarta: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-playfair)', 'Georgia', 'serif'],
+        display: ['var(--font-playfair)', 'Georgia', 'serif'],
         mono: ['var(--font-mono)', 'monospace'],
       },
       keyframes: {

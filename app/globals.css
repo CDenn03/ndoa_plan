@@ -70,3 +70,30 @@
   }
   .modal-slide-up { animation: slide-up 0.2s ease-out; }
 }
+
+/* Orbit animations for landing page */
+@keyframes orbit-node {
+  from { transform: rotate(var(--start, 0deg)) translateX(var(--r, 100px)) rotate(calc(-1 * var(--start, 0deg))); }
+  to   { transform: rotate(calc(var(--start, 0deg) + 360deg)) translateX(var(--r, 100px)) rotate(calc(-1 * (var(--start, 0deg) + 360deg))); }
+}
+@keyframes counter-orbit {
+  /* keeps the node card upright while the anchor rotates */
+  from { transform: translate(-50%, -50%) rotate(calc(-1 * var(--start, 0deg))); }
+  to   { transform: translate(-50%, -50%) rotate(calc(-1 * (var(--start, 0deg) + 360deg))); }
+}
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+.animate-float {
+  animation: float-badge 3s ease-in-out infinite;
+}
+
+/* Ticker scroll */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
