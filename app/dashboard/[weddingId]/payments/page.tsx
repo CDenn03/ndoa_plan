@@ -51,24 +51,24 @@ function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Paymen
   return (
     <div className="space-y-8">
       <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total received</p>
+        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total received</p>
           <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalReceived)}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total payments</p>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total payments</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{payments.length}</p></div>
-        {pendingCount > 0 && <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Pending</p>
+        {pendingCount > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Pending</p>
           <p className="text-2xl font-extrabold text-amber-500">{pendingCount}</p></div>}
       </div>
       <div className="space-y-3">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, payments: evPays }]) => {
           if (evPays.length === 0) return null
           const evTotal = evPays.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
           return (
-            <div key={key} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+            <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-zinc-400" />
+                <CalendarDays size={15} className="text-[#14161C]/40" />
                 <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
-                <span className="text-xs text-zinc-400">{evPays.length} payments</span>
+                <span className="text-xs text-[#14161C]/40">{evPays.length} payments</span>
               </div>
               <p className="text-sm font-bold text-emerald-600">{fmt(evTotal)}</p>
             </div>
@@ -77,19 +77,19 @@ function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Paymen
       </div>
       <div>
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">All payments</p>
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">All payments</p>
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
             {(['all', 'pending', 'completed'] as const).map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {f === 'all' ? `All (${payments.length})` : f === 'pending' ? `Pending (${pendingCount})` : `Completed (${payments.filter(p => p.status === 'COMPLETED').length})`}
               </button>
             ))}
           </div>
         </div>
         {filtered.length === 0
-          ? <p className="text-sm text-zinc-400 text-center py-8">No {filter} payments</p>
-          : <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+          ? <p className="text-sm text-[#14161C]/40 text-center py-8">No {filter} payments</p>
+          : <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
               {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
             </div>}
       </div>
@@ -128,18 +128,18 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Payments</h1>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Payments</h1>
           </div>
-          <p className="text-sm text-zinc-400 mt-1 mb-6">{payments.length} payments · {fmt(totalReceived)} received</p>
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{payments.length} payments · {fmt(totalReceived)} received</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                   {t.label}
                 </button>
               ))

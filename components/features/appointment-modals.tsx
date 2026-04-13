@@ -186,14 +186,14 @@ export function AppointmentRow({ a, weddingId, vendors, onRefresh }: Readonly<{
 
   return (
     <>
-      <div className={`flex items-start gap-3 py-3.5 border-b border-zinc-100 last:border-0 ${isDone ? 'opacity-60' : ''}`}>
+      <div className={`flex items-start gap-3 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 ${isDone ? 'opacity-60' : ''}`}>
         {/* Checkbox */}
         <button onClick={toggleComplete} disabled={updating || isCancelled}
           className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            updating ? 'border-violet-300 bg-violet-100 animate-pulse cursor-wait' :
-            isCompleted ? 'bg-violet-500 border-violet-500' :
-            isCancelled ? 'bg-zinc-200 border-zinc-300 cursor-not-allowed' :
-            'border-zinc-300 hover:border-violet-400'
+            updating ? 'border-violet-300 bg-[#1F4D3A]/10 animate-pulse cursor-wait' :
+            isCompleted ? 'bg-[#1F4D3A]/60 border-violet-500' :
+            isCancelled ? 'bg-[#1F4D3A]/10 border-zinc-300 cursor-not-allowed' :
+            'border-zinc-300 hover:border-[#1F4D3A]/40'
           }`}
           aria-label={isCompleted ? 'Mark incomplete' : 'Mark complete'}>
           {updating ? (
@@ -206,49 +206,49 @@ export function AppointmentRow({ a, weddingId, vendors, onRefresh }: Readonly<{
               <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           ) : isCancelled ? (
-            <span className="text-[8px] font-bold text-zinc-400">✕</span>
+            <span className="text-[8px] font-bold text-[#14161C]/40">✕</span>
           ) : null}
         </button>
 
         {/* Date badge */}
-        <div className="w-9 h-9 rounded-xl bg-[#CDB5F7]/20 flex flex-col items-center justify-center flex-shrink-0">
-          <p className="text-sm font-extrabold text-violet-600 leading-none">{format(new Date(a.startAt), 'd')}</p>
-          <p className="text-[9px] font-semibold text-zinc-400 uppercase">{format(new Date(a.startAt), 'MMM')}</p>
+        <div className="w-9 h-9 rounded-xl bg-[#1F4D3A]/8 flex flex-col items-center justify-center flex-shrink-0">
+          <p className="text-sm font-extrabold text-[#1F4D3A] leading-none">{format(new Date(a.startAt), 'd')}</p>
+          <p className="text-[9px] font-semibold text-[#14161C]/40 uppercase">{format(new Date(a.startAt), 'MMM')}</p>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className={`text-sm font-semibold ${isDone ? 'line-through text-zinc-400' : 'text-[#14161C]'}`}>{a.title}</p>
+            <p className={`text-sm font-semibold ${isDone ? 'line-through text-[#14161C]/40' : 'text-[#14161C]'}`}>{a.title}</p>
             <Badge variant={STATUS_BADGE[a.status] ?? 'default'}>{a.status}</Badge>
           </div>
           <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-            <span className="text-xs text-zinc-400 flex items-center gap-1">
+            <span className="text-xs text-[#14161C]/40 flex items-center gap-1">
               <Clock size={10} /> {format(new Date(a.startAt), 'h:mm a')}
               {a.endAt ? ` – ${format(new Date(a.endAt), 'h:mm a')}` : ''}
             </span>
-            {a.location && <span className="text-xs text-zinc-400 flex items-center gap-1"><MapPin size={10} /> {a.location}</span>}
-            {a.vendor && <span className="text-xs text-violet-500 font-medium">{a.vendor.name}</span>}
+            {a.location && <span className="text-xs text-[#14161C]/40 flex items-center gap-1"><MapPin size={10} /> {a.location}</span>}
+            {a.vendor && <span className="text-xs text-[#1F4D3A]/70 font-medium">{a.vendor.name}</span>}
           </div>
-          {a.notes && <p className="text-xs text-zinc-400 mt-1">{a.notes}</p>}
+          {a.notes && <p className="text-xs text-[#14161C]/40 mt-1">{a.notes}</p>}
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-1 flex-shrink-0">
           {!isCancelled && !isCompleted && (
             <button onClick={cancelAppt} disabled={updating}
-              className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-red-500'}`} title="Cancel">
+              className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-[#14161C]/15 cursor-wait' : 'text-[#14161C]/40 hover:text-red-500'}`} title="Cancel">
               <XCircle size={13} />
             </button>
           )}
           {isCancelled && (
             <button onClick={cancelAppt} disabled={updating}
-              className={`p-1.5 rounded-lg hover:bg-zinc-100 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-zinc-600'}`} title="Restore">
+              className={`p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 transition-colors ${updating ? 'text-[#14161C]/15 cursor-wait' : 'text-[#14161C]/40 hover:text-[#14161C]/60'}`} title="Restore">
               <CheckCircle2 size={13} />
             </button>
           )}
-          <button onClick={() => setEditing(true)} disabled={updating} className={`p-1.5 rounded-lg hover:bg-zinc-100 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-zinc-600'}`} aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} disabled={updating} className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-zinc-200 cursor-wait' : 'text-zinc-400 hover:text-red-500'}`} aria-label="Delete"><Trash2 size={13} /></button>
+          <button onClick={() => setEditing(true)} disabled={updating} className={`p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 transition-colors ${updating ? 'text-[#14161C]/15 cursor-wait' : 'text-[#14161C]/40 hover:text-[#14161C]/60'}`} aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} disabled={updating} className={`p-1.5 rounded-lg hover:bg-red-50 transition-colors ${updating ? 'text-[#14161C]/15 cursor-wait' : 'text-[#14161C]/40 hover:text-red-500'}`} aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditAppointmentModal weddingId={weddingId} appointment={a} vendors={vendors} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -288,15 +288,15 @@ export function AppointmentLoadTemplateModal({ weddingId, eventId, onClose, onDo
   return (
     <Modal onClose={onClose} title="Load appointment template">
       <div className="space-y-3">
-        <p className="text-xs text-zinc-400">Adds suggested appointments to this event.</p>
+        <p className="text-xs text-[#14161C]/40">Adds suggested appointments to this event.</p>
         {loading ? <div className="flex justify-center py-8"><Spinner /></div> :
-          templates.length === 0 ? <p className="text-sm text-zinc-400 text-center py-6">No appointment templates available</p> :
+          templates.length === 0 ? <p className="text-sm text-[#14161C]/40 text-center py-6">No appointment templates available</p> :
           <div className="space-y-2">
             {templates.map(t => (
-              <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-zinc-100 last:border-0">
+              <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-[#1F4D3A]/8 last:border-0">
                 <div>
                   <p className="text-sm font-semibold text-[#14161C]">{t.name}</p>
-                  <p className="text-xs text-zinc-400">{(t.data as unknown[]).length} appointments</p>
+                  <p className="text-xs text-[#14161C]/40">{(t.data as unknown[]).length} appointments</p>
                 </div>
                 <Button size="sm" variant="lavender" onClick={() => void handleApply(t.id)} disabled={applying === t.id}>
                   {applying === t.id ? <Spinner size="sm" /> : 'Apply'}
@@ -345,17 +345,17 @@ export function AppointmentList({ appointments, weddingId, vendors, onRefresh }:
       {/* Progress */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-500">Progress</span>
-          <span className="font-bold text-violet-600">{pct}% · {completed}/{appointments.length}</span>
+          <span className="text-[#14161C]/55">Progress</span>
+          <span className="font-bold text-[#1F4D3A]">{pct}% · {completed}/{appointments.length}</span>
         </div>
         <ProgressBar value={completed} max={appointments.length} />
       </div>
 
       {/* Filters */}
-      <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
         {(['all', 'pending', 'done'] as const).map(f => (
           <button key={f} onClick={() => setStatusFilter(f)}
-            className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
             {f}
           </button>
         ))}
@@ -368,8 +368,8 @@ export function AppointmentList({ appointments, weddingId, vendors, onRefresh }:
           {/* Pending grouped by month */}
           {Object.entries(grouped).map(([month, appts]) => (
             <div key={month}>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">{month}</p>
-              <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">{month}</p>
+              <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
                 {appts.map(a => <AppointmentRow key={a.id} a={a} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />)}
               </div>
             </div>
@@ -378,8 +378,8 @@ export function AppointmentList({ appointments, weddingId, vendors, onRefresh }:
           {/* Done section */}
           {done.length > 0 && (
             <div>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Completed / Cancelled</p>
-              <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">Completed / Cancelled</p>
+              <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
                 {done.map(a => <AppointmentRow key={a.id} a={a} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />)}
               </div>
             </div>
@@ -405,7 +405,7 @@ export function EventAppointmentsTab({ weddingId, userId, eventId, vendors, appo
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-[#14161C]/40">
           {completed}/{eventAppts.length} completed
         </p>
         <div className="flex gap-2">

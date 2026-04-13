@@ -10,13 +10,13 @@ import Link from 'next/link'
 const EVENT_TYPES = ['RURACIO','WEDDING','RECEPTION','POST_WEDDING','TRADITIONAL','CIVIL','ENGAGEMENT','AFTER_PARTY','HONEYMOON','MOVING']
 
 const TYPE_COLOR: Record<string, string> = {
-  WEDDING: 'bg-violet-100 text-violet-700',
+  WEDDING: 'bg-[#1F4D3A]/10 text-[#1F4D3A]',
   RURACIO: 'bg-amber-100 text-amber-700',
   RECEPTION: 'bg-sky-100 text-sky-700',
   ENGAGEMENT: 'bg-pink-100 text-pink-700',
   HONEYMOON: 'bg-emerald-100 text-emerald-700',
   TRADITIONAL: 'bg-orange-100 text-orange-700',
-  CIVIL: 'bg-zinc-100 text-zinc-600',
+  CIVIL: 'bg-[#1F4D3A]/6 text-[#14161C]/60',
   AFTER_PARTY: 'bg-purple-100 text-purple-700',
   POST_WEDDING: 'bg-teal-100 text-teal-700',
   MOVING: 'bg-blue-100 text-blue-700',
@@ -114,61 +114,61 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
     return (
       <Link
         href={`/dashboard/${weddingId}/events/${ev.id}`}
-        className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors group"
+        className="flex items-start gap-4 py-4 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors group"
       >
-        <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isPast ? 'bg-zinc-100' : 'bg-[#E5DF98]/40 border border-[#E5DF98]'}`}>
+        <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isPast ? 'bg-[#1F4D3A]/6' : 'bg-[#E5DF98]/40 border border-[#E5DF98]'}`}>
           {isPast ? (
-            <p className="text-xs font-semibold text-zinc-400">Done</p>
+            <p className="text-xs font-semibold text-[#14161C]/40">Done</p>
           ) : (
             <>
               <p className="text-lg font-extrabold text-[#14161C] leading-none">{daysLeft}</p>
-              <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wide">days</p>
+              <p className="text-[9px] font-semibold text-[#14161C]/55 uppercase tracking-wide">days</p>
             </>
           )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold text-[#14161C]">{ev.name}</p>
-            {ev.isMain && <span className="text-[10px] font-bold bg-violet-100 text-violet-600 rounded-full px-2 py-0.5">Main</span>}
-            <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${TYPE_COLOR[ev.type] ?? 'bg-zinc-100 text-zinc-600'}`}>
+            {ev.isMain && <span className="text-[10px] font-bold bg-[#1F4D3A]/10 text-[#1F4D3A] rounded-full px-2 py-0.5">Main</span>}
+            <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${TYPE_COLOR[ev.type] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/60'}`}>
               {ev.type.replaceAll('_', ' ')}
             </span>
           </div>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-[#14161C]/40 mt-0.5">
             {format(new Date(ev.date), 'EEEE, d MMMM yyyy')}
             {ev.startTime && <> · <Clock size={10} className="inline" /> {ev.startTime}{ev.endTime ? ` – ${ev.endTime}` : ''}</>}
           </p>
           {ev.venue && (
-            <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+            <p className="text-xs text-[#14161C]/40 mt-0.5 flex items-center gap-1">
               <MapPin size={10} /> {ev.venue}
             </p>
           )}
           <div className="flex items-center gap-4 mt-1.5">
             {ev.taskCount > 0 && (
-              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+              <span className="flex items-center gap-1 text-[11px] text-[#14161C]/40">
                 <CheckSquare size={10} /> {ev.taskCount} task{ev.taskCount !== 1 ? 's' : ''}
               </span>
             )}
             {ev.budgetLineCount > 0 && (
-              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+              <span className="flex items-center gap-1 text-[11px] text-[#14161C]/40">
                 <DollarSign size={10} /> {ev.budgetLineCount} budget line{ev.budgetLineCount !== 1 ? 's' : ''}
               </span>
             )}
           </div>
         </div>
-        <ChevronRight size={14} className="text-zinc-300 group-hover:text-zinc-500 transition-colors flex-shrink-0 mt-1" />
+        <ChevronRight size={14} className="text-[#14161C]/25 group-hover:text-[#14161C]/55 transition-colors flex-shrink-0 mt-1" />
       </Link>
     )
   }
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Planning</p>
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Events</h1>
-            <p className="text-sm text-zinc-400 mt-2">{events.length} event{events.length !== 1 ? 's' : ''} · {upcoming.length} upcoming</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Planning</p>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Events</h1>
+            <p className="text-sm text-[#14161C]/40 mt-2">{events.length} event{events.length !== 1 ? 's' : ''} · {upcoming.length} upcoming</p>
           </div>
           <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add event</Button>
         </div>
@@ -186,16 +186,16 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
           <>
             {upcoming.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Upcoming</p>
-                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">Upcoming</p>
+                <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
                   {upcoming.map(ev => <EventCard key={ev.id} ev={ev} />)}
                 </div>
               </div>
             )}
             {past.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Past</p>
-                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4 opacity-60">
+                <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">Past</p>
+                <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4 opacity-60">
                   {past.map(ev => <EventCard key={ev.id} ev={ev} />)}
                 </div>
               </div>

@@ -46,10 +46,10 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       memberId: body.memberId ?? userId,
       memberName: body.memberName,
       pledgeAmount: body.pledgeAmount,
-      paidAmount: 0,
+      paidAmount: body.paidAmount ?? 0,
       eventId: body.eventId || null,
       dueDate: body.dueDate ? new Date(body.dueDate) : null,
-      status: 'PLEDGED',
+      status: body.status ?? 'PLEDGED',
       notes: body.notes ?? null,
     },
   })

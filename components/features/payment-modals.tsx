@@ -34,7 +34,7 @@ const STATUS_ICON: Record<string, typeof CheckCircle2> = {
 function iconBg(status: string) {
   if (status === 'COMPLETED') return 'bg-emerald-50 text-emerald-600'
   if (status === 'DISPUTED' || status === 'FAILED') return 'bg-red-50 text-red-500'
-  return 'bg-zinc-100 text-zinc-400'
+  return 'bg-[#1F4D3A]/6 text-[#14161C]/40'
 }
 
 // ─── Payment Row ──────────────────────────────────────────────────────────────
@@ -42,16 +42,16 @@ function iconBg(status: string) {
 export function PaymentRow({ p, onDelete }: Readonly<{ p: Payment; onDelete?: (p: Payment) => void }>) {
   const Icon = STATUS_ICON[p.status] ?? Clock
   return (
-    <div className="flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 px-6 group">
+    <div className="flex items-center gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 px-6 group">
       <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconBg(p.status)}`}>
         <Icon size={15} />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-[#14161C]">{p.payerName ?? p.payerPhone ?? 'Unknown payer'}</p>
         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          {p.mpesaRef && <span className="text-xs text-zinc-400 font-mono">{p.mpesaRef}</span>}
-          {p.description && <span className="text-xs text-zinc-400 truncate max-w-48">{p.description}</span>}
-          <span className="text-xs text-zinc-400">{format(new Date(p.createdAt), 'MMM d, HH:mm')}</span>
+          {p.mpesaRef && <span className="text-xs text-[#14161C]/40 font-mono">{p.mpesaRef}</span>}
+          {p.description && <span className="text-xs text-[#14161C]/40 truncate max-w-48">{p.description}</span>}
+          <span className="text-xs text-[#14161C]/40">{format(new Date(p.createdAt), 'MMM d, HH:mm')}</span>
         </div>
       </div>
       <div className="text-right flex-shrink-0">
@@ -59,7 +59,7 @@ export function PaymentRow({ p, onDelete }: Readonly<{ p: Payment; onDelete?: (p
         <Badge variant={STATUS_BADGE[p.status] ?? 'pending'} className="mt-1">{p.status}</Badge>
       </div>
       {onDelete && (
-        <button onClick={() => onDelete(p)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-50 text-zinc-300 hover:text-red-500 transition-all flex-shrink-0" aria-label="Delete payment">
+        <button onClick={() => onDelete(p)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/25 hover:text-red-500 transition-all flex-shrink-0" aria-label="Delete payment">
           <Trash2 size={13} />
         </button>
       )}
@@ -92,7 +92,7 @@ export function StkPushModal({ weddingId, onClose }: Readonly<{ weddingId: strin
       <form onSubmit={handleSubmit} className="space-y-4">
         <div><Label htmlFor="stk-phone">Phone number *</Label>
           <Input id="stk-phone" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="254712345678" required />
-          <p className="text-xs text-zinc-400 mt-1">Format: 254XXXXXXXXX (no +)</p></div>
+          <p className="text-xs text-[#14161C]/40 mt-1">Format: 254XXXXXXXXX (no +)</p></div>
         <div><Label htmlFor="stk-amount">Amount (KES) *</Label>
           <Input id="stk-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="5000" min="1" required /></div>
         <div><Label htmlFor="stk-desc">Description</Label>
@@ -236,17 +236,17 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
             })}
           </Select>
           {selectedLine && (
-            <div className="mt-2 bg-zinc-50 rounded-xl p-3 text-xs space-y-1">
+            <div className="mt-2 bg-[#F7F5F2] rounded-xl p-3 text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Estimated</span>
+                <span className="text-[#14161C]/55">Estimated</span>
                 <span className="font-semibold">{fmt(selectedLine.estimated)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Already paid</span>
+                <span className="text-[#14161C]/55">Already paid</span>
                 <span className="font-semibold text-emerald-600">{fmt(selectedLine.actual)}</span>
               </div>
-              <div className="flex justify-between border-t border-zinc-200 pt-1 mt-1">
-                <span className="text-zinc-500 font-semibold">Remaining</span>
+              <div className="flex justify-between border-t border-[#1F4D3A]/12 pt-1 mt-1">
+                <span className="text-[#14161C]/55 font-semibold">Remaining</span>
                 <span className={`font-bold ${remaining === 0 ? 'text-emerald-600' : 'text-amber-600'}`}>{fmt(remaining ?? 0)}</span>
               </div>
             </div>
@@ -257,10 +257,10 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
         {selectedLine && (
           <div>
             <Label>Payment type</Label>
-            <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+            <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1">
               {(['full', 'partial'] as const).map(t => (
                 <button key={t} type="button" onClick={() => handlePaymentTypeChange(t)}
-                  className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                  className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                   {t === 'full' ? `Full (${fmt(remaining ?? 0)})` : 'Partial'}
                 </button>
               ))}
@@ -275,7 +275,7 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
             placeholder="5000" min="1" required
             readOnly={paymentType === 'full' && !!selectedLine} />
           {paymentType === 'full' && selectedLine && (
-            <p className="text-xs text-zinc-400 mt-1">Auto-filled from remaining balance. Switch to Partial to enter a custom amount.</p>
+            <p className="text-xs text-[#14161C]/40 mt-1">Auto-filled from remaining balance. Switch to Partial to enter a custom amount.</p>
           )}
         </div>
 
@@ -289,12 +289,12 @@ export function AddManualPaymentModal({ weddingId, eventId, events, onClose }: R
           <div>
             <Label htmlFor="mp-vname">
               Vendor name override
-              {resolvedVendorName && <span className="text-zinc-400 font-normal ml-1">(linked: {resolvedVendorName})</span>}
+              {resolvedVendorName && <span className="text-[#14161C]/40 font-normal ml-1">(linked: {resolvedVendorName})</span>}
             </Label>
             <Input id="mp-vname" value={form.vendorNameOverride}
               onChange={e => setForm(f => ({ ...f, vendorNameOverride: e.target.value }))}
               placeholder={resolvedVendorName ?? 'Override or enter vendor name'} />
-            <p className="text-xs text-zinc-400 mt-0.5">Leave blank to use the linked vendor name, or type to override.</p>
+            <p className="text-xs text-[#14161C]/40 mt-0.5">Leave blank to use the linked vendor name, or type to override.</p>
           </div>
         </div>
 
@@ -380,7 +380,7 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-sm text-zinc-500">{eventPayments.length} payment{eventPayments.length !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-[#14161C]/55">{eventPayments.length} payment{eventPayments.length !== 1 ? 's' : ''}</p>
           {eventPayments.length > 0 && (
             <div className="flex gap-4 mt-0.5">
               <p className="text-xs font-bold text-emerald-600">{fmt(total)} received</p>
@@ -396,10 +396,10 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
 
       {/* Filter tabs */}
       {eventPayments.length > 0 && (
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
           {(['all', 'pending', 'completed'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
               {f === 'all' ? `All (${eventPayments.length})` : f === 'pending' ? `Pending (${eventPayments.filter(p => p.status === 'PENDING').length})` : `Completed (${eventPayments.filter(p => p.status === 'COMPLETED').length})`}
             </button>
           ))}
@@ -409,20 +409,20 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
       {/* Pending budget items */}
       {(filter === 'all' || filter === 'pending') && pendingBudgetItems.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5"><AlertTriangle size={11} className="text-amber-400" /> Outstanding from budget</p>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest flex items-center gap-1.5"><AlertTriangle size={11} className="text-amber-400" /> Outstanding from budget</p>
           <div className="bg-amber-50 rounded-2xl border border-amber-100 overflow-hidden">
             {pendingBudgetItems.map(l => (
               <div key={l.id} className="flex items-center gap-4 py-3 px-5 border-b border-amber-100 last:border-0">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-[#14161C]">{l.description}</p>
                   <div className="flex gap-3 mt-0.5">
-                    <span className="text-xs text-zinc-500">{l.category.replaceAll('_', ' ')}</span>
-                    {l.vendorName && <span className="text-xs text-violet-500">{l.vendorName}</span>}
+                    <span className="text-xs text-[#14161C]/55">{l.category.replaceAll('_', ' ')}</span>
+                    {l.vendorName && <span className="text-xs text-[#1F4D3A]/70">{l.vendorName}</span>}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-sm font-bold text-amber-600">{fmt(l.estimated - l.actual)} due</p>
-                  <p className="text-xs text-zinc-400">{fmt(l.actual)} of {fmt(l.estimated)} paid</p>
+                  <p className="text-xs text-[#14161C]/40">{fmt(l.actual)} of {fmt(l.estimated)} paid</p>
                 </div>
                 <Button size="sm" variant="secondary" onClick={() => setShowManual(true)} className="flex-shrink-0 text-xs">
                   <Plus size={11} /> Pay
@@ -434,9 +434,9 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
       )}
 
       {filtered.length === 0 && pendingBudgetItems.length === 0
-        ? <EmptyState icon={<DollarSign size={32} className="text-zinc-200" />} title="No payments" description="Record M-Pesa or manual payments for this event" />
+        ? <EmptyState icon={<DollarSign size={32} className="text-[#14161C]/15" />} title="No payments" description="Record M-Pesa or manual payments for this event" />
         : filtered.length > 0
-          ? <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+          ? <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
               {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
             </div>
           : null}

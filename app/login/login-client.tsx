@@ -1,38 +1,36 @@
 'use client'
 import { signIn } from 'next-auth/react'
-import { Heart } from 'lucide-react'
 import { Button } from '@/components/ui'
 
 export function LoginClient() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
-      {/* Background pattern */}
+    <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-violet-600/10 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-violet-600/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#1F4D3A]/6 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[#D4A94F]/8 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-600 mb-4 shadow-lg shadow-violet-600/30">
-            <Heart size={24} className="text-white" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#1F4D3A] mb-5 shadow-lg shadow-[#1F4D3A]/20">
+            <span className="text-white text-xl font-heading font-bold">N</span>
           </div>
-          <h1 className="font-display text-4xl font-bold text-white tracking-tight">Ndoa</h1>
-          <p className="text-zinc-400 mt-2 text-sm">Fault-tolerant wedding coordination</p>
+          <h1 className="font-heading text-4xl font-semibold text-[#1F4D3A] tracking-tight">Ndoa</h1>
+          <p className="text-[#14161C]/45 mt-2 text-sm">The operating system for your wedding</p>
         </div>
 
         {/* Card */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-          <h2 className="text-lg font-semibold text-white mb-1">Welcome back</h2>
-          <p className="text-sm text-zinc-400 mb-6">Sign in to manage your wedding</p>
+        <div className="bg-white border border-[#1F4D3A]/10 rounded-2xl p-8 shadow-sm">
+          <h2 className="font-heading text-lg font-semibold text-[#14161C] mb-1">Welcome back</h2>
+          <p className="text-sm text-[#14161C]/45 mb-6">Sign in to manage your wedding</p>
 
           <Button
             variant="outline"
-            className="w-full border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+            className="w-full"
             onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -41,10 +39,14 @@ export function LoginClient() {
             Continue with Google
           </Button>
 
-          <p className="text-xs text-zinc-600 text-center mt-6">
+          <p className="text-xs text-[#14161C]/35 text-center mt-6">
             Offline-first · End-to-end data integrity · M-Pesa reconciliation
           </p>
         </div>
+
+        <p className="text-center text-xs text-[#14161C]/30 mt-6">
+          © {new Date().getFullYear()} Ndoa
+        </p>
       </div>
     </div>
   )

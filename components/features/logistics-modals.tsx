@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQuery } from '@tanstack/react-query'
@@ -138,7 +138,7 @@ function GuestMultiPicker({ guests, selected, onChange }: Readonly<{
       {selectedGuests.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {selectedGuests.map(g => (
-            <span key={g.id} className="inline-flex items-center gap-1 bg-violet-100 text-violet-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+            <span key={g.id} className="inline-flex items-center gap-1 bg-[#1F4D3A]/10 text-[#1F4D3A] text-xs font-semibold px-2.5 py-1 rounded-full">
               {g.name}
               <button type="button" onClick={() => toggle(g.id)} className="hover:text-violet-900" aria-label={`Remove ${g.name}`}>
                 <X size={10} />
@@ -148,30 +148,30 @@ function GuestMultiPicker({ guests, selected, onChange }: Readonly<{
         </div>
       )}
       {/* Search + list */}
-      <div className="border border-zinc-200 rounded-xl overflow-hidden">
-        <div className="relative border-b border-zinc-100">
-          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+      <div className="border border-[#1F4D3A]/12 rounded-xl overflow-hidden">
+        <div className="relative border-b border-[#1F4D3A]/8">
+          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
           <input
             type="text" value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search guests…"
-            className="w-full pl-8 pr-3 py-2 text-sm bg-white focus:outline-none text-[#14161C] placeholder:text-zinc-400"
+            className="w-full pl-8 pr-3 py-2 text-sm bg-white focus:outline-none text-[#14161C] placeholder:text-[#14161C]/40"
           />
         </div>
         <div className="max-h-40 overflow-y-auto">
           {filtered.length === 0
-            ? <p className="text-xs text-zinc-400 text-center py-3">No guests found</p>
+            ? <p className="text-xs text-[#14161C]/40 text-center py-3">No guests found</p>
             : filtered.map(g => (
-              <label key={g.id} className="flex items-center gap-3 px-3 py-2 hover:bg-zinc-50 cursor-pointer">
+              <label key={g.id} className="flex items-center gap-3 px-3 py-2 hover:bg-[#F7F5F2] cursor-pointer">
                 <input type="checkbox" checked={selected.includes(g.id)} onChange={() => toggle(g.id)}
-                  className="rounded accent-violet-600" />
+                  className="rounded accent-[#1F4D3A]" />
                 <span className="text-sm text-[#14161C] flex-1">{g.name}</span>
-                {g.phone && <span className="text-xs text-zinc-400">{g.phone}</span>}
+                {g.phone && <span className="text-xs text-[#14161C]/40">{g.phone}</span>}
               </label>
             ))}
         </div>
       </div>
       {selectedGuests.length > 0 && (
-        <p className="text-xs text-zinc-400">{selectedGuests.length} guest{selectedGuests.length !== 1 ? 's' : ''} selected</p>
+        <p className="text-xs text-[#14161C]/40">{selectedGuests.length} guest{selectedGuests.length !== 1 ? 's' : ''} selected</p>
       )}
     </div>
   )
@@ -239,11 +239,11 @@ function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly
         {/* Assignment type */}
         <div>
           <Label>Assigned to</Label>
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1">
             {(['none', 'individual', 'group'] as const).map(t => (
               <button key={t} type="button"
                 onClick={() => setForm(f => ({ ...f, guestType: t, selectedGuestIds: [], groupName: '', groupSize: '' }))}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual(s)' : 'Group'}
               </button>
             ))}
@@ -270,7 +270,7 @@ function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly
         <div><Label htmlFor="hotel-notes">Notes</Label>
           <textarea id="hotel-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
             placeholder="Breakfast included, special requests, room preferences…" rows={3}
-            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
+            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
@@ -311,11 +311,17 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
     roomsBlocked: accommodation.roomsBlocked ? String(accommodation.roomsBlocked) : '',
     notes: restNotes,
     guestType: (assignedLine ? (groupMatch ? 'group' : 'individual') : 'none') as 'none' | 'individual' | 'group',
-    selectedGuestIds: initialGuestIds,
+    selectedGuestIds: [] as string[],
     groupName: groupMatch ? groupMatch[1] : '',
     groupSize: groupMatch ? groupMatch[2] : '',
   })
 
+  // Sync guest IDs once guests have loaded (they load async after initial render)
+  useEffect(() => {
+    if (initialGuestIds.length > 0) {
+      setForm(f => ({ ...f, selectedGuestIds: initialGuestIds }))
+    }
+  }, [initialGuestIds])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
     try {
@@ -358,11 +364,11 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
 
         <div>
           <Label>Assigned to</Label>
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1">
             {(['none', 'individual', 'group'] as const).map(t => (
               <button key={t} type="button"
                 onClick={() => setForm(f => ({ ...f, guestType: t, selectedGuestIds: [], groupName: '', groupSize: '' }))}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${form.guestType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'none' ? 'Unassigned' : t === 'individual' ? 'Individual(s)' : 'Group'}
               </button>
             ))}
@@ -389,7 +395,7 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
         <div><Label htmlFor="ea-notes">Notes</Label>
           <textarea id="ea-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
             placeholder="Breakfast included, special requests, room preferences…" rows={3}
-            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
+            className="flex w-full rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 py-2 text-sm text-[#14161C] focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:ring-offset-1 focus:border-transparent resize-none" /></div>
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
@@ -428,29 +434,29 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
 
   return (
     <>
-      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 transition-colors ${route.isCompleted ? 'bg-emerald-50/40' : ''}`}>
+      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0 transition-colors ${route.isCompleted ? 'bg-emerald-50/40' : ''}`}>
         <button onClick={toggleComplete} disabled={toggling}
-          className="mt-0.5 flex-shrink-0 text-zinc-300 hover:text-emerald-500 transition-colors disabled:opacity-50"
+          className="mt-0.5 flex-shrink-0 text-[#14161C]/25 hover:text-emerald-500 transition-colors disabled:opacity-50"
           aria-label={route.isCompleted ? 'Mark incomplete' : 'Mark complete'}>
           {route.isCompleted
             ? <CheckCircle2 size={18} className="text-emerald-500" />
             : <Circle size={18} />}
         </button>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-semibold ${route.isCompleted ? 'text-zinc-400 line-through' : 'text-[#14161C]'}`}>{route.name}</p>
-          <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+          <p className={`text-sm font-semibold ${route.isCompleted ? 'text-[#14161C]/40 line-through' : 'text-[#14161C]'}`}>{route.name}</p>
+          <p className="text-xs text-[#14161C]/40 mt-0.5 flex items-center gap-1">
             <MapPin size={10} /> {route.departureLocation} → {route.arrivalLocation}
           </p>
-          <p className="text-xs text-zinc-400 flex items-center gap-1">
+          <p className="text-xs text-[#14161C]/40 flex items-center gap-1">
             <Clock size={10} /> {format(new Date(route.departureTime), 'MMM d, h:mm a')}
             {route.capacity ? ` · ${route.capacity} seats` : ''}
           </p>
-          {route.assignedVendor && <p className="text-xs text-violet-500 mt-0.5">{route.assignedVendor.name}</p>}
+          {route.assignedVendor && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">{route.assignedVendor.name}</p>}
         </div>
         <div className="flex gap-1 flex-shrink-0">
           {route.isCompleted && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full self-center">Done</span>}
-          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
+          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditRouteModal weddingId={weddingId} route={route} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -491,30 +497,30 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
 
   return (
     <>
-      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-zinc-100 last:border-0 transition-colors ${accommodation.isCompleted ? 'bg-emerald-50/40' : ''}`}>
+      <div className={`group flex items-start gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0 transition-colors ${accommodation.isCompleted ? 'bg-emerald-50/40' : ''}`}>
         <button onClick={toggleComplete} disabled={toggling}
-          className="mt-0.5 flex-shrink-0 text-zinc-300 hover:text-emerald-500 transition-colors disabled:opacity-50"
+          className="mt-0.5 flex-shrink-0 text-[#14161C]/25 hover:text-emerald-500 transition-colors disabled:opacity-50"
           aria-label={accommodation.isCompleted ? 'Mark incomplete' : 'Mark complete'}>
           {accommodation.isCompleted
             ? <CheckCircle2 size={18} className="text-emerald-500" />
             : <Circle size={18} />}
         </button>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-semibold ${accommodation.isCompleted ? 'text-zinc-400 line-through' : 'text-[#14161C]'}`}>{accommodation.hotelName}</p>
+          <p className={`text-sm font-semibold ${accommodation.isCompleted ? 'text-[#14161C]/40 line-through' : 'text-[#14161C]'}`}>{accommodation.hotelName}</p>
           {accommodation.address && (
-            <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {accommodation.address}</p>
+            <p className="text-xs text-[#14161C]/40 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {accommodation.address}</p>
           )}
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[#14161C]/40">
             {format(new Date(accommodation.checkIn), 'MMM d')} – {format(new Date(accommodation.checkOut), 'MMM d, yyyy')}
             {accommodation.roomsBlocked ? ` · ${accommodation.roomsBlocked} rooms` : ''}
           </p>
-          {assignedTo && <p className="text-xs text-violet-500 mt-0.5">👤 {assignedTo}</p>}
-          {restNotes && <p className="text-xs text-zinc-400 mt-0.5 italic">{restNotes}</p>}
+          {assignedTo && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">👤 {assignedTo}</p>}
+          {restNotes && <p className="text-xs text-[#14161C]/40 mt-0.5 italic">{restNotes}</p>}
         </div>
         <div className="flex gap-1 flex-shrink-0">
           {accommodation.isCompleted && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full self-center">Done</span>}
-          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
-          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
+          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Edit"><Pencil size={13} /></button>
+          <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
         </div>
       </div>
       {editing && <EditAccommodationModal weddingId={weddingId} accommodation={accommodation} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -532,7 +538,7 @@ export function RouteList({ routes, weddingId, onRefresh, onAdd }: Readonly<{
       action={<Button onClick={onAdd}><Plus size={14} /> Add route</Button>} />
   )
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
       {routes.map(r => <RouteRow key={r.id} route={r} weddingId={weddingId} onRefresh={onRefresh} />)}
     </div>
   )
@@ -548,7 +554,7 @@ export function AccomList({ accommodations, weddingId, onRefresh, onAdd }: Reado
       action={<Button onClick={onAdd}><Plus size={14} /> Add accommodation</Button>} />
   )
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
       {accommodations.map(a => <AccommodationRow key={a.id} accommodation={a} weddingId={weddingId} onRefresh={onRefresh} />)}
     </div>
   )
@@ -570,10 +576,10 @@ export function EventLogisticsTab({ weddingId, eventId, routes, accommodations, 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
           {(['transport', 'accommodation'] as const).map(t => (
             <button key={t} onClick={() => setSubTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
               {t === 'transport' ? 'Transport' : 'Accommodation'}
             </button>
           ))}

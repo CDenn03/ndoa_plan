@@ -33,30 +33,30 @@ function OverallTab({ incidents, events }: Readonly<{ incidents: Incident[]; eve
   return (
     <div className="space-y-8">
       <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Events</p>
+        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Events</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{events.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Active incidents</p>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Active incidents</p>
           <p className={`text-2xl font-extrabold ${activeIncidents.length > 0 ? 'text-red-500' : 'text-emerald-600'}`}>{activeIncidents.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total incidents</p>
-          <p className="text-2xl font-extrabold text-zinc-400">{incidents.length}</p></div>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total incidents</p>
+          <p className="text-2xl font-extrabold text-[#14161C]/40">{incidents.length}</p></div>
       </div>
       <div className="space-y-3">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Events</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Events</p>
         {events.map(e => {
           const evIncidents = byEvent.get(e.id)?.incidents ?? []
           const active = evIncidents.filter(i => !i.resolvedAt).length
           return (
-            <div key={e.id} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+            <div key={e.id} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-zinc-400" />
+                <CalendarDays size={15} className="text-[#14161C]/40" />
                 <div>
                   <p className="text-sm font-bold text-[#14161C]">{e.name}</p>
-                  <p className="text-xs text-zinc-400">{format(new Date(e.date), 'MMM d, yyyy')}</p>
+                  <p className="text-xs text-[#14161C]/40">{format(new Date(e.date), 'MMM d, yyyy')}</p>
                 </div>
               </div>
               <div className="flex gap-6 text-right">
-                {active > 0 && <div><p className="text-xs text-zinc-400">Active</p><p className="text-sm font-bold text-red-500">{active}</p></div>}
-                <div><p className="text-xs text-zinc-400">Incidents</p><p className="text-sm font-bold text-zinc-500">{evIncidents.length}</p></div>
+                {active > 0 && <div><p className="text-xs text-[#14161C]/40">Active</p><p className="text-sm font-bold text-red-500">{active}</p></div>}
+                <div><p className="text-xs text-[#14161C]/40">Incidents</p><p className="text-sm font-bold text-[#14161C]/55">{evIncidents.length}</p></div>
               </div>
             </div>
           )
@@ -74,11 +74,11 @@ export function ScheduleClient({ weddingId, events, vendors, incidents, onRefres
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Execution</p>
-          <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Schedule</h1>
-          <p className="text-sm text-zinc-400 mt-2 mb-6">
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Execution</p>
+          <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Schedule</h1>
+          <p className="text-sm text-[#14161C]/40 mt-2 mb-6">
             {events.length} events
             {activeIncidents.length > 0 && (
               <span className="ml-2 text-red-500 font-semibold">· {activeIncidents.length} active incident{activeIncidents.length === 1 ? '' : 's'}</span>
@@ -87,7 +87,7 @@ export function ScheduleClient({ weddingId, events, vendors, incidents, onRefres
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {tabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.label}
               </button>
             ))}

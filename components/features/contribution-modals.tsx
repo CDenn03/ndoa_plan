@@ -112,29 +112,29 @@ function RecordPaymentModal({ weddingId, contrib, onClose }: Readonly<{
     <Modal onClose={onClose} title={`Record payment — ${contrib.memberName}`}>
       <div className="space-y-4">
         {/* Outstanding summary */}
-        <div className="bg-zinc-50 rounded-xl p-3 flex items-center justify-between">
+        <div className="bg-[#F7F5F2] rounded-xl p-3 flex items-center justify-between">
           <div>
-            <p className="text-xs text-zinc-400">Pledge</p>
+            <p className="text-xs text-[#14161C]/40">Pledge</p>
             <p className="text-sm font-bold text-[#14161C]">{fmt(contrib.pledgeAmount)}</p>
           </div>
           <div>
-            <p className="text-xs text-zinc-400">Paid so far</p>
+            <p className="text-xs text-[#14161C]/40">Paid so far</p>
             <p className="text-sm font-bold text-emerald-600">{fmt(contrib.paidAmount)}</p>
           </div>
           <div>
-            <p className="text-xs text-zinc-400">Outstanding</p>
+            <p className="text-xs text-[#14161C]/40">Outstanding</p>
             <p className={`text-sm font-bold ${outstanding > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{fmt(outstanding)}</p>
           </div>
         </div>
 
         {/* Mode toggle */}
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
           <button onClick={() => setMode('manual')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'manual' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500'}`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'manual' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55'}`}>
             <CreditCard size={13} /> Manual
           </button>
           <button onClick={() => setMode('mpesa')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'mpesa' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500'}`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'mpesa' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55'}`}>
             <Phone size={13} /> M-Pesa STK
           </button>
         </div>
@@ -186,7 +186,7 @@ function PaymentHistory({ weddingId, contribId }: Readonly<{ weddingId: string; 
   })
 
   if (isLoading) return <div className="py-2 flex justify-center"><Spinner size="sm" /></div>
-  if (payments.length === 0) return <p className="text-xs text-zinc-400 py-2 px-6">No payments recorded yet.</p>
+  if (payments.length === 0) return <p className="text-xs text-[#14161C]/40 py-2 px-6">No payments recorded yet.</p>
 
   return (
     <div className="px-6 pb-3 space-y-1.5">
@@ -194,9 +194,9 @@ function PaymentHistory({ weddingId, contribId }: Readonly<{ weddingId: string; 
         <div key={p.id} className="flex items-center justify-between text-xs py-1.5 border-b border-zinc-50 last:border-0">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-            <span className="text-zinc-500">{format(new Date(p.createdAt), 'MMM d, yyyy')}</span>
-            {p.description && <span className="text-zinc-400 truncate max-w-32">{p.description}</span>}
-            {p.mpesaRef && <span className="font-mono text-violet-500">{p.mpesaRef}</span>}
+            <span className="text-[#14161C]/55">{format(new Date(p.createdAt), 'MMM d, yyyy')}</span>
+            {p.description && <span className="text-[#14161C]/40 truncate max-w-32">{p.description}</span>}
+            {p.mpesaRef && <span className="font-mono text-[#1F4D3A]/70">{p.mpesaRef}</span>}
           </div>
           <span className="font-bold text-emerald-600">{fmt(p.amount)}</span>
         </div>
@@ -231,29 +231,29 @@ export function ContribRow({ contrib, weddingId, events, onEdit }: Readonly<{
 
   return (
     <>
-      <div className={`border-b border-zinc-100 last:border-0 ${expanded ? 'bg-zinc-50/50' : ''}`}>
+      <div className={`border-b border-[#1F4D3A]/8 last:border-0 ${expanded ? 'bg-[#F7F5F2]/50' : ''}`}>
         {/* Main row */}
         <div className="group flex items-center gap-4 py-3.5 px-6">
-          <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
             {contrib.memberName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-semibold text-[#14161C]">{contrib.memberName}</p>
               {isDirect && <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 rounded-full px-1.5 py-0.5">Direct</span>}
-              {eventName && <span className="text-[10px] text-violet-500 bg-violet-50 rounded-full px-1.5 py-0.5">{eventName}</span>}
+              {eventName && <span className="text-[10px] text-[#1F4D3A]/70 bg-[#1F4D3A]/6 rounded-full px-1.5 py-0.5">{eventName}</span>}
               <Badge variant={STATUS_BADGE[contrib.status] ?? 'pending'}>{contrib.status}</Badge>
             </div>
             <div className="flex items-center gap-2 mt-1.5">
-              <div className="flex-1 bg-zinc-100 rounded-full h-1.5">
+              <div className="flex-1 bg-[#1F4D3A]/6 rounded-full h-1.5">
                 <div className={`h-1.5 rounded-full transition-all ${barColor(contrib.status)}`} style={{ width: `${Math.min(100, pct)}%` }} />
               </div>
-              <span className="text-xs text-zinc-400 whitespace-nowrap">{pct}%</span>
+              <span className="text-xs text-[#14161C]/40 whitespace-nowrap">{pct}%</span>
             </div>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-sm font-bold text-[#14161C]">{fmt(contrib.paidAmount)} <span className="text-zinc-400 font-normal text-xs">/ {fmt(contrib.pledgeAmount)}</span></p>
-            {contrib.dueDate && <p className={`text-xs mt-0.5 ${contrib.status === 'OVERDUE' ? 'text-red-500 font-semibold' : 'text-zinc-400'}`}>Due {format(new Date(contrib.dueDate), 'MMM d')}</p>}
+            <p className="text-sm font-bold text-[#14161C]">{fmt(contrib.paidAmount)} <span className="text-[#14161C]/40 font-normal text-xs">/ {fmt(contrib.pledgeAmount)}</span></p>
+            {contrib.dueDate && <p className={`text-xs mt-0.5 ${contrib.status === 'OVERDUE' ? 'text-red-500 font-semibold' : 'text-[#14161C]/40'}`}>Due {format(new Date(contrib.dueDate), 'MMM d')}</p>}
             {outstanding > 0 && <p className="text-xs text-amber-600 font-medium">{fmt(outstanding)} left</p>}
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
@@ -264,9 +264,9 @@ export function ContribRow({ contrib, weddingId, events, onEdit }: Readonly<{
                 + Pay
               </button>
             )}
-            <button onClick={() => onEdit(contrib)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
-            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
-            <button onClick={() => setExpanded(v => !v)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 transition-colors" aria-label="Toggle history">
+            <button onClick={() => onEdit(contrib)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+            <button onClick={() => setExpanded(v => !v)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 transition-colors" aria-label="Toggle history">
               {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
             </button>
           </div>
@@ -374,16 +374,16 @@ export function DirectContributionModal({ weddingId, events, eventId, onClose }:
   return (
     <Modal onClose={onClose} title="Record contribution">
       <div className="space-y-4">
-        <p className="text-xs text-zinc-400">For on-the-spot giving — no prior pledge needed.</p>
+        <p className="text-xs text-[#14161C]/40">For on-the-spot giving — no prior pledge needed.</p>
 
         {/* Mode toggle */}
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
           <button type="button" onClick={() => setMode('manual')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'manual' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500'}`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'manual' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55'}`}>
             <CreditCard size={13} /> Cash / Manual
           </button>
           <button type="button" onClick={() => setMode('mpesa')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'mpesa' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500'}`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold transition-colors ${mode === 'mpesa' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55'}`}>
             <Phone size={13} /> M-Pesa STK
           </button>
         </div>
@@ -511,18 +511,18 @@ export function ContributionModal({ weddingId, events, contrib, eventId, onClose
         </div>
 
         {pledge > 0 && (
-          <div className="bg-zinc-50 rounded-xl p-3 space-y-2">
+          <div className="bg-[#F7F5F2] rounded-xl p-3 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-500">Progress</span>
+              <span className="text-[#14161C]/55">Progress</span>
               <span className="font-bold text-[#14161C]">{pct}%</span>
             </div>
             <ProgressBar value={paid} max={pledge} />
             <div className="flex justify-between text-xs">
-              <span className="text-zinc-400">Paid: <span className="font-semibold text-emerald-600">{fmt(paid)}</span></span>
-              <span className="text-zinc-400">Outstanding: <span className={`font-semibold ${outstanding > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{fmt(outstanding)}</span></span>
+              <span className="text-[#14161C]/40">Paid: <span className="font-semibold text-emerald-600">{fmt(paid)}</span></span>
+              <span className="text-[#14161C]/40">Outstanding: <span className={`font-semibold ${outstanding > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{fmt(outstanding)}</span></span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-zinc-400">Status:</span>
+              <span className="text-xs text-[#14161C]/40">Status:</span>
               <Badge variant={STATUS_BADGE[form.status] ?? 'pending'}>{form.status}</Badge>
             </div>
           </div>
@@ -583,22 +583,22 @@ export function EventContributionsTab({ weddingId, eventId, events }: Readonly<{
         <>
           <div className="grid grid-cols-3 gap-0 divide-x divide-zinc-100">
             <div className="pr-6">
-              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total pledged</p>
+              <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total pledged</p>
               <p className="text-xl font-extrabold text-sky-600">{fmt(totalPledged)}</p>
             </div>
             <div className="px-6">
-              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Collected</p>
+              <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Collected</p>
               <p className="text-xl font-extrabold text-emerald-600">{fmt(totalPaid)}</p>
             </div>
             <div className="pl-6">
-              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Outstanding</p>
+              <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Outstanding</p>
               <p className={`text-xl font-extrabold ${outstanding > 0 ? 'text-amber-500' : 'text-[#14161C]'}`}>{fmt(outstanding)}</p>
             </div>
           </div>
           {totalPledged > 0 && (
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-500">Collection progress</span>
+                <span className="text-[#14161C]/55">Collection progress</span>
                 <span className="font-bold">{Math.round((totalPaid / totalPledged) * 100)}%</span>
               </div>
               <ProgressBar value={totalPaid} max={totalPledged} />
@@ -614,7 +614,7 @@ export function EventContributionsTab({ weddingId, eventId, events }: Readonly<{
       </div>
 
       {contributions.length === 0 ? (
-        <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No contributions yet"
+        <EmptyState icon={<Users size={32} className="text-[#14161C]/15" />} title="No contributions yet"
           description="Add a pledge or record a direct contribution"
           action={
             <div className="flex gap-2">
@@ -623,7 +623,7 @@ export function EventContributionsTab({ weddingId, eventId, events }: Readonly<{
             </div>
           } />
       ) : (
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
           {contributions.map(c => <ContribRow key={c.id} contrib={c} weddingId={weddingId} events={events} onEdit={setEditing} />)}
         </div>
       )}

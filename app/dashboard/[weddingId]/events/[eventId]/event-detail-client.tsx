@@ -46,9 +46,9 @@ type Tab = 'tasks' | 'budget' | 'guests' | 'appointments' | 'payments' | 'contri
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TYPE_COLOR: Record<string, string> = {
-  WEDDING: 'bg-violet-100 text-violet-700', RURACIO: 'bg-amber-100 text-amber-700',
+  WEDDING: 'bg-[#1F4D3A]/10 text-[#1F4D3A]', RURACIO: 'bg-amber-100 text-amber-700',
   RECEPTION: 'bg-sky-100 text-sky-700', ENGAGEMENT: 'bg-pink-100 text-pink-700',
-  TRADITIONAL: 'bg-orange-100 text-orange-700', CIVIL: 'bg-zinc-100 text-zinc-600',
+  TRADITIONAL: 'bg-orange-100 text-orange-700', CIVIL: 'bg-[#1F4D3A]/6 text-[#14161C]/60',
   POST_WEDDING: 'bg-emerald-100 text-emerald-700',
 }
 
@@ -67,7 +67,7 @@ function TasksTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId:
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-zinc-500">{tasks.filter(t => t.isChecked).length}/{tasks.length} completed</p>
+        <p className="text-sm text-[#14161C]/55">{tasks.filter(t => t.isChecked).length}/{tasks.length} completed</p>
         <div className="flex gap-2">
           <Button size="sm" variant="lavender" onClick={() => setShowTemplate(true)}><LayoutTemplate size={13} /> Template</Button>
           <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add task</Button>
@@ -238,28 +238,28 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'vendors', label: 'Vendors', icon: <Users size={13} /> },
   { key: 'gifts', label: 'Gifts', icon: <Gift size={13} /> },
   { key: 'vision', label: 'Vision', icon: <Sparkles size={13} /> },
-  { key: 'photography', label: 'Photography', icon: <Camera size={13} /> },
+  { key: 'photography', label: 'Media Production', icon: <Camera size={13} /> },
 ]
 
 export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
   const [activeTab, setActiveTab] = useState<Tab>('tasks')
-  const typeColor = TYPE_COLOR[event.type] ?? 'bg-zinc-100 text-zinc-600'
+  const typeColor = TYPE_COLOR[event.type] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/60'
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <Link href={`/dashboard/${weddingId}/events`} className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-600 transition-colors mb-4">
+          <Link href={`/dashboard/${weddingId}/events`} className="inline-flex items-center gap-1.5 text-xs text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors mb-4">
             <ArrowLeft size={12} /> All events
           </Link>
           <div className="flex items-start justify-between gap-4 mb-1 flex-wrap">
             <div>
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${typeColor}`}>{event.type}</span>
-                {event.isMain && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">Main event</span>}
+                {event.isMain && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1F4D3A]/10 text-[#1F4D3A]">Main event</span>}
               </div>
-              <h1 className="text-3xl font-extrabold text-[#14161C] tracking-tight">{event.name}</h1>
-              <div className="flex items-center gap-4 mt-2 text-sm text-zinc-500 flex-wrap">
+              <h1 className="text-3xl font-heading font-semibold text-[#14161C] tracking-tight">{event.name}</h1>
+              <div className="flex items-center gap-4 mt-2 text-sm text-[#14161C]/55 flex-wrap">
                 <span className="flex items-center gap-1.5"><CalendarDays size={13} /> {format(new Date(event.date), 'EEEE, MMMM d, yyyy')}</span>
                 {(event.startTime || event.endTime) && (
                   <span className="flex items-center gap-1.5"><Clock size={13} />
@@ -269,13 +269,13 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
                 )}
                 {event.venue && <span className="flex items-center gap-1.5"><MapPin size={13} /> {event.venue}</span>}
               </div>
-              {event.description && <p className="text-sm text-zinc-400 mt-1">{event.description}</p>}
+              {event.description && <p className="text-sm text-[#14161C]/40 mt-1">{event.description}</p>}
             </div>
           </div>
           <div className="flex gap-0.5 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {TABS.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.icon}{t.label}
               </button>
             ))}

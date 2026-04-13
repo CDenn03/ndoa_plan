@@ -70,12 +70,12 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-5xl mx-auto flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Content</p>
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Vision Board</h1>
-            <p className="text-sm text-zinc-400 mt-2">{images.length} image{images.length !== 1 ? 's' : ''}</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Content</p>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Vision Board</h1>
+            <p className="text-sm text-[#14161C]/40 mt-2">{images.length} image{images.length !== 1 ? 's' : ''}</p>
           </div>
           <div className="flex items-end gap-3">
             <div>
@@ -99,7 +99,7 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
           {['ALL', ...categories].map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
               className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${
-                activeCategory === cat ? 'bg-[#14161C] text-white' : 'bg-zinc-100 text-zinc-500 hover:text-zinc-700'
+                activeCategory === cat ? 'bg-[#14161C] text-white' : 'bg-[#1F4D3A]/6 text-[#14161C]/55 hover:text-[#14161C]/70'
               }`}>
               {cat}
             </button>
@@ -122,7 +122,7 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {filtered.map(img => (
-              <div key={img.id} className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-100">
+              <div key={img.id} className="group relative aspect-square rounded-2xl overflow-hidden bg-[#1F4D3A]/6">
                 <img
                   src={`/api/storage/signed-url?path=${encodeURIComponent(img.path)}&bucket=${img.bucket}`}
                   alt={img.title ?? 'Mood board image'}

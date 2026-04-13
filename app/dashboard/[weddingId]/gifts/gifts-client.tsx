@@ -20,7 +20,7 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
   weddingId: string; registry: GiftRegistryItem[]; received: GiftReceived[]
   events: WeddingEvent[]; onRefresh: () => void
 }>) {
-  const [subTab, setSubTab] = useState<'registry' | 'received'>('registry')
+  const [subTab, setSubTab] = useState<'wishlist' | 'received'>('wishlist')
   const pendingThankYous = received.filter(r => !r.thankYouSent).length
   const totalValue = received.reduce((s, r) => s + (r.estimatedValue ?? 0), 0)
 
@@ -49,31 +49,31 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
     <div className="space-y-8">
       {/* Stats */}
       <div className="flex gap-8 divide-x divide-zinc-100 flex-wrap">
-        <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Registry items</p>
+        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Wish list items</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{registry.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Gifts received</p>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Gifts received</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{received.length}</p></div>
-        {totalValue > 0 && <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total value</p>
+        {totalValue > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total value</p>
           <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalValue)}</p></div>}
-        {pendingThankYous > 0 && <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Thank-yous pending</p>
+        {pendingThankYous > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Thank-yous pending</p>
           <p className="text-2xl font-extrabold text-amber-500">{pendingThankYous}</p></div>}
       </div>
 
       {/* By event */}
       {events.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
           {Array.from(byEvent.entries()).map(([key, { event, reg, rec }]) => {
             if (reg.length === 0 && rec.length === 0) return null
             return (
-              <div key={key} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+              <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <CalendarDays size={15} className="text-zinc-400" />
+                  <CalendarDays size={15} className="text-[#14161C]/40" />
                   <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
                 </div>
                 <div className="flex gap-6 text-right">
-                  <div><p className="text-xs text-zinc-400">Registry</p><p className="text-sm font-bold text-violet-600">{reg.length}</p></div>
-                  <div><p className="text-xs text-zinc-400">Received</p><p className="text-sm font-bold text-emerald-600">{rec.length}</p></div>
+                  <div><p className="text-xs text-[#14161C]/40">Registry</p><p className="text-sm font-bold text-[#1F4D3A]">{reg.length}</p></div>
+                  <div><p className="text-xs text-[#14161C]/40">Received</p><p className="text-sm font-bold text-emerald-600">{rec.length}</p></div>
                 </div>
               </div>
             )
@@ -83,18 +83,18 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
 
       {/* Sub-tab toggle for all items */}
       <div className="space-y-4">
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
-          {(['registry', 'received'] as const).map(t => (
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
+          {(['wishlist', 'received'] as const).map(t => (
             <button key={t} onClick={() => setSubTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
-              {t === 'registry' ? `Registry (${registry.length})` : `Received (${received.length})`}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+              {t === 'wishlist' ? `Wish List (${registry.length})` : `Received (${received.length})`}
               {t === 'received' && pendingThankYous > 0 && (
                 <span className="ml-1.5 text-[10px] font-bold bg-amber-100 text-amber-600 rounded-full px-1.5 py-0.5">{pendingThankYous}</span>
               )}
             </button>
           ))}
         </div>
-        {subTab === 'registry' && <RegistryList items={registry} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => {}} />}
+        {subTab === 'wishlist' && <RegistryList items={registry} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => {}} />}
         {subTab === 'received' && <ReceivedList gifts={received} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => {}} />}
       </div>
     </div>
@@ -109,18 +109,18 @@ export function GiftsClient({ weddingId, events, registry, received, onRefresh }
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Content</p>
-          <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Gifts</h1>
-          <p className="text-sm text-zinc-400 mt-2 mb-6">
-            {registry.length} registry items · {received.length} received
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Content</p>
+          <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Gifts</h1>
+          <p className="text-sm text-[#14161C]/40 mt-2 mb-6">
+            {registry.length} wish list items · {received.length} received
             {pendingThankYous > 0 && <span className="ml-2 text-amber-500 font-semibold">· {pendingThankYous} thank-yous pending</span>}
           </p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {tabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.label}
               </button>
             ))}

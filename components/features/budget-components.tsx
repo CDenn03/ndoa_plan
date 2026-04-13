@@ -149,13 +149,13 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
 
         {/* Read-only actual in edit mode */}
         {line && (
-          <div className="bg-zinc-50 rounded-xl p-3 space-y-1.5 text-sm">
+          <div className="bg-[#F7F5F2] rounded-xl p-3 space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-zinc-500">Actual paid</span>
+              <span className="text-[#14161C]/55">Actual paid</span>
               <span className={`font-bold ${line.actual > line.estimated ? 'text-red-500' : 'text-emerald-600'}`}>{fmt(line.actual)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-zinc-500">Remaining</span>
+              <span className="text-[#14161C]/55">Remaining</span>
               <span className={`font-semibold ${remaining === 0 ? 'text-emerald-600' : 'text-amber-600'}`}>{fmt(remaining ?? 0)}</span>
             </div>
           </div>
@@ -183,7 +183,7 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
 
         <div><Label htmlFor="bl-reminder">Reminder date</Label>
           <Input id="bl-reminder" type="date" value={form.reminderDate} onChange={e => setForm(f => ({ ...f, reminderDate: e.target.value }))} />
-          <p className="text-xs text-zinc-400 mt-1">Optional follow-up or next payment reminder</p></div>
+          <p className="text-xs text-[#14161C]/40 mt-1">Optional follow-up or next payment reminder</p></div>
 
         <div><Label htmlFor="bl-notes">Notes / Payment plan</Label>
           <Input id="bl-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="e.g. 50% deposit, 50% on day" /></div>
@@ -191,24 +191,24 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
         {/* Linked payments list — edit mode only */}
         {line && (
           <div className="space-y-2">
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Linked payments</p>
+            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Linked payments</p>
             {loadingPayments ? <Spinner size="sm" /> : linkedPayments.length === 0 ? (
-              <p className="text-xs text-zinc-400">No payments recorded yet</p>
+              <p className="text-xs text-[#14161C]/40">No payments recorded yet</p>
             ) : (
-              <div className="rounded-xl border border-zinc-100 overflow-hidden">
+              <div className="rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
                 {linkedPayments.map(p => {
                   const Icon = PAY_STATUS_ICON[p.status] ?? Clock
                   return (
-                    <div key={p.id} className="flex items-center gap-3 py-2.5 px-3 border-b border-zinc-100 last:border-0">
-                      <Icon size={13} className={PAY_STATUS_COLOR[p.status] ?? 'text-zinc-400'} />
+                    <div key={p.id} className="flex items-center gap-3 py-2.5 px-3 border-b border-[#1F4D3A]/8 last:border-0">
+                      <Icon size={13} className={PAY_STATUS_COLOR[p.status] ?? 'text-[#14161C]/40'} />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-[#14161C]">{fmt(p.amount)}</p>
-                        <p className="text-[10px] text-zinc-400">
+                        <p className="text-[10px] text-[#14161C]/40">
                           {p.payerName ?? p.description ?? 'Payment'} · {format(new Date(p.paymentDate ?? p.createdAt), 'MMM d, yyyy')}
                         </p>
                       </div>
                       <button type="button" onClick={() => void handleDeletePayment(p.id)}
-                        className="p-1 rounded hover:bg-red-50 text-zinc-300 hover:text-red-500 transition-colors flex-shrink-0" aria-label="Delete payment">
+                        className="p-1 rounded hover:bg-red-50 text-[#14161C]/25 hover:text-red-500 transition-colors flex-shrink-0" aria-label="Delete payment">
                         <Trash2 size={11} />
                       </button>
                     </div>
@@ -257,13 +257,13 @@ export function LoadBudgetTemplateModal({ weddingId, eventId, onClose }: Readonl
   return (
     <Modal onClose={onClose} title="Load budget template">
       <div className="space-y-3">
-        <p className="text-xs text-zinc-400">Appends suggested budget line items to this event.</p>
+        <p className="text-xs text-[#14161C]/40">Appends suggested budget line items to this event.</p>
         {isLoading ? <div className="flex justify-center py-8"><Spinner /></div> :
-          templates.length === 0 ? <p className="text-sm text-zinc-400 text-center py-6">No templates available</p> : (
+          templates.length === 0 ? <p className="text-sm text-[#14161C]/40 text-center py-6">No templates available</p> : (
             <div className="space-y-2">
               {templates.map(t => (
-                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-zinc-100 last:border-0">
-                  <div><p className="text-sm font-semibold text-[#14161C]">{t.name}</p><p className="text-xs text-zinc-400">{t.data.length} line items</p></div>
+                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-[#1F4D3A]/8 last:border-0">
+                  <div><p className="text-sm font-semibold text-[#14161C]">{t.name}</p><p className="text-xs text-[#14161C]/40">{t.data.length} line items</p></div>
                   <Button size="sm" variant="lavender" onClick={() => void handleApply(t.id)} disabled={applying === t.id}>{applying === t.id ? <Spinner size="sm" /> : 'Apply'}</Button>
                 </div>
               ))}
@@ -306,20 +306,20 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
   return (
     <>
     <div className="space-y-0">
-      <div className="grid grid-cols-4 gap-4 pb-2 border-b border-zinc-100">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest col-span-1">Category</p>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Estimated</p>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Actual</p>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Variance</p>
+      <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#1F4D3A]/8">
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest col-span-1">Category</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest text-right">Estimated</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest text-right">Actual</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest text-right">Variance</p>
       </div>
       {Object.entries(byCategory).sort((a, b) => b[1].estimated - a[1].estimated).map(([cat, totals]) => {
         const variance = totals.estimated - totals.actual
         const catPct = totals.estimated > 0 ? Math.round((totals.actual / totals.estimated) * 100) : 0
         return (
-          <div key={cat} className="py-4 border-b border-zinc-100 last:border-0">
+          <div key={cat} className="py-4 border-b border-[#1F4D3A]/8 last:border-0">
             <div className="grid grid-cols-4 gap-4 mb-2">
-              <div className="col-span-1"><p className="text-sm font-semibold text-[#14161C]">{cat.replaceAll('_', ' ')}</p><p className="text-xs text-zinc-400 mt-0.5">{catPct}% used</p></div>
-              <p className="text-sm font-medium text-zinc-500 text-right self-center">{fmt(totals.estimated)}</p>
+              <div className="col-span-1"><p className="text-sm font-semibold text-[#14161C]">{cat.replaceAll('_', ' ')}</p><p className="text-xs text-[#14161C]/40 mt-0.5">{catPct}% used</p></div>
+              <p className="text-sm font-medium text-[#14161C]/55 text-right self-center">{fmt(totals.estimated)}</p>
               <p className={`text-sm font-bold text-right self-center ${catPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(totals.actual)}</p>
               <p className={`text-sm font-bold text-right self-center ${variance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{variance < 0 ? '-' : '+'}{fmt(Math.abs(variance))}</p>
             </div>
@@ -329,29 +329,29 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
                 const lineRemaining = Math.max(0, l.estimated - l.actual)
                 const isPaid = l.estimated > 0 && l.actual >= l.estimated
                 return (
-                  <div key={l.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-zinc-50">
+                  <div key={l.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-[#F7F5F2]">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-zinc-700 truncate">{l.description}</p>
+                      <p className="text-xs font-medium text-[#14161C]/70 truncate">{l.description}</p>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        {(l.vendorName ?? l.vendorId) && <span className="text-[10px] text-violet-500">{l.vendorName ?? 'Vendor'}</span>}
-                        {l.paymentType && <span className="text-[10px] text-zinc-400 bg-zinc-100 rounded px-1">{l.paymentType}</span>}
-                        {l.paymentDate && <span className="text-[10px] text-zinc-400">{format(new Date(l.paymentDate), 'MMM d, yyyy')}</span>}
+                        {(l.vendorName ?? l.vendorId) && <span className="text-[10px] text-[#1F4D3A]/70">{l.vendorName ?? 'Vendor'}</span>}
+                        {l.paymentType && <span className="text-[10px] text-[#14161C]/40 bg-[#1F4D3A]/6 rounded px-1">{l.paymentType}</span>}
+                        {l.paymentDate && <span className="text-[10px] text-[#14161C]/40">{format(new Date(l.paymentDate), 'MMM d, yyyy')}</span>}
                         {l.reminderDate && <span className="text-[10px] text-amber-500">🔔 {format(new Date(l.reminderDate), 'MMM d')}</span>}
                         {l.actual > 0 && <span className={`text-[10px] font-semibold ${isPaid ? 'text-emerald-600' : 'text-amber-600'}`}>{fmt(l.actual)} paid</span>}
                       </div>
                     </div>
-                    <span className="text-xs text-zinc-500 flex-shrink-0">{fmt(l.estimated)}</span>
+                    <span className="text-xs text-[#14161C]/55 flex-shrink-0">{fmt(l.estimated)}</span>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {!isPaid && l.estimated > 0 && (
                         <button onClick={() => onPay(l)}
-                          className="flex items-center gap-0.5 text-[10px] font-semibold text-violet-600 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 rounded px-1.5 py-0.5 transition-colors"
+                          className="flex items-center gap-0.5 text-[10px] font-semibold text-[#1F4D3A] hover:text-[#16382B] bg-[#1F4D3A]/6 hover:bg-[#1F4D3A]/10 rounded px-1.5 py-0.5 transition-colors"
                           aria-label={`Pay ${l.description}`}>
                           <CreditCard size={9} /> {lineRemaining > 0 ? fmt(lineRemaining) : 'Pay'}
                         </button>
                       )}
                       {isPaid && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 rounded px-1.5 py-0.5">✓ Paid</span>}
-                      <button onClick={() => onEdit(l)} className="p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={11} /></button>
-                      <button onClick={() => setConfirmDelete(l)} className="p-1 rounded hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={11} /></button>
+                      <button onClick={() => onEdit(l)} className="p-1 rounded hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Edit"><Pencil size={11} /></button>
+                      <button onClick={() => setConfirmDelete(l)} className="p-1 rounded hover:bg-red-50 text-[#14161C]/40 hover:text-red-500" aria-label="Delete"><Trash2 size={11} /></button>
                     </div>
                   </div>
                 )
@@ -395,7 +395,7 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <p className="text-sm text-zinc-400">{lines.length} line items</p>
+        <p className="text-sm text-[#14161C]/40">{lines.length} line items</p>
         <div className="flex gap-2">
           <Button variant="lavender" size="sm" onClick={() => setShowAlloc(v => !v)}><Lightbulb size={13} /> Suggest allocation</Button>
           <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}><LayoutTemplate size={13} /> Load template</Button>
@@ -411,8 +411,8 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Object.entries(SUGGESTED_ALLOC).map(([cat, pctAlloc]) => (
               <div key={cat} className="text-xs">
-                <span className="font-semibold text-zinc-600">{cat.replaceAll('_', ' ')}</span>
-                <span className="text-zinc-400 ml-1">{fmt(totalEstimated * pctAlloc)} ({Math.round(pctAlloc * 100)}%)</span>
+                <span className="font-semibold text-[#14161C]/60">{cat.replaceAll('_', ' ')}</span>
+                <span className="text-[#14161C]/40 ml-1">{fmt(totalEstimated * pctAlloc)} ({Math.round(pctAlloc * 100)}%)</span>
               </div>
             ))}
           </div>
@@ -427,14 +427,14 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
               { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
             ].map(({ label, val, color }, i) => (
               <div key={label} className={i === 0 ? 'pr-8' : i === 2 ? 'pl-8' : 'px-8'}>
-                <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
+                <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
                 <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
               </div>
             ))}
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Budget utilisation</span>
+              <span className="text-[#14161C]/55">Budget utilisation</span>
               <span className={`font-bold ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>{pct}%</span>
             </div>
             <ProgressBar value={totalActual} max={totalEstimated} />
@@ -509,11 +509,11 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
     <Modal onClose={onClose} title={`Pay — ${line.description}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Summary */}
-        <div className="bg-zinc-50 rounded-xl p-3 space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-zinc-500">Estimated</span><span className="font-semibold">{fmt(line.estimated)}</span></div>
-          <div className="flex justify-between"><span className="text-zinc-500">Already paid</span><span className="font-semibold text-emerald-600">{fmt(line.actual)}</span></div>
-          <div className="flex justify-between border-t border-zinc-200 pt-1 mt-1">
-            <span className="text-zinc-500 font-semibold">Remaining</span>
+        <div className="bg-[#F7F5F2] rounded-xl p-3 space-y-1 text-sm">
+          <div className="flex justify-between"><span className="text-[#14161C]/55">Estimated</span><span className="font-semibold">{fmt(line.estimated)}</span></div>
+          <div className="flex justify-between"><span className="text-[#14161C]/55">Already paid</span><span className="font-semibold text-emerald-600">{fmt(line.actual)}</span></div>
+          <div className="flex justify-between border-t border-[#1F4D3A]/12 pt-1 mt-1">
+            <span className="text-[#14161C]/55 font-semibold">Remaining</span>
             <span className={`font-bold ${remaining === 0 ? 'text-emerald-600' : 'text-amber-600'}`}>{fmt(remaining)}</span>
           </div>
         </div>
@@ -521,10 +521,10 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
         {/* Full / Partial toggle */}
         <div>
           <Label>Payment type</Label>
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1">
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1">
             {(['full', 'partial'] as const).map(t => (
               <button key={t} type="button" onClick={() => handlePaymentTypeChange(t)}
-                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'full' ? `Full (${fmt(remaining)})` : 'Partial'}
               </button>
             ))}

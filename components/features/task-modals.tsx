@@ -82,7 +82,7 @@ export function TaskModal({ weddingId, item, eventId, onClose }: Readonly<{
           <Input id="task-assignee" value={form.assignedToName} onChange={e => setForm(f => ({ ...f, assignedToName: e.target.value }))} placeholder="e.g. Bride's aunt" /></div>
         <div><Label htmlFor="task-notes">Notes</Label>
           <Input id="task-notes" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Additional details" /></div>
-        <label className="flex items-center gap-2 text-sm text-zinc-600 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-[#14161C]/60 cursor-pointer">
           <input type="checkbox" checked={form.isFinalCheck} onChange={e => setForm(f => ({ ...f, isFinalCheck: e.target.checked }))} className="rounded" />
           Mark as final check item
         </label>
@@ -132,15 +132,15 @@ export function LoadTemplateModal({ weddingId, eventId, onClose }: Readonly<{
   return (
     <Modal onClose={onClose} title="Load template">
       <div className="space-y-3">
-        <p className="text-xs text-zinc-400">Appends tasks to your list. Existing tasks are not affected.</p>
+        <p className="text-xs text-[#14161C]/40">Appends tasks to your list. Existing tasks are not affected.</p>
         {isLoading ? <div className="flex justify-center py-8"><Spinner /></div> :
-          templates.length === 0 ? <p className="text-sm text-zinc-400 py-4 text-center">No templates available.</p> : (
+          templates.length === 0 ? <p className="text-sm text-[#14161C]/40 py-4 text-center">No templates available.</p> : (
             <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-thin">
               {templates.map(t => (
-                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-zinc-100 last:border-0">
+                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-[#1F4D3A]/8 last:border-0">
                   <div>
                     <p className="text-sm font-semibold text-[#14161C]">{t.name}</p>
-                    <p className="text-xs text-zinc-400">{(t.data as unknown[]).length} tasks{t.culturalType && <span className="ml-1.5 text-violet-500">{t.culturalType}</span>}</p>
+                    <p className="text-xs text-[#14161C]/40">{(t.data as unknown[]).length} tasks{t.culturalType && <span className="ml-1.5 text-[#1F4D3A]/70">{t.culturalType}</span>}</p>
                   </div>
                   <Button size="sm" variant="lavender" onClick={() => void handleApply(t.id)} disabled={applying === t.id}>
                     {applying === t.id ? <Spinner size="sm" /> : 'Apply'}
@@ -171,13 +171,13 @@ export function TaskRow({ item, weddingId }: Readonly<{ item: TaskItem; weddingI
 
   return (
     <>
-      <div className={`group flex items-start gap-4 py-3.5 border-b border-zinc-100 last:border-0 ${item.isChecked ? 'opacity-50' : ''} ${item.isFinalCheck ? 'border-l-2 border-red-400 pl-3' : ''}`}>
+      <div className={`group flex items-start gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 ${item.isChecked ? 'opacity-50' : ''} ${item.isFinalCheck ? 'border-l-2 border-red-400 pl-3' : ''}`}>
         <button
           onClick={() => toggle.mutate({ itemId: item.id, currentVersion: item.version })}
           disabled={toggle.isPending}
           className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            toggle.isPending ? 'border-violet-300 bg-violet-100 animate-pulse cursor-wait' :
-            item.isChecked ? 'bg-violet-500 border-violet-500' : 'border-zinc-300 hover:border-violet-400'
+            toggle.isPending ? 'border-violet-300 bg-[#1F4D3A]/10 animate-pulse cursor-wait' :
+            item.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
           }`}
           aria-label={item.isChecked ? 'Mark incomplete' : 'Mark complete'}>
           {toggle.isPending ? (
@@ -193,26 +193,26 @@ export function TaskRow({ item, weddingId }: Readonly<{ item: TaskItem; weddingI
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className={`text-sm font-semibold ${item.isChecked ? 'line-through text-zinc-400' : 'text-[#14161C]'}`}>{item.title}</p>
+            <p className={`text-sm font-semibold ${item.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]'}`}>{item.title}</p>
             {item.isFinalCheck && <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">Final check</span>}
             {item.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
           </div>
           <div className="flex items-center gap-3 mt-1 flex-wrap">
             {item.dueDate && (
-              <span className={`text-xs font-medium ${overdue ? 'text-red-500' : 'text-zinc-400'}`}>
+              <span className={`text-xs font-medium ${overdue ? 'text-red-500' : 'text-[#14161C]/40'}`}>
                 {overdue ? '⚠ Overdue · ' : ''}Due {format(new Date(item.dueDate), 'MMM d')}
               </span>
             )}
             {item.priority <= 2 && <span className={`text-xs font-semibold ${PRIORITY_COLOR[item.priority]}`}>{PRIORITY_LABEL[item.priority]}</span>}
-            {item.assignedToName && <span className="text-xs text-zinc-400">→ {item.assignedToName}</span>}
-            {item.description && <p className="text-xs text-zinc-400 w-full mt-0.5">{item.description}</p>}
+            {item.assignedToName && <span className="text-xs text-[#14161C]/40">→ {item.assignedToName}</span>}
+            {item.description && <p className="text-xs text-[#14161C]/40 w-full mt-0.5">{item.description}</p>}
           </div>
         </div>
         <div className="flex items-center gap-1  flex-shrink-0">
-          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit task">
+          <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit task">
             <Pencil size={13} />
           </button>
-          <button onClick={handleDelete} disabled={del.isPending} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete task">
+          <button onClick={handleDelete} disabled={del.isPending} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete task">
             <Trash2 size={13} />
           </button>
         </div>
@@ -259,25 +259,25 @@ export function TaskList({ items, weddingId, onAdd }: Readonly<{
       {/* Progress */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-500">Progress</span>
-          <span className="font-bold text-violet-600">{pct}% · {checked}/{items.length}</span>
+          <span className="text-[#14161C]/55">Progress</span>
+          <span className="font-bold text-[#1F4D3A]">{pct}% · {checked}/{items.length}</span>
         </div>
         <ProgressBar value={checked} max={items.length} />
       </div>
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
           {(['all', 'pending', 'done'] as const).map(f => (
             <button key={f} onClick={() => setStatusFilter(f)}
-              className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
               {f}
             </button>
           ))}
         </div>
         {categories.length > 2 && (
           <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-            className="text-sm border border-zinc-200 rounded-xl px-3 py-1.5 text-zinc-600 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300">
+            className="text-sm border border-[#1F4D3A]/12 rounded-xl px-3 py-1.5 text-[#14161C]/60 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300">
             {categories.map(c => <option key={c} value={c}>{c === 'all' ? 'All categories' : c.replaceAll('_', ' ')}</option>)}
           </select>
         )}
@@ -293,14 +293,14 @@ export function TaskList({ items, weddingId, onAdd }: Readonly<{
             return (
               <div key={cat}>
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{cat.replaceAll('_', ' ')}</p>
-                  <span className="text-xs text-zinc-400">{catItems.filter(i => i.isChecked).length}/{catItems.length}</span>
+                  <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">{cat.replaceAll('_', ' ')}</p>
+                  <span className="text-xs text-[#14161C]/40">{catItems.filter(i => i.isChecked).length}/{catItems.length}</span>
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden px-4">
+                <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
                   {regular.map(i => <TaskRow key={i.id} item={i} weddingId={weddingId} />)}
                   {finals.length > 0 && (
                     <>
-                      {regular.length > 0 && <div className="border-t border-zinc-100 my-1" />}
+                      {regular.length > 0 && <div className="border-t border-[#1F4D3A]/8 my-1" />}
                       <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest py-2">Final checks</p>
                       {finals.map(i => <TaskRow key={i.id} item={i} weddingId={weddingId} />)}
                     </>

@@ -39,24 +39,24 @@ function OverallTab({ routes, accommodations, events }: Readonly<{
   return (
     <div className="space-y-8">
       <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Routes</p>
+        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Routes</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{routes.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Accommodations</p>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Accommodations</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{accommodations.length}</p></div>
       </div>
       <div className="space-y-3">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, routes: evR, accoms }]) => {
           if (evR.length === 0 && accoms.length === 0) return null
           return (
-            <div key={key} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+            <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-zinc-400" />
+                <CalendarDays size={15} className="text-[#14161C]/40" />
                 <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
               </div>
               <div className="flex gap-6 text-right">
-                <div><p className="text-xs text-zinc-400">Routes</p><p className="text-sm font-bold text-sky-600">{evR.length}</p></div>
-                <div><p className="text-xs text-zinc-400">Accommodations</p><p className="text-sm font-bold text-emerald-600">{accoms.length}</p></div>
+                <div><p className="text-xs text-[#14161C]/40">Routes</p><p className="text-sm font-bold text-sky-600">{evR.length}</p></div>
+                <div><p className="text-xs text-[#14161C]/40">Accommodations</p><p className="text-sm font-bold text-emerald-600">{accoms.length}</p></div>
               </div>
             </div>
           )
@@ -73,15 +73,15 @@ export function LogisticsClient({ weddingId, events, routes, accommodations, onR
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Logistics</p>
-          <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Logistics</h1>
-          <p className="text-sm text-zinc-400 mt-2 mb-6">{routes.length} routes · {accommodations.length} accommodations</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Logistics</p>
+          <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Logistics</h1>
+          <p className="text-sm text-[#14161C]/40 mt-2 mb-6">{routes.length} routes · {accommodations.length} accommodations</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {tabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.label}
               </button>
             ))}

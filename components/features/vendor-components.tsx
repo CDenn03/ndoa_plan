@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import { Search, Plus, Phone, Mail, MessageCircle, ChevronDown, ChevronUp, Send, Shield, Pencil, Trash2, X, Users } from 'lucide-react'
-import { Button, Input, Select, Label, Badge, EmptyState, Spinner, Modal } from '@/components/ui'
+import { Button, Input, Select, Label, Badge, EmptyState, Spinner, Modal, ConfirmDialog } from '@/components/ui'
 import { useVendors, useAddVendor, useUpdateVendorStatus, useUpdateVendor } from '@/hooks/use-vendors'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
@@ -52,15 +52,15 @@ export function VendorNotes({ vendorId, weddingId }: Readonly<{ vendorId: string
   }
 
   return (
-    <div className="px-6 pb-5 pt-3 border-t border-zinc-100 space-y-3">
-      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Notes log</p>
+    <div className="px-6 pb-5 pt-3 border-t border-[#1F4D3A]/8 space-y-3">
+      <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Notes log</p>
       {isLoading ? <div className="flex justify-center py-4"><Spinner size="sm" /></div> :
-        notes.length === 0 ? <p className="text-xs text-zinc-400">No notes yet. Log a communication update below.</p> : (
+        notes.length === 0 ? <p className="text-xs text-[#14161C]/40">No notes yet. Log a communication update below.</p> : (
           <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
             {notes.map(n => (
-              <div key={n.id} className="text-xs bg-zinc-50 rounded-xl px-3 py-2.5">
+              <div key={n.id} className="text-xs bg-[#F7F5F2] rounded-xl px-3 py-2.5">
                 <p className="text-[#14161C] leading-relaxed">{n.content}</p>
-                <p className="text-zinc-400 mt-1">{n.createdBy} · {format(new Date(n.createdAt), 'MMM d, h:mm a')}</p>
+                <p className="text-[#14161C]/40 mt-1">{n.createdBy} · {format(new Date(n.createdAt), 'MMM d, h:mm a')}</p>
               </div>
             ))}
           </div>
@@ -100,14 +100,14 @@ export function VendorEventAssign({ vendorId, weddingId }: Readonly<{ vendorId: 
   if (allEvents.length === 0) return null
 
   return (
-    <div className="px-6 pb-5 pt-3 border-t border-zinc-100 space-y-2">
-      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Assigned events</p>
+    <div className="px-6 pb-5 pt-3 border-t border-[#1F4D3A]/8 space-y-2">
+      <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Assigned events</p>
       <div className="flex flex-wrap gap-1.5">
         {allEvents.map(ev => {
           const assigned = assignedIds.has(ev.id)
           return (
             <button key={ev.id} onClick={() => toggle(ev.id, assigned)}
-              className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${assigned ? 'bg-violet-100 text-violet-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+              className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${assigned ? 'bg-[#1F4D3A]/10 text-[#1F4D3A]' : 'bg-[#1F4D3A]/6 text-[#14161C]/55 hover:bg-[#1F4D3A]/10'}`}>
               {assigned ? '✓ ' : ''}{ev.name}
             </button>
           )
@@ -148,9 +148,10 @@ export function AddVendorModal({ weddingId, eventId, onClose }: Readonly<{
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ eventId }),
           })
-          await qc.invalidateQueries({ queryKey: ['vendors', weddingId, eventId] })
         }
       }
+      // Invalidate the base vendors query so the overall list refreshes
+      await qc.invalidateQueries({ queryKey: ['vendors', weddingId] })
       toast('Vendor added', 'success')
       onClose()
     } catch { toast('Failed to add vendor', 'error') }
@@ -175,7 +176,7 @@ export function AddVendorModal({ weddingId, eventId, onClose }: Readonly<{
         </div>
         <div><Label htmlFor="av-amount">Amount (KES)</Label>
           <Input id="av-amount" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="50000" min="0" /></div>
-        <label className="flex items-center gap-2 text-sm text-zinc-600 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-[#14161C]/60 cursor-pointer">
           <input type="checkbox" checked={form.isBackup} onChange={e => setForm(f => ({ ...f, isBackup: e.target.checked }))} className="rounded" />
           Mark as backup vendor
         </label>
@@ -256,10 +257,10 @@ export function VendorRow({ vendor, weddingId, showEventAssign }: Readonly<{
   const { toast } = useToast()
   const [expanded, setExpanded] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const extVendor = vendor as LocalVendor & { description?: string; isBackup?: boolean }
 
   const handleDelete = async () => {
-    if (!confirm(`Delete ${vendor.name}?`)) return
     try {
       await fetch(`/api/weddings/${weddingId}/vendors/${vendor.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['vendors', weddingId] })
@@ -269,35 +270,35 @@ export function VendorRow({ vendor, weddingId, showEventAssign }: Readonly<{
 
   return (
     <>
-      <div className="border-b border-zinc-100 last:border-0">
+      <div className="border-b border-[#1F4D3A]/8 last:border-0">
         <div className="group flex items-center gap-4 py-4 px-6 hover:bg-stone-50 transition-colors">
-          <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
+          <div className="w-9 h-9 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0 relative">
             {vendor.name.charAt(0).toUpperCase()}
-            {extVendor.isBackup && <Shield size={9} className="absolute -top-0.5 -right-0.5 text-zinc-400" aria-label="Backup vendor" />}
+            {extVendor.isBackup && <Shield size={9} className="absolute -top-0.5 -right-0.5 text-[#14161C]/40" aria-label="Backup vendor" />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-semibold text-[#14161C]">{vendor.name}</p>
-              {extVendor.isBackup && <span className="text-[10px] text-zinc-400 font-medium">Backup</span>}
+              {extVendor.isBackup && <span className="text-[10px] text-[#14161C]/40 font-medium">Backup</span>}
               {vendor.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
             </div>
             <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-              <span className="text-xs text-zinc-400">{vendor.category.replaceAll('_', ' ')}</span>
-              {extVendor.description && <span className="text-xs text-zinc-400 truncate max-w-48">{extVendor.description}</span>}
+              <span className="text-xs text-[#14161C]/40">{vendor.category.replaceAll('_', ' ')}</span>
+              {extVendor.description && <span className="text-xs text-[#14161C]/40 truncate max-w-48">{extVendor.description}</span>}
               {vendor.contactPhone && (
-                <a href={`tel:${vendor.contactPhone}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
+                <a href={`tel:${vendor.contactPhone}`} className="flex items-center gap-1 text-xs text-[#14161C]/40 hover:text-[#1F4D3A] transition-colors">
                   <Phone size={10} /> {vendor.contactPhone}
                 </a>
               )}
               {vendor.contactEmail && (
-                <a href={`mailto:${vendor.contactEmail}`} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-violet-600 transition-colors">
+                <a href={`mailto:${vendor.contactEmail}`} className="flex items-center gap-1 text-xs text-[#14161C]/40 hover:text-[#1F4D3A] transition-colors">
                   <Mail size={10} /> {vendor.contactEmail}
                 </a>
               )}
               {vendor.contactPhone && (
                 <a href={`https://wa.me/${vendor.contactPhone.replaceAll(/\D/g, '')}?text=Hi, I'm reaching out regarding our wedding`}
                   target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-xs text-zinc-400 hover:text-emerald-600 transition-colors">
+                  className="flex items-center gap-1 text-xs text-[#14161C]/40 hover:text-emerald-600 transition-colors">
                   <MessageCircle size={10} /> WhatsApp
                 </a>
               )}
@@ -313,13 +314,13 @@ export function VendorRow({ vendor, weddingId, showEventAssign }: Readonly<{
             <Badge variant={STATUS_BADGE[vendor.status] ?? 'default'}>{vendor.status}</Badge>
             <select value={vendor.status}
               onChange={e => updateStatus.mutate({ vendorId: vendor.id, status: e.target.value as LocalVendor['status'], currentVersion: vendor.version })}
-              className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
+              className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white text-[#14161C]/60 focus:outline-none focus:ring-1 focus:ring-[#1F4D3A]/40 appearance-none cursor-pointer"
               disabled={updateStatus.isPending} aria-label="Update vendor status">
               {VENDOR_STATUSES.map(s => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>)}
             </select>
             <div className="flex items-center gap-1 ">
-              <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
-              <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+              <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+              <button onClick={() => setConfirmDelete(true)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
             </div>
             <Button size="icon" variant="ghost" onClick={() => setExpanded(v => !v)} aria-label={expanded ? 'Collapse' : 'Expand'}>
               {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -330,6 +331,15 @@ export function VendorRow({ vendor, weddingId, showEventAssign }: Readonly<{
         {expanded && showEventAssign && <VendorEventAssign vendorId={vendor.id} weddingId={weddingId} />}
       </div>
       {editing && <EditVendorModal vendor={vendor} weddingId={weddingId} onClose={() => setEditing(false)} />}
+      {confirmDelete && (
+        <ConfirmDialog
+          title={`Delete ${vendor.name}?`}
+          description="This vendor will be permanently removed."
+          confirmLabel="Delete"
+          onConfirm={() => { void handleDelete(); setConfirmDelete(false) }}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
     </>
   )
 }
@@ -383,7 +393,7 @@ export function EventVendorsTab({ weddingId, eventId }: Readonly<{ weddingId: st
             { label: 'Total owed', val: fmt(totalOwed), color: totalOwed > 0 ? 'text-red-500' : 'text-[#14161C]' },
           ].map(({ label, val, color }, i) => (
             <div key={label} className={i === 0 ? 'pr-6' : i === 3 ? 'pl-6' : 'px-6'}>
-              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
+              <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
               <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
             </div>
           ))}
@@ -393,7 +403,7 @@ export function EventVendorsTab({ weddingId, eventId }: Readonly<{ weddingId: st
       {/* Filters + Add */}
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-36">
-          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search vendors…" className="pl-8 text-sm" />
         </div>
         <Select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="w-auto" aria-label="Filter by category">
@@ -414,14 +424,14 @@ export function EventVendorsTab({ weddingId, eventId }: Readonly<{ weddingId: st
 
       {/* List */}
       {vendors.length === 0 ? (
-        <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No vendors for this event"
+        <EmptyState icon={<Users size={32} className="text-[#14161C]/15" />} title="No vendors for this event"
           description="Add vendors assigned to this event"
           action={<Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add vendor</Button>} />
       ) : filtered.length === 0 ? (
-        <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No vendors match" description="Try adjusting your filters" />
+        <EmptyState icon={<Users size={32} className="text-[#14161C]/15" />} title="No vendors match" description="Try adjusting your filters" />
       ) : (
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-          <div className="px-6 py-3 border-b border-zinc-100">
+        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+          <div className="px-6 py-3 border-b border-[#1F4D3A]/8">
             <p className="text-sm font-semibold text-[#14161C]">{filtered.length} vendor{filtered.length !== 1 ? 's' : ''}</p>
           </div>
           {filtered.map(v => <VendorRow key={v.id} vendor={v} weddingId={weddingId} />)}

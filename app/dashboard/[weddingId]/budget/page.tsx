@@ -49,37 +49,37 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
           { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
         ].map(({ label, val, color }, i) => (
           <div key={label} className={i === 0 ? 'pr-8' : i === 2 ? 'pl-8' : 'px-8'}>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
             <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
           </div>
         ))}
       </div>
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-500">Overall utilisation</span>
+          <span className="text-[#14161C]/55">Overall utilisation</span>
           <span className={`font-bold ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>{pct}%</span>
         </div>
         <ProgressBar value={totalActual} max={totalEstimated} />
       </div>
       <div className="space-y-4">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, lines: evLines }]) => {
           if (evLines.length === 0) return null
           const s = summarise(evLines)
           const evPct = s.estimated > 0 ? Math.round((s.actual / s.estimated) * 100) : 0
           const evVariance = s.estimated - s.actual
           return (
-            <div key={key} className="rounded-2xl border border-zinc-100 p-5 space-y-3">
+            <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-5 space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2">
-                  <CalendarDays size={15} className="text-zinc-400" />
+                  <CalendarDays size={15} className="text-[#14161C]/40" />
                   <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
-                  <span className="text-xs text-zinc-400">{evLines.length} lines</span>
+                  <span className="text-xs text-[#14161C]/40">{evLines.length} lines</span>
                 </div>
                 <div className="flex gap-6 text-right">
-                  <div><p className="text-xs text-zinc-400">Estimated</p><p className="text-sm font-bold text-[#14161C]">{fmt(s.estimated)}</p></div>
-                  <div><p className="text-xs text-zinc-400">Actual</p><p className={`text-sm font-bold ${evPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(s.actual)}</p></div>
-                  <div><p className="text-xs text-zinc-400">Variance</p><p className={`text-sm font-bold ${evVariance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{evVariance < 0 ? '-' : '+'}{fmt(Math.abs(evVariance))}</p></div>
+                  <div><p className="text-xs text-[#14161C]/40">Estimated</p><p className="text-sm font-bold text-[#14161C]">{fmt(s.estimated)}</p></div>
+                  <div><p className="text-xs text-[#14161C]/40">Actual</p><p className={`text-sm font-bold ${evPct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(s.actual)}</p></div>
+                  <div><p className="text-xs text-[#14161C]/40">Variance</p><p className={`text-sm font-bold ${evVariance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>{evVariance < 0 ? '-' : '+'}{fmt(Math.abs(evVariance))}</p></div>
                 </div>
               </div>
               <ProgressBar value={s.actual} max={s.estimated || 1} />
@@ -88,7 +88,7 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
         })}
       </div>
       <div>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">All categories</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-4">All categories</p>
         <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} onPay={setPayingLine} />
       </div>
       {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} onPay={setPayingLine} />}
@@ -123,18 +123,18 @@ export default function BudgetPage(props: Readonly<{ params: Promise<{ weddingId
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Budget</h1>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Budget</h1>
           </div>
-          <p className="text-sm text-zinc-400 mt-1 mb-6">{lines.length} total line items across {events.length} events</p>
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{lines.length} total line items across {events.length} events</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {isLoading ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                   {t.label}
                 </button>
               ))

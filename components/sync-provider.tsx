@@ -100,7 +100,7 @@ export function SyncProvider({ weddingId, children }: { weddingId: string; child
               <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
                 {c.entityType} edited on two devices. Server version kept.
               </p>
-              <button onClick={() => dismissConflict(c.operationId)} className="mt-2 text-xs text-zinc-400 hover:text-zinc-600 border border-zinc-200 dark:border-zinc-700 rounded px-2 py-0.5">
+              <button onClick={() => dismissConflict(c.operationId)} className="mt-2 text-xs text-zinc-400 hover:text-[#14161C]/60 border border-[#1F4D3A]/12 dark:border-zinc-700 rounded px-2 py-0.5">
                 Dismiss
               </button>
             </div>

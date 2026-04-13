@@ -4,21 +4,32 @@
 
 @layer base {
   :root {
-    /* Color system */
-    --bg: 40 20% 97%;           /* soft warm white */
-    --surface: 0 0% 100%;       /* pure white panels */
-    --border: 220 13% 91%;      /* subtle border */
-    --text-primary: 228 14% 10%;   /* #14161C deep navy */
-    --text-secondary: 220 9% 46%;  /* muted body */
-    --text-muted: 220 9% 64%;      /* placeholder / meta */
-    --accent-lavender: 263 52% 83%; /* #CDB5F7 muted lavender */
-    --accent-yellow: 48 68% 87%;    /* #E5DF98 soft yellow */
-    --primary: 263 68% 58%;         /* violet-600 */
-    --primary-fg: 0 0% 100%;
-    --destructive: 0 72% 51%;
-    --radius: 0.75rem;
-    --surface-subtle: 220 14% 96%;          /* off-white section backgrounds */
-    --accent-lavender-fg: 263 52% 35%;      /* dark lavender for text on lavender bg */
+    /* ── Brand color system ─────────────────────────────────────── */
+    --brand-green:      31 38% 21%;   /* #1F4D3A */
+    --brand-green-dark: 31 38% 16%;   /* #16382B */
+    --brand-gold:       38 62% 57%;   /* #D4A94F */
+    --brand-gold-light: 43 68% 69%;   /* #E6C878 */
+    --brand-bg:         36 18% 96%;   /* #F7F5F2 */
+
+    /* ── UI semantic tokens ─────────────────────────────────────── */
+    --bg:              36 18% 96%;    /* #F7F5F2 warm off-white */
+    --surface:         0 0% 100%;     /* pure white panels */
+    --border:          36 12% 88%;    /* warm subtle border */
+    --text-primary:    228 14% 10%;   /* #14161C deep */
+    --text-secondary:  220 9% 46%;    /* muted body */
+    --text-muted:      220 9% 64%;    /* placeholder / meta */
+
+    /* ── Accent tokens (brand-aligned) ─────────────────────────── */
+    --accent-gold:     38 62% 57%;    /* #D4A94F */
+    --accent-gold-bg:  43 68% 95%;    /* very light gold tint */
+    --accent-green-bg: 31 38% 96%;    /* very light green tint */
+
+    /* ── Functional ─────────────────────────────────────────────── */
+    --primary:         31 38% 21%;    /* brand green */
+    --primary-fg:      0 0% 100%;
+    --destructive:     0 72% 51%;
+    --radius:          0.75rem;
+    --surface-subtle:  36 14% 94%;    /* warm off-white section bg */
   }
 
   * { border-color: hsl(var(--border)); box-sizing: border-box; }
@@ -34,15 +45,13 @@
 @layer utilities {
   .font-jakarta { font-family: var(--font-jakarta), system-ui, sans-serif; }
 
-  .text-primary { color: hsl(var(--text-primary)); }
+  .text-primary   { color: hsl(var(--text-primary)); }
   .text-secondary { color: hsl(var(--text-secondary)); }
-  .text-muted-ui { color: hsl(var(--text-muted)); }
+  .text-muted-ui  { color: hsl(var(--text-muted)); }
 
-  .bg-surface { background-color: hsl(var(--surface)); }
-  .bg-app { background-color: hsl(var(--bg)); }
-
-  .accent-lavender { background-color: hsl(var(--accent-lavender)); }
-  .accent-yellow { background-color: hsl(var(--accent-yellow)); }
+  .bg-surface        { background-color: hsl(var(--surface)); }
+  .bg-app            { background-color: hsl(var(--bg)); }
+  .bg-surface-subtle { background-color: hsl(var(--surface-subtle)); }
 
   .scrollbar-thin {
     scrollbar-width: thin;
@@ -52,15 +61,11 @@
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #d4d4d8; border-radius: 9999px; }
 
-  /* Editorial divider */
   .section-divider {
     border: none;
     border-top: 1px solid hsl(var(--border));
   }
 
-  /* Surface variants */
-  .bg-surface-subtle { background-color: hsl(var(--surface-subtle)); }
-  .text-accent-lavender { color: hsl(var(--accent-lavender-fg)); }
   .border-subtle { border-color: hsl(var(--border)); }
 
   /* Modal slide-up on mobile */
@@ -71,24 +76,6 @@
   .modal-slide-up { animation: slide-up 0.2s ease-out; }
 }
 
-/* Orbit animations for landing page */
-@keyframes orbit-node {
-  from { transform: rotate(var(--start, 0deg)) translateX(var(--r, 100px)) rotate(calc(-1 * var(--start, 0deg))); }
-  to   { transform: rotate(calc(var(--start, 0deg) + 360deg)) translateX(var(--r, 100px)) rotate(calc(-1 * (var(--start, 0deg) + 360deg))); }
-}
-@keyframes counter-orbit {
-  /* keeps the node card upright while the anchor rotates */
-  from { transform: translate(-50%, -50%) rotate(calc(-1 * var(--start, 0deg))); }
-  to   { transform: translate(-50%, -50%) rotate(calc(-1 * (var(--start, 0deg) + 360deg))); }
-}
-@keyframes float-badge {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-4px); }
-}
-.animate-float {
-  animation: float-badge 3s ease-in-out infinite;
-}
-
 /* Ticker scroll */
 @keyframes ticker {
   from { transform: translateX(0); }
@@ -96,4 +83,13 @@
 }
 .animate-ticker {
   animation: ticker 30s linear infinite;
+}
+
+/* Float badge */
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+.animate-float {
+  animation: float-badge 3s ease-in-out infinite;
 }

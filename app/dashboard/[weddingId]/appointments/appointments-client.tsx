@@ -41,36 +41,36 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
   return (
     <div className="space-y-10">
       <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Upcoming</p>
+        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Upcoming</p>
           <p className="text-2xl font-extrabold text-[#14161C]">{upcoming.length}</p></div>
         {thisWeek.length > 0 && (
-          <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">This week</p>
+          <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">This week</p>
             <p className="text-2xl font-extrabold text-amber-500">{thisWeek.length}</p></div>
         )}
-        <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total</p>
-          <p className="text-2xl font-extrabold text-zinc-400">{appointments.length}</p></div>
+        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total</p>
+          <p className="text-2xl font-extrabold text-[#14161C]/40">{appointments.length}</p></div>
       </div>
       <div className="space-y-3">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, appts }]) => {
           if (appts.length === 0) return null
           const upcomingCount = appts.filter(a => a.status === 'SCHEDULED' && isFuture(new Date(a.startAt))).length
           return (
-            <div key={key} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+            <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-zinc-400" />
+                <CalendarDays size={15} className="text-[#14161C]/40" />
                 <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
               </div>
               <div className="flex gap-6 text-right">
-                <div><p className="text-xs text-zinc-400">Upcoming</p><p className="text-sm font-bold text-violet-600">{upcomingCount}</p></div>
-                <div><p className="text-xs text-zinc-400">Total</p><p className="text-sm font-bold text-zinc-500">{appts.length}</p></div>
+                <div><p className="text-xs text-[#14161C]/40">Upcoming</p><p className="text-sm font-bold text-[#1F4D3A]">{upcomingCount}</p></div>
+                <div><p className="text-xs text-[#14161C]/40">Total</p><p className="text-sm font-bold text-[#14161C]/55">{appts.length}</p></div>
               </div>
             </div>
           )
         })}
       </div>
       <div>
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">All appointments</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-4">All appointments</p>
         <AppointmentList appointments={appointments} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />
       </div>
     </div>
@@ -105,14 +105,14 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Planning</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Planning</p>
           <div className="flex items-end justify-between gap-4 mb-1">
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Appointments</h1>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Appointments</h1>
             
           </div>
-          <p className="text-sm text-zinc-400 mt-1 mb-6">
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">
             {upcoming.length} upcoming
             {thisWeek.length > 0 && <span className="ml-2 text-amber-500 font-semibold">· {thisWeek.length} this week</span>}
           </p>
@@ -120,7 +120,7 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
             {isLoading ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                   {t.label}
                 </button>
               ))

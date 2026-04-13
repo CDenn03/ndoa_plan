@@ -50,19 +50,19 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">People</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">People</p>
           <div className="flex items-end justify-between gap-4 mb-1">
             <div>
-              <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Guests</h1>
+              <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Guests</h1>
             </div>
           </div>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                   {t.label}
                 </button>
               ))
@@ -79,7 +79,7 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
             {/* Filters */}
             <div className="flex flex-wrap gap-2">
               <div className="relative flex-1 min-w-48">
-                <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
                 <Input value={guestFilter.search} onChange={e => setGuestFilter({ search: e.target.value })} placeholder="Search guests…" className="pl-9" />
               </div>
               <Select value={guestFilter.rsvpStatus} onChange={e => setGuestFilter({ rsvpStatus: e.target.value })} className="w-auto" aria-label="Filter by RSVP">
@@ -107,8 +107,8 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
             </div>
 
             {/* All guests list */}
-            <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-zinc-100">
+            <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#1F4D3A]/8">
                 <p className="text-sm font-semibold text-[#14161C]">{filtered.length} guest{filtered.length !== 1 ? 's' : ''}</p>
               </div>
               {isLoading ? (

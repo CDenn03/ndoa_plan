@@ -22,7 +22,7 @@ export const PRESET_TAGS = [
 
 const TAG_COLORS: Record<string, string> = {
   VIP: 'bg-amber-50 text-amber-700',
-  Family: 'bg-violet-50 text-violet-700',
+  Family: 'bg-[#1F4D3A]/6 text-[#1F4D3A]',
   Friends: 'bg-pink-50 text-pink-700',
   Work: 'bg-sky-50 text-sky-700',
   Committee: 'bg-emerald-50 text-emerald-700',
@@ -87,10 +87,10 @@ export function AddGuestModal({ weddingId, eventId, onClose, onDone }: Readonly<
     <Modal onClose={onClose} title={eventId ? 'Add guest to event' : 'Add guest'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {eventId && (
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
             {(['new', 'existing'] as const).map(t => (
               <button key={t} type="button" onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${tab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${tab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'new' ? 'New guest' : 'Existing guest'}
               </button>
             ))}
@@ -135,7 +135,7 @@ export function AddGuestModal({ weddingId, eventId, onClose, onDone }: Readonly<
               <div className="flex flex-wrap gap-1.5 mt-1">
                 {PRESET_TAGS.map(tag => (
                   <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                    className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-violet-100 text-violet-700') + ' ring-1 ring-current' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+                    className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/10 text-[#1F4D3A]') + ' ring-1 ring-current' : 'bg-[#1F4D3A]/6 text-[#14161C]/55 hover:bg-[#1F4D3A]/10'}`}>
                     {tag}
                   </button>
                 ))}
@@ -203,7 +203,7 @@ export function EditGuestModal({ guest, weddingId, onClose }: Readonly<{ guest: 
           <div className="flex flex-wrap gap-1.5 mt-1">
             {PRESET_TAGS.map(tag => (
               <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-violet-100 text-violet-700') + ' ring-1 ring-current' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>
+                className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${form.tags.includes(tag) ? (TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/10 text-[#1F4D3A]') + ' ring-1 ring-current' : 'bg-[#1F4D3A]/6 text-[#14161C]/55 hover:bg-[#1F4D3A]/10'}`}>
                 {tag}
               </button>
             ))}
@@ -240,23 +240,23 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
 
   return (
     <>
-      <div className="group flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors px-6">
-        <div className="w-9 h-9 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0 relative">
+      <div className="group flex items-center gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors px-6">
+        <div className="w-9 h-9 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0 relative">
           {guest.name.charAt(0).toUpperCase()}
           {extGuest.priority === 'VIP' && <Star size={9} className="absolute -top-0.5 -right-0.5 text-amber-500 fill-amber-500" />}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold text-[#14161C] truncate">{guest.name}</p>
-            {extGuest.plusOneOf && <span className="text-[11px] text-zinc-400">+1</span>}
+            {extGuest.plusOneOf && <span className="text-[11px] text-[#14161C]/40">+1</span>}
             {guest.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
             {guest.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Pending sync" />}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-            {guest.phone && <p className="text-xs text-zinc-400">{guest.phone}</p>}
-            {guest.mealPref && <p className="text-xs text-zinc-400">🍽 {guest.mealPref}</p>}
+            {guest.phone && <p className="text-xs text-[#14161C]/40">{guest.phone}</p>}
+            {guest.mealPref && <p className="text-xs text-[#14161C]/40">🍽 {guest.mealPref}</p>}
             {guest.tags?.map(tag => (
-              <span key={tag} className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>{tag}</span>
+              <span key={tag} className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/55'}`}>{tag}</span>
             ))}
           </div>
         </div>
@@ -264,7 +264,7 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
           <Badge variant={RSVP_BADGE[guest.rsvpStatus] ?? 'default'}>{guest.rsvpStatus}</Badge>
           <select value={guest.rsvpStatus}
             onChange={e => updateRsvp.mutate({ guestId: guest.id, rsvpStatus: e.target.value as LocalGuest['rsvpStatus'], currentVersion: guest.version })}
-            className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
+            className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white text-[#14161C]/60 focus:outline-none focus:ring-1 focus:ring-[#1F4D3A]/40 appearance-none cursor-pointer"
             disabled={updateRsvp.isPending} aria-label="Update RSVP status">
             <option value="PENDING">Pending</option>
             <option value="CONFIRMED">Confirmed</option>
@@ -278,8 +278,8 @@ export function GuestRow({ guest, weddingId }: Readonly<{ guest: LocalGuest; wed
             </Button>
           )}
           <div className="flex items-center gap-1">
-            <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit guest"><Pencil size={13} /></button>
-            <button onClick={() => setConfirmDelete(true)} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Remove guest"><Trash2 size={13} /></button>
+            <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit guest"><Pencil size={13} /></button>
+            <button onClick={() => setConfirmDelete(true)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Remove guest"><Trash2 size={13} /></button>
           </div>
         </div>
       </div>
@@ -329,26 +329,26 @@ export function AttendanceRow({ attendance, weddingId, eventId, onRefresh }: Rea
 
   const g = attendance.guest
   return (
-    <div className="group flex items-center gap-4 py-3.5 border-b border-zinc-100 last:border-0 hover:bg-stone-50 transition-colors px-4">
-      <div className="w-8 h-8 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0">
+    <div className="group flex items-center gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors px-4">
+      <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
         {g.name.charAt(0).toUpperCase()}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-[#14161C] truncate">{g.name}</p>
         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          <span className="text-xs text-zinc-400">{g.side}</span>
-          {g.phone && <span className="text-xs text-zinc-400">{g.phone}</span>}
-          {g.mealPref && <span className="text-xs text-zinc-400">🍽 {g.mealPref}</span>}
+          <span className="text-xs text-[#14161C]/40">{g.side}</span>
+          {g.phone && <span className="text-xs text-[#14161C]/40">{g.phone}</span>}
+          {g.mealPref && <span className="text-xs text-[#14161C]/40">🍽 {g.mealPref}</span>}
           {g.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
           {g.tags?.map(tag => (
-            <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-500'}`}>{tag}</span>
+            <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/55'}`}>{tag}</span>
           ))}
         </div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <Badge variant={RSVP_BADGE[attendance.rsvpStatus] ?? 'default'}>{attendance.rsvpStatus}</Badge>
         <select value={attendance.rsvpStatus} onChange={e => void updateRsvp(e.target.value)} disabled={saving}
-          className="text-xs border border-zinc-200 rounded-lg px-2 py-1.5 bg-white text-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none cursor-pointer"
+          className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white text-[#14161C]/60 focus:outline-none focus:ring-1 focus:ring-[#1F4D3A]/40 appearance-none cursor-pointer"
           aria-label="Update RSVP">
           <option value="PENDING">Pending</option>
           <option value="CONFIRMED">Confirmed</option>
@@ -356,7 +356,7 @@ export function AttendanceRow({ attendance, weddingId, eventId, onRefresh }: Rea
           <option value="MAYBE">Maybe</option>
           <option value="WAITLISTED">Waitlisted</option>
         </select>
-        <button onClick={remove} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 " aria-label="Remove from event">
+        <button onClick={remove} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 " aria-label="Remove from event">
           <Trash2 size={13} />
         </button>
       </div>
@@ -429,28 +429,28 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
           { label: 'Checked in', val: checkedIn, color: 'text-sky-600' },
         ].map(({ label, val, color }, i) => (
           <div key={label} className={i === 0 ? 'pr-4' : i === 3 ? 'pl-4' : 'px-4'}>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">{label}</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">{label}</p>
             <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
           </div>
         ))}
       </div>
 
       {/* Expected guests input */}
-      <div className="flex items-center gap-3 bg-zinc-50 rounded-xl px-4 py-3">
+      <div className="flex items-center gap-3 bg-[#F7F5F2] rounded-xl px-4 py-3">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-zinc-500 mb-1">Expected guests</p>
+          <p className="text-xs font-semibold text-[#14161C]/55 mb-1">Expected guests</p>
           <div className="flex items-center gap-2">
             <input
               type="number" min="0" value={expectedInput}
               onChange={e => saveExpected(e.target.value)}
               placeholder="Set target…"
-              className="w-18 text-sm font-semibold bg-white border border-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-300 text-[#14161C]"
+              className="w-18 text-sm font-semibold bg-white border border-[#1F4D3A]/12 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-300 text-[#14161C]"
             />
             {expected > 0 && (
               <span className={`text-xs font-semibold ${
-                delta === null ? 'text-zinc-400' :
+                delta === null ? 'text-[#14161C]/40' :
                 delta > 0 ? 'text-amber-500' :
-                delta < 0 ? 'text-zinc-400' :
+                delta < 0 ? 'text-[#14161C]/40' :
                 'text-emerald-600'
               }`}>
                 {delta === null ? '' :
@@ -463,9 +463,9 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
         </div>
         {expected > 0 && (
           <div className="text-right flex-shrink-0">
-            <p className="text-xs text-zinc-400">Confirmed / Expected</p>
+            <p className="text-xs text-[#14161C]/40">Confirmed / Expected</p>
             <p className="text-sm font-bold text-[#14161C]">{confirmed} / {expected}</p>
-            <p className="text-xs text-zinc-400 mt-0.5">{expected > 0 ? Math.round((confirmed / expected) * 100) : 0}% filled</p>
+            <p className="text-xs text-[#14161C]/40 mt-0.5">{expected > 0 ? Math.round((confirmed / expected) * 100) : 0}% filled</p>
           </div>
         )}
       </div>
@@ -473,7 +473,7 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
       {/* Filters + Add */}
       <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-36">
-          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…" className="pl-8 text-sm" />
         </div>
         <Select value={rsvpFilter} onChange={e => setRsvpFilter(e.target.value)} className="w-auto text-sm" aria-label="Filter RSVP">
@@ -495,13 +495,13 @@ export function EventGuestsTab({ weddingId, eventId }: Readonly<{ weddingId: str
 
       {/* List */}
       {attendances.length === 0 ? (
-        <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No guests for this event"
+        <EmptyState icon={<Users size={32} className="text-[#14161C]/15" />} title="No guests for this event"
           description="Add guests or link existing ones to track attendance"
           action={<Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add guest</Button>} />
       ) : filtered.length === 0 ? (
-        <EmptyState icon={<Users size={32} className="text-zinc-200" />} title="No guests match" description="Try adjusting your filters" />
+        <EmptyState icon={<Users size={32} className="text-[#14161C]/15" />} title="No guests match" description="Try adjusting your filters" />
       ) : (
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
           {filtered.map(a => <AttendanceRow key={a.id} attendance={a} weddingId={weddingId} eventId={eventId} onRefresh={refresh} />)}
         </div>
       )}
@@ -552,7 +552,7 @@ export function GuestsOverallTab({ weddingId, events }: Readonly<{ weddingId: st
           { label: 'Checked in', val: checkedIn, color: 'text-sky-600' },
         ].map(({ label, val, color }, i) => (
           <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
             <p className={`text-3xl font-extrabold leading-none ${color}`}>{val}</p>
           </div>
         ))}
@@ -560,10 +560,10 @@ export function GuestsOverallTab({ weddingId, events }: Readonly<{ weddingId: st
 
       {byCategory.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By category</p>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By category</p>
           <div className="flex flex-wrap gap-2">
             {byCategory.map(([tag, count]) => (
-              <div key={tag} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${TAG_COLORS[tag] ?? 'bg-zinc-100 text-zinc-600'}`}>
+              <div key={tag} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/60'}`}>
                 {tag}
                 <span className="opacity-60">{count}</span>
               </div>
@@ -574,7 +574,7 @@ export function GuestsOverallTab({ weddingId, events }: Readonly<{ weddingId: st
 
       {events.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
           {Array.from(byEvent.values()).map(({ event }) => (
             <EventAttendanceSummary key={event.id} weddingId={weddingId} event={event} />
           ))}
@@ -596,15 +596,15 @@ function EventAttendanceSummary({ weddingId, event }: Readonly<{ weddingId: stri
   })
   const confirmed = attendances.filter(a => a.rsvpStatus === 'CONFIRMED').length
   return (
-    <div className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+    <div className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
       <div className="flex items-center gap-2">
-        <CalendarDays size={15} className="text-zinc-400" />
+        <CalendarDays size={15} className="text-[#14161C]/40" />
         <p className="text-sm font-bold text-[#14161C]">{event.name}</p>
-        <span className="text-xs text-zinc-400">{attendances.length} guests</span>
+        <span className="text-xs text-[#14161C]/40">{attendances.length} guests</span>
       </div>
       <div className="flex gap-6 text-right">
-        <div><p className="text-xs text-zinc-400">Confirmed</p><p className="text-sm font-bold text-emerald-600">{confirmed}</p></div>
-        <div><p className="text-xs text-zinc-400">Total</p><p className="text-sm font-bold text-zinc-500">{attendances.length}</p></div>
+        <div><p className="text-xs text-[#14161C]/40">Confirmed</p><p className="text-sm font-bold text-emerald-600">{confirmed}</p></div>
+        <div><p className="text-xs text-[#14161C]/40">Total</p><p className="text-sm font-bold text-[#14161C]/55">{attendances.length}</p></div>
       </div>
     </div>
   )

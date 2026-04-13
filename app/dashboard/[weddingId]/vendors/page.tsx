@@ -40,18 +40,18 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">People</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">People</p>
           <div className="flex items-end justify-between gap-4 mb-1">
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Vendors</h1>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Vendors</h1>
           </div>
-          <p className="text-sm text-zinc-400 mt-1 mb-6">{stats.total} vendors · {fmt(stats.totalOwed)} outstanding</p>
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{stats.total} vendors · {fmt(stats.totalOwed)} outstanding</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                   {t.label}
                 </button>
               ))
@@ -76,7 +76,7 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
                 { label: 'Total owed', val: fmt(stats.totalOwed), color: stats.totalOwed > 0 ? 'text-red-500' : 'text-[#14161C]' },
               ].map(({ label, val, color }, i) => (
                 <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
-                  <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">{label}</p>
+                  <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
                   <p className={`text-3xl font-extrabold leading-none ${color}`}>{val}</p>
                 </div>
               ))}
@@ -85,15 +85,15 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
             {/* By event summary */}
             {events.length > 0 && (
               <div className="space-y-3">
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+                <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
                 {events.map(e => (
                     <button key={e.id} onClick={() => setActiveTab(e.id)}
-                      className="w-full rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4 hover:border-zinc-200 hover:bg-zinc-50 transition-colors text-left">
+                      className="w-full rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4 hover:border-[#1F4D3A]/12 hover:bg-[#F7F5F2] transition-colors text-left">
                       <div className="flex items-center gap-2">
-                        <CalendarDays size={15} className="text-zinc-400" />
+                        <CalendarDays size={15} className="text-[#14161C]/40" />
                         <p className="text-sm font-bold text-[#14161C]">{e.name}</p>
                       </div>
-                      <span className="text-xs text-zinc-400">View vendors →</span>
+                      <span className="text-xs text-[#14161C]/40">View vendors →</span>
                     </button>
                   ))}
               </div>
@@ -102,7 +102,7 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
             {/* Filters */}
             <div className="flex flex-wrap gap-2">
               <div className="relative flex-1 min-w-48">
-                <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
                 <Input value={vendorFilter.search} onChange={e => setVendorFilter({ search: e.target.value })} placeholder="Search vendors…" className="pl-9" />
               </div>
               <Select value={vendorFilter.category} onChange={e => setVendorFilter({ category: e.target.value })} className="w-auto" aria-label="Filter by category">
@@ -121,8 +121,8 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
             </div>
 
             {/* All vendors list */}
-            <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-zinc-100">
+            <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#1F4D3A]/8">
                 <p className="text-sm font-semibold text-[#14161C]">{filtered.length} vendor{filtered.length !== 1 ? 's' : ''}</p>
               </div>
               {isLoading ? (

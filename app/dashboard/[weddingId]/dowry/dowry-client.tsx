@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Heart, Plus, CheckCircle2 } from 'lucide-react'
-import { Button, Input, Label, Select, Badge, EmptyState, Modal } from '@/components/ui'
+import { Heart, Plus, CheckCircle2 } from 'lucide-react'import { Button, Input, Label, Select, Badge, EmptyState, Modal } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useRouter } from 'next/navigation'
 
@@ -81,15 +80,16 @@ export function DowryClient({ weddingId, items }: Readonly<Props>) {
 
   const delivered = items.filter(i => i.status === 'DELIVERED').length
   const agreed = items.filter(i => i.status === 'AGREED').length
+  const allSorted = items.length > 0 && delivered === items.length
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Traditional</p>
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Dowry Tracker</h1>
-            <p className="text-sm text-zinc-400 mt-2">{items.length} items · {agreed} agreed · {delivered} delivered</p>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Traditional</p>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Dowry Tracker</h1>
+            <p className="text-sm text-[#14161C]/40 mt-2">{items.length} items · {agreed} agreed · {delivered} delivered</p>
           </div>
           <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add item</Button>
         </div>
@@ -104,24 +104,39 @@ export function DowryClient({ weddingId, items }: Readonly<Props>) {
             action={<Button onClick={() => setShowAdd(true)}><Plus size={14} />Add item</Button>}
           />
         ) : (
-          <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-            {items.map(item => (
-              <div key={item.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-[#14161C]">{item.name}</p>
-                    <Badge variant={STATUS_BADGE[item.status] ?? 'default'}>{item.status}</Badge>
-                  </div>
-                  <p className="text-xs text-zinc-400 mt-0.5">Qty: {item.quantity}</p>
-                  {item.notes && <p className="text-xs text-zinc-400">{item.notes}</p>}
-                </div>
-                <div className="text-right flex-shrink-0">
-                  {item.agreedValue && <p className="text-sm font-bold text-[#14161C]">{fmt(item.agreedValue)}</p>}
-                  {item.estimatedValue && !item.agreedValue && <p className="text-sm text-zinc-400">Est. {fmt(item.estimatedValue)}</p>}
+          <>
+            {allSorted && (
+              <div className="mb-6 flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 px-5 py-4">
+                <CheckCircle2 size={18} className="text-emerald-600 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">All items sorted</p>
+                  <p className="text-xs text-emerald-600">Every dowry item has been delivered.</p>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+            <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+              {items.map(item => (
+                <div key={item.id} className="flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-[#14161C]">{item.name}</p>
+                      <Badge variant={STATUS_BADGE[item.status] ?? 'default'}>{item.status}</Badge>
+                    </div>
+                    <p className="text-xs text-[#14161C]/40 mt-0.5">Qty: {item.quantity}</p>
+                    {item.notes && <p className="text-xs text-[#14161C]/40">{item.notes}</p>}
+                  </div>
+                  <div className="text-right flex-shrink-0 space-y-0.5">
+                    {item.estimatedValue != null && (
+                      <p className="text-xs text-[#14161C]/40">Est. {fmt(item.estimatedValue)}</p>
+                    )}
+                    {item.agreedValue != null && (
+                      <p className="text-sm font-bold text-[#14161C]">Agreed {fmt(item.agreedValue)}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

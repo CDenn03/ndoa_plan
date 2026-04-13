@@ -44,17 +44,17 @@ export function VendorNotesLog({ vendorId, weddingId }: Readonly<{ vendorId: str
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Notes log</p>
+      <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Notes log</p>
       {isLoading ? (
         <div className="flex justify-center py-4"><Spinner size="sm" /></div>
       ) : notes.length === 0 ? (
-        <p className="text-xs text-zinc-400">No notes yet. Log a communication update below.</p>
+        <p className="text-xs text-[#14161C]/40">No notes yet. Log a communication update below.</p>
       ) : (
         <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
           {notes.map(n => (
-            <div key={n.id} className="text-xs bg-zinc-50 rounded-xl px-3 py-2.5">
+            <div key={n.id} className="text-xs bg-[#F7F5F2] rounded-xl px-3 py-2.5">
               <p className="text-[#14161C] leading-relaxed">{n.content}</p>
-              <p className="text-zinc-400 mt-1">{n.createdBy} · {format(new Date(n.createdAt), 'MMM d, h:mm a')}</p>
+              <p className="text-[#14161C]/40 mt-1">{n.createdBy} · {format(new Date(n.createdAt), 'MMM d, h:mm a')}</p>
             </div>
           ))}
         </div>

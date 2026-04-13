@@ -31,13 +31,13 @@ export default async function DashboardLayout(
 
   return (
     <SyncProvider weddingId={params.weddingId}>
-      <div className="flex h-screen overflow-hidden bg-stone-50">
+      <div className="flex h-screen overflow-hidden bg-[#F7F5F2]">
         <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} culturalType={membership.wedding.culturalType} />
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile top bar */}
-          <header className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 bg-white lg:hidden">
+          <header className="flex items-center gap-3 px-4 py-3 border-b border-[#1F4D3A]/8 bg-white lg:hidden">
             <MobileMenuButton />
-            <span className="font-bold text-sm text-[#14161C]">
+            <span className="font-heading font-semibold text-sm text-[#1F4D3A]">
               {membership.wedding.name}
             </span>
           </header>

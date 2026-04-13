@@ -49,11 +49,11 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Monitoring</p>
-          <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Risk Alerts</h1>
-          <p className="text-sm text-zinc-400 mt-2">{active.length} active · {resolved.length} resolved</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Monitoring</p>
+          <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Risk Alerts</h1>
+          <p className="text-sm text-[#14161C]/40 mt-2">{active.length} active · {resolved.length} resolved</p>
         </div>
       </div>
 
@@ -66,21 +66,21 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
               <CheckCircle2 size={28} className="text-emerald-500" />
             </div>
             <h2 className="text-lg font-bold text-[#14161C]">All clear</h2>
-            <p className="text-sm text-zinc-400 mt-1.5">No active risk alerts. Risk rules run automatically.</p>
+            <p className="text-sm text-[#14161C]/40 mt-1.5">No active risk alerts. Risk rules run automatically.</p>
           </div>
         ) : (
           <div>
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5">Active</p>
+            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-5">Active</p>
             <div className="space-y-0">
               {active.map(r => (
-                <div key={r.id} className="group flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0">
+                <div key={r.id} className="group flex items-start gap-4 py-4 border-b border-[#1F4D3A]/8 last:border-0">
                   <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${SEV_DOT[r.severity] ?? 'bg-zinc-300'}`} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant={SEV_BADGE[r.severity]}>{r.severity}</Badge>
-                      <span className="text-xs text-zinc-400 font-medium">{r.category}</span>
+                      <span className="text-xs text-[#14161C]/40 font-medium">{r.category}</span>
                     </div>
-                    <p className="text-sm text-zinc-700 leading-relaxed">{r.message}</p>
+                    <p className="text-sm text-[#14161C]/70 leading-relaxed">{r.message}</p>
                   </div>
                   <Button size="sm" variant="secondary"
                     className=" flex-shrink-0"
@@ -95,12 +95,12 @@ export default function RisksPage(props: Readonly<{ params: Promise<{ weddingId:
 
         {resolved.length > 0 && (
           <div>
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5">Recently resolved</p>
+            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-5">Recently resolved</p>
             <div className="space-y-0">
               {resolved.map(r => (
-                <div key={r.id} className="flex items-start gap-4 py-4 border-b border-zinc-100 last:border-0 opacity-50">
+                <div key={r.id} className="flex items-start gap-4 py-4 border-b border-[#1F4D3A]/8 last:border-0 opacity-50">
                   <CheckCircle2 size={15} className="text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-zinc-500 line-through leading-relaxed">{r.message}</p>
+                  <p className="text-sm text-[#14161C]/55 line-through leading-relaxed">{r.message}</p>
                 </div>
               ))}
             </div>

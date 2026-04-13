@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-stone-50 text-[#14161C] antialiased font-jakarta">
+      <body className="min-h-screen bg-[#F7F5F2] text-[#14161C] antialiased font-jakarta">
         <Providers>{children}</Providers>
       </body>
     </html>

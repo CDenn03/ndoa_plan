@@ -27,13 +27,13 @@ function CheckInRow({ guest, weddingId, onCheckedIn }: Readonly<{ guest: LocalGu
         'w-full flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all text-left active:scale-[0.98]',
         isCheckedIn
           ? 'bg-emerald-50 border-emerald-100 opacity-60'
-          : 'bg-white border-zinc-100 hover:border-[#CDB5F7] hover:shadow-sm',
+          : 'bg-white border-[#1F4D3A]/8 hover:border-[#CDB5F7] hover:shadow-sm',
         checkIn.isPending ? 'opacity-60' : '',
       ].join(' ')}
     >
       <div className={[
         'w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors',
-        isCheckedIn ? 'bg-emerald-500 text-white' : 'bg-[#CDB5F7]/20 text-violet-600',
+        isCheckedIn ? 'bg-emerald-500 text-white' : 'bg-[#1F4D3A]/8 text-[#1F4D3A]',
       ].join(' ')}>
         {isCheckedIn ? <UserCheck size={18} /> : guest.name.charAt(0).toUpperCase()}
       </div>
@@ -42,13 +42,13 @@ function CheckInRow({ guest, weddingId, onCheckedIn }: Readonly<{ guest: LocalGu
           {guest.name}
         </p>
         <div className="flex items-center gap-3 mt-0.5">
-          {guest.phone && <span className="text-xs text-zinc-400 truncate">{guest.phone}</span>}
+          {guest.phone && <span className="text-xs text-[#14161C]/40 truncate">{guest.phone}</span>}
         </div>
       </div>
       <div className="flex-shrink-0">
         {isCheckedIn
           ? <span className="text-xs font-semibold text-emerald-500">✓ In</span>
-          : <span className="text-xs text-zinc-400 border border-zinc-200 rounded-lg px-2.5 py-1">Tap to check in</span>
+          : <span className="text-xs text-[#14161C]/40 border border-[#1F4D3A]/12 rounded-lg px-2.5 py-1">Tap to check in</span>
         }
         {guest.isDirty && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" title="Pending sync" />}
       </div>
@@ -86,11 +86,11 @@ export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingI
   return (
     <div className="flex flex-col h-full bg-stone-50">
       {/* Header */}
-      <div className="bg-white border-b border-zinc-100 px-5 py-4">
+      <div className="bg-white border-b border-[#1F4D3A]/8 px-5 py-4">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-xl font-extrabold text-[#14161C]">Day-of check-in</h1>
-            <p className="text-xs text-zinc-400 mt-0.5">Tap a guest to mark them as arrived</p>
+            <p className="text-xs text-[#14161C]/40 mt-0.5">Tap a guest to mark them as arrived</p>
           </div>
           <div className={`flex items-center gap-1.5 text-xs font-semibold ${isOnline ? 'text-emerald-500' : 'text-amber-500'}`}>
             {isOnline ? <Wifi size={13} /> : <WifiOff size={13} />}
@@ -107,14 +107,14 @@ export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingI
           ].map(({ label, val, color }) => (
             <div key={label} className="text-center bg-stone-50 rounded-xl py-2.5">
               <p className={`text-xl font-extrabold leading-none ${color}`}>{val}</p>
-              <p className="text-[11px] text-zinc-400 mt-1">{label}</p>
+              <p className="text-[11px] text-[#14161C]/40 mt-1">{label}</p>
             </div>
           ))}
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
           <Input
             ref={searchRef}
             value={search}
@@ -143,11 +143,11 @@ export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingI
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <Users size={40} className="text-zinc-200 mb-4" />
-            <p className="font-semibold text-zinc-500">
+            <Users size={40} className="text-[#14161C]/15 mb-4" />
+            <p className="font-semibold text-[#14161C]/55">
               {search ? 'No guests match your search' : 'All confirmed guests are checked in!'}
             </p>
-            {search && <p className="text-sm text-zinc-400 mt-1.5">Try first name, last name, or table number</p>}
+            {search && <p className="text-sm text-[#14161C]/40 mt-1.5">Try first name, last name, or table number</p>}
           </div>
         ) : (
           <>
@@ -155,7 +155,7 @@ export default function CheckInPage(props: Readonly<{ params: Promise<{ weddingI
               <CheckInRow key={g.id} guest={g} weddingId={wid} onCheckedIn={() => setLastCheckedIn(g.name)} />
             ))}
             {!search && (
-              <p className="text-center text-xs text-zinc-400 py-3">
+              <p className="text-center text-xs text-[#14161C]/40 py-3">
                 {filtered.length} guest{filtered.length !== 1 ? 's' : ''} still to arrive
               </p>
             )}

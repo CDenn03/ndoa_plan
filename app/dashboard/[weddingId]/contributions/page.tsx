@@ -54,20 +54,20 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-zinc-100 bg-white">
+      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Finance</p>
+          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Contributions</h1>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Contributions</h1>
           </div>
-          <p className="text-sm text-zinc-400 mt-1 mb-6">
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">
             {contributions.length} pledges · {fmt(totalPaid)} of {fmt(totalPledged)} collected
             {overdue > 0 && <span className="ml-2 text-red-500 font-semibold">· {overdue} overdue</span>}
           </p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {tabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.label}
               </button>
             ))}
@@ -83,28 +83,28 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
           /* Overall tab */
           <div className="space-y-8">
             <div className="grid grid-cols-3 gap-0 divide-x divide-zinc-100">
-              <div className="pr-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total pledged</p><p className="text-2xl font-extrabold text-sky-600">{fmt(totalPledged)}</p></div>
-              <div className="px-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Collected</p><p className="text-2xl font-extrabold text-emerald-600">{fmt(totalPaid)}</p></div>
-              <div className="pl-8"><p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Outstanding</p><p className={`text-2xl font-extrabold ${totalPledged - totalPaid > 0 ? 'text-amber-500' : 'text-[#14161C]'}`}>{fmt(Math.max(0, totalPledged - totalPaid))}</p></div>
+              <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total pledged</p><p className="text-2xl font-extrabold text-sky-600">{fmt(totalPledged)}</p></div>
+              <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Collected</p><p className="text-2xl font-extrabold text-emerald-600">{fmt(totalPaid)}</p></div>
+              <div className="pl-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Outstanding</p><p className={`text-2xl font-extrabold ${totalPledged - totalPaid > 0 ? 'text-amber-500' : 'text-[#14161C]'}`}>{fmt(Math.max(0, totalPledged - totalPaid))}</p></div>
             </div>
 
             {events.length > 0 && (
               <div className="space-y-3">
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">By event</p>
+                <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
                 {Array.from(byEvent.entries()).map(([key, { event, contribs }]) => {
                   if (contribs.length === 0) return null
                   const evPledged = contribs.reduce((s, c) => s + c.pledgeAmount, 0)
                   const evPaid = contribs.reduce((s, c) => s + c.paidAmount, 0)
                   return (
-                    <div key={key} className="rounded-2xl border border-zinc-100 p-4 flex items-center justify-between gap-4">
+                    <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
-                        <CalendarDays size={15} className="text-zinc-400" />
+                        <CalendarDays size={15} className="text-[#14161C]/40" />
                         <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
-                        <span className="text-xs text-zinc-400">{contribs.length} pledges</span>
+                        <span className="text-xs text-[#14161C]/40">{contribs.length} pledges</span>
                       </div>
                       <div className="flex gap-6 text-right">
-                        <div><p className="text-xs text-zinc-400">Pledged</p><p className="text-sm font-bold text-sky-600">{fmt(evPledged)}</p></div>
-                        <div><p className="text-xs text-zinc-400">Paid</p><p className="text-sm font-bold text-emerald-600">{fmt(evPaid)}</p></div>
+                        <div><p className="text-xs text-[#14161C]/40">Pledged</p><p className="text-sm font-bold text-sky-600">{fmt(evPledged)}</p></div>
+                        <div><p className="text-xs text-[#14161C]/40">Paid</p><p className="text-sm font-bold text-emerald-600">{fmt(evPaid)}</p></div>
                       </div>
                     </div>
                   )
@@ -128,7 +128,7 @@ export default function ContributionsPage(props: Readonly<{ params: Promise<{ we
                     <Button variant="secondary" size="sm" onClick={() => setShowDirect(true)}><Plus size={13} /> Record contribution</Button>
                     <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={13} /> Add pledge</Button>
                   </div>
-                  <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
                     {filtered.map(c => <ContribRow key={c.id} contrib={c} weddingId={wid} events={events} onEdit={setEditing} />)}
                   </div>
                 </div>

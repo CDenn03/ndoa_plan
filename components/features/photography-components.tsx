@@ -99,64 +99,64 @@ function VendorCard({ vendor, weddingId, onEdit }: Readonly<{
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
       <div className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${vendor.category === 'PHOTOGRAPHY' ? 'bg-violet-50' : 'bg-sky-50'}`}>
-              {vendor.category === 'PHOTOGRAPHY' ? <Camera size={18} className="text-violet-600" /> : <Video size={18} className="text-sky-600" />}
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${vendor.category === 'PHOTOGRAPHY' ? 'bg-[#1F4D3A]/6' : 'bg-sky-50'}`}>
+              {vendor.category === 'PHOTOGRAPHY' ? <Camera size={18} className="text-[#1F4D3A]" /> : <Video size={18} className="text-sky-600" />}
             </div>
             <div>
               <p className="text-sm font-bold text-[#14161C]">{vendor.name}</p>
-              <p className="text-xs text-zinc-400">{vendor.category === 'PHOTOGRAPHY' ? 'Photographer' : 'Videographer'}</p>
+              <p className="text-xs text-[#14161C]/40">{vendor.category === 'PHOTOGRAPHY' ? 'Photographer' : 'Videographer'}</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <Badge variant={STATUS_BADGE[vendor.status] ?? 'pending'}>{vendor.status}</Badge>
-            <button onClick={onEdit} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Edit"><Pencil size={13} /></button>
-            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
+            <button onClick={onEdit} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Edit"><Pencil size={13} /></button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500" aria-label="Delete"><Trash2 size={13} /></button>
           </div>
         </div>
 
         {vendor.amount && (
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-zinc-500">Package cost</span>
+              <span className="text-[#14161C]/55">Package cost</span>
               <span className="font-bold text-[#14161C]">{fmt(vendor.amount)}</span>
             </div>
             <ProgressBar value={vendor.paidAmount} max={vendor.amount} />
             <div className="flex justify-between text-xs">
-              <span className="text-zinc-400">Paid: <span className="font-semibold text-emerald-600">{fmt(vendor.paidAmount)}</span></span>
-              <span className="text-zinc-400">Balance: <span className={`font-semibold ${balance > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{fmt(balance)}</span></span>
+              <span className="text-[#14161C]/40">Paid: <span className="font-semibold text-emerald-600">{fmt(vendor.paidAmount)}</span></span>
+              <span className="text-[#14161C]/40">Balance: <span className={`font-semibold ${balance > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{fmt(balance)}</span></span>
             </div>
-            {pct < 100 && <p className="text-xs text-zinc-400">{pct}% paid</p>}
+            {pct < 100 && <p className="text-xs text-[#14161C]/40">{pct}% paid</p>}
           </div>
         )}
 
         {vendor.description && (
-          <p className="mt-3 text-xs text-zinc-500 leading-relaxed">{vendor.description}</p>
+          <p className="mt-3 text-xs text-[#14161C]/55 leading-relaxed">{vendor.description}</p>
         )}
 
-        <button onClick={() => setExpanded(v => !v)} className="mt-3 flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+        <button onClick={() => setExpanded(v => !v)} className="mt-3 flex items-center gap-1 text-xs text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors">
           {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           {expanded ? 'Less' : 'Details'}
         </button>
       </div>
 
       {expanded && (
-        <div className="border-t border-zinc-100 px-5 py-4 space-y-2 bg-zinc-50/50">
-          {vendor.contactName && <p className="text-xs text-zinc-500">Contact: <span className="font-medium text-zinc-700">{vendor.contactName}</span></p>}
-          {vendor.contactPhone && <p className="text-xs text-zinc-500">Phone: <span className="font-medium text-zinc-700">{vendor.contactPhone}</span></p>}
-          {vendor.contactEmail && <p className="text-xs text-zinc-500">Email: <span className="font-medium text-zinc-700">{vendor.contactEmail}</span></p>}
-          {vendor.depositAmount && <p className="text-xs text-zinc-500">Deposit: <span className="font-medium text-zinc-700">{fmt(vendor.depositAmount)}{vendor.depositPaidAt ? ` — paid ${format(new Date(vendor.depositPaidAt), 'MMM d, yyyy')}` : ' (unpaid)'}</span></p>}
+        <div className="border-t border-[#1F4D3A]/8 px-5 py-4 space-y-2 bg-[#F7F5F2]/50">
+          {vendor.contactName && <p className="text-xs text-[#14161C]/55">Contact: <span className="font-medium text-[#14161C]/70">{vendor.contactName}</span></p>}
+          {vendor.contactPhone && <p className="text-xs text-[#14161C]/55">Phone: <span className="font-medium text-[#14161C]/70">{vendor.contactPhone}</span></p>}
+          {vendor.contactEmail && <p className="text-xs text-[#14161C]/55">Email: <span className="font-medium text-[#14161C]/70">{vendor.contactEmail}</span></p>}
+          {vendor.depositAmount && <p className="text-xs text-[#14161C]/55">Deposit: <span className="font-medium text-[#14161C]/70">{fmt(vendor.depositAmount)}{vendor.depositPaidAt ? ` — paid ${format(new Date(vendor.depositPaidAt), 'MMM d, yyyy')}` : ' (unpaid)'}</span></p>}
           {vendor.contractPath && (
             <a href={`/api/storage/signed-url?path=${encodeURIComponent(vendor.contractPath)}&bucket=contracts`}
               target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800 font-medium">
+              className="flex items-center gap-1 text-xs text-[#1F4D3A] hover:text-[#16382B] font-medium">
               <FileText size={12} /> View contract <ExternalLink size={10} />
             </a>
           )}
-          {vendor.notes && <p className="text-xs text-zinc-400 italic">{vendor.notes}</p>}
+          {vendor.notes && <p className="text-xs text-[#14161C]/40 italic">{vendor.notes}</p>}
         </div>
       )}
     </div>
@@ -324,33 +324,33 @@ function ChecklistSection({ items, weddingId, eventId, title, category, template
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{title}</p>
-          <span className="text-xs text-zinc-400">{done}/{items.length}</span>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">{title}</p>
+          <span className="text-xs text-[#14161C]/40">{done}/{items.length}</span>
         </div>
         <div className="flex gap-1">
-          {templateKey && items.length === 0 && (
+          {templateKey && (
             <button onClick={loadTemplate} disabled={loadingTemplate}
-              className="text-xs text-violet-500 hover:text-violet-700 font-medium px-2 py-1 rounded-lg hover:bg-violet-50 transition-colors">
+              className="text-xs text-[#1F4D3A]/70 hover:text-[#1F4D3A] font-medium px-2 py-1 rounded-lg hover:bg-[#1F4D3A]/6 transition-colors">
               {loadingTemplate ? 'Loading…' : 'Load template'}
             </button>
           )}
-          <button onClick={() => setAdding(true)} className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Add item">
+          <button onClick={() => setAdding(true)} className="p-1 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Add item">
             <Plus size={13} />
           </button>
         </div>
       </div>
 
       {items.length > 0 && (
-        <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
           {items.map(item => (
             <div key={item.id} className="group flex items-center gap-3 px-4 py-2.5 border-b border-zinc-50 last:border-0">
               <button onClick={() => toggle(item)}
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${item.isChecked ? 'bg-violet-500 border-violet-500' : 'border-zinc-300 hover:border-violet-400'}`}
+                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${item.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'}`}
                 aria-label={item.isChecked ? 'Uncheck' : 'Check'}>
                 {item.isChecked && <Check size={10} className="text-white" />}
               </button>
-              <p className={`flex-1 text-sm ${item.isChecked ? 'line-through text-zinc-400' : 'text-zinc-700'}`}>{item.title}</p>
-              <button onClick={() => deleteItem(item.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-zinc-300 hover:text-red-400 transition-all" aria-label="Delete">
+              <p className={`flex-1 text-sm ${item.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]/70'}`}>{item.title}</p>
+              <button onClick={() => deleteItem(item.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-[#14161C]/25 hover:text-red-400 transition-all" aria-label="Delete">
                 <Trash2 size={11} />
               </button>
             </div>
@@ -363,13 +363,13 @@ function ChecklistSection({ items, weddingId, eventId, title, category, template
           <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Add item…" className="flex-1 h-8 text-sm"
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addItem() } if (e.key === 'Escape') { setAdding(false); setNewTitle('') } }}
             autoFocus />
-          <button onClick={addItem} className="p-1.5 rounded-lg bg-violet-50 text-violet-600 hover:bg-violet-100" aria-label="Save"><Check size={13} /></button>
-          <button onClick={() => { setAdding(false); setNewTitle('') }} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400" aria-label="Cancel"><X size={13} /></button>
+          <button onClick={addItem} className="p-1.5 rounded-lg bg-[#1F4D3A]/6 text-[#1F4D3A] hover:bg-[#1F4D3A]/10" aria-label="Save"><Check size={13} /></button>
+          <button onClick={() => { setAdding(false); setNewTitle('') }} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40" aria-label="Cancel"><X size={13} /></button>
         </div>
       )}
 
       {items.length === 0 && !adding && (
-        <button onClick={() => setAdding(true)} className="w-full py-3 border border-dashed border-zinc-200 rounded-xl text-xs text-zinc-400 hover:border-violet-300 hover:text-violet-500 transition-colors">
+        <button onClick={() => setAdding(true)} className="w-full py-3 border border-dashed border-[#1F4D3A]/12 rounded-xl text-xs text-[#14161C]/40 hover:border-violet-300 hover:text-[#1F4D3A]/70 transition-colors">
           + Add item
         </button>
       )}
@@ -453,20 +453,20 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Shot List</p>
-          <span className="text-xs text-zinc-400">{done}/{items.length} captured</span>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Shot List</p>
+          <span className="text-xs text-[#14161C]/40">{done}/{items.length} captured</span>
         </div>
         <Button size="sm" onClick={() => setAdding(true)}><Plus size={13} /> Add shot</Button>
       </div>
 
       {/* Template loader */}
       {items.length === 0 && (
-        <div className="rounded-xl border border-dashed border-zinc-200 p-4 space-y-2">
-          <p className="text-xs text-zinc-400 font-medium">Load shot group templates:</p>
+        <div className="rounded-xl border border-dashed border-[#1F4D3A]/12 p-4 space-y-2">
+          <p className="text-xs text-[#14161C]/40 font-medium">Load shot group templates:</p>
           <div className="flex flex-wrap gap-1.5">
             {groups.map(g => (
               <button key={g} onClick={() => loadGroupTemplate(g)} disabled={loadingGroup === g}
-                className="px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-100 hover:bg-violet-100 hover:text-violet-700 text-zinc-600 transition-colors">
+                className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#1F4D3A]/6 hover:bg-[#1F4D3A]/10 hover:text-[#1F4D3A] text-[#14161C]/60 transition-colors">
                 {loadingGroup === g ? '…' : g.replace('_', ' ')}
               </button>
             ))}
@@ -477,8 +477,8 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
       {/* Grouped shot list */}
       {Object.entries(grouped).map(([group, shots]) => (
         <div key={group} className="space-y-1">
-          <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest px-1">{group.replace('_', ' ')}</p>
-          <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
+          <p className="text-[10px] font-bold text-[#14161C]/25 uppercase tracking-widest px-1">{group.replace('_', ' ')}</p>
+          <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
             {shots.map(shot => (
               <div key={shot.id} className="group flex items-center gap-3 px-4 py-2.5 border-b border-zinc-50 last:border-0">
                 <button onClick={() => toggle(shot)}
@@ -486,8 +486,8 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
                   aria-label={shot.isChecked ? 'Uncheck' : 'Check'}>
                   {shot.isChecked && <Check size={10} className="text-white" />}
                 </button>
-                <p className={`flex-1 text-sm ${shot.isChecked ? 'line-through text-zinc-400' : 'text-zinc-700'}`}>{shot.title}</p>
-                <button onClick={() => deleteShot(shot.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-zinc-300 hover:text-red-400 transition-all" aria-label="Delete">
+                <p className={`flex-1 text-sm ${shot.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]/70'}`}>{shot.title}</p>
+                <button onClick={() => deleteShot(shot.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-[#14161C]/25 hover:text-red-400 transition-all" aria-label="Delete">
                   <Trash2 size={11} />
                 </button>
               </div>
@@ -499,14 +499,14 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
       {adding && (
         <div className="flex items-center gap-2 flex-wrap">
           <select value={newGroup} onChange={e => setNewGroup(e.target.value)}
-            className="text-xs border border-zinc-200 rounded-xl px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300">
+            className="text-xs border border-[#1F4D3A]/12 rounded-xl px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300">
             {groups.map(g => <option key={g} value={g}>{g.replace('_', ' ')}</option>)}
           </select>
           <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Shot description…" className="flex-1 h-8 text-sm"
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addShot() } if (e.key === 'Escape') { setAdding(false); setNewTitle('') } }}
             autoFocus />
-          <button onClick={addShot} className="p-1.5 rounded-lg bg-violet-50 text-violet-600 hover:bg-violet-100" aria-label="Save"><Check size={13} /></button>
-          <button onClick={() => { setAdding(false); setNewTitle('') }} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400" aria-label="Cancel"><X size={13} /></button>
+          <button onClick={addShot} className="p-1.5 rounded-lg bg-[#1F4D3A]/6 text-[#1F4D3A] hover:bg-[#1F4D3A]/10" aria-label="Save"><Check size={13} /></button>
+          <button onClick={() => { setAdding(false); setNewTitle('') }} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40" aria-label="Cancel"><X size={13} /></button>
         </div>
       )}
     </div>
@@ -557,8 +557,8 @@ function DeliverablesSection({ items, weddingId, eventId }: Readonly<{
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Deliverables</p>
-      <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
+      <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Deliverables</p>
+      <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
         {DELIVERABLES.map(d => {
           const item = getItem(d.key)
           return (
@@ -572,9 +572,9 @@ function DeliverablesSection({ items, weddingId, eventId }: Readonly<{
                 aria-label={item?.isChecked ? 'Mark not received' : 'Mark received'}>
                 {item?.isChecked && <Check size={10} className="text-white" />}
               </button>
-              <p className={`flex-1 text-sm font-medium ${item?.isChecked ? 'text-zinc-400 line-through' : 'text-zinc-700'}`}>{d.label}</p>
+              <p className={`flex-1 text-sm font-medium ${item?.isChecked ? 'text-[#14161C]/40 line-through' : 'text-[#14161C]/70'}`}>{d.label}</p>
               {item?.isChecked && <span className="text-xs text-emerald-600 font-semibold">Received</span>}
-              {!item?.isChecked && <span className="text-xs text-zinc-300">Pending</span>}
+              {!item?.isChecked && <span className="text-xs text-[#14161C]/25">Pending</span>}
             </div>
           )
         })}
@@ -626,36 +626,36 @@ function BudgetSection({ lines, weddingId, eventId, vendors }: Readonly<{
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Budget</p>
+        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Budget</p>
         <Button size="sm" onClick={() => setAdding(true)}><Plus size={13} /> Add line</Button>
       </div>
 
       {lines.length > 0 && (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-zinc-50 rounded-xl p-3">
-              <p className="text-xs text-zinc-400">Estimated</p>
+            <div className="bg-[#F7F5F2] rounded-xl p-3">
+              <p className="text-xs text-[#14161C]/40">Estimated</p>
               <p className="text-lg font-extrabold text-sky-600">{fmt(totalEstimated)}</p>
             </div>
-            <div className="bg-zinc-50 rounded-xl p-3">
-              <p className="text-xs text-zinc-400">Actual</p>
+            <div className="bg-[#F7F5F2] rounded-xl p-3">
+              <p className="text-xs text-[#14161C]/40">Actual</p>
               <p className={`text-lg font-extrabold ${totalActual > totalEstimated ? 'text-red-500' : 'text-emerald-600'}`}>{fmt(totalActual)}</p>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
+          <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
             {lines.map(line => (
               <div key={line.id} className="group flex items-center gap-3 px-4 py-3 border-b border-zinc-50 last:border-0">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-zinc-700">{line.description}</p>
-                  {line.vendorName && <p className="text-xs text-zinc-400">{line.vendorName}</p>}
+                  <p className="text-sm font-medium text-[#14161C]/70">{line.description}</p>
+                  {line.vendorName && <p className="text-xs text-[#14161C]/40">{line.vendorName}</p>}
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-sm font-bold text-[#14161C]">{fmt(line.actual || line.estimated)}</p>
                   {line.actual > 0 && line.estimated > 0 && line.actual !== line.estimated && (
-                    <p className="text-xs text-zinc-400">est. {fmt(line.estimated)}</p>
+                    <p className="text-xs text-[#14161C]/40">est. {fmt(line.estimated)}</p>
                   )}
                 </div>
-                <button onClick={() => deleteLine(line.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-zinc-300 hover:text-red-400 transition-all" aria-label="Delete">
+                <button onClick={() => deleteLine(line.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-[#14161C]/25 hover:text-red-400 transition-all" aria-label="Delete">
                   <Trash2 size={11} />
                 </button>
               </div>
@@ -665,7 +665,7 @@ function BudgetSection({ lines, weddingId, eventId, vendors }: Readonly<{
       )}
 
       {adding && (
-        <form onSubmit={addLine} className="bg-zinc-50 rounded-xl p-4 space-y-3">
+        <form onSubmit={addLine} className="bg-[#F7F5F2] rounded-xl p-4 space-y-3">
           <div><Label htmlFor="pb-desc">Description *</Label>
             <Input id="pb-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Photography package" required /></div>
           <div className="grid grid-cols-2 gap-3">
@@ -689,7 +689,7 @@ function BudgetSection({ lines, weddingId, eventId, vendors }: Readonly<{
       )}
 
       {lines.length === 0 && !adding && (
-        <button onClick={() => setAdding(true)} className="w-full py-3 border border-dashed border-zinc-200 rounded-xl text-xs text-zinc-400 hover:border-violet-300 hover:text-violet-500 transition-colors">
+        <button onClick={() => setAdding(true)} className="w-full py-3 border border-dashed border-[#1F4D3A]/12 rounded-xl text-xs text-[#14161C]/40 hover:border-violet-300 hover:text-[#1F4D3A]/70 transition-colors">
           + Add budget line
         </button>
       )}
@@ -748,10 +748,10 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
   return (
     <div className="space-y-6">
       {/* Sub-tabs */}
-      <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-zinc-100 -mx-1 px-1">
+      <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-[#1F4D3A]/8 -mx-1 px-1">
         {tabs.map(({ key, label }) => (
           <button key={key} onClick={() => setActiveTab(key)}
-            className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === key ? 'border-violet-500 text-violet-700' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}>
+            className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === key ? 'border-violet-500 text-[#1F4D3A]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
             {label}
           </button>
         ))}
@@ -761,11 +761,11 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-zinc-500">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-[#14161C]/55">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''}</p>
             <Button size="sm" onClick={() => setShowVendorModal(true)}><Plus size={13} /> Add vendor</Button>
           </div>
           {vendors.length === 0 ? (
-            <EmptyState icon={<Camera size={40} className="text-zinc-200" />} title="No photographers yet"
+            <EmptyState icon={<Camera size={40} className="text-[#14161C]/15" />} title="No photographers yet"
               description="Add your photographer or videographer to get started"
               action={<Button size="sm" onClick={() => setShowVendorModal(true)}><Plus size={13} /> Add vendor</Button>} />
           ) : (
@@ -779,17 +779,17 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
           {/* Quick stats */}
           {(shotListItems.length > 0 || checklistItems.length > 0) && (
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-zinc-50 rounded-xl p-3 text-center">
-                <p className="text-lg font-extrabold text-violet-600">{shotListItems.filter(i => i.isChecked).length}/{shotListItems.length}</p>
-                <p className="text-xs text-zinc-400 mt-0.5">Shots captured</p>
+              <div className="bg-[#F7F5F2] rounded-xl p-3 text-center">
+                <p className="text-lg font-extrabold text-[#1F4D3A]">{shotListItems.filter(i => i.isChecked).length}/{shotListItems.length}</p>
+                <p className="text-xs text-[#14161C]/40 mt-0.5">Shots captured</p>
               </div>
-              <div className="bg-zinc-50 rounded-xl p-3 text-center">
+              <div className="bg-[#F7F5F2] rounded-xl p-3 text-center">
                 <p className="text-lg font-extrabold text-emerald-600">{preItems.filter(i => i.isChecked).length}/{preItems.length}</p>
-                <p className="text-xs text-zinc-400 mt-0.5">Checklist done</p>
+                <p className="text-xs text-[#14161C]/40 mt-0.5">Checklist done</p>
               </div>
-              <div className="bg-zinc-50 rounded-xl p-3 text-center">
+              <div className="bg-[#F7F5F2] rounded-xl p-3 text-center">
                 <p className="text-lg font-extrabold text-sky-600">{deliverableItems.filter(i => i.isChecked).length}/{DELIVERABLES.length}</p>
-                <p className="text-xs text-zinc-400 mt-0.5">Deliverables</p>
+                <p className="text-xs text-[#14161C]/40 mt-0.5">Deliverables</p>
               </div>
             </div>
           )}

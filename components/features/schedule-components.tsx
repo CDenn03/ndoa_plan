@@ -186,15 +186,15 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
         {/* Scope toggle */}
         <div>
           <Label>Type</Label>
-          <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl mt-1 w-fit">
+          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1 w-fit">
             {(['daily', 'weekly'] as const).map(s => (
               <button key={s} type="button" onClick={() => setForm(f => ({ ...f, scope: s }))}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${form.scope === s ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${form.scope === s ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {s === 'daily' ? '📅 Daily' : '📆 Weekly'}
               </button>
             ))}
           </div>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-[#14161C]/40 mt-1">
             {isWeekly ? 'A weekly activity spans the whole week — no specific time needed.' : 'A daily activity is tied to a specific day and optionally a time.'}
           </p>
         </div>
@@ -211,7 +211,7 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
                 </Label>
                 <Input id="pi-start" type="time" value={form.startTime}
                   onChange={e => handleTimeChange('startTime', e.target.value)}
-                  className={derived === 'startTime' ? 'bg-violet-50 text-violet-700' : ''} />
+                  className={derived === 'startTime' ? 'bg-[#1F4D3A]/6 text-[#1F4D3A]' : ''} />
               </div>
               <div>
                 <Label htmlFor="pi-end">
@@ -219,7 +219,7 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
                 </Label>
                 <Input id="pi-end" type="time" value={form.endTime}
                   onChange={e => handleTimeChange('endTime', e.target.value)}
-                  className={derived === 'endTime' ? 'bg-violet-50 text-violet-700' : ''} />
+                  className={derived === 'endTime' ? 'bg-[#1F4D3A]/6 text-[#1F4D3A]' : ''} />
               </div>
               <div>
                 <Label htmlFor="pi-dur">
@@ -228,11 +228,11 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
                 <Input id="pi-dur" type="number" value={form.duration}
                   onChange={e => handleTimeChange('duration', e.target.value)}
                   placeholder="30" min="1"
-                  className={derived === 'duration' ? 'bg-violet-50 text-violet-700' : ''} />
+                  className={derived === 'duration' ? 'bg-[#1F4D3A]/6 text-[#1F4D3A]' : ''} />
               </div>
             </div>
             {(form.startTime || form.endTime || form.duration) && (
-              <p className="text-xs text-zinc-400 -mt-2">
+              <p className="text-xs text-[#14161C]/40 -mt-2">
                 Fill any two — the third is calculated automatically.
               </p>
             )}
@@ -261,25 +261,25 @@ export function ProgramRow({ item, idx, onEdit, onDelete }: Readonly<{
   const timeLabel = item.startTime ? format(new Date(item.startTime), 'HH:mm') : item.time
   const endLabel = item.endTime ? format(new Date(item.endTime), 'HH:mm') : null
   return (
-    <div className="flex gap-4 py-3 border-b border-zinc-100 last:border-0 group">
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-xs font-bold text-violet-600">{idx + 1}</div>
+    <div className="flex gap-4 py-3 border-b border-[#1F4D3A]/8 last:border-0 group">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1F4D3A]/6 flex items-center justify-center text-xs font-bold text-[#1F4D3A]">{idx + 1}</div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-sm font-semibold text-[#14161C]">{item.title}</p>
           {timeLabel && (
-            <span className="text-xs font-semibold text-violet-600 bg-violet-50 rounded-full px-2 py-0.5">
+            <span className="text-xs font-semibold text-[#1F4D3A] bg-[#1F4D3A]/6 rounded-full px-2 py-0.5">
               {timeLabel}{endLabel ? ` – ${endLabel}` : ''}
             </span>
           )}
-          {Boolean(item.duration) && !timeLabel && <span className="text-xs text-zinc-400">{item.duration}min</span>}
+          {Boolean(item.duration) && !timeLabel && <span className="text-xs text-[#14161C]/40">{item.duration}min</span>}
         </div>
-        {item.description && <p className="text-xs text-zinc-400 mt-0.5">{item.description}</p>}
-        {item.assignedTo && <p className="text-xs text-violet-500 mt-0.5">→ {item.assignedTo}</p>}
+        {item.description && <p className="text-xs text-[#14161C]/40 mt-0.5">{item.description}</p>}
+        {item.assignedTo && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">→ {item.assignedTo}</p>}
       </div>
       {(onEdit ?? onDelete) && (
         <div className="flex gap-1  flex-shrink-0">
-          {onEdit && <button onClick={onEdit} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>}
-          {onDelete && <button onClick={onDelete} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>}
+          {onEdit && <button onClick={onEdit} className="p-1 text-[#14161C]/25 hover:text-[#1F4D3A]/70" aria-label="Edit"><Pencil size={13} /></button>}
+          {onDelete && <button onClick={onDelete} className="p-1 text-[#14161C]/25 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>}
         </div>
       )}
     </div>
@@ -330,13 +330,13 @@ export function WeekProgram({ items, eventDate, onEdit, onDelete }: Readonly<{
       {grouped.map(([dateStr, dayItems], dayIdx) => (
         <div key={dateStr}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-50 flex flex-col items-center justify-center flex-shrink-0">
-              <p className="text-sm font-extrabold text-violet-600 leading-none">{format(parseISO(dateStr), 'd')}</p>
-              <p className="text-[9px] font-semibold text-zinc-400 uppercase">{format(parseISO(dateStr), 'MMM')}</p>
+            <div className="w-10 h-10 rounded-xl bg-[#1F4D3A]/6 flex flex-col items-center justify-center flex-shrink-0">
+              <p className="text-sm font-extrabold text-[#1F4D3A] leading-none">{format(parseISO(dateStr), 'd')}</p>
+              <p className="text-[9px] font-semibold text-[#14161C]/40 uppercase">{format(parseISO(dateStr), 'MMM')}</p>
             </div>
             <div>
               <p className="text-sm font-bold text-[#14161C]">{format(parseISO(dateStr), 'EEEE, d MMMM')}</p>
-              <p className="text-xs text-zinc-400">Day {dayIdx + 1} · {dayItems.length} item{dayItems.length === 1 ? '' : 's'}</p>
+              <p className="text-xs text-[#14161C]/40">Day {dayIdx + 1} · {dayItems.length} item{dayItems.length === 1 ? '' : 's'}</p>
             </div>
           </div>
           <div className="pl-4 border-l-2 border-violet-100 ml-5">
@@ -444,39 +444,39 @@ export function ContactsTab({ weddingId, eventId, vendors, showAdd, onCloseAdd }
   return (
     <div className="space-y-4">
       {/* Sub-tabs */}
-      <div className="flex gap-1 bg-zinc-100 rounded-2xl p-1 w-fit">
+      <div className="flex gap-1 bg-[#1F4D3A]/6 rounded-2xl p-1 w-fit">
         {([
           { key: 'vendors-on-duty', label: 'Vendors on Duty', count: vendors.length },
           { key: 'key-people',      label: 'Key People',      count: contacts.length },
         ] as const).map(t => (
           <button key={t.key} type="button" onClick={() => setSubTab(t.key)}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs transition-all ${subTab === t.key ? 'bg-white text-[#14161C] font-bold shadow-sm' : 'text-zinc-400 font-medium hover:text-zinc-600'}`}>
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs transition-all ${subTab === t.key ? 'bg-white text-[#14161C] font-bold shadow-sm' : 'text-[#14161C]/40 font-medium hover:text-[#14161C]/60'}`}>
             {t.label}
-            {t.count > 0 && <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${subTab === t.key ? 'bg-zinc-100 text-zinc-500' : 'bg-zinc-200 text-zinc-400'}`}>{t.count}</span>}
+            {t.count > 0 && <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${subTab === t.key ? 'bg-[#1F4D3A]/6 text-[#14161C]/55' : 'bg-[#1F4D3A]/10 text-[#14161C]/40'}`}>{t.count}</span>}
           </button>
         ))}
       </div>
 
       {/* Vendors on Duty */}
       {subTab === 'vendors-on-duty' && (
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
           {vendors.length === 0 ? (
             <div className="py-12 text-center">
-              <Phone size={32} className="mx-auto text-zinc-200 mb-3" />
-              <p className="text-sm font-semibold text-zinc-400">No vendors assigned to this event</p>
-              <p className="text-xs text-zinc-300 mt-1">Assign vendors from the Vendors tab</p>
+              <Phone size={32} className="mx-auto text-[#14161C]/15 mb-3" />
+              <p className="text-sm font-semibold text-[#14161C]/40">No vendors assigned to this event</p>
+              <p className="text-xs text-[#14161C]/25 mt-1">Assign vendors from the Vendors tab</p>
             </div>
           ) : vendors.map(v => (
-            <div key={v.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-              <div className="w-8 h-8 rounded-full bg-[#CDB5F7]/20 flex items-center justify-center text-xs font-bold text-violet-600 flex-shrink-0">
+            <div key={v.id} className="flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0">
+              <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
                 {v.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-[#14161C]">{v.name}</p>
-                <p className="text-xs text-zinc-400">{v.category.replaceAll('_', ' ')}</p>
+                <p className="text-xs text-[#14161C]/40">{v.category.replaceAll('_', ' ')}</p>
               </div>
               {v.contactPhone && (
-                <a href={`tel:${v.contactPhone}`} className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors flex-shrink-0">
+                <a href={`tel:${v.contactPhone}`} className="flex items-center gap-1.5 text-sm font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors flex-shrink-0">
                   <Phone size={13} /> {v.contactPhone}
                 </a>
               )}
@@ -488,31 +488,31 @@ export function ContactsTab({ weddingId, eventId, vendors, showAdd, onCloseAdd }
       {/* Key People */}
       {subTab === 'key-people' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
             {contacts.length === 0 ? (
               <div className="py-12 text-center">
-                <Phone size={32} className="mx-auto text-zinc-200 mb-3" />
-                <p className="text-sm font-semibold text-zinc-400">No key people added yet</p>
-                <p className="text-xs text-zinc-300 mt-1">Add the MC, pastor, family coordinator or anyone else to call on the day</p>
+                <Phone size={32} className="mx-auto text-[#14161C]/15 mb-3" />
+                <p className="text-sm font-semibold text-[#14161C]/40">No key people added yet</p>
+                <p className="text-xs text-[#14161C]/25 mt-1">Add the MC, pastor, family coordinator or anyone else to call on the day</p>
               </div>
             ) : contacts.map(c => (
-              <div key={c.id} className="flex items-center gap-4 py-4 px-6 border-b border-zinc-100 last:border-0">
-                <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500 flex-shrink-0">
+              <div key={c.id} className="flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0">
+                <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/6 flex items-center justify-center text-xs font-bold text-[#14161C]/55 flex-shrink-0">
                   {c.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-[#14161C]">{c.name}</p>
-                  {c.role && <p className="text-xs text-zinc-400">{c.role}</p>}
-                  {c.notes && <p className="text-xs text-zinc-400 italic mt-0.5">{c.notes}</p>}
+                  {c.role && <p className="text-xs text-[#14161C]/40">{c.role}</p>}
+                  {c.notes && <p className="text-xs text-[#14161C]/40 italic mt-0.5">{c.notes}</p>}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {c.phone && (
-                    <a href={`tel:${c.phone}`} className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors">
+                    <a href={`tel:${c.phone}`} className="flex items-center gap-1.5 text-sm font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors">
                       <Phone size={13} /> {c.phone}
                     </a>
                   )}
-                  <button onClick={() => setEditing(c)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
-                  <button onClick={() => setDeleting(c)} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+                  <button onClick={() => setEditing(c)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+                  <button onClick={() => setDeleting(c)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
                 </div>
               </div>
             ))}
@@ -538,7 +538,7 @@ export function ContactsTab({ weddingId, eventId, vendors, showAdd, onCloseAdd }
       )}
       {deleting && (
         <Modal title="Delete contact?" onClose={() => setDeleting(null)}>
-          <p className="text-sm text-zinc-600 mb-6">"{deleting.name}" will be permanently removed.</p>
+          <p className="text-sm text-[#14161C]/60 mb-6">"{deleting.name}" will be permanently removed.</p>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setDeleting(null)}>Cancel</Button>
             <Button variant="danger" onClick={() => void handleDelete(deleting)}>Delete</Button>
@@ -640,7 +640,7 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
     } catch { toast('Failed to delete note', 'error') }
   }
 
-  const sevColor: Record<string, string> = { LOW: 'text-zinc-500', MEDIUM: 'text-amber-600', HIGH: 'text-orange-600', CRITICAL: 'text-red-600' }
+  const sevColor: Record<string, string> = { LOW: 'text-[#14161C]/55', MEDIUM: 'text-amber-600', HIGH: 'text-orange-600', CRITICAL: 'text-red-600' }
 
   return (
     <Modal title="Incident" onClose={onClose}>
@@ -648,19 +648,19 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className={`text-xs font-bold uppercase ${sevColor[inc.severity] ?? 'text-zinc-500'}`}>{inc.severity}</span>
-            <span className="text-xs text-zinc-400">{format(new Date(inc.reportedAt), 'MMM d · h:mm a')}</span>
+            <span className={`text-xs font-bold uppercase ${sevColor[inc.severity] ?? 'text-[#14161C]/55'}`}>{inc.severity}</span>
+            <span className="text-xs text-[#14161C]/40">{format(new Date(inc.reportedAt), 'MMM d · h:mm a')}</span>
             {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setEditing(v => !v)} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
-            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
+            <button onClick={() => setEditing(v => !v)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete"><Trash2 size={13} /></button>
           </div>
         </div>
 
         {/* Edit form or read view */}
         {editing ? (
-          <div className="space-y-3 bg-zinc-50 rounded-xl p-4">
+          <div className="space-y-3 bg-[#F7F5F2] rounded-xl p-4">
             <div>
               <Label>Severity</Label>
               <Select value={form.severity} onChange={e => setForm(f => ({ ...f, severity: e.target.value }))}>
@@ -682,8 +682,8 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
           </div>
         ) : (
           <div>
-            <p className="text-sm text-zinc-700">{inc.description}</p>
-            {inc.resolution && <p className="text-xs text-zinc-500 mt-1.5 italic border-l-2 border-zinc-200 pl-2">{inc.resolution}</p>}
+            <p className="text-sm text-[#14161C]/70">{inc.description}</p>
+            {inc.resolution && <p className="text-xs text-[#14161C]/55 mt-1.5 italic border-l-2 border-[#1F4D3A]/12 pl-2">{inc.resolution}</p>}
           </div>
         )}
 
@@ -693,24 +693,24 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
           </button>
         )}
 
-        <hr className="border-zinc-100" />
+        <hr className="border-[#1F4D3A]/8" />
 
         {/* Activity log */}
         <div>
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Activity log</p>
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">Activity log</p>
           {notes.length === 0 ? (
-            <p className="text-xs text-zinc-400 py-2">No notes yet — log updates, actions taken, or follow-ups.</p>
+            <p className="text-xs text-[#14161C]/40 py-2">No notes yet — log updates, actions taken, or follow-ups.</p>
           ) : (
             <div className="space-y-2 mb-3 max-h-48 overflow-y-auto scrollbar-thin">
               {notes.map(n => (
                 <div key={n.id} className="flex items-start gap-2 group">
                   <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-zinc-700 leading-relaxed">{n.content}</p>
-                    <p className="text-[10px] text-zinc-400 mt-0.5">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
+                    <p className="text-sm text-[#14161C]/70 leading-relaxed">{n.content}</p>
+                    <p className="text-[10px] text-[#14161C]/40 mt-0.5">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
                   </div>
                   <button onClick={() => void handleDeleteNote(n.id)}
-                    className="p-1 rounded text-zinc-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                    className="p-1 rounded text-[#14161C]/25 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
                     aria-label="Delete note"><Trash2 size={11} /></button>
                 </div>
               ))}
@@ -721,7 +721,7 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleAddNote() } }}
               placeholder="Log an update or action taken… (Enter to submit)"
               rows={2}
-              className="flex-1 text-sm rounded-xl border border-zinc-200 px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+              className="flex-1 text-sm rounded-xl border border-[#1F4D3A]/12 px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:border-transparent" />
             <Button size="sm" variant="lavender" onClick={handleAddNote} disabled={addingNote || !noteText.trim()}>
               {addingNote ? '…' : 'Add'}
             </Button>
@@ -749,14 +749,14 @@ export function IncidentsTab({ incidents, weddingId, onRefresh }: Readonly<{
             className={`w-full text-left rounded-xl p-4 transition-all hover:opacity-90 active:scale-[0.99] ${SEV_COLOR[inc.severity] ?? 'border-l-4 border-zinc-300'}`}>
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-zinc-500 uppercase">{inc.severity}</span>
-                <span className="text-xs text-zinc-400">{format(new Date(inc.reportedAt), 'h:mm a')}</span>
+                <span className="text-xs font-bold text-[#14161C]/55 uppercase">{inc.severity}</span>
+                <span className="text-xs text-[#14161C]/40">{format(new Date(inc.reportedAt), 'h:mm a')}</span>
                 {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
               </div>
-              <Pencil size={12} className="text-zinc-300 flex-shrink-0" />
+              <Pencil size={12} className="text-[#14161C]/25 flex-shrink-0" />
             </div>
-            <p className="text-sm text-zinc-700 mt-1">{inc.description}</p>
-            {inc.resolution && <p className="text-xs text-zinc-500 mt-1 italic">{inc.resolution}</p>}
+            <p className="text-sm text-[#14161C]/70 mt-1">{inc.description}</p>
+            {inc.resolution && <p className="text-xs text-[#14161C]/55 mt-1 italic">{inc.resolution}</p>}
           </button>
         ))}
       </div>
@@ -862,10 +862,10 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
     <div className="space-y-6">
       {/* Sub-tab bar + actions */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl w-fit">
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
           {(['program', 'contacts', 'incidents'] as const).map(t => (
             <button key={t} onClick={() => setSubTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
               {t === 'contacts' ? 'Contacts' : t.charAt(0).toUpperCase() + t.slice(1)}
               {t === 'incidents' && activeIncidents.length > 0 && (
                 <span className="ml-1.5 text-[10px] font-bold bg-red-100 text-red-600 rounded-full px-1.5 py-0.5">{activeIncidents.length}</span>
@@ -876,13 +876,13 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
         <div className="flex items-center gap-2">
           {subTab === 'program' && (
             <>
-              <div className="flex gap-1 bg-zinc-100 p-1 rounded-xl">
+              <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
                 <button onClick={() => setViewMode('day')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${viewMode === 'day' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${viewMode === 'day' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                   <List size={12} /> Day
                 </button>
                 <button onClick={() => setViewMode('week')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${viewMode === 'week' ? 'bg-white text-[#14161C] shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}>
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${viewMode === 'week' ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                   <CalendarDays size={12} /> Week
                 </button>
               </div>
@@ -912,13 +912,13 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
           <div className="space-y-4">
             {/* Week navigator */}
             <div className="flex items-center justify-between">
-              <button onClick={() => setWeekStart(d => addDays(d, -7))} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Previous week">
+              <button onClick={() => setWeekStart(d => addDays(d, -7))} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Previous week">
                 <ChevronLeft size={16} />
               </button>
-              <p className="text-sm font-semibold text-zinc-600">
+              <p className="text-sm font-semibold text-[#14161C]/60">
                 {format(weekStart, 'MMM d')} – {format(addDays(weekStart, 6), 'MMM d, yyyy')}
               </p>
-              <button onClick={() => setWeekStart(d => addDays(d, 7))} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Next week">
+              <button onClick={() => setWeekStart(d => addDays(d, 7))} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Next week">
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -941,9 +941,9 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                       className="group flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-1.5 border border-sky-100 shadow-sm cursor-pointer hover:border-sky-300 transition-all"
                       onClick={() => setEditingItem(item)}>
                       <p className="text-xs font-semibold text-[#14161C]">{item.title}</p>
-                      {item.assignedTo && <span className="text-[10px] text-zinc-400">→ {item.assignedTo}</span>}
+                      {item.assignedTo && <span className="text-[10px] text-[#14161C]/40">→ {item.assignedTo}</span>}
                       <button onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                        className="p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all ml-1"
+                        className="p-0.5 rounded  text-[#14161C]/25 hover:text-red-400 transition-all ml-1"
                         aria-label="Delete"><Trash2 size={10} /></button>
                     </div>
                   ))}
@@ -959,13 +959,13 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                 const isToday = isSameDay(day, new Date())
                 return (
                   <div key={day.toISOString()}
-                    className={`rounded-xl border flex flex-col min-h-32 ${isEventDay ? 'border-amber-200 bg-amber-50/40' : isToday ? 'border-violet-200 bg-violet-50/30' : 'border-zinc-100 bg-zinc-50/50'}`}>
+                    className={`rounded-xl border flex flex-col min-h-32 ${isEventDay ? 'border-amber-200 bg-amber-50/40' : isToday ? 'border-violet-200 bg-[#1F4D3A]/6/30' : 'border-[#1F4D3A]/8 bg-[#F7F5F2]/50'}`}>
                     {/* Day header */}
-                    <div className={`px-2 pt-2 pb-1 border-b ${isEventDay ? 'border-amber-100' : 'border-zinc-100'}`}>
-                      <p className={`text-[10px] font-bold uppercase tracking-wide ${isEventDay ? 'text-amber-600' : isToday ? 'text-violet-600' : 'text-zinc-400'}`}>
+                    <div className={`px-2 pt-2 pb-1 border-b ${isEventDay ? 'border-amber-100' : 'border-[#1F4D3A]/8'}`}>
+                      <p className={`text-[10px] font-bold uppercase tracking-wide ${isEventDay ? 'text-amber-600' : isToday ? 'text-[#1F4D3A]' : 'text-[#14161C]/40'}`}>
                         {format(day, 'EEE')}
                       </p>
-                      <p className={`text-base font-extrabold leading-tight ${isEventDay ? 'text-amber-700' : isToday ? 'text-violet-700' : 'text-[#14161C]'}`}>
+                      <p className={`text-base font-extrabold leading-tight ${isEventDay ? 'text-amber-700' : isToday ? 'text-[#1F4D3A]' : 'text-[#14161C]'}`}>
                         {format(day, 'd')}
                       </p>
                       {isEventDay && <p className="text-[9px] text-amber-500 font-semibold">Event day</p>}
@@ -977,15 +977,15 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                         const timeStr = item.startTime ? format(new Date(item.startTime), 'HH:mm') : null
                         return (
                           <div key={item.id}
-                            className="group relative bg-white rounded-lg px-2 py-1.5 border border-zinc-100 shadow-sm cursor-pointer hover:border-violet-200 hover:shadow-md transition-all"
+                            className="group relative bg-white rounded-lg px-2 py-1.5 border border-[#1F4D3A]/8 shadow-sm cursor-pointer hover:border-violet-200 hover:shadow-md transition-all"
                             onClick={() => setEditingItem(item)}>
-                            {timeStr && <p className="text-[9px] font-bold text-violet-500 mb-0.5">{timeStr}</p>}
+                            {timeStr && <p className="text-[9px] font-bold text-[#1F4D3A]/70 mb-0.5">{timeStr}</p>}
                             <p className="text-[11px] font-semibold text-[#14161C] leading-tight line-clamp-2">{item.title}</p>
-                            {item.assignedTo && <p className="text-[9px] text-zinc-400 mt-0.5 truncate">→ {item.assignedTo}</p>}
+                            {item.assignedTo && <p className="text-[9px] text-[#14161C]/40 mt-0.5 truncate">→ {item.assignedTo}</p>}
                             {/* Delete on hover */}
                             <button
                               onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                              className="absolute top-1 right-1 p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all"
+                              className="absolute top-1 right-1 p-0.5 rounded  text-[#14161C]/25 hover:text-red-400 transition-all"
                               aria-label="Delete">
                               <Trash2 size={10} />
                             </button>
@@ -997,7 +997,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                     {/* Add button at bottom of column */}
                     <button
                       onClick={() => { setAddForDay(format(day, 'yyyy-MM-dd')); setShowAdd(true) }}
-                      className="mx-1.5 mb-1.5 flex items-center justify-center gap-1 py-1 rounded-lg text-[10px] font-semibold text-zinc-400 hover:text-violet-600 hover:bg-violet-50 transition-colors border border-dashed border-zinc-200 hover:border-violet-200">
+                      className="mx-1.5 mb-1.5 flex items-center justify-center gap-1 py-1 rounded-lg text-[10px] font-semibold text-[#14161C]/40 hover:text-[#1F4D3A] hover:bg-[#1F4D3A]/6 transition-colors border border-dashed border-[#1F4D3A]/12 hover:border-violet-200">
                       <Plus size={10} /> Add
                     </button>
                   </div>
@@ -1007,8 +1007,8 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
 
             {/* Weekly summary */}
             {programItems.length > 0 && (
-              <div className="pt-2 border-t border-zinc-100">
-                <p className="text-xs text-zinc-400 text-center">
+              <div className="pt-2 border-t border-[#1F4D3A]/8">
+                <p className="text-xs text-[#14161C]/40 text-center">
                   {programItems.length} item{programItems.length === 1 ? '' : 's'} this week ·
                   click any item to edit · click a day column to add
                 </p>
@@ -1022,15 +1022,15 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
           <div className="space-y-3">
             {/* Day navigator */}
             <div className="flex items-center justify-between">
-              <button onClick={() => setSelectedDay(d => addDays(d, -1))} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Previous day">
+              <button onClick={() => setSelectedDay(d => addDays(d, -1))} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Previous day">
                 <ChevronLeft size={16} />
               </button>
               <div className="text-center">
                 <p className="text-sm font-bold text-[#14161C]">{format(selectedDay, 'EEEE, MMMM d')}</p>
                 {isSameDay(selectedDay, new Date(event.date)) && <p className="text-xs text-amber-600 font-semibold">Event day</p>}
-                {isSameDay(selectedDay, new Date()) && !isSameDay(selectedDay, new Date(event.date)) && <p className="text-xs text-violet-500 font-semibold">Today</p>}
+                {isSameDay(selectedDay, new Date()) && !isSameDay(selectedDay, new Date(event.date)) && <p className="text-xs text-[#1F4D3A]/70 font-semibold">Today</p>}
               </div>
-              <button onClick={() => setSelectedDay(d => addDays(d, 1))} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600" aria-label="Next day">
+              <button onClick={() => setSelectedDay(d => addDays(d, 1))} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60" aria-label="Next day">
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -1055,9 +1055,9 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                         className="group flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-1.5 border border-sky-100 shadow-sm cursor-pointer hover:border-sky-300 transition-all"
                         onClick={() => setEditingItem(item)}>
                         <p className="text-xs font-semibold text-[#14161C]">{item.title}</p>
-                        {item.assignedTo && <span className="text-[10px] text-zinc-400">→ {item.assignedTo}</span>}
+                        {item.assignedTo && <span className="text-[10px] text-[#14161C]/40">→ {item.assignedTo}</span>}
                         <button onClick={e => { e.stopPropagation(); void deleteItem(item) }}
-                          className="p-0.5 rounded  text-zinc-300 hover:text-red-400 transition-all ml-1"
+                          className="p-0.5 rounded  text-[#14161C]/25 hover:text-red-400 transition-all ml-1"
                           aria-label="Delete"><Trash2 size={10} /></button>
                       </div>
                     ))}
@@ -1074,7 +1074,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
             ) : (
               <div className="relative">
                 {/* Timeline line */}
-                <div className="absolute left-[2.75rem] top-0 bottom-0 w-px bg-zinc-100" />
+                <div className="absolute left-[2.75rem] top-0 bottom-0 w-px bg-[#1F4D3A]/6" />
                 <div className="space-y-0">
                   {dayItems.map((item, idx) => {
                     const parseTime = (v: unknown) => {
@@ -1090,31 +1090,31 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                         <div className="w-10 flex-shrink-0 text-right pt-0.5">
                           {st ? (
                             <>
-                              <p className="text-xs font-bold text-violet-600">{st}</p>
-                              {et && <p className="text-[10px] text-zinc-400">{et}</p>}
+                              <p className="text-xs font-bold text-[#1F4D3A]">{st}</p>
+                              {et && <p className="text-[10px] text-[#14161C]/40">{et}</p>}
                             </>
                           ) : (
-                            <span className="inline-flex w-5 h-5 rounded-full bg-violet-100 items-center justify-center text-[10px] font-bold text-violet-600 ml-auto">{idx + 1}</span>
+                            <span className="inline-flex w-5 h-5 rounded-full bg-[#1F4D3A]/10 items-center justify-center text-[10px] font-bold text-[#1F4D3A] ml-auto">{idx + 1}</span>
                           )}
                         </div>
                         {/* Dot on timeline */}
                         <div className="relative flex-shrink-0 flex items-start pt-1.5">
-                          <div className="w-2.5 h-2.5 rounded-full bg-violet-400 ring-2 ring-white z-10" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#1F4D3A] ring-2 ring-white z-10" />
                         </div>
                         {/* Content */}
-                        <div className="flex-1 min-w-0 bg-white rounded-xl border border-zinc-100 px-3 py-2 shadow-sm group-hover:border-violet-100 transition-colors">
+                        <div className="flex-1 min-w-0 bg-white rounded-xl border border-[#1F4D3A]/8 px-3 py-2 shadow-sm group-hover:border-violet-100 transition-colors">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-[#14161C]">{item.title}</p>
-                              {item.description && <p className="text-xs text-zinc-400 mt-0.5">{item.description}</p>}
+                              {item.description && <p className="text-xs text-[#14161C]/40 mt-0.5">{item.description}</p>}
                               <div className="flex items-center gap-3 mt-1 flex-wrap">
-                                {item.duration && !et && <span className="text-xs text-zinc-400">{item.duration} min</span>}
-                                {item.assignedTo && <span className="text-xs text-violet-500">→ {item.assignedTo}</span>}
+                                {item.duration && !et && <span className="text-xs text-[#14161C]/40">{item.duration} min</span>}
+                                {item.assignedTo && <span className="text-xs text-[#1F4D3A]/70">→ {item.assignedTo}</span>}
                               </div>
                             </div>
                             <div className="flex gap-1  flex-shrink-0">
-                              <button onClick={() => setEditingItem(item)} className="p-1 text-zinc-300 hover:text-violet-500" aria-label="Edit"><Pencil size={13} /></button>
-                              <button onClick={() => void deleteItem(item)} className="p-1 text-zinc-300 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+                              <button onClick={() => setEditingItem(item)} className="p-1 text-[#14161C]/25 hover:text-[#1F4D3A]/70" aria-label="Edit"><Pencil size={13} /></button>
+                              <button onClick={() => void deleteItem(item)} className="p-1 text-[#14161C]/25 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
                             </div>
                           </div>
                         </div>

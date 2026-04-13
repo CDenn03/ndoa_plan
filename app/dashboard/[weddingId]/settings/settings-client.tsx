@@ -65,7 +65,7 @@ const ALL_COLOURS = [
   { name: 'Cobalt',          hex: '#0047AB', group: 'Blues' },
   { name: 'Navy Blue',       hex: '#1B2A4A', group: 'Blues' },
   { name: 'Midnight Blue',   hex: '#191970', group: 'Blues' },
-  { name: 'Lavender',        hex: '#CDB5F7', group: 'Purples & Lavender' },
+  { name: 'Lavender',        hex: '#D4A94F', group: 'Purples & Lavender' },
   { name: 'Lilac',           hex: '#C8A2C8', group: 'Purples & Lavender' },
   { name: 'Wisteria',        hex: '#C9A0DC', group: 'Purples & Lavender' },
   { name: 'Orchid',          hex: '#DA70D6', group: 'Purples & Lavender' },
@@ -107,7 +107,7 @@ function encodePalette(entries: PaletteEntry[]): string[] {
   return entries.filter(e => e.hex).map(e => `${e.name}|${e.hex}`)
 }
 const DEFAULT_PALETTE: PaletteEntry[] = [
-  { name: 'Lavender', hex: '#CDB5F7' },
+  { name: 'Lavender', hex: '#D4A94F' },
   { name: 'Champagne', hex: '#F7E7CE' },
   { name: 'Ivory', hex: '#FFFFF0' },
 ]
@@ -142,37 +142,37 @@ function ColourPickerModal({ current, onSelect, onClose }: Readonly<{
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/30 backdrop-blur-sm">
       <div className="bg-white w-full sm:w-96 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col max-h-[85vh] sm:max-h-[600px]">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-zinc-100 flex-shrink-0">
+        <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#1F4D3A]/8 flex-shrink-0">
           <p className="text-sm font-bold text-[#14161C]">Choose a colour</p>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 transition-colors" aria-label="Close">
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 transition-colors" aria-label="Close">
             <X size={15} />
           </button>
         </div>
 
         {/* Search */}
-        <div className="px-4 py-3 border-b border-zinc-100 flex-shrink-0">
+        <div className="px-4 py-3 border-b border-[#1F4D3A]/8 flex-shrink-0">
           <div className="relative">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#14161C]/40 pointer-events-none" />
             <input ref={inputRef} value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search colours…"
-              className="w-full pl-8 pr-3 py-2.5 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+              className="w-full pl-8 pr-3 py-2.5 text-sm rounded-xl border border-[#1F4D3A]/12 focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:border-transparent" />
           </div>
         </div>
 
         {/* Colour grid — scrollable */}
         <div className="overflow-y-auto flex-1 px-4 py-3 space-y-5">
           {groups.size === 0 ? (
-            <p className="text-sm text-zinc-400 text-center py-8">No colours found for "{search}"</p>
+            <p className="text-sm text-[#14161C]/40 text-center py-8">No colours found for "{search}"</p>
           ) : Array.from(groups.entries()).map(([group, colours]) => (
             <div key={group}>
-              <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-2.5">{group}</p>
+              <p className="text-[10px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2.5">{group}</p>
               <div className="grid grid-cols-5 gap-2">
                 {colours.map(c => (
                   <button key={c.hex + c.name} type="button" onClick={() => { onSelect(c); onClose() }}
-                    className={`flex flex-col items-center gap-1.5 p-1.5 rounded-xl active:scale-95 transition-all ${current === c.hex ? 'ring-2 ring-violet-400 ring-offset-1 bg-violet-50' : 'hover:bg-zinc-50'}`}>
-                    <div className="w-10 h-10 rounded-xl border border-zinc-200 shadow-sm"
+                    className={`flex flex-col items-center gap-1.5 p-1.5 rounded-xl active:scale-95 transition-all ${current === c.hex ? 'ring-2 ring-[#1F4D3A]/40 ring-offset-1 bg-[#1F4D3A]/6' : 'hover:bg-[#F7F5F2]'}`}>
+                    <div className="w-10 h-10 rounded-xl border border-[#1F4D3A]/12 shadow-sm"
                       style={{ backgroundColor: c.hex }} />
-                    <span className="text-[9px] text-zinc-500 text-center leading-tight w-full truncate">{c.name}</span>
+                    <span className="text-[9px] text-[#14161C]/55 text-center leading-tight w-full truncate">{c.name}</span>
                   </button>
                 ))}
               </div>
@@ -181,15 +181,15 @@ function ColourPickerModal({ current, onSelect, onClose }: Readonly<{
         </div>
 
         {/* Custom colour */}
-        <div className="border-t border-zinc-100 px-4 py-3 flex-shrink-0 space-y-2">
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Custom colour</p>
+        <div className="border-t border-[#1F4D3A]/8 px-4 py-3 flex-shrink-0 space-y-2">
+          <p className="text-[10px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest">Custom colour</p>
           <div className="flex items-center gap-2">
-            <input type="color" value={customHex || '#8B5CF6'}
+            <input type="color" value={customHex || '#1F4D3A'}
               onChange={e => { setCustomHex(e.target.value); if (!customName) setCustomName('Custom') }}
-              className="w-10 h-10 rounded-xl border border-zinc-200 cursor-pointer flex-shrink-0 p-0.5" />
+              className="w-10 h-10 rounded-xl border border-[#1F4D3A]/12 cursor-pointer flex-shrink-0 p-0.5" />
             <input value={customName} onChange={e => setCustomName(e.target.value)}
               placeholder="Name this colour…"
-              className="flex-1 h-10 px-3 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+              className="flex-1 h-10 px-3 text-sm rounded-xl border border-[#1F4D3A]/12 focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:border-transparent" />
             <Button type="button" size="sm" variant="lavender"
               onClick={() => { if (customHex && customName.trim()) { onSelect({ name: customName.trim(), hex: customHex }); onClose() } }}
               disabled={!customHex || !customName.trim()}>
@@ -213,25 +213,25 @@ function ColourSlot({ entry, onChange, onRemove, canRemove }: Readonly<{
 
   return (
     <>
-      <div className="flex items-center gap-3 p-3 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-200 transition-colors">
+      <div className="flex items-center gap-3 p-3 rounded-2xl border border-[#1F4D3A]/8 bg-white hover:border-[#1F4D3A]/12 transition-colors">
         <button type="button" onClick={() => setOpen(true)}
-          className={`w-12 h-12 rounded-xl flex-shrink-0 border shadow-sm transition-transform hover:scale-105 active:scale-95 flex items-center justify-center ${isEmpty ? 'border-dashed border-zinc-300 bg-zinc-50' : 'border-zinc-200'}`}
+          className={`w-12 h-12 rounded-xl flex-shrink-0 border shadow-sm transition-transform hover:scale-105 active:scale-95 flex items-center justify-center ${isEmpty ? 'border-dashed border-zinc-300 bg-[#F7F5F2]' : 'border-[#1F4D3A]/12'}`}
           style={isEmpty ? {} : { backgroundColor: entry.hex }}
           aria-label="Pick colour">
-          {isEmpty && <span className="text-[10px] text-zinc-400 font-medium">Pick</span>}
+          {isEmpty && <span className="text-[10px] text-[#14161C]/40 font-medium">Pick</span>}
         </button>
         <div className="flex-1 min-w-0">
           {isEmpty
-            ? <p className="text-sm text-zinc-400">No colour selected — tap to pick</p>
+            ? <p className="text-sm text-[#14161C]/40">No colour selected — tap to pick</p>
             : <>
                 <p className="text-sm font-semibold text-[#14161C]">{entry.name}</p>
-                <p className="text-xs text-zinc-400 font-mono">{entry.hex}</p>
+                <p className="text-xs text-[#14161C]/40 font-mono">{entry.hex}</p>
               </>
           }
         </div>
         {canRemove && (
           <button type="button" onClick={onRemove}
-            className="p-1.5 rounded-lg text-zinc-300 hover:text-red-400 hover:bg-red-50 transition-colors flex-shrink-0"
+            className="p-1.5 rounded-lg text-[#14161C]/25 hover:text-red-400 hover:bg-red-50 transition-colors flex-shrink-0"
             aria-label="Remove colour">
             <X size={13} />
           </button>
@@ -265,17 +265,17 @@ function FocalPointEditor({ src, focalX, focalY, onSave, onClose }: Readonly<{
   return (
     <Modal onClose={onClose} title="Set focal point">
       <div className="space-y-4">
-        <p className="text-xs text-zinc-400">Click or drag on the image to set where it focuses when cropped.</p>
+        <p className="text-xs text-[#14161C]/40">Click or drag on the image to set where it focuses when cropped.</p>
 
         <div className="grid grid-cols-[1fr_auto] gap-3">
           {/* Click target */}
-          <div className="relative rounded-xl overflow-hidden cursor-crosshair select-none aspect-[4/3] bg-zinc-100"
+          <div className="relative rounded-xl overflow-hidden cursor-crosshair select-none aspect-[4/3] bg-[#1F4D3A]/6"
             onClick={handlePointer} onMouseMove={handlePointer}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt="Set focal point" className="w-full h-full object-contain pointer-events-none" draggable={false} />
             {/* Crosshair */}
             <div className="absolute pointer-events-none" style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%,-50%)' }}>
-              <div className="w-5 h-5 rounded-full border-2 border-white shadow-md bg-violet-500/60 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full border-2 border-white shadow-md bg-[#1F4D3A]/60/60 flex items-center justify-center">
                 <Crosshair size={10} className="text-white" />
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-px w-[9999px] h-px bg-white/40" />
@@ -285,13 +285,13 @@ function FocalPointEditor({ src, focalX, focalY, onSave, onClose }: Readonly<{
 
           {/* Live preview */}
           <div className="w-24 flex flex-col gap-1.5">
-            <p className="text-[10px] text-zinc-400 uppercase tracking-widest">Preview</p>
-            <div className="w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200">
+            <p className="text-[10px] text-[#1F4D3A]/40 uppercase tracking-widest">Preview</p>
+            <div className="w-24 h-24 rounded-xl overflow-hidden bg-[#1F4D3A]/6 border border-[#1F4D3A]/12">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt="Preview" className="w-full h-full object-cover"
                 style={{ objectPosition: `${x}% ${y}%` }} />
             </div>
-            <p className="text-[10px] text-zinc-400 font-mono text-center">{x}% {y}%</p>
+            <p className="text-[10px] text-[#14161C]/40 font-mono text-center">{x}% {y}%</p>
           </div>
         </div>
 
@@ -383,10 +383,10 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
       )}
 
       <div className="min-h-full">
-        <div className="px-8 pt-10 pb-8 border-b border-zinc-100 bg-white">
+        <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
           <div className="max-w-2xl mx-auto">
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Configuration</p>
-            <h1 className="text-4xl font-extrabold text-[#14161C] tracking-tight">Settings</h1>
+            <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Configuration</p>
+            <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Settings</h1>
           </div>
         </div>
 
@@ -395,10 +395,10 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
 
             {/* Couple photo */}
             <div>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">Couple photo</p>
+              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-6">Couple photo</p>
               <div className="flex items-start gap-6">
                 {/* Rectangular photo with focal point */}
-                <div className="relative flex-shrink-0 w-48 h-36 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200">
+                <div className="relative flex-shrink-0 w-48 h-36 rounded-2xl overflow-hidden bg-[#1F4D3A]/6 border border-[#1F4D3A]/12">
                   {photoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={photoUrl} alt="Couple"
@@ -406,7 +406,7 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
                       style={{ objectPosition: `${focalX}% ${focalY}%` }} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ImageIcon size={32} className="text-zinc-300" />
+                      <ImageIcon size={32} className="text-[#14161C]/25" />
                     </div>
                   )}
                   {photoUrl && (
@@ -425,48 +425,48 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
                   </Button>
                   {photoUrl && (
                     <button type="button" onClick={() => setShowFocalEditor(true)}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-violet-600 transition-colors">
+                      className="flex items-center gap-1.5 text-xs font-semibold text-[#14161C]/55 hover:text-[#1F4D3A] transition-colors">
                       <Crosshair size={12} /> Adjust focal point
                     </button>
                   )}
-                  <p className="text-xs text-zinc-400">JPG or PNG, max 5MB.</p>
+                  <p className="text-xs text-[#14161C]/40">JPG or PNG, max 5MB.</p>
                 </div>
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
               </div>
             </div>
 
-            <hr className="border-zinc-100" />
+            <hr className="border-[#1F4D3A]/8" />
 
             {/* Couple info */}
             <div>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6">Couple information</p>
+              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-6">Couple information</p>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="s-name" className="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Wedding name</label>
+                  <label htmlFor="s-name" className="block text-xs font-semibold text-[#14161C]/55 uppercase tracking-wide mb-1.5">Wedding name</label>
                   <Input id="s-name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Wanjiku & Brian" required />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="s-bride" className="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Bride's name</label>
+                    <label htmlFor="s-bride" className="block text-xs font-semibold text-[#14161C]/55 uppercase tracking-wide mb-1.5">Bride's name</label>
                     <Input id="s-bride" value={brideName} onChange={e => setBrideName(e.target.value)} placeholder="e.g. Wanjiku" />
                   </div>
                   <div>
-                    <label htmlFor="s-groom" className="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Groom's name</label>
+                    <label htmlFor="s-groom" className="block text-xs font-semibold text-[#14161C]/55 uppercase tracking-wide mb-1.5">Groom's name</label>
                     <Input id="s-groom" value={groomName} onChange={e => setGroomName(e.target.value)} placeholder="e.g. Brian" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <hr className="border-zinc-100" />
+            <hr className="border-[#1F4D3A]/8" />
 
             {/* Colour palette */}
             <div>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-1">Wedding colours</p>
-              <p className="text-xs text-zinc-400 mb-4">Pick colours by name — these set the mood for your whole wedding.</p>
+              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Wedding colours</p>
+              <p className="text-xs text-[#14161C]/40 mb-4">Pick colours by name — these set the mood for your whole wedding.</p>
 
               {palette.some(e => e.hex) && (
-                <div className="flex gap-1 mb-5 rounded-2xl overflow-hidden h-10 border border-zinc-100">
+                <div className="flex gap-1 mb-5 rounded-2xl overflow-hidden h-10 border border-[#1F4D3A]/8">
                   {palette.filter(e => e.hex).map((e, i) => (
                     <div key={e.hex + i} className="flex-1 h-full" style={{ backgroundColor: e.hex }} title={e.name} />
                   ))}
@@ -491,7 +491,7 @@ export function WeddingSettingsClient({ weddingId, initialValues }: Readonly<Pro
 
               {palette.length < 6 && !addingNew && (
                 <button type="button" onClick={() => setAddingNew(true)}
-                  className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors">
+                  className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors">
                   <Plus size={13} /> Add another colour
                 </button>
               )}
