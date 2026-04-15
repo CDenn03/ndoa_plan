@@ -9,7 +9,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { giverName, giverPhone, description, estimatedValue, status, thankYouSent } = body
+  const { giverName, giverPhone, description, estimatedValue, status, disposition, thankYouSent } = body
 
   const gift = await db.giftReceived.update({
     where: { id: giftId, weddingId: id },
@@ -19,10 +19,14 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       ...(description !== undefined && { description }),
       ...(estimatedValue !== undefined && { estimatedValue: estimatedValue ?? null }),
       ...(status !== undefined && { status }),
+      ...(disposition !== undefined && { disposition }),
       ...(thankYouSent !== undefined && { thankYouSent, thankYouSentAt: thankYouSent ? new Date() : null }),
     },
   })
-  return NextResponse.json(gift)
+  return NextResponse.json({
+    ...gift,
+    estimatedValue: gift.estimatedValue != null ? Number(gift.estimatedValue) : null,
+  })
 }
 
 export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string; giftId: string }> }) {

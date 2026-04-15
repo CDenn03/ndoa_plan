@@ -11,7 +11,7 @@ import { cn } from '@/components/ui'
 import { useWeddingStore } from '@/store/wedding-store'
 import { signOut } from 'next-auth/react'
 import { useSync } from '@/components/sync-provider'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 interface WeddingEvent { id: string; name: string; type: string }
@@ -69,7 +69,8 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
   const { sidebarOpen, toggleSidebar } = useWeddingStore()
   const { isOnline, circuitOpen } = useSync()
   const base = `/dashboard/${weddingId}`
-  const [mounted] = useState(() => typeof window !== 'undefined')
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const [eventsExpanded, setEventsExpanded] = useState(true)
 
   const open = mounted && sidebarOpen

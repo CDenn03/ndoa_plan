@@ -240,12 +240,14 @@ model EventDependency {
 // ─── Guest Event Attendance ───────────────────────────────────────────────────
 
 model GuestEventAttendance {
-  id         String       @id @default(uuid())
-  guestId    String
-  eventId    String
-  rsvpStatus RsvpStatus   @default(PENDING)
-  guest      Guest        @relation(fields: [guestId], references: [id], onDelete: Cascade)
-  event      WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id          String       @id @default(uuid())
+  guestId     String
+  eventId     String
+  rsvpStatus  RsvpStatus   @default(PENDING)
+  checkedIn   Boolean      @default(false)
+  checkedInAt DateTime?
+  guest       Guest        @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  event       WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
   @@unique([guestId, eventId])
   @@index([eventId])
 }
@@ -898,23 +900,24 @@ model GiftRegistryItem {
 }
 
 model GiftReceived {
-  id              String      @id @default(uuid())
+  id              String           @id @default(uuid())
   weddingId       String
   eventId         String?
   guestId         String?
-  giverName       String
+  giverName       String?
   giverPhone      String?
   description     String
   estimatedValue  Decimal?
-  status          GiftStatus  @default(RECEIVED)
-  receivedAt      DateTime    @default(now())
-  thankYouSent    Boolean     @default(false)
+  status          GiftStatus       @default(RECEIVED)
+  disposition     GiftDisposition?
+  receivedAt      DateTime         @default(now())
+  thankYouSent    Boolean          @default(false)
   thankYouSentAt  DateTime?
-  wedding         Wedding     @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-  event           WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  guest           Guest?      @relation(fields: [guestId], references: [id])
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  wedding         Wedding          @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  event           WeddingEvent?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  guest           Guest?           @relation(fields: [guestId], references: [id])
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   @@index([weddingId])
   @@index([eventId])
 }
@@ -923,6 +926,12 @@ enum GiftStatus {
   RECEIVED
   THANKED
   RETURNED
+}
+
+enum GiftDisposition {
+  KEEP
+  SELL
+  GIVE
 }
 
 // ─── Logistics & Transport ────────────────────────────────────────────────────

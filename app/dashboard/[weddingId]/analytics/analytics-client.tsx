@@ -1,11 +1,24 @@
 'use client'
-import { BarChart2 } from 'lucide-react'
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { useMemo } from 'react'
+import {
+  TrendingUp, Wallet, Users, CheckCircle2, AlertTriangle, ArrowRight, BarChart2,
+} from 'lucide-react'
+import {
+  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip,
+  ResponsiveContainer, LineChart, Line, CartesianGrid,
+} from 'recharts'
 import { format } from 'date-fns'
+import { cn } from '@/components/ui'
+import Link from 'next/link'
 
-const COLORS = ['#1F4D3A', '#D4A94F', '#E5DF98', '#10B981', '#F59E0B', '#3B82F6', '#EC4899', '#6366F1', '#14B8A6', '#F97316']
+const COLORS = [
+  '#1F4D3A', '#D4A94F', '#10B981', '#F59E0B',
+  '#3B82F6', '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#E5DF98',
+]
 
 interface Props {
+  weddingId: string
+  weddingName: string
   currency: string
   totalBudget: number
   totalSpent: number
@@ -18,70 +31,171 @@ interface Props {
   payments: { amount: number; createdAt: string }[]
 }
 
+function getBudgetColor(pct: number) {
+  if (pct > 100) return 'text-red-500'
+  if (pct > 85) return 'text-amber-500'
+  return 'text-[#14161C]'
+}
+
+function StatCard({ label, value, sub, color = 'text-[#14161C]' }: Readonly<{
+  label: string; value: string; sub?: string; color?: string
+}>) {
+  return (
+    <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-1">
+      <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">{label}</p>
+      <p className={cn('text-3xl font-extrabold font-heading leading-none', color)}>{value}</p>
+      {sub && <p className="text-xs text-[#14161C]/40 pt-0.5">{sub}</p>}
+    </div>
+  )
+}
+
 export function AnalyticsClient({
-  currency, totalBudget, totalSpent, totalActual,
+  weddingId, weddingName, currency, totalBudget, totalActual,
   budgetByCategory, guestStats, vendorStats, checklistStats, costPerGuest, payments,
 }: Readonly<Props>) {
-  const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n)
+  const fmt = (n: number) =>
+    new Intl.NumberFormat('en-KE', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n)
+
   const budgetPct = totalBudget > 0 ? Math.round((totalActual / totalBudget) * 100) : 0
   const checklistPct = checklistStats.total > 0 ? Math.round((checklistStats.checked / checklistStats.total) * 100) : 0
+  const vendorConfirmPct = vendorStats.total > 0 ? Math.round((vendorStats.confirmed / vendorStats.total) * 100) : 0
+  const guestConfirmPct = guestStats.total > 0 ? Math.round((guestStats.confirmed / guestStats.total) * 100) : 0
+  const remaining = totalBudget - totalActual
 
-  // Spending trend by week
-  const spendByWeek = payments.reduce<Record<string, number>>((acc, p) => {
-    const week = format(new Date(p.createdAt), 'MMM d')
-    acc[week] = (acc[week] ?? 0) + p.amount
-    return acc
-  }, {})
-  const trendData = Object.entries(spendByWeek).map(([week, amount]) => ({ week, amount }))
+  const trendData = useMemo(() => {
+    const byWeek = payments.reduce<Record<string, number>>((acc, p) => {
+      const week = format(new Date(p.createdAt), 'MMM d')
+      acc[week] = (acc[week] ?? 0) + p.amount
+      return acc
+    }, {})
+    return Object.entries(byWeek).map(([week, amount]) => ({ week, amount }))
+  }, [payments])
 
-  const pieData = budgetByCategory.slice(0, 8).map(c => ({ name: c.name.replace(/_/g, ' '), value: c.total }))
+  const cumulativeData = useMemo(() => {
+    let running = 0
+    return trendData.map(d => {
+      running += d.amount
+      return { week: d.week, cumulative: running }
+    })
+  }, [trendData])
+
+  const pieData = budgetByCategory.slice(0, 8).map(c => ({
+    name: c.name.replaceAll('_', ' '),
+    value: c.total,
+  }))
+
+  const barData = budgetByCategory.slice(0, 8).map(c => ({
+    name: c.name.replaceAll('_', ' ').slice(0, 12),
+    estimated: c.estimated,
+    actual: c.actual,
+  }))
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-8 border-b border-[#1F4D3A]/8 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Insights</p>
-          <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Analytics</h1>
+
+      {/* Header */}
+      <div className="px-6 pt-8 pb-7 border-b border-[#1F4D3A]/8 bg-white">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Insights</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#14161C] leading-tight tracking-tight font-heading">
+              Analytics
+            </h1>
+            <p className="text-sm text-[#14161C]/40 mt-1">{weddingName}</p>
+          </div>
+          <BarChart2 size={28} className="text-[#1F4D3A]/20" />
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-8 py-10 space-y-12">
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-        {/* Key metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-zinc-100">
-          {[
-            { label: 'Budget used', val: `${budgetPct}%`, color: budgetPct > 100 ? 'text-red-500' : budgetPct > 85 ? 'text-amber-500' : 'text-[#14161C]' },
-            { label: 'Guests confirmed', val: String(guestStats.confirmed), color: 'text-emerald-600' },
-            { label: 'Cost per guest', val: fmt(costPerGuest), color: 'text-sky-600' },
-            { label: 'Tasks done', val: `${checklistPct}%`, color: 'text-[#1F4D3A]' },
-          ].map(({ label, val, color }, i) => (
-            <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
-              <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
-              <p className={`text-3xl font-extrabold leading-none ${color}`}>{val}</p>
-            </div>
-          ))}
+        {/* KPI row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            label="Budget used"
+            value={`${budgetPct}%`}
+            sub={`${fmt(totalActual)} of ${fmt(totalBudget)}`}
+            color={getBudgetColor(budgetPct)}
+          />
+          <StatCard
+            label="Guests confirmed"
+            value={String(guestStats.confirmed)}
+            sub={`${guestConfirmPct}% of ${guestStats.total} total`}
+            color="text-emerald-600"
+          />
+          <StatCard
+            label="Cost per guest"
+            value={fmt(costPerGuest)}
+            sub="based on confirmed guests"
+            color="text-sky-600"
+          />
+          <StatCard
+            label="Tasks done"
+            value={`${checklistPct}%`}
+            sub={`${checklistStats.checked} of ${checklistStats.total} items`}
+            color="text-[#1F4D3A]"
+          />
         </div>
 
-        <hr className="border-[#1F4D3A]/8" />
+        {/* Budget overview */}
+        <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-5">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest flex items-center gap-1.5">
+              <Wallet size={11} /> Budget overview
+            </p>
+            <Link href={`/dashboard/${weddingId}/budget`}
+              className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors flex items-center gap-1">
+              View budget <ArrowRight size={11} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-3 gap-0 divide-x divide-zinc-100">
+            <div className="pr-6">
+              <p className={cn('text-2xl font-extrabold font-heading', getBudgetColor(budgetPct))}>{budgetPct}%</p>
+              <p className="text-xs text-[#14161C]/40 mt-0.5">used</p>
+            </div>
+            <div className="px-6">
+              <p className="text-2xl font-extrabold text-amber-500 font-heading">{fmt(totalActual)}</p>
+              <p className="text-xs text-[#14161C]/40 mt-0.5">committed</p>
+            </div>
+            <div className="pl-6">
+              <p className={cn('text-2xl font-extrabold font-heading', remaining < 0 ? 'text-red-500' : 'text-emerald-600')}>
+                {fmt(Math.abs(remaining))}
+              </p>
+              <p className="text-xs text-[#14161C]/40 mt-0.5">{remaining < 0 ? 'over budget' : 'remaining'}</p>
+            </div>
+          </div>
+          {budgetPct > 100 && (
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-full px-3 py-1.5 w-fit">
+              <AlertTriangle size={11} /> Over budget by {fmt(Math.abs(remaining))}
+            </div>
+          )}
+          {budgetPct > 85 && budgetPct <= 100 && (
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 rounded-full px-3 py-1.5 w-fit">
+              <AlertTriangle size={11} /> Approaching budget limit
+            </div>
+          )}
+        </div>
 
-        {/* Budget doughnut + guest bar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2">
-            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-6">Budget by category</p>
+        {/* Donut + estimated vs actual */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">Spend by category</p>
             {pieData.length > 0 ? (
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <ResponsiveContainer width={220} height={220}>
+                <ResponsiveContainer width={180} height={180}>
                   <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" paddingAngle={2}>
-                      {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={85} dataKey="value" paddingAngle={2}>
+                      {pieData.map((entry, i) => (
+                        <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />
+                      ))}
                     </Pie>
                     <Tooltip formatter={(v: number) => fmt(v)} />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-2 min-w-0">
                   {pieData.map((d, i) => (
                     <div key={d.name} className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                       <span className="text-xs text-[#14161C]/55 flex-1 truncate">{d.name}</span>
                       <span className="text-xs font-semibold text-[#14161C]">{fmt(d.value)}</span>
                     </div>
@@ -89,13 +203,78 @@ export function AnalyticsClient({
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-[#14161C]/40">No budget data yet</p>
+              <p className="text-sm text-[#14161C]/40 py-6 text-center">No budget data yet</p>
             )}
           </div>
 
-          <div>
-            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-6">Guest RSVP</p>
-            <div className="space-y-4">
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">Estimated vs actual</p>
+            {barData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={barData} barCategoryGap="30%">
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#a1a1aa' }} />
+                  <YAxis tick={{ fontSize: 10, fill: '#a1a1aa' }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
+                  <Tooltip formatter={(v: number) => fmt(v)} />
+                  <Bar dataKey="estimated" fill="#1F4D3A" opacity={0.25} radius={[3, 3, 0, 0]} name="Estimated" />
+                  <Bar dataKey="actual" fill="#D4A94F" radius={[3, 3, 0, 0]} name="Actual" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-sm text-[#14161C]/40 py-6 text-center">No data yet</p>
+            )}
+            <div className="flex items-center gap-4 text-xs text-[#14161C]/50">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#1F4D3A]/25 inline-block" />Estimated
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#D4A94F] inline-block" />Actual
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Spending trend + cumulative */}
+        {trendData.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">Payments over time</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={trendData}>
+                  <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#a1a1aa' }} />
+                  <YAxis tick={{ fontSize: 10, fill: '#a1a1aa' }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
+                  <Tooltip formatter={(v: number) => fmt(v)} />
+                  <Bar dataKey="amount" fill="#D4A94F" radius={[4, 4, 0, 0]} name="Amount" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">Cumulative spend</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={cumulativeData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1F4D3A10" />
+                  <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#a1a1aa' }} />
+                  <YAxis tick={{ fontSize: 10, fill: '#a1a1aa' }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
+                  <Tooltip formatter={(v: number) => fmt(v)} />
+                  <Line type="monotone" dataKey="cumulative" stroke="#1F4D3A" strokeWidth={2} dot={false} name="Cumulative" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Guests + Vendors + Checklist */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest flex items-center gap-1.5">
+                <Users size={11} /> Guest RSVP
+              </p>
+              <Link href={`/dashboard/${weddingId}/guests`}
+                className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors flex items-center gap-1">
+                View <ArrowRight size={11} />
+              </Link>
+            </div>
+            <div className="space-y-3">
               {[
                 { label: 'Confirmed', count: guestStats.confirmed, color: 'bg-emerald-400' },
                 { label: 'Pending', count: guestStats.pending, color: 'bg-amber-300' },
@@ -104,60 +283,84 @@ export function AnalyticsClient({
                 const pct = guestStats.total > 0 ? Math.round((count / guestStats.total) * 100) : 0
                 return (
                   <div key={label}>
-                    <div className="flex justify-between text-sm mb-1.5">
-                      <span className="text-[#14161C]/55 font-medium">{label}</span>
-                      <span className="font-bold text-[#14161C]">{count} <span className="text-[#14161C]/40 font-normal text-xs">({pct}%)</span></span>
+                    <div className="flex justify-between text-xs mb-1.5">
+                      <span className="text-[#14161C]/55">{label}</span>
+                      <span className="font-bold text-[#14161C]">{count} <span className="text-[#14161C]/40 font-normal">({pct}%)</span></span>
                     </div>
                     <div className="bg-[#1F4D3A]/6 rounded-full h-1.5">
-                      <div className={`h-1.5 rounded-full transition-all duration-500 ${color}`} style={{ width: `${pct}%` }} />
+                      <div className={cn('h-1.5 rounded-full transition-all duration-700', color)} style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 )
               })}
             </div>
+            <div className="pt-1 border-t border-[#1F4D3A]/8">
+              <p className="text-xs text-[#14161C]/40">{guestStats.total} total guests</p>
+            </div>
+          </div>
 
-            <div className="mt-8">
-              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-4">Vendor status</p>
-              <div className="space-y-2">
-                {[
-                  { label: 'Confirmed', count: vendorStats.confirmed, color: 'text-emerald-600' },
-                  { label: 'Booked', count: vendorStats.booked, color: 'text-sky-600' },
-                  { label: 'Other', count: vendorStats.total - vendorStats.confirmed - vendorStats.booked, color: 'text-[#14161C]/40' },
-                ].map(({ label, count, color }) => (
-                  <div key={label} className="flex justify-between text-sm">
-                    <span className="text-[#14161C]/55">{label}</span>
-                    <span className={`font-bold ${color}`}>{count}</span>
-                  </div>
-                ))}
-              </div>
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest flex items-center gap-1.5">
+                <TrendingUp size={11} /> Vendors
+              </p>
+              <Link href={`/dashboard/${weddingId}/vendors`}
+                className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors flex items-center gap-1">
+                View <ArrowRight size={11} />
+              </Link>
+            </div>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-extrabold text-sky-600 leading-none font-heading">{vendorStats.confirmed}</p>
+              <p className="text-sm text-[#14161C]/40 mb-0.5">of {vendorStats.total} confirmed</p>
+            </div>
+            <div className="bg-[#1F4D3A]/6 rounded-full h-1.5">
+              <div className="h-1.5 rounded-full bg-sky-400 transition-all duration-700" style={{ width: `${vendorConfirmPct}%` }} />
+            </div>
+            <div className="space-y-2 pt-1">
+              {[
+                { label: 'Confirmed', count: vendorStats.confirmed, color: 'text-emerald-600' },
+                { label: 'Booked', count: vendorStats.booked, color: 'text-sky-600' },
+                { label: 'Other', count: vendorStats.total - vendorStats.confirmed - vendorStats.booked, color: 'text-[#14161C]/40' },
+              ].map(({ label, count, color }) => (
+                <div key={label} className="flex justify-between text-xs">
+                  <span className="text-[#14161C]/55">{label}</span>
+                  <span className={cn('font-bold', color)}>{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest flex items-center gap-1.5">
+                <CheckCircle2 size={11} /> Checklist
+              </p>
+              <Link href={`/dashboard/${weddingId}/checklist`}
+                className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors flex items-center gap-1">
+                View <ArrowRight size={11} />
+              </Link>
+            </div>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-extrabold text-[#1F4D3A] leading-none font-heading">{checklistPct}%</p>
+              <p className="text-sm text-[#14161C]/40 mb-0.5">complete</p>
+            </div>
+            <div className="bg-[#1F4D3A]/6 rounded-full h-1.5">
+              <div className="h-1.5 rounded-full bg-[#1F4D3A] transition-all duration-700" style={{ width: `${checklistPct}%` }} />
+            </div>
+            <div className="pt-1 border-t border-[#1F4D3A]/8 flex justify-between text-xs">
+              <span className="text-[#14161C]/40">{checklistStats.checked} done</span>
+              <span className="text-[#14161C]/40">{checklistStats.total - checklistStats.checked} remaining</span>
             </div>
           </div>
         </div>
 
-        {/* Spending trend */}
-        {trendData.length > 0 && (
-          <>
-            <hr className="border-[#1F4D3A]/8" />
-            <div>
-              <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-6">Spending over time</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={trendData}>
-                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#a1a1aa' }} />
-                  <YAxis tick={{ fontSize: 11, fill: '#a1a1aa' }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
-                  <Tooltip formatter={(v: number) => fmt(v)} />
-                  <Bar dataKey="amount" fill="#D4A94F" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+        {/* Budget breakdown table */}
+        {budgetByCategory.length > 0 && (
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-[#1F4D3A]/8">
+              <p className="text-[11px] font-semibold text-[#1F4D3A]/50 uppercase tracking-widest">Budget breakdown</p>
             </div>
-          </>
-        )}
-
-        {/* Budget table */}
-        <hr className="border-[#1F4D3A]/8" />
-        <div>
-          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-5">Budget breakdown</p>
-          <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
-            <div className="grid grid-cols-4 px-6 py-3 border-b border-[#1F4D3A]/8 text-xs font-semibold text-[#14161C]/40 uppercase tracking-wide">
+            <div className="grid grid-cols-4 px-5 py-3 border-b border-[#1F4D3A]/8 text-[11px] font-semibold text-[#14161C]/40 uppercase tracking-wide">
               <span>Category</span>
               <span className="text-right">Estimated</span>
               <span className="text-right">Spent</span>
@@ -166,18 +369,19 @@ export function AnalyticsClient({
             {budgetByCategory.map(c => {
               const variance = c.estimated - c.total
               return (
-                <div key={c.name} className="grid grid-cols-4 px-6 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 text-sm">
-                  <span className="font-medium text-[#14161C]">{c.name.replace(/_/g, ' ')}</span>
+                <div key={c.name} className="grid grid-cols-4 px-5 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 text-sm hover:bg-[#F7F5F2]/60 transition-colors">
+                  <span className="font-medium text-[#14161C]">{c.name.replaceAll('_', ' ')}</span>
                   <span className="text-right text-[#14161C]/55">{fmt(c.estimated)}</span>
                   <span className="text-right font-semibold text-[#14161C]">{fmt(c.total)}</span>
-                  <span className={`text-right font-semibold ${variance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                  <span className={cn('text-right font-semibold', variance < 0 ? 'text-red-500' : 'text-emerald-600')}>
                     {variance < 0 ? '-' : '+'}{fmt(Math.abs(variance))}
                   </span>
                 </div>
               )
             })}
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   )

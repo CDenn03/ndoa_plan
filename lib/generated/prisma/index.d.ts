@@ -402,6 +402,15 @@ export const GiftStatus: {
 
 export type GiftStatus = (typeof GiftStatus)[keyof typeof GiftStatus]
 
+
+export const GiftDisposition: {
+  KEEP: 'KEEP',
+  SELL: 'SELL',
+  GIVE: 'GIVE'
+};
+
+export type GiftDisposition = (typeof GiftDisposition)[keyof typeof GiftDisposition]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -463,6 +472,10 @@ export const DowryStatus: typeof $Enums.DowryStatus
 export type GiftStatus = $Enums.GiftStatus
 
 export const GiftStatus: typeof $Enums.GiftStatus
+
+export type GiftDisposition = $Enums.GiftDisposition
+
+export const GiftDisposition: typeof $Enums.GiftDisposition
 
 /**
  * ##  Prisma Client ʲˢ
@@ -18252,6 +18265,8 @@ export namespace Prisma {
     guestId: string | null
     eventId: string | null
     rsvpStatus: $Enums.RsvpStatus | null
+    checkedIn: boolean | null
+    checkedInAt: Date | null
   }
 
   export type GuestEventAttendanceMaxAggregateOutputType = {
@@ -18259,6 +18274,8 @@ export namespace Prisma {
     guestId: string | null
     eventId: string | null
     rsvpStatus: $Enums.RsvpStatus | null
+    checkedIn: boolean | null
+    checkedInAt: Date | null
   }
 
   export type GuestEventAttendanceCountAggregateOutputType = {
@@ -18266,6 +18283,8 @@ export namespace Prisma {
     guestId: number
     eventId: number
     rsvpStatus: number
+    checkedIn: number
+    checkedInAt: number
     _all: number
   }
 
@@ -18275,6 +18294,8 @@ export namespace Prisma {
     guestId?: true
     eventId?: true
     rsvpStatus?: true
+    checkedIn?: true
+    checkedInAt?: true
   }
 
   export type GuestEventAttendanceMaxAggregateInputType = {
@@ -18282,6 +18303,8 @@ export namespace Prisma {
     guestId?: true
     eventId?: true
     rsvpStatus?: true
+    checkedIn?: true
+    checkedInAt?: true
   }
 
   export type GuestEventAttendanceCountAggregateInputType = {
@@ -18289,6 +18312,8 @@ export namespace Prisma {
     guestId?: true
     eventId?: true
     rsvpStatus?: true
+    checkedIn?: true
+    checkedInAt?: true
     _all?: true
   }
 
@@ -18369,6 +18394,8 @@ export namespace Prisma {
     guestId: string
     eventId: string
     rsvpStatus: $Enums.RsvpStatus
+    checkedIn: boolean
+    checkedInAt: Date | null
     _count: GuestEventAttendanceCountAggregateOutputType | null
     _min: GuestEventAttendanceMinAggregateOutputType | null
     _max: GuestEventAttendanceMaxAggregateOutputType | null
@@ -18393,6 +18420,8 @@ export namespace Prisma {
     guestId?: boolean
     eventId?: boolean
     rsvpStatus?: boolean
+    checkedIn?: boolean
+    checkedInAt?: boolean
     guest?: boolean | GuestDefaultArgs<ExtArgs>
     event?: boolean | WeddingEventDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["guestEventAttendance"]>
@@ -18402,6 +18431,8 @@ export namespace Prisma {
     guestId?: boolean
     eventId?: boolean
     rsvpStatus?: boolean
+    checkedIn?: boolean
+    checkedInAt?: boolean
     guest?: boolean | GuestDefaultArgs<ExtArgs>
     event?: boolean | WeddingEventDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["guestEventAttendance"]>
@@ -18411,6 +18442,8 @@ export namespace Prisma {
     guestId?: boolean
     eventId?: boolean
     rsvpStatus?: boolean
+    checkedIn?: boolean
+    checkedInAt?: boolean
     guest?: boolean | GuestDefaultArgs<ExtArgs>
     event?: boolean | WeddingEventDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["guestEventAttendance"]>
@@ -18420,9 +18453,11 @@ export namespace Prisma {
     guestId?: boolean
     eventId?: boolean
     rsvpStatus?: boolean
+    checkedIn?: boolean
+    checkedInAt?: boolean
   }
 
-  export type GuestEventAttendanceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guestId" | "eventId" | "rsvpStatus", ExtArgs["result"]["guestEventAttendance"]>
+  export type GuestEventAttendanceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guestId" | "eventId" | "rsvpStatus" | "checkedIn" | "checkedInAt", ExtArgs["result"]["guestEventAttendance"]>
   export type GuestEventAttendanceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     guest?: boolean | GuestDefaultArgs<ExtArgs>
     event?: boolean | WeddingEventDefaultArgs<ExtArgs>
@@ -18447,6 +18482,8 @@ export namespace Prisma {
       guestId: string
       eventId: string
       rsvpStatus: $Enums.RsvpStatus
+      checkedIn: boolean
+      checkedInAt: Date | null
     }, ExtArgs["result"]["guestEventAttendance"]>
     composites: {}
   }
@@ -18876,6 +18913,8 @@ export namespace Prisma {
     readonly guestId: FieldRef<"GuestEventAttendance", 'String'>
     readonly eventId: FieldRef<"GuestEventAttendance", 'String'>
     readonly rsvpStatus: FieldRef<"GuestEventAttendance", 'RsvpStatus'>
+    readonly checkedIn: FieldRef<"GuestEventAttendance", 'Boolean'>
+    readonly checkedInAt: FieldRef<"GuestEventAttendance", 'DateTime'>
   }
     
 
@@ -48498,6 +48537,7 @@ export namespace Prisma {
     description: string | null
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus | null
+    disposition: $Enums.GiftDisposition | null
     receivedAt: Date | null
     thankYouSent: boolean | null
     thankYouSentAt: Date | null
@@ -48515,6 +48555,7 @@ export namespace Prisma {
     description: string | null
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus | null
+    disposition: $Enums.GiftDisposition | null
     receivedAt: Date | null
     thankYouSent: boolean | null
     thankYouSentAt: Date | null
@@ -48532,6 +48573,7 @@ export namespace Prisma {
     description: number
     estimatedValue: number
     status: number
+    disposition: number
     receivedAt: number
     thankYouSent: number
     thankYouSentAt: number
@@ -48559,6 +48601,7 @@ export namespace Prisma {
     description?: true
     estimatedValue?: true
     status?: true
+    disposition?: true
     receivedAt?: true
     thankYouSent?: true
     thankYouSentAt?: true
@@ -48576,6 +48619,7 @@ export namespace Prisma {
     description?: true
     estimatedValue?: true
     status?: true
+    disposition?: true
     receivedAt?: true
     thankYouSent?: true
     thankYouSentAt?: true
@@ -48593,6 +48637,7 @@ export namespace Prisma {
     description?: true
     estimatedValue?: true
     status?: true
+    disposition?: true
     receivedAt?: true
     thankYouSent?: true
     thankYouSentAt?: true
@@ -48692,11 +48737,12 @@ export namespace Prisma {
     weddingId: string
     eventId: string | null
     guestId: string | null
-    giverName: string
+    giverName: string | null
     giverPhone: string | null
     description: string
     estimatedValue: Decimal | null
     status: $Enums.GiftStatus
+    disposition: $Enums.GiftDisposition | null
     receivedAt: Date
     thankYouSent: boolean
     thankYouSentAt: Date | null
@@ -48733,6 +48779,7 @@ export namespace Prisma {
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
+    disposition?: boolean
     receivedAt?: boolean
     thankYouSent?: boolean
     thankYouSentAt?: boolean
@@ -48753,6 +48800,7 @@ export namespace Prisma {
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
+    disposition?: boolean
     receivedAt?: boolean
     thankYouSent?: boolean
     thankYouSentAt?: boolean
@@ -48773,6 +48821,7 @@ export namespace Prisma {
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
+    disposition?: boolean
     receivedAt?: boolean
     thankYouSent?: boolean
     thankYouSentAt?: boolean
@@ -48793,6 +48842,7 @@ export namespace Prisma {
     description?: boolean
     estimatedValue?: boolean
     status?: boolean
+    disposition?: boolean
     receivedAt?: boolean
     thankYouSent?: boolean
     thankYouSentAt?: boolean
@@ -48800,7 +48850,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GiftReceivedOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "guestId" | "giverName" | "giverPhone" | "description" | "estimatedValue" | "status" | "receivedAt" | "thankYouSent" | "thankYouSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["giftReceived"]>
+  export type GiftReceivedOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "guestId" | "giverName" | "giverPhone" | "description" | "estimatedValue" | "status" | "disposition" | "receivedAt" | "thankYouSent" | "thankYouSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["giftReceived"]>
   export type GiftReceivedInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | GiftReceived$eventArgs<ExtArgs>
@@ -48829,11 +48879,12 @@ export namespace Prisma {
       weddingId: string
       eventId: string | null
       guestId: string | null
-      giverName: string
+      giverName: string | null
       giverPhone: string | null
       description: string
       estimatedValue: Prisma.Decimal | null
       status: $Enums.GiftStatus
+      disposition: $Enums.GiftDisposition | null
       receivedAt: Date
       thankYouSent: boolean
       thankYouSentAt: Date | null
@@ -49274,6 +49325,7 @@ export namespace Prisma {
     readonly description: FieldRef<"GiftReceived", 'String'>
     readonly estimatedValue: FieldRef<"GiftReceived", 'Decimal'>
     readonly status: FieldRef<"GiftReceived", 'GiftStatus'>
+    readonly disposition: FieldRef<"GiftReceived", 'GiftDisposition'>
     readonly receivedAt: FieldRef<"GiftReceived", 'DateTime'>
     readonly thankYouSent: FieldRef<"GiftReceived", 'Boolean'>
     readonly thankYouSentAt: FieldRef<"GiftReceived", 'DateTime'>
@@ -56724,7 +56776,9 @@ export namespace Prisma {
     id: 'id',
     guestId: 'guestId',
     eventId: 'eventId',
-    rsvpStatus: 'rsvpStatus'
+    rsvpStatus: 'rsvpStatus',
+    checkedIn: 'checkedIn',
+    checkedInAt: 'checkedInAt'
   };
 
   export type GuestEventAttendanceScalarFieldEnum = (typeof GuestEventAttendanceScalarFieldEnum)[keyof typeof GuestEventAttendanceScalarFieldEnum]
@@ -57168,6 +57222,7 @@ export namespace Prisma {
     description: 'description',
     estimatedValue: 'estimatedValue',
     status: 'status',
+    disposition: 'disposition',
     receivedAt: 'receivedAt',
     thankYouSent: 'thankYouSent',
     thankYouSentAt: 'thankYouSentAt',
@@ -57609,6 +57664,20 @@ export namespace Prisma {
    * Reference to a field of type 'GiftStatus[]'
    */
   export type ListEnumGiftStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'GiftDisposition'
+   */
+  export type EnumGiftDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftDisposition'>
+    
+
+
+  /**
+   * Reference to a field of type 'GiftDisposition[]'
+   */
+  export type ListEnumGiftDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GiftDisposition[]'>
     
   /**
    * Deep Input Types
@@ -58519,6 +58588,8 @@ export namespace Prisma {
     guestId?: StringFilter<"GuestEventAttendance"> | string
     eventId?: StringFilter<"GuestEventAttendance"> | string
     rsvpStatus?: EnumRsvpStatusFilter<"GuestEventAttendance"> | $Enums.RsvpStatus
+    checkedIn?: BoolFilter<"GuestEventAttendance"> | boolean
+    checkedInAt?: DateTimeNullableFilter<"GuestEventAttendance"> | Date | string | null
     guest?: XOR<GuestScalarRelationFilter, GuestWhereInput>
     event?: XOR<WeddingEventScalarRelationFilter, WeddingEventWhereInput>
   }
@@ -58528,6 +58599,8 @@ export namespace Prisma {
     guestId?: SortOrder
     eventId?: SortOrder
     rsvpStatus?: SortOrder
+    checkedIn?: SortOrder
+    checkedInAt?: SortOrderInput | SortOrder
     guest?: GuestOrderByWithRelationInput
     event?: WeddingEventOrderByWithRelationInput
   }
@@ -58541,6 +58614,8 @@ export namespace Prisma {
     guestId?: StringFilter<"GuestEventAttendance"> | string
     eventId?: StringFilter<"GuestEventAttendance"> | string
     rsvpStatus?: EnumRsvpStatusFilter<"GuestEventAttendance"> | $Enums.RsvpStatus
+    checkedIn?: BoolFilter<"GuestEventAttendance"> | boolean
+    checkedInAt?: DateTimeNullableFilter<"GuestEventAttendance"> | Date | string | null
     guest?: XOR<GuestScalarRelationFilter, GuestWhereInput>
     event?: XOR<WeddingEventScalarRelationFilter, WeddingEventWhereInput>
   }, "id" | "guestId_eventId">
@@ -58550,6 +58625,8 @@ export namespace Prisma {
     guestId?: SortOrder
     eventId?: SortOrder
     rsvpStatus?: SortOrder
+    checkedIn?: SortOrder
+    checkedInAt?: SortOrderInput | SortOrder
     _count?: GuestEventAttendanceCountOrderByAggregateInput
     _max?: GuestEventAttendanceMaxOrderByAggregateInput
     _min?: GuestEventAttendanceMinOrderByAggregateInput
@@ -58563,6 +58640,8 @@ export namespace Prisma {
     guestId?: StringWithAggregatesFilter<"GuestEventAttendance"> | string
     eventId?: StringWithAggregatesFilter<"GuestEventAttendance"> | string
     rsvpStatus?: EnumRsvpStatusWithAggregatesFilter<"GuestEventAttendance"> | $Enums.RsvpStatus
+    checkedIn?: BoolWithAggregatesFilter<"GuestEventAttendance"> | boolean
+    checkedInAt?: DateTimeNullableWithAggregatesFilter<"GuestEventAttendance"> | Date | string | null
   }
 
   export type GuestWhereInput = {
@@ -60856,11 +60935,12 @@ export namespace Prisma {
     weddingId?: StringFilter<"GiftReceived"> | string
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
-    giverName?: StringFilter<"GiftReceived"> | string
+    giverName?: StringNullableFilter<"GiftReceived"> | string | null
     giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
+    disposition?: EnumGiftDispositionNullableFilter<"GiftReceived"> | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFilter<"GiftReceived"> | Date | string
     thankYouSent?: BoolFilter<"GiftReceived"> | boolean
     thankYouSentAt?: DateTimeNullableFilter<"GiftReceived"> | Date | string | null
@@ -60876,11 +60956,12 @@ export namespace Prisma {
     weddingId?: SortOrder
     eventId?: SortOrderInput | SortOrder
     guestId?: SortOrderInput | SortOrder
-    giverName?: SortOrder
+    giverName?: SortOrderInput | SortOrder
     giverPhone?: SortOrderInput | SortOrder
     description?: SortOrder
     estimatedValue?: SortOrderInput | SortOrder
     status?: SortOrder
+    disposition?: SortOrderInput | SortOrder
     receivedAt?: SortOrder
     thankYouSent?: SortOrder
     thankYouSentAt?: SortOrderInput | SortOrder
@@ -60899,11 +60980,12 @@ export namespace Prisma {
     weddingId?: StringFilter<"GiftReceived"> | string
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
-    giverName?: StringFilter<"GiftReceived"> | string
+    giverName?: StringNullableFilter<"GiftReceived"> | string | null
     giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
+    disposition?: EnumGiftDispositionNullableFilter<"GiftReceived"> | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFilter<"GiftReceived"> | Date | string
     thankYouSent?: BoolFilter<"GiftReceived"> | boolean
     thankYouSentAt?: DateTimeNullableFilter<"GiftReceived"> | Date | string | null
@@ -60919,11 +61001,12 @@ export namespace Prisma {
     weddingId?: SortOrder
     eventId?: SortOrderInput | SortOrder
     guestId?: SortOrderInput | SortOrder
-    giverName?: SortOrder
+    giverName?: SortOrderInput | SortOrder
     giverPhone?: SortOrderInput | SortOrder
     description?: SortOrder
     estimatedValue?: SortOrderInput | SortOrder
     status?: SortOrder
+    disposition?: SortOrderInput | SortOrder
     receivedAt?: SortOrder
     thankYouSent?: SortOrder
     thankYouSentAt?: SortOrderInput | SortOrder
@@ -60944,11 +61027,12 @@ export namespace Prisma {
     weddingId?: StringWithAggregatesFilter<"GiftReceived"> | string
     eventId?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     guestId?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
-    giverName?: StringWithAggregatesFilter<"GiftReceived"> | string
+    giverName?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     giverPhone?: StringNullableWithAggregatesFilter<"GiftReceived"> | string | null
     description?: StringWithAggregatesFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableWithAggregatesFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusWithAggregatesFilter<"GiftReceived"> | $Enums.GiftStatus
+    disposition?: EnumGiftDispositionNullableWithAggregatesFilter<"GiftReceived"> | $Enums.GiftDisposition | null
     receivedAt?: DateTimeWithAggregatesFilter<"GiftReceived"> | Date | string
     thankYouSent?: BoolWithAggregatesFilter<"GiftReceived"> | boolean
     thankYouSentAt?: DateTimeNullableWithAggregatesFilter<"GiftReceived"> | Date | string | null
@@ -62407,6 +62491,8 @@ export namespace Prisma {
   export type GuestEventAttendanceCreateInput = {
     id?: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
     guest: GuestCreateNestedOneWithoutEventAttendancesInput
     event: WeddingEventCreateNestedOneWithoutGuestAttendancesInput
   }
@@ -62416,11 +62502,15 @@ export namespace Prisma {
     guestId: string
     eventId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type GuestEventAttendanceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     guest?: GuestUpdateOneRequiredWithoutEventAttendancesNestedInput
     event?: WeddingEventUpdateOneRequiredWithoutGuestAttendancesNestedInput
   }
@@ -62430,6 +62520,8 @@ export namespace Prisma {
     guestId?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestEventAttendanceCreateManyInput = {
@@ -62437,11 +62529,15 @@ export namespace Prisma {
     guestId: string
     eventId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type GuestEventAttendanceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestEventAttendanceUncheckedUpdateManyInput = {
@@ -62449,6 +62545,8 @@ export namespace Prisma {
     guestId?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestCreateInput = {
@@ -64983,11 +65081,12 @@ export namespace Prisma {
 
   export type GiftReceivedCreateInput = {
     id?: string
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -65003,11 +65102,12 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -65017,11 +65117,12 @@ export namespace Prisma {
 
   export type GiftReceivedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65037,11 +65138,12 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65054,11 +65156,12 @@ export namespace Prisma {
     weddingId: string
     eventId?: string | null
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -65068,11 +65171,12 @@ export namespace Prisma {
 
   export type GiftReceivedUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65085,11 +65189,12 @@ export namespace Prisma {
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66598,6 +66703,8 @@ export namespace Prisma {
     guestId?: SortOrder
     eventId?: SortOrder
     rsvpStatus?: SortOrder
+    checkedIn?: SortOrder
+    checkedInAt?: SortOrder
   }
 
   export type GuestEventAttendanceMaxOrderByAggregateInput = {
@@ -66605,6 +66712,8 @@ export namespace Prisma {
     guestId?: SortOrder
     eventId?: SortOrder
     rsvpStatus?: SortOrder
+    checkedIn?: SortOrder
+    checkedInAt?: SortOrder
   }
 
   export type GuestEventAttendanceMinOrderByAggregateInput = {
@@ -66612,6 +66721,8 @@ export namespace Prisma {
     guestId?: SortOrder
     eventId?: SortOrder
     rsvpStatus?: SortOrder
+    checkedIn?: SortOrder
+    checkedInAt?: SortOrder
   }
 
   export type EnumRsvpStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -68259,6 +68370,13 @@ export namespace Prisma {
     not?: NestedEnumGiftStatusFilter<$PrismaModel> | $Enums.GiftStatus
   }
 
+  export type EnumGiftDispositionNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftDisposition | EnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    in?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGiftDispositionNullableFilter<$PrismaModel> | $Enums.GiftDisposition | null
+  }
+
   export type GuestNullableScalarRelationFilter = {
     is?: GuestWhereInput | null
     isNot?: GuestWhereInput | null
@@ -68274,6 +68392,7 @@ export namespace Prisma {
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
+    disposition?: SortOrder
     receivedAt?: SortOrder
     thankYouSent?: SortOrder
     thankYouSentAt?: SortOrder
@@ -68295,6 +68414,7 @@ export namespace Prisma {
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
+    disposition?: SortOrder
     receivedAt?: SortOrder
     thankYouSent?: SortOrder
     thankYouSentAt?: SortOrder
@@ -68312,6 +68432,7 @@ export namespace Prisma {
     description?: SortOrder
     estimatedValue?: SortOrder
     status?: SortOrder
+    disposition?: SortOrder
     receivedAt?: SortOrder
     thankYouSent?: SortOrder
     thankYouSentAt?: SortOrder
@@ -68331,6 +68452,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGiftStatusFilter<$PrismaModel>
     _max?: NestedEnumGiftStatusFilter<$PrismaModel>
+  }
+
+  export type EnumGiftDispositionNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftDisposition | EnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    in?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGiftDispositionNullableWithAggregatesFilter<$PrismaModel> | $Enums.GiftDisposition | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumGiftDispositionNullableFilter<$PrismaModel>
+    _max?: NestedEnumGiftDispositionNullableFilter<$PrismaModel>
   }
 
   export type TransportRouteCountOrderByAggregateInput = {
@@ -72236,6 +72367,10 @@ export namespace Prisma {
     set?: $Enums.GiftStatus
   }
 
+  export type NullableEnumGiftDispositionFieldUpdateOperationsInput = {
+    set?: $Enums.GiftDisposition | null
+  }
+
   export type WeddingUpdateOneRequiredWithoutGiftsReceivedNestedInput = {
     create?: XOR<WeddingCreateWithoutGiftsReceivedInput, WeddingUncheckedCreateWithoutGiftsReceivedInput>
     connectOrCreate?: WeddingCreateOrConnectWithoutGiftsReceivedInput
@@ -73087,6 +73222,13 @@ export namespace Prisma {
     not?: NestedEnumGiftStatusFilter<$PrismaModel> | $Enums.GiftStatus
   }
 
+  export type NestedEnumGiftDispositionNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftDisposition | EnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    in?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGiftDispositionNullableFilter<$PrismaModel> | $Enums.GiftDisposition | null
+  }
+
   export type NestedEnumGiftStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.GiftStatus | EnumGiftStatusFieldRefInput<$PrismaModel>
     in?: $Enums.GiftStatus[] | ListEnumGiftStatusFieldRefInput<$PrismaModel>
@@ -73095,6 +73237,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGiftStatusFilter<$PrismaModel>
     _max?: NestedEnumGiftStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumGiftDispositionNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GiftDisposition | EnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    in?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.GiftDisposition[] | ListEnumGiftDispositionFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGiftDispositionNullableWithAggregatesFilter<$PrismaModel> | $Enums.GiftDisposition | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumGiftDispositionNullableFilter<$PrismaModel>
+    _max?: NestedEnumGiftDispositionNullableFilter<$PrismaModel>
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -74172,11 +74324,12 @@ export namespace Prisma {
 
   export type GiftReceivedCreateWithoutWeddingInput = {
     id?: string
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -74190,11 +74343,12 @@ export namespace Prisma {
     id?: string
     eventId?: string | null
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -75021,11 +75175,12 @@ export namespace Prisma {
     weddingId?: StringFilter<"GiftReceived"> | string
     eventId?: StringNullableFilter<"GiftReceived"> | string | null
     guestId?: StringNullableFilter<"GiftReceived"> | string | null
-    giverName?: StringFilter<"GiftReceived"> | string
+    giverName?: StringNullableFilter<"GiftReceived"> | string | null
     giverPhone?: StringNullableFilter<"GiftReceived"> | string | null
     description?: StringFilter<"GiftReceived"> | string
     estimatedValue?: DecimalNullableFilter<"GiftReceived"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFilter<"GiftReceived"> | $Enums.GiftStatus
+    disposition?: EnumGiftDispositionNullableFilter<"GiftReceived"> | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFilter<"GiftReceived"> | Date | string
     thankYouSent?: BoolFilter<"GiftReceived"> | boolean
     thankYouSentAt?: DateTimeNullableFilter<"GiftReceived"> | Date | string | null
@@ -75618,6 +75773,8 @@ export namespace Prisma {
   export type GuestEventAttendanceCreateWithoutEventInput = {
     id?: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
     guest: GuestCreateNestedOneWithoutEventAttendancesInput
   }
 
@@ -75625,6 +75782,8 @@ export namespace Prisma {
     id?: string
     guestId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type GuestEventAttendanceCreateOrConnectWithoutEventInput = {
@@ -76035,11 +76194,12 @@ export namespace Prisma {
 
   export type GiftReceivedCreateWithoutEventInput = {
     id?: string
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -76053,11 +76213,12 @@ export namespace Prisma {
     id?: string
     weddingId: string
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -76454,6 +76615,8 @@ export namespace Prisma {
     guestId?: StringFilter<"GuestEventAttendance"> | string
     eventId?: StringFilter<"GuestEventAttendance"> | string
     rsvpStatus?: EnumRsvpStatusFilter<"GuestEventAttendance"> | $Enums.RsvpStatus
+    checkedIn?: BoolFilter<"GuestEventAttendance"> | boolean
+    checkedInAt?: DateTimeNullableFilter<"GuestEventAttendance"> | Date | string | null
   }
 
   export type EventDependencyUpsertWithWhereUniqueWithoutFromEventInput = {
@@ -77764,6 +77927,8 @@ export namespace Prisma {
   export type GuestEventAttendanceCreateWithoutGuestInput = {
     id?: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
     event: WeddingEventCreateNestedOneWithoutGuestAttendancesInput
   }
 
@@ -77771,6 +77936,8 @@ export namespace Prisma {
     id?: string
     eventId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type GuestEventAttendanceCreateOrConnectWithoutGuestInput = {
@@ -77827,11 +77994,12 @@ export namespace Prisma {
 
   export type GiftReceivedCreateWithoutGuestInput = {
     id?: string
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -77845,11 +78013,12 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -88063,11 +88232,12 @@ export namespace Prisma {
     id?: string
     eventId?: string | null
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -89016,11 +89186,12 @@ export namespace Prisma {
 
   export type GiftReceivedUpdateWithoutWeddingInput = {
     id?: StringFieldUpdateOperationsInput | string
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -89034,11 +89205,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -89050,11 +89222,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -89269,6 +89442,8 @@ export namespace Prisma {
     id?: string
     guestId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type EventDependencyCreateManyFromEventInput = {
@@ -89418,11 +89593,12 @@ export namespace Prisma {
     id?: string
     weddingId: string
     guestId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -89525,6 +89701,8 @@ export namespace Prisma {
   export type GuestEventAttendanceUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     guest?: GuestUpdateOneRequiredWithoutEventAttendancesNestedInput
   }
 
@@ -89532,12 +89710,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     guestId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestEventAttendanceUncheckedUpdateManyWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     guestId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type EventDependencyUpdateWithoutFromEventInput = {
@@ -89981,11 +90163,12 @@ export namespace Prisma {
 
   export type GiftReceivedUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -89999,11 +90182,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90015,11 +90199,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     guestId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90311,6 +90496,8 @@ export namespace Prisma {
     id?: string
     eventId: string
     rsvpStatus?: $Enums.RsvpStatus
+    checkedIn?: boolean
+    checkedInAt?: Date | string | null
   }
 
   export type GuestTransportCreateManyGuestInput = {
@@ -90328,11 +90515,12 @@ export namespace Prisma {
     id?: string
     weddingId: string
     eventId?: string | null
-    giverName: string
+    giverName?: string | null
     giverPhone?: string | null
     description: string
     estimatedValue?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.GiftStatus
+    disposition?: $Enums.GiftDisposition | null
     receivedAt?: Date | string
     thankYouSent?: boolean
     thankYouSentAt?: Date | string | null
@@ -90343,6 +90531,8 @@ export namespace Prisma {
   export type GuestEventAttendanceUpdateWithoutGuestInput = {
     id?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     event?: WeddingEventUpdateOneRequiredWithoutGuestAttendancesNestedInput
   }
 
@@ -90350,12 +90540,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestEventAttendanceUncheckedUpdateManyWithoutGuestInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     rsvpStatus?: EnumRsvpStatusFieldUpdateOperationsInput | $Enums.RsvpStatus
+    checkedIn?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GuestTransportUpdateWithoutGuestInput = {
@@ -90393,11 +90587,12 @@ export namespace Prisma {
 
   export type GiftReceivedUpdateWithoutGuestInput = {
     id?: StringFieldUpdateOperationsInput | string
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90411,11 +90606,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90427,11 +90623,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weddingId?: StringFieldUpdateOperationsInput | string
     eventId?: NullableStringFieldUpdateOperationsInput | string | null
-    giverName?: StringFieldUpdateOperationsInput | string
+    giverName?: NullableStringFieldUpdateOperationsInput | string | null
     giverPhone?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     estimatedValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumGiftStatusFieldUpdateOperationsInput | $Enums.GiftStatus
+    disposition?: NullableEnumGiftDispositionFieldUpdateOperationsInput | $Enums.GiftDisposition | null
     receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     thankYouSent?: BoolFieldUpdateOperationsInput | boolean
     thankYouSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

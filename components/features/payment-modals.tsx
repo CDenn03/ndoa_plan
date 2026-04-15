@@ -343,7 +343,22 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
   const qc = useQueryClient()
   const { toast } = useToast()
 
-  const eventPayments = useMemo(() => payments.filter(p => p.eventId === eventId), [payments, eventId])
+  // Load contributions to find payments linked via contributionId (contribution payments often have no eventId)
+  const { data: allContributions = [] } = useQuery<{ id: string; eventId?: string }[]>({
+    queryKey: ['contributions', weddingId],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/contributions`); if (!res.ok) return []; return res.json() },
+    staleTime: 60_000,
+  })
+  const eventContribIds = useMemo(() =>
+    new Set(allContributions.filter(c => c.eventId === eventId).map(c => c.id)),
+  [allContributions, eventId])
+
+  const eventPayments = useMemo(() =>
+    payments.filter(p =>
+      p.eventId === eventId ||
+      (p.contributionId != null && eventContribIds.has(p.contributionId))
+    ),
+  [payments, eventId, eventContribIds])
   const total = eventPayments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
   const pendingCount = eventPayments.filter(p => p.status === 'PENDING').length
 
@@ -377,66 +392,86 @@ export function EventPaymentsTab({ weddingId, eventId, events, payments, isLoadi
   if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      {/* Top bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <p className="text-sm text-[#14161C]/55">{eventPayments.length} payment{eventPayments.length !== 1 ? 's' : ''}</p>
-          {eventPayments.length > 0 && (
-            <div className="flex gap-4 mt-0.5">
-              <p className="text-xs font-bold text-emerald-600">{fmt(total)} received</p>
-              {pendingCount > 0 && <p className="text-xs font-bold text-amber-500">{pendingCount} pending</p>}
-            </div>
-          )}
-        </div>
+        <p className="text-sm text-[#14161C]/40">
+          {eventPayments.length} payment{eventPayments.length !== 1 ? 's' : ''}
+        </p>
         <div className="flex gap-2">
           <Button size="sm" variant="secondary" onClick={() => setShowManual(true)}><Plus size={13} /> Manual</Button>
           <Button size="sm" onClick={() => setShowStk(true)}><Phone size={13} /> STK Push</Button>
         </div>
       </div>
 
+      {/* Stats card */}
+      {eventPayments.length > 0 && (
+        <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm p-5 grid grid-cols-3 gap-0 divide-x divide-zinc-100">
+          <div className="pr-6">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Received</p>
+            <p className="text-xl font-extrabold text-emerald-600 font-heading tabular-nums">{fmt(total)}</p>
+          </div>
+          <div className="px-6">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Total</p>
+            <p className="text-xl font-extrabold text-[#14161C] font-heading tabular-nums">{eventPayments.length}</p>
+          </div>
+          <div className="pl-6">
+            <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Pending</p>
+            <p className={`text-xl font-extrabold font-heading tabular-nums ${pendingCount > 0 ? 'text-amber-500' : 'text-[#14161C]/30'}`}>{pendingCount}</p>
+          </div>
+        </div>
+      )}
+
       {/* Filter tabs */}
       {eventPayments.length > 0 && (
-        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
-          {(['all', 'pending', 'completed'] as const).map(f => (
-            <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
-              {f === 'all' ? `All (${eventPayments.length})` : f === 'pending' ? `Pending (${eventPayments.filter(p => p.status === 'PENDING').length})` : `Completed (${eventPayments.filter(p => p.status === 'COMPLETED').length})`}
+        <div className="flex gap-1 bg-[#F7F5F2] rounded-xl p-1 w-fit">
+          {([
+            { key: 'all', label: 'All', count: eventPayments.length },
+            { key: 'pending', label: 'Pending', count: eventPayments.filter(p => p.status === 'PENDING').length },
+            { key: 'completed', label: 'Completed', count: eventPayments.filter(p => p.status === 'COMPLETED').length },
+          ] as const).map(f => (
+            <button key={f.key} onClick={() => setFilter(f.key)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${filter === f.key ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/40 hover:text-[#14161C]/70'}`}>
+              {f.label}
+              <span className={`text-[11px] rounded-full px-1.5 py-0.5 font-bold ${filter === f.key ? 'bg-[#1F4D3A]/8 text-[#1F4D3A]' : 'text-[#14161C]/30'}`}>{f.count}</span>
             </button>
           ))}
         </div>
       )}
 
-      {/* Pending budget items */}
+      {/* Outstanding budget items */}
       {(filter === 'all' || filter === 'pending') && pendingBudgetItems.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest flex items-center gap-1.5"><AlertTriangle size={11} className="text-amber-400" /> Outstanding from budget</p>
-          <div className="bg-amber-50 rounded-2xl border border-amber-100 overflow-hidden">
-            {pendingBudgetItems.map(l => (
-              <div key={l.id} className="flex items-center gap-4 py-3 px-5 border-b border-amber-100 last:border-0">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#14161C]">{l.description}</p>
-                  <div className="flex gap-3 mt-0.5">
-                    <span className="text-xs text-[#14161C]/55">{l.category.replaceAll('_', ' ')}</span>
-                    {l.vendorName && <span className="text-xs text-[#1F4D3A]/70">{l.vendorName}</span>}
-                  </div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-bold text-amber-600">{fmt(l.estimated - l.actual)} due</p>
-                  <p className="text-xs text-[#14161C]/40">{fmt(l.actual)} of {fmt(l.estimated)} paid</p>
-                </div>
-                <Button size="sm" variant="secondary" onClick={() => setShowManual(true)} className="flex-shrink-0 text-xs">
-                  <Plus size={11} /> Pay
-                </Button>
-              </div>
-            ))}
+        <div className="rounded-2xl border border-amber-200 bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3 border-b border-amber-100 bg-amber-50/60">
+            <AlertTriangle size={11} className="text-amber-500" />
+            <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Outstanding from budget</p>
           </div>
+          {pendingBudgetItems.map(l => (
+            <div key={l.id} className="flex items-center gap-4 py-3.5 px-5 border-b border-[#1F4D3A]/6 last:border-0 hover:bg-[#F7F5F2]/60 transition-colors">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#14161C]">{l.description}</p>
+                <div className="flex gap-3 mt-0.5">
+                  <span className="text-xs text-[#14161C]/55">{l.category.replaceAll('_', ' ')}</span>
+                  {l.vendorName && <span className="text-xs text-[#1F4D3A]/70">{l.vendorName}</span>}
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className="text-sm font-bold text-amber-600">{fmt(l.estimated - l.actual)} due</p>
+                <p className="text-xs text-[#14161C]/40">{fmt(l.actual)} of {fmt(l.estimated)} paid</p>
+              </div>
+              <Button size="sm" variant="secondary" onClick={() => setShowManual(true)} className="flex-shrink-0 text-xs">
+                <Plus size={11} /> Pay
+              </Button>
+            </div>
+          ))}
         </div>
       )}
 
+      {/* Payment list */}
       {filtered.length === 0 && pendingBudgetItems.length === 0
         ? <EmptyState icon={<DollarSign size={32} className="text-[#14161C]/15" />} title="No payments" description="Record M-Pesa or manual payments for this event" />
         : filtered.length > 0
-          ? <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+          ? <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm overflow-hidden">
               {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
             </div>
           : null}

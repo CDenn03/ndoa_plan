@@ -22,7 +22,7 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
 }>) {
   const [subTab, setSubTab] = useState<'wishlist' | 'received'>('wishlist')
   const pendingThankYous = received.filter(r => !r.thankYouSent).length
-  const totalValue = received.reduce((s, r) => s + (r.estimatedValue ?? 0), 0)
+  const totalValue = received.reduce((s, r) => s + Number(r.estimatedValue ?? 0), 0)
 
   const byEvent = useMemo(() => {
     const map = new Map<string, { event: WeddingEvent | null; reg: GiftRegistryItem[]; rec: GiftReceived[] }>()

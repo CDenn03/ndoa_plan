@@ -9,7 +9,10 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const gifts = await db.giftReceived.findMany({ where: { weddingId: id }, orderBy: { receivedAt: 'desc' } })
-  return NextResponse.json(gifts)
+  return NextResponse.json(gifts.map(g => ({
+    ...g,
+    estimatedValue: g.estimatedValue != null ? Number(g.estimatedValue) : null,
+  })))
 }
 
 export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
@@ -20,10 +23,13 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   const body = await req.json()
   const { giverName, giverPhone, description, estimatedValue, eventId } = body
 
-  if (!giverName || !description) return NextResponse.json({ error: 'giverName and description are required' }, { status: 400 })
+  if (!description) return NextResponse.json({ error: 'description is required' }, { status: 400 })
 
   const gift = await db.giftReceived.create({
-    data: { weddingId: id, eventId: eventId ?? null, giverName, giverPhone: giverPhone ?? null, description, estimatedValue: estimatedValue ?? null },
+    data: { weddingId: id, eventId: eventId ?? null, giverName: giverName || null, giverPhone: giverPhone ?? null, description, estimatedValue: estimatedValue ?? null },
   })
-  return NextResponse.json(gift, { status: 201 })
+  return NextResponse.json({
+    ...gift,
+    estimatedValue: gift.estimatedValue != null ? Number(gift.estimatedValue) : null,
+  }, { status: 201 })
 }

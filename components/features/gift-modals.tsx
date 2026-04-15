@@ -4,15 +4,15 @@ import { Button, Input, Label, Select, Modal, EmptyState } from '@/components/ui
 import { useToast } from '@/components/ui/toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { Pencil, Trash2, Plus, Heart, Gift, CheckCircle2 } from 'lucide-react'
+import { Pencil, Trash2, Plus, Heart, Gift, CheckCircle2, Home, DollarSign, HandHeart, Send } from 'lucide-react'
 
 export interface GiftRegistryItem {
   id: string; name: string; description?: string | null; url?: string | null
   estimatedPrice?: number | null; quantity: number; priority: number; eventId?: string | null
 }
 export interface GiftReceived {
-  id: string; giverName: string; giverPhone?: string | null; description: string; estimatedValue?: number | null
-  status: string; thankYouSent: boolean; eventId?: string | null; receivedAt?: string
+  id: string; giverName?: string | null; giverPhone?: string | null; description: string; estimatedValue?: number | null
+  status: string; disposition?: string | null; thankYouSent: boolean; eventId?: string | null; receivedAt?: string
 }
 
 const fmt = (n: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(n)
@@ -114,12 +114,12 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
   return (
     <Modal onClose={onClose} title={gift ? 'Edit gift' : 'Record received gift'}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div><Label htmlFor="gift-giver">Giver name *</Label>
-          <Input id="gift-giver" value={form.giverName} onChange={e => setForm(f => ({ ...f, giverName: e.target.value }))} placeholder="Aunt Jane" required /></div>
+        <div><Label htmlFor="gift-desc">Gift description *</Label>
+          <Input id="gift-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Dinner set, blender, cash gift…" required /></div>
+        <div><Label htmlFor="gift-giver">Giver name (optional)</Label>
+          <Input id="gift-giver" value={form.giverName} onChange={e => setForm(f => ({ ...f, giverName: e.target.value }))} placeholder="Aunt Jane, Uncle Tom…" /></div>
         <div><Label htmlFor="gift-phone">Giver's phone (optional)</Label>
           <Input id="gift-phone" value={form.giverPhone} onChange={e => setForm(f => ({ ...f, giverPhone: e.target.value }))} placeholder="+254712345678" /></div>
-        <div><Label htmlFor="gift-desc">Description *</Label>
-          <Input id="gift-desc" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Dinner set" required /></div>
         <div className="grid grid-cols-2 gap-3">
           <div><Label htmlFor="gift-val">Estimated value (KES)</Label>
             <Input id="gift-val" type="number" value={form.estimatedValue} onChange={e => setForm(f => ({ ...f, estimatedValue: e.target.value }))} placeholder="5000" min="0" /></div>
@@ -186,32 +186,146 @@ export function ReceivedGiftRow({ gift, weddingId, onRefresh }: Readonly<{
   const { toast } = useToast()
   const qc = useQueryClient()
   const [editing, setEditing] = useState(false)
+  const [updating, setUpdating] = useState(false)
+
+  const canSendThankYou = !!(gift.giverName || gift.giverPhone)
+
+  const handleDisposition = async (disposition: string) => {
+    setUpdating(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ disposition }),
+      })
+      await qc.invalidateQueries({ queryKey: ['gifts-received', weddingId] })
+      toast(`Marked as ${disposition.toLowerCase()}`, 'success')
+      onRefresh()
+    } catch {
+      toast('Failed to update', 'error')
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleThankYou = async () => {
+    if (!canSendThankYou) {
+      toast('Cannot send thank you - no giver name or phone', 'error')
+      return
+    }
+    setUpdating(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ thankYouSent: true }),
+      })
+      await qc.invalidateQueries({ queryKey: ['gifts-received', weddingId] })
+      toast('Thank you marked as sent', 'success')
+      onRefresh()
+    } catch {
+      toast('Failed to update', 'error')
+    } finally {
+      setUpdating(false)
+    }
+  }
 
   const handleDelete = async () => {
     if (!confirm('Delete this gift record?')) return
     try {
       await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['gifts-received', weddingId] })
-      toast('Gift deleted', 'success'); onRefresh()
-    } catch { toast('Failed to delete', 'error') }
+      toast('Gift deleted', 'success')
+      onRefresh()
+    } catch {
+      toast('Failed to delete', 'error')
+    }
+  }
+
+  const dispositionColors: Record<string, string> = {
+    KEEP: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    SELL: 'bg-amber-50 text-amber-700 border-amber-200',
+    GIVE: 'bg-sky-50 text-sky-700 border-sky-200',
   }
 
   return (
     <>
-      <div className="group flex items-center gap-3 py-3 px-4 border border-[#1F4D3A]/8 rounded-xl">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-[#14161C]">{gift.description}</p>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-xs text-[#14161C]/40">From {gift.giverName}</span>
-            {gift.thankYouSent && <span className="text-xs text-emerald-500">Thank you sent</span>}
+      <div className="group flex flex-col gap-3 py-4 px-4 border border-[#1F4D3A]/8 rounded-xl bg-white">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-[#14161C]">{gift.description}</p>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              {gift.giverName && <span className="text-xs text-[#14161C]/40">From {gift.giverName}</span>}
+              {!gift.giverName && gift.giverPhone && <span className="text-xs text-[#14161C]/40">{gift.giverPhone}</span>}
+              {!gift.giverName && !gift.giverPhone && <span className="text-xs text-[#14161C]/25 italic">Giver unknown</span>}
+              {gift.estimatedValue != null && <span className="text-xs font-bold text-[#14161C]">{fmt(gift.estimatedValue)}</span>}
+            </div>
+          </div>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit">
+              <Pencil size={13} />
+            </button>
+            <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete">
+              <Trash2 size={13} />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {gift.estimatedValue != null && <p className="text-sm font-bold text-[#14161C]">{fmt(gift.estimatedValue)}</p>}
-          <div className="flex items-center gap-1 ">
-            <button onClick={() => setEditing(true)} className="p-1 text-[#14161C]/25 hover:text-[#1F4D3A]/70" aria-label="Edit"><Pencil size={13} /></button>
-            <button onClick={handleDelete} className="p-1 text-[#14161C]/25 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Disposition buttons */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => void handleDisposition('KEEP')}
+              disabled={updating || gift.disposition === 'KEEP'}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+                gift.disposition === 'KEEP'
+                  ? dispositionColors.KEEP
+                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700'
+              }`}
+            >
+              <Home size={12} /> Keep
+            </button>
+            <button
+              onClick={() => void handleDisposition('SELL')}
+              disabled={updating || gift.disposition === 'SELL'}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+                gift.disposition === 'SELL'
+                  ? dispositionColors.SELL
+                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+              }`}
+            >
+              <DollarSign size={12} /> Sell
+            </button>
+            <button
+              onClick={() => void handleDisposition('GIVE')}
+              disabled={updating || gift.disposition === 'GIVE'}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+                gift.disposition === 'GIVE'
+                  ? dispositionColors.GIVE
+                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700'
+              }`}
+            >
+              <HandHeart size={12} /> Give
+            </button>
           </div>
+
+          {/* Thank you button */}
+          {canSendThankYou && !gift.thankYouSent && (
+            <button
+              onClick={() => void handleThankYou()}
+              disabled={updating}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 transition-colors ml-auto"
+            >
+              <Send size={12} /> Send thank you
+            </button>
+          )}
+          {gift.thankYouSent && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600 ml-auto">
+              <CheckCircle2 size={12} /> Thank you sent
+            </span>
+          )}
         </div>
       </div>
       {editing && <AddReceivedGiftModal weddingId={weddingId} gift={gift} onClose={() => setEditing(false)} onDone={onRefresh} />}

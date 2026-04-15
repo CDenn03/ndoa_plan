@@ -30,6 +30,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       data: items.map((item, i) => ({
         id: uuid(),
         weddingId: wid,
+        eventId: eventId ?? null,
         title: item.title,
         category: item.category ?? 'OTHER',
         priority: item.priority ?? 2,

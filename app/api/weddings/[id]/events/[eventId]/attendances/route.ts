@@ -19,7 +19,10 @@ export async function GET(_req: NextRequest, props: Params) {
     orderBy: { guest: { name: 'asc' } },
   })
 
-  return NextResponse.json(attendances)
+  return NextResponse.json(attendances.map(a => ({
+    ...a,
+    guest: { ...a.guest, checkedIn: a.checkedIn }, // Use event-specific check-in status
+  })))
 }
 
 export async function POST(req: NextRequest, props: Params) {

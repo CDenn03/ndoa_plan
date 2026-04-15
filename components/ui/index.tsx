@@ -283,8 +283,14 @@ export function Modal({ onClose, title, children }: Readonly<{
   onClose: () => void; title: string; children: React.ReactNode
 }>) {
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-lg border border-[#1F4D3A]/8 sm:animate-none modal-slide-up">
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center !mt-0"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-lg border border-[#1F4D3A]/8 sm:animate-none modal-slide-up"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#1F4D3A]/8">
           <h2 className="font-heading font-semibold text-base text-[#14161C]">{title}</h2>
           <button

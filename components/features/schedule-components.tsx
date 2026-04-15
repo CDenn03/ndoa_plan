@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo, useRef } from 'react'
-import { Calendar, Phone, AlertTriangle, CheckCircle2, CalendarDays, List, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Phone, AlertTriangle, CheckCircle2, CalendarDays, List, Plus, Pencil, Trash2, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
 import { Button, EmptyState, Modal, Input, Label, Select, Spinner, Textarea } from '@/components/ui'
 import { format, parseISO, addDays, startOfWeek, isSameDay } from 'date-fns'
 import { useToast } from '@/components/ui/toast'
@@ -23,11 +23,28 @@ export interface WeddingEvent { id: string; name: string; type: string; date: st
 
 export const MULTI_DAY_TYPES = new Set(['HONEYMOON', 'MOVING', 'POST_WEDDING'])
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes}min`
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  if (mins === 0) return `${hours}h`
+  return `${hours}h ${mins}min`
+}
+
 const SEV_COLOR: Record<string, string> = {
-  CRITICAL: 'border-l-4 border-red-400 bg-red-50/50',
-  HIGH: 'border-l-4 border-amber-400 bg-amber-50/50',
-  MEDIUM: 'border-l-4 border-sky-400 bg-sky-50/50',
-  LOW: 'border-l-4 border-zinc-300',
+  CRITICAL: 'border-l-2 border-red-400',
+  HIGH: 'border-l-2 border-amber-400',
+  MEDIUM: 'border-l-2 border-sky-400',
+  LOW: 'border-l-2 border-zinc-300',
+}
+
+const SEV_TEXT_COLOR: Record<string, string> = {
+  CRITICAL: 'text-red-500',
+  HIGH: 'text-amber-500',
+  MEDIUM: 'text-sky-500',
+  LOW: 'text-zinc-500',
 }
 
 // ─── Log Incident Modal ───────────────────────────────────────────────────────
@@ -85,8 +102,8 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
     title: item?.title ?? '',
     description: item?.description ?? '',
     scope: (item?.scope ?? defaultScope ?? 'daily') as 'daily' | 'weekly',
-    startTime: item?.startTime ? format(new Date(item.startTime), 'HH:mm') : '',
-    endTime: item?.endTime ? format(new Date(item.endTime), 'HH:mm') : '',
+    startTime: item?.startTime ? (() => { const d = new Date(item.startTime); return isNaN(d.getTime()) ? item.startTime.slice(0, 5) : format(d, 'HH:mm') })() : '',
+    endTime: item?.endTime ? (() => { const d = new Date(item.endTime); return isNaN(d.getTime()) ? item.endTime.slice(0, 5) : format(d, 'HH:mm') })() : '',
     duration: item?.duration ? String(item.duration) : '',
     assignedTo: item?.assignedTo ?? '',
     date: item?.date ? item.date.split('T')[0] : baseDate.split('T')[0],
@@ -189,7 +206,7 @@ export function ProgramItemModal({ weddingId, eventId, item, baseDate, defaultSc
           <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1 w-fit">
             {(['daily', 'weekly'] as const).map(s => (
               <button key={s} type="button" onClick={() => setForm(f => ({ ...f, scope: s }))}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${form.scope === s ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${form.scope === s ? 'bg-white shadow-lg border text-[#14161C]' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {s === 'daily' ? '📅 Daily' : '📆 Weekly'}
               </button>
             ))}
@@ -271,7 +288,7 @@ export function ProgramRow({ item, idx, onEdit, onDelete }: Readonly<{
               {timeLabel}{endLabel ? ` – ${endLabel}` : ''}
             </span>
           )}
-          {Boolean(item.duration) && !timeLabel && <span className="text-xs text-[#14161C]/40">{item.duration}min</span>}
+          {Boolean(item.duration) && !timeLabel && <span className="text-xs text-[#14161C]/40">{formatDuration(item.duration!)}</span>}
         </div>
         {item.description && <p className="text-xs text-[#14161C]/40 mt-0.5">{item.description}</p>}
         {item.assignedTo && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">→ {item.assignedTo}</p>}
@@ -640,17 +657,15 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
     } catch { toast('Failed to delete note', 'error') }
   }
 
-  const sevColor: Record<string, string> = { LOW: 'text-[#14161C]/55', MEDIUM: 'text-amber-600', HIGH: 'text-orange-600', CRITICAL: 'text-red-600' }
-
   return (
     <Modal title="Incident" onClose={onClose}>
       <div className="space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className={`text-xs font-bold uppercase ${sevColor[inc.severity] ?? 'text-[#14161C]/55'}`}>{inc.severity}</span>
+            <span className={`text-xs font-bold uppercase ${SEV_TEXT_COLOR[inc.severity] ?? 'text-zinc-600'}`}>{inc.severity}</span>
             <span className="text-xs text-[#14161C]/40">{format(new Date(inc.reportedAt), 'MMM d · h:mm a')}</span>
-            {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
+            {inc.resolvedAt && <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1"><CheckCircle2 size={12} /> Resolved</span>}
           </div>
           <div className="flex items-center gap-1">
             <button onClick={() => setEditing(v => !v)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit"><Pencil size={13} /></button>
@@ -660,36 +675,40 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
 
         {/* Edit form or read view */}
         {editing ? (
-          <div className="space-y-3 bg-[#F7F5F2] rounded-xl p-4">
+          <div className="space-y-4 bg-white rounded-xl border border-[#1F4D3A]/6 p-4">
             <div>
-              <Label>Severity</Label>
-              <Select value={form.severity} onChange={e => setForm(f => ({ ...f, severity: e.target.value }))}>
+              <Label htmlFor="inc-severity">Severity</Label>
+              <Select id="inc-severity" value={form.severity} onChange={e => setForm(f => ({ ...f, severity: e.target.value }))}>
                 {['LOW','MEDIUM','HIGH','CRITICAL'].map(s => <option key={s} value={s}>{s}</option>)}
               </Select>
             </div>
             <div>
-              <Label>Description</Label>
-              <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} />
+              <Label htmlFor="inc-description">Description</Label>
+              <Textarea id="inc-description" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} />
             </div>
             <div>
-              <Label>Resolution notes</Label>
-              <Textarea value={form.resolution} onChange={e => setForm(f => ({ ...f, resolution: e.target.value }))} rows={2} placeholder="How was this resolved?" />
+              <Label htmlFor="inc-resolution">Resolution notes</Label>
+              <Textarea id="inc-resolution" value={form.resolution} onChange={e => setForm(f => ({ ...f, resolution: e.target.value }))} rows={2} placeholder="How was this resolved?" />
             </div>
-            <div className="flex gap-2 justify-end">
-              <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="secondary" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
               <Button size="sm" onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
             </div>
           </div>
         ) : (
-          <div>
-            <p className="text-sm text-[#14161C]/70">{inc.description}</p>
-            {inc.resolution && <p className="text-xs text-[#14161C]/55 mt-1.5 italic border-l-2 border-[#1F4D3A]/12 pl-2">{inc.resolution}</p>}
+          <div className="bg-white rounded-xl border border-[#1F4D3A]/6 p-4">
+            <p className="text-sm text-[#14161C] leading-relaxed">{inc.description}</p>
+            {inc.resolution && (
+              <p className="text-xs text-[#14161C]/60 mt-3 pt-3 border-t border-[#1F4D3A]/6 italic">
+                <span className="font-semibold text-[#14161C]/70">Resolution:</span> {inc.resolution}
+              </p>
+            )}
           </div>
         )}
 
         {!inc.resolvedAt && !editing && (
-          <button onClick={handleResolve} className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">
-            <CheckCircle2 size={13} /> Mark as resolved
+          <button onClick={handleResolve} className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors px-3 py-2 rounded-lg hover:bg-emerald-50">
+            <CheckCircle2 size={14} /> Mark as resolved
           </button>
         )}
 
@@ -699,19 +718,21 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
         <div>
           <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-3">Activity log</p>
           {notes.length === 0 ? (
-            <p className="text-xs text-[#14161C]/40 py-2">No notes yet — log updates, actions taken, or follow-ups.</p>
+            <p className="text-xs text-[#14161C]/40 py-3 text-center bg-[#F7F5F2] rounded-lg">
+              No notes yet — log updates, actions taken, or follow-ups.
+            </p>
           ) : (
-            <div className="space-y-2 mb-3 max-h-48 overflow-y-auto scrollbar-thin">
+            <div className="space-y-3 mb-4 max-h-64 overflow-y-auto scrollbar-thin bg-white rounded-xl border border-[#1F4D3A]/6 p-3">
               {notes.map(n => (
-                <div key={n.id} className="flex items-start gap-2 group">
-                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-1.5 flex-shrink-0" />
+                <div key={n.id} className="flex items-start gap-3 group pb-3 border-b border-[#1F4D3A]/5 last:border-0 last:pb-0">
+                  <div className="w-2 h-2 rounded-full bg-[#1F4D3A]/20 mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#14161C]/70 leading-relaxed">{n.content}</p>
-                    <p className="text-[10px] text-[#14161C]/40 mt-0.5">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
+                    <p className="text-sm text-[#14161C] leading-relaxed">{n.content}</p>
+                    <p className="text-[10px] text-[#14161C]/40 mt-1">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
                   </div>
                   <button onClick={() => void handleDeleteNote(n.id)}
-                    className="p-1 rounded text-[#14161C]/25 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
-                    aria-label="Delete note"><Trash2 size={11} /></button>
+                    className="p-1.5 rounded-lg text-[#14161C]/25 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                    aria-label="Delete note"><Trash2 size={12} /></button>
                 </div>
               ))}
             </div>
@@ -721,8 +742,8 @@ function IncidentDetailModal({ incident: initialIncident, weddingId, onClose, on
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleAddNote() } }}
               placeholder="Log an update or action taken… (Enter to submit)"
               rows={2}
-              className="flex-1 text-sm rounded-xl border border-[#1F4D3A]/12 px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/40 focus:border-transparent" />
-            <Button size="sm" variant="lavender" onClick={handleAddNote} disabled={addingNote || !noteText.trim()}>
+              className="flex-1 text-sm rounded-xl border border-[#1F4D3A]/10 px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-[#1F4D3A]/30 focus:border-transparent placeholder:text-[#14161C]/30" />
+            <Button size="sm" onClick={handleAddNote} disabled={addingNote || !noteText.trim()}>
               {addingNote ? '…' : 'Add'}
             </Button>
           </div>
@@ -736,6 +757,42 @@ export function IncidentsTab({ incidents, weddingId, onRefresh }: Readonly<{
   incidents: Incident[]; weddingId: string; onRefresh: () => void
 }>) {
   const [selected, setSelected] = useState<Incident | null>(null)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const { toast } = useToast()
+
+  const { data: notesMap = {}, refetch: refetchNotes } = useQuery<Record<string, IncidentNote[]>>({
+    queryKey: ['incident-notes-all', weddingId],
+    queryFn: async () => {
+      const map: Record<string, IncidentNote[]> = {}
+      await Promise.all(
+        incidents.map(async inc => {
+          const res = await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}/notes`)
+          if (res.ok) map[inc.id] = await res.json() as IncidentNote[]
+        })
+      )
+      return map
+    },
+    enabled: expanded !== null,
+    staleTime: 0,
+  })
+
+  const handleResolve = async (inc: Incident, e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      const resolvedAt = new Date().toISOString()
+      await fetch(`/api/weddings/${weddingId}/incidents/${inc.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resolvedAt }),
+      })
+      toast('Marked as resolved', 'success')
+      onRefresh()
+    } catch { toast('Failed', 'error') }
+  }
+
+  const toggleExpand = (incId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setExpanded(prev => prev === incId ? null : incId)
+  }
 
   if (incidents.length === 0) return (
     <EmptyState icon={<AlertTriangle size={40} />} title="No incidents" description="Log any issues that arise" />
@@ -743,22 +800,75 @@ export function IncidentsTab({ incidents, weddingId, onRefresh }: Readonly<{
 
   return (
     <>
-      <div className="space-y-2">
-        {incidents.map(inc => (
-          <button key={inc.id} onClick={() => setSelected(inc)}
-            className={`w-full text-left rounded-xl p-4 transition-all hover:opacity-90 active:scale-[0.99] ${SEV_COLOR[inc.severity] ?? 'border-l-4 border-zinc-300'}`}>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#14161C]/55 uppercase">{inc.severity}</span>
-                <span className="text-xs text-[#14161C]/40">{format(new Date(inc.reportedAt), 'h:mm a')}</span>
-                {inc.resolvedAt && <span className="text-xs text-emerald-500 font-semibold flex items-center gap-1"><CheckCircle2 size={11} /> Resolved</span>}
+      <div className="space-y-3">
+        {incidents.map(inc => {
+          const isExpanded = expanded === inc.id
+          const notes = notesMap[inc.id] ?? []
+          return (
+            <div key={inc.id} className={`bg-white rounded-2xl border border-[#1F4D3A]/6 overflow-hidden transition-all ${SEV_COLOR[inc.severity] ?? 'border-l-2 border-zinc-300'}`}>
+              <button
+                onClick={() => setSelected(inc)}
+                className="w-full text-left p-4 transition-all hover:bg-[#1F4D3A]/[0.02] active:scale-[0.995]">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-xs font-bold uppercase ${SEV_TEXT_COLOR[inc.severity] ?? 'text-zinc-600'}`}>{inc.severity}</span>
+                    <span className="text-xs text-[#14161C]/40">{format(new Date(inc.reportedAt), 'MMM d · h:mm a')}</span>
+                    {inc.resolvedAt && (
+                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                        <CheckCircle2 size={12} /> Resolved
+                      </span>
+                    )}
+                  </div>
+                  <Pencil size={13} className="text-[#14161C]/30 flex-shrink-0" />
+                </div>
+                <p className="text-sm text-[#14161C] font-medium leading-relaxed">{inc.description}</p>
+                {inc.resolution && (
+                  <p className="text-xs text-[#14161C]/55 mt-2 pl-2 border-l-2 border-[#1F4D3A]/12 italic">
+                    {inc.resolution}
+                  </p>
+                )}
+              </button>
+
+              {/* Expandable actions bar */}
+              <div className="border-t border-[#1F4D3A]/6 px-4 py-2 flex items-center justify-between gap-2 bg-[#F7F5F2]/30">
+                <button
+                  onClick={(e) => toggleExpand(inc.id, e)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-[#14161C]/60 hover:text-[#14161C] transition-colors py-1">
+                  <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  Activity ({notes.length})
+                </button>
+                {!inc.resolvedAt && (
+                  <button
+                    onClick={(e) => void handleResolve(inc, e)}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors px-2 py-1 rounded-lg hover:bg-emerald-50">
+                    <CheckCircle2 size={13} /> Resolve
+                  </button>
+                )}
               </div>
-              <Pencil size={12} className="text-[#14161C]/25 flex-shrink-0" />
+
+              {/* Expanded activity log */}
+              {isExpanded && (
+                <div className="border-t border-[#1F4D3A]/6 px-4 py-3 bg-white">
+                  {notes.length === 0 ? (
+                    <p className="text-xs text-[#14161C]/40 py-2 text-center">No activity logged yet</p>
+                  ) : (
+                    <div className="space-y-2.5 max-h-48 overflow-y-auto scrollbar-thin">
+                      {notes.map(n => (
+                        <div key={n.id} className="flex items-start gap-2 pb-2.5 border-b border-[#1F4D3A]/5 last:border-0 last:pb-0">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#1F4D3A]/20 mt-1.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-[#14161C] leading-relaxed">{n.content}</p>
+                            <p className="text-[10px] text-[#14161C]/40 mt-0.5">{format(new Date(n.createdAt), 'MMM d · h:mm a')}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <p className="text-sm text-[#14161C]/70 mt-1">{inc.description}</p>
-            {inc.resolution && <p className="text-xs text-[#14161C]/55 mt-1 italic">{inc.resolution}</p>}
-          </button>
-        ))}
+          )
+        })}
       </div>
 
       {selected && (
@@ -766,7 +876,7 @@ export function IncidentsTab({ incidents, weddingId, onRefresh }: Readonly<{
           incident={selected}
           weddingId={weddingId}
           onClose={() => setSelected(null)}
-          onRefresh={onRefresh}
+          onRefresh={() => { onRefresh(); void refetchNotes() }}
           onDeleted={() => { onRefresh(); setSelected(null) }}
         />
       )}
@@ -1108,7 +1218,7 @@ export function EventScheduleTab({ weddingId, event, vendors, incidents, onRefre
                               <p className="text-sm font-semibold text-[#14161C]">{item.title}</p>
                               {item.description && <p className="text-xs text-[#14161C]/40 mt-0.5">{item.description}</p>}
                               <div className="flex items-center gap-3 mt-1 flex-wrap">
-                                {item.duration && !et && <span className="text-xs text-[#14161C]/40">{item.duration} min</span>}
+                                {item.duration && !et && <span className="text-xs text-[#14161C]/40">{formatDuration(item.duration)}</span>}
                                 {item.assignedTo && <span className="text-xs text-[#1F4D3A]/70">→ {item.assignedTo}</span>}
                               </div>
                             </div>

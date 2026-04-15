@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Users, Search, Plus, UserCheck, Star, Pencil, Trash2, X, CalendarDays } from 'lucide-react'
 import { Button, Input, Select, Label, EmptyState, Spinner, Modal, Badge, ConfirmDialog } from '@/components/ui'
 import { useGuests, useUpdateGuestRsvp, useCheckInGuest, useAddGuest } from '@/hooks/use-guests'
@@ -90,7 +90,7 @@ export function AddGuestModal({ weddingId, eventId, onClose, onDone }: Readonly<
           <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
             {(['new', 'existing'] as const).map(t => (
               <button key={t} type="button" onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${tab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${tab === t ? 'bg-white shadow-lg border text-[#14161C]' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'new' ? 'New guest' : 'Existing guest'}
               </button>
             ))}
@@ -305,6 +305,9 @@ export function AttendanceRow({ attendance, weddingId, eventId, onRefresh }: Rea
   const { toast } = useToast()
   const qc = useQueryClient()
   const [saving, setSaving] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [checkingIn, setCheckingIn] = useState(false)
 
   const updateRsvp = async (rsvpStatus: string) => {
     setSaving(true)
@@ -317,50 +320,101 @@ export function AttendanceRow({ attendance, weddingId, eventId, onRefresh }: Rea
     } catch { toast('Failed to update RSVP', 'error') } finally { setSaving(false) }
   }
 
-  const remove = async () => {
-    if (!confirm(`Remove ${attendance.guest.name} from this event?`)) return
+  const handleCheckIn = async () => {
+    setCheckingIn(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/events/${eventId}/attendances/${attendance.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ checkedIn: true }),
+      })
+      await qc.invalidateQueries({ queryKey: ['attendances', weddingId, eventId] })
+      toast('Guest checked in', 'success')
+    } catch { toast('Failed to check in', 'error') } finally { setCheckingIn(false) }
+  }
+
+  const handleDelete = async () => {
     try {
       await fetch(`/api/weddings/${weddingId}/events/${eventId}/attendances/${attendance.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['attendances', weddingId, eventId] })
       toast('Guest removed from event', 'success')
       onRefresh()
     } catch { toast('Failed to remove guest', 'error') }
+    setConfirmDelete(false)
   }
 
   const g = attendance.guest
+  // Convert guest to LocalGuest format for EditGuestModal
+  const guestForEdit: LocalGuest = {
+    id: g.id,
+    name: g.name,
+    phone: g.phone ?? undefined,
+    side: g.side,
+    rsvpStatus: g.rsvpStatus as LocalGuest['rsvpStatus'],
+    checkedIn: g.checkedIn,
+    mealPref: g.mealPref ?? undefined,
+    tags: g.tags,
+    weddingId,
+    version: 0,
+    checksum: '',
+    updatedAt: Date.now(),
+    isDirty: false,
+  }
+
   return (
-    <div className="group flex items-center gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors px-4">
-      <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
-        {g.name.charAt(0).toUpperCase()}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-[#14161C] truncate">{g.name}</p>
-        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          <span className="text-xs text-[#14161C]/40">{g.side}</span>
-          {g.phone && <span className="text-xs text-[#14161C]/40">{g.phone}</span>}
-          {g.mealPref && <span className="text-xs text-[#14161C]/40">🍽 {g.mealPref}</span>}
-          {g.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
-          {g.tags?.map(tag => (
-            <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/55'}`}>{tag}</span>
-          ))}
+    <>
+      <div className="group flex items-center gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors px-4">
+        <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
+          {g.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-[#14161C] truncate">{g.name}</p>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            <span className="text-xs text-[#14161C]/40">{g.side}</span>
+            {g.phone && <span className="text-xs text-[#14161C]/40">{g.phone}</span>}
+            {g.mealPref && <span className="text-xs text-[#14161C]/40">🍽 {g.mealPref}</span>}
+            {g.checkedIn && <span className="text-[11px] font-semibold text-emerald-500">✓ Checked in</span>}
+            {g.tags?.map(tag => (
+              <span key={tag} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${TAG_COLORS[tag] ?? 'bg-[#1F4D3A]/6 text-[#14161C]/55'}`}>{tag}</span>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Badge variant={RSVP_BADGE[attendance.rsvpStatus] ?? 'default'}>{attendance.rsvpStatus}</Badge>
+          <select value={attendance.rsvpStatus} onChange={e => void updateRsvp(e.target.value)} disabled={saving}
+            className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white text-[#14161C]/60 focus:outline-none focus:ring-1 focus:ring-[#1F4D3A]/40 appearance-none cursor-pointer"
+            aria-label="Update RSVP">
+            <option value="PENDING">Pending</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="DECLINED">Declined</option>
+            <option value="MAYBE">Maybe</option>
+            <option value="WAITLISTED">Waitlisted</option>
+          </select>
+          {!g.checkedIn && attendance.rsvpStatus === 'CONFIRMED' && (
+            <Button size="icon" variant="ghost" onClick={() => void handleCheckIn()} disabled={checkingIn} title="Check in">
+              <UserCheck size={14} />
+            </Button>
+          )}
+          <div className="flex items-center gap-1">
+            <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit guest">
+              <Pencil size={13} />
+            </button>
+            <button onClick={() => setConfirmDelete(true)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Remove from event">
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <Badge variant={RSVP_BADGE[attendance.rsvpStatus] ?? 'default'}>{attendance.rsvpStatus}</Badge>
-        <select value={attendance.rsvpStatus} onChange={e => void updateRsvp(e.target.value)} disabled={saving}
-          className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white text-[#14161C]/60 focus:outline-none focus:ring-1 focus:ring-[#1F4D3A]/40 appearance-none cursor-pointer"
-          aria-label="Update RSVP">
-          <option value="PENDING">Pending</option>
-          <option value="CONFIRMED">Confirmed</option>
-          <option value="DECLINED">Declined</option>
-          <option value="MAYBE">Maybe</option>
-          <option value="WAITLISTED">Waitlisted</option>
-        </select>
-        <button onClick={remove} className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 " aria-label="Remove from event">
-          <Trash2 size={13} />
-        </button>
-      </div>
-    </div>
+      {editing && <EditGuestModal guest={guestForEdit} weddingId={weddingId} onClose={() => setEditing(false)} />}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Remove from event?"
+          description={`${g.name} will be removed from this event.`}
+          confirmLabel="Remove"
+          onConfirm={() => void handleDelete()}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -605,6 +659,187 @@ function EventAttendanceSummary({ weddingId, event }: Readonly<{ weddingId: stri
       <div className="flex gap-6 text-right">
         <div><p className="text-xs text-[#14161C]/40">Confirmed</p><p className="text-sm font-bold text-emerald-600">{confirmed}</p></div>
         <div><p className="text-xs text-[#14161C]/40">Total</p><p className="text-sm font-bold text-[#14161C]/55">{attendances.length}</p></div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Event Check-In Tab ───────────────────────────────────────────────────────
+
+function EventCheckInRow({ attendance, weddingId, eventId, onCheckedIn }: Readonly<{
+  attendance: EventAttendance; weddingId: string; eventId: string; onCheckedIn: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [checking, setChecking] = useState(false)
+  const [justCheckedIn, setJustCheckedIn] = useState(false)
+  const g = attendance.guest
+  const isCheckedIn = g.checkedIn || justCheckedIn
+
+  const handleCheckIn = async () => {
+    if (isCheckedIn) return
+    setChecking(true)
+    try {
+      await fetch(`/api/weddings/${weddingId}/events/${eventId}/attendances/${attendance.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ checkedIn: true }),
+      })
+      await qc.invalidateQueries({ queryKey: ['attendances', weddingId, eventId] })
+      setJustCheckedIn(true)
+      onCheckedIn()
+      setTimeout(() => setJustCheckedIn(false), 2000)
+    } catch { toast('Failed to check in', 'error') } finally { setChecking(false) }
+  }
+
+  return (
+    <button
+      onClick={handleCheckIn}
+      disabled={isCheckedIn || checking}
+      className={[
+        'w-full flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all text-left active:scale-[0.98]',
+        isCheckedIn
+          ? 'bg-emerald-50 border-emerald-100 opacity-60'
+          : 'bg-white border-[#1F4D3A]/8 hover:border-[#CDB5F7] hover:shadow-sm',
+        checking ? 'opacity-60' : '',
+      ].join(' ')}
+    >
+      <div className={[
+        'w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors',
+        isCheckedIn ? 'bg-emerald-500 text-white' : 'bg-[#1F4D3A]/8 text-[#1F4D3A]',
+      ].join(' ')}>
+        {isCheckedIn ? <UserCheck size={18} /> : g.name.charAt(0).toUpperCase()}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={`font-semibold text-base truncate ${isCheckedIn ? 'text-emerald-600 line-through' : 'text-[#14161C]'}`}>
+          {g.name}
+        </p>
+        <div className="flex items-center gap-3 mt-0.5">
+          {g.phone && <span className="text-xs text-[#14161C]/40 truncate">{g.phone}</span>}
+          {g.side && <span className="text-xs text-[#14161C]/40">{g.side}</span>}
+        </div>
+      </div>
+      <div className="flex-shrink-0">
+        {isCheckedIn
+          ? <span className="text-xs font-semibold text-emerald-500">✓ In</span>
+          : <span className="text-xs text-[#14161C]/40 border border-[#1F4D3A]/12 rounded-lg px-2.5 py-1">Tap to check in</span>
+        }
+      </div>
+    </button>
+  )
+}
+
+export function EventCheckInTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId: string }>) {
+  const [search, setSearch] = useState('')
+  const [lastCheckedIn, setLastCheckedIn] = useState<string | null>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const { data: attendances = [], isLoading } = useQuery<EventAttendance[]>({
+    queryKey: ['attendances', weddingId, eventId],
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/events/${eventId}/attendances`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<EventAttendance[]>
+    },
+    staleTime: 0,
+  })
+
+  useEffect(() => { searchRef.current?.focus() }, [])
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return attendances.filter(a => !a.guest.checkedIn && a.rsvpStatus === 'CONFIRMED')
+    const q = search.toLowerCase()
+    return attendances.filter(a =>
+      a.guest.name.toLowerCase().includes(q) ||
+      (a.guest.phone?.includes(q) ?? false)
+    ).sort((a, b) => {
+      const aReady = a.rsvpStatus === 'CONFIRMED' && !a.guest.checkedIn
+      const bReady = b.rsvpStatus === 'CONFIRMED' && !b.guest.checkedIn
+      return aReady === bReady ? 0 : aReady ? -1 : 1
+    })
+  }, [attendances, search])
+
+  const checkedInCount = attendances.filter(a => a.guest.checkedIn).length
+  const confirmedNotIn = attendances.filter(a => a.rsvpStatus === 'CONFIRMED' && !a.guest.checkedIn).length
+  const totalConfirmed = attendances.filter(a => a.rsvpStatus === 'CONFIRMED').length
+
+  return (
+    <div className="flex flex-col h-full bg-stone-50">
+      {/* Header */}
+      <div className="bg-white border-b border-[#1F4D3A]/8 px-5 py-4">
+        <div className="mb-4">
+          <h2 className="text-xl font-extrabold text-[#14161C]">Event check-in</h2>
+          <p className="text-xs text-[#14161C]/40 mt-0.5">Tap a guest to mark them as arrived</p>
+        </div>
+
+        {/* Live stats */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[
+            { label: 'Checked in', val: checkedInCount, color: 'text-emerald-600' },
+            { label: 'Still expected', val: confirmedNotIn, color: 'text-amber-500' },
+            { label: 'Total confirmed', val: totalConfirmed, color: 'text-[#14161C]' },
+          ].map(({ label, val, color }) => (
+            <div key={label} className="text-center bg-stone-50 rounded-xl py-2.5">
+              <p className={`text-xl font-extrabold leading-none ${color}`}>{val}</p>
+              <p className="text-[11px] text-[#14161C]/40 mt-1">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14161C]/40" />
+          <Input
+            ref={searchRef}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by name or phone…"
+            className="pl-10 h-11 text-base"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+          />
+        </div>
+      </div>
+
+      {/* Flash feedback */}
+      {lastCheckedIn && (
+        <div className="mx-4 mt-3 px-4 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-sm text-emerald-700 font-semibold">
+          ✓ {lastCheckedIn} checked in
+        </div>
+      )}
+
+      {/* List */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Spinner />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex flex-col items-center py-16 text-center">
+            <Users size={40} className="text-[#14161C]/15 mb-4" />
+            <p className="font-semibold text-[#14161C]/55">
+              {search ? 'No guests match your search' : 'All confirmed guests are checked in!'}
+            </p>
+            {search && <p className="text-sm text-[#14161C]/40 mt-1.5">Try first name, last name, or phone</p>}
+          </div>
+        ) : (
+          <>
+            {filtered.map(a => (
+              <EventCheckInRow
+                key={a.id}
+                attendance={a}
+                weddingId={weddingId}
+                eventId={eventId}
+                onCheckedIn={() => setLastCheckedIn(a.guest.name)}
+              />
+            ))}
+            {!search && (
+              <p className="text-center text-xs text-[#14161C]/40 py-3">
+                {filtered.length} guest{filtered.length !== 1 ? 's' : ''} still to arrive
+              </p>
+            )}
+          </>
+        )}
       </div>
     </div>
   )

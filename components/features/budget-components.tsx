@@ -24,7 +24,10 @@ export const fmt = (n: number) =>
 
 export function summarise(lines: LocalBudgetLine[]) {
   return lines.reduce(
-    (acc, l) => ({ estimated: acc.estimated + l.estimated, actual: acc.actual + l.actual }),
+    (acc, l) => ({
+      estimated: acc.estimated + (Number(l.estimated) || 0),
+      actual: acc.actual + (Number(l.actual) || 0),
+    }),
     { estimated: 0, actual: 0 },
   )
 }
@@ -98,6 +101,7 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
         weddingId, eventId: form.selectedEventId || undefined,
         category: form.category, description: form.description,
         estimated: Number.parseFloat(form.estimated) || 0,
+        actual: 0,
         vendorId: form.vendorId || undefined,
         vendorName: form.vendorName || undefined,
         notes: form.notes || undefined,
@@ -296,7 +300,7 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
   const byCategory = useMemo(() =>
     lines.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, l) => {
       if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, lines: [] }
-      acc[l.category].estimated += l.estimated; acc[l.category].actual += l.actual; acc[l.category].lines.push(l)
+      acc[l.category].estimated += (Number(l.estimated) || 0); acc[l.category].actual += (Number(l.actual) || 0); acc[l.category].lines.push(l)
       return acc
     }, {}),
   [lines])
@@ -374,7 +378,112 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
   )
 }
 
-// ─── Event Budget Tab (reusable in event detail + budget page) ────────────────
+// ─── Budget Line Row ──────────────────────────────────────────────────────────
+
+type FilterTab = 'all' | 'unpaid' | 'paid'
+
+function BudgetLineRow({ l, onEdit, onPay, onDelete }: Readonly<{
+  l: LocalBudgetLine
+  onEdit: (l: LocalBudgetLine) => void
+  onPay: (l: LocalBudgetLine) => void
+  onDelete: (l: LocalBudgetLine) => void
+}>) {
+  const isPaid = (Number(l.estimated) || 0) > 0 && (Number(l.actual) || 0) >= (Number(l.estimated) || 0)
+  const hasPartial = (Number(l.actual) || 0) > 0 && !isPaid
+  const remaining = Math.max(0, (Number(l.estimated) || 0) - (Number(l.actual) || 0))
+
+  return (
+    <div className="flex items-center gap-4 py-3.5 px-4 border-b border-[#1F4D3A]/6 last:border-0 hover:bg-[#F7F5F2]/60 transition-colors group">
+      {/* Status circle */}
+      <button
+        type="button"
+        onClick={() => !isPaid && onPay(l)}
+        aria-label={isPaid ? 'Paid' : `Mark ${l.description} as paid`}
+        className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+        style={{ borderColor: isPaid ? '#10B981' : hasPartial ? '#F59E0B' : '#1F4D3A30' }}
+      >
+        {isPaid && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />}
+        {hasPartial && <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />}
+      </button>
+
+      {/* Main content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className={`text-sm font-semibold truncate ${isPaid ? 'text-[#14161C]/40 line-through' : 'text-[#14161C]'}`}>
+            {l.description}
+          </p>
+          {isPaid && (
+            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5 flex-shrink-0">
+              PAID
+            </span>
+          )}
+          {hasPartial && (
+            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-100 rounded-full px-2 py-0.5 flex-shrink-0">
+              PARTIAL
+            </span>
+          )}
+          {!isPaid && !hasPartial && (
+            <span className="text-[10px] font-bold text-[#14161C]/30 bg-[#1F4D3A]/6 rounded-full px-2 py-0.5 flex-shrink-0">
+              UNPAID
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+          {(l.vendorName ?? l.vendorId) && (
+            <span className="text-[11px] text-[#1F4D3A]/60 flex items-center gap-1">
+              @ {l.vendorName ?? 'Vendor'}
+            </span>
+          )}
+          {l.paymentType && (
+            <span className="text-[11px] text-[#14161C]/40 bg-[#1F4D3A]/6 rounded px-1.5 py-0.5">
+              {l.paymentType}
+            </span>
+          )}
+          {l.paymentDate && (
+            <span className="text-[11px] text-[#14161C]/40">
+              {format(new Date(l.paymentDate), 'MMM d, yyyy')}
+            </span>
+          )}
+          {l.reminderDate && (
+            <span className="text-[11px] text-amber-500">
+              🔔 {format(new Date(l.reminderDate), 'MMM d')}
+            </span>
+          )}
+          {hasPartial && (
+            <span className="text-[11px] text-amber-600 font-semibold">
+              {fmt(Number(l.actual) || 0)} paid · {fmt(remaining)} left
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Estimated amount */}
+      <span className="text-sm font-semibold text-[#14161C]/60 flex-shrink-0 tabular-nums">
+        {fmt(Number(l.estimated) || 0)}
+      </span>
+
+      {/* Actions — visible on hover */}
+      <div className="flex items-center gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        {!isPaid && (
+          <button onClick={() => onPay(l)} aria-label={`Pay ${l.description}`}
+            className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/8 text-[#1F4D3A]/50 hover:text-[#1F4D3A] transition-colors">
+            <CreditCard size={13} />
+          </button>
+        )}
+        <button onClick={() => onEdit(l)} aria-label="Edit"
+          className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/8 text-[#14161C]/30 hover:text-[#14161C]/60 transition-colors">
+          <Pencil size={13} />
+        </button>
+        <button onClick={() => onDelete(l)} aria-label="Delete"
+          className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/30 hover:text-red-500 transition-colors">
+          <Trash2 size={13} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Event Budget Tab ─────────────────────────────────────────────────────────
 
 export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly<{
   weddingId: string; eventId: string; events: WeddingEvent[]; vendors: Vendor[]
@@ -385,23 +494,64 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
   const [showTemplate, setShowTemplate] = useState(false)
   const [editingLine, setEditingLine] = useState<LocalBudgetLine | null>(null)
   const [payingLine, setPayingLine] = useState<LocalBudgetLine | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<LocalBudgetLine | null>(null)
+  const [tab, setTab] = useState<FilterTab>('all')
+  const { toast } = useToast()
+  const qc = useQueryClient()
 
   const lines = useMemo(() => allLines.filter(l => l.eventId === eventId), [allLines, eventId])
   const { estimated: totalEstimated, actual: totalActual } = summarise(lines)
   const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
+  const paidLines = useMemo(() =>
+    lines.filter(l => (Number(l.estimated) || 0) > 0 && (Number(l.actual) || 0) >= (Number(l.estimated) || 0)),
+  [lines])
+  const unpaidLines = useMemo(() =>
+    lines.filter(l => !((Number(l.estimated) || 0) > 0 && (Number(l.actual) || 0) >= (Number(l.estimated) || 0))),
+  [lines])
+  const filteredLines = tab === 'paid' ? paidLines : tab === 'unpaid' ? unpaidLines : lines
+
+  const byCategory = useMemo(() =>
+    filteredLines.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, l) => {
+      if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, lines: [] }
+      acc[l.category].estimated += (Number(l.estimated) || 0)
+      acc[l.category].actual += (Number(l.actual) || 0)
+      acc[l.category].lines.push(l)
+      return acc
+    }, {}),
+  [filteredLines])
+
+  const handleDelete = async (line: LocalBudgetLine) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/budget/${line.id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
+      toast('Budget line deleted', 'success')
+    } catch { toast('Failed to delete', 'error') }
+    setConfirmDelete(null)
+  }
+
   if (isLoading) return <div className="flex justify-center py-16"><Spinner /></div>
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
+
+      {/* Top bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <p className="text-sm text-[#14161C]/40">{lines.length} line items</p>
+        <p className="text-sm text-[#14161C]/40">{paidLines.length}/{lines.length} paid</p>
         <div className="flex gap-2">
-          <Button variant="lavender" size="sm" onClick={() => setShowAlloc(v => !v)}><Lightbulb size={13} /> Suggest allocation</Button>
-          <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}><LayoutTemplate size={13} /> Load template</Button>
-          <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Add line</Button>
+          <Button variant="lavender" size="sm" onClick={() => setShowAlloc(v => !v)}>
+            <Lightbulb size={13} /> Suggest allocation
+          </Button>
+          <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
+            <LayoutTemplate size={13} /> Load template
+          </Button>
+          <Button size="sm" onClick={() => setShowAdd(true)}>
+            <Plus size={14} /> Add line
+          </Button>
         </div>
       </div>
+
+      {/* Suggest allocation panel */}
       {showAlloc && totalEstimated > 0 && (
         <div className="bg-[#E5DF98]/30 rounded-2xl p-5 border border-[#E5DF98] space-y-3">
           <div className="flex items-center justify-between">
@@ -418,39 +568,120 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
           </div>
         </div>
       )}
-      {lines.length > 0 && (
-        <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-zinc-100">
-            {[
-              { label: 'Estimated', val: fmt(totalEstimated), color: 'text-[#14161C]' },
-              { label: 'Actual (paid)', val: fmt(totalActual), color: 'text-red-500' },
-              { label: 'Remaining', val: fmt(Math.max(0, totalEstimated - totalActual)), color: pct > 100 ? 'text-red-500' : 'text-emerald-600' },
-            ].map(({ label, val, color }, i) => (
-              <div key={label} className={i === 0 ? 'pr-8' : i === 2 ? 'pl-8' : 'px-8'}>
-                <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
-                <p className={`text-2xl font-extrabold leading-none ${color}`}>{val}</p>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-[#14161C]/55">Budget utilisation</span>
-              <span className={`font-bold ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>{pct}%</span>
-            </div>
-            <ProgressBar value={totalActual} max={totalEstimated} />
-          </div>
-          <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} onPay={setPayingLine} />
-        </>
-      )}
-      {lines.length === 0 && (
+
+      {lines.length === 0 ? (
         <EmptyState icon={<DollarSign size={40} />} title="No budget lines for this event"
           description="Add line items or load a template to get started"
           action={<Button onClick={() => setShowAdd(true)}><Plus size={14} /> Add line item</Button>} />
+      ) : (
+        <>
+          {/* Stats card */}
+          <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm p-5 space-y-4">
+            <div className="grid grid-cols-3 gap-0 divide-x divide-zinc-100">
+              <div className="pr-6">
+                <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Estimated</p>
+                <p className="text-xl font-extrabold text-[#14161C] font-heading tabular-nums">{fmt(totalEstimated)}</p>
+              </div>
+              <div className="px-6">
+                <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Actual (paid)</p>
+                <p className={`text-xl font-extrabold font-heading tabular-nums ${pct > 100 ? 'text-red-500' : 'text-[#14161C]'}`}>{fmt(totalActual)}</p>
+              </div>
+              <div className="pl-6">
+                <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Remaining</p>
+                <p className={`text-xl font-extrabold font-heading tabular-nums ${pct > 100 ? 'text-red-500' : 'text-emerald-600'}`}>
+                  {fmt(Math.max(0, totalEstimated - totalActual))}
+                </p>
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-[#14161C]/55">Progress</span>
+                <span className={`font-bold tabular-nums ${pct > 100 ? 'text-red-500' : pct > 85 ? 'text-amber-500' : 'text-[#14161C]'}`}>
+                  {pct}% · {paidLines.length}/{lines.length}
+                </span>
+              </div>
+              <ProgressBar value={totalActual} max={totalEstimated} />
+            </div>
+          </div>
+
+          {/* Filter tabs */}
+          <div className="flex gap-1 bg-[#F7F5F2] rounded-xl p-1 w-fit">
+            {([
+              { key: 'all', label: 'All', count: lines.length },
+              { key: 'unpaid', label: 'Unpaid', count: unpaidLines.length },
+              { key: 'paid', label: 'Paid', count: paidLines.length },
+            ] as { key: FilterTab; label: string; count: number }[]).map(t => (
+              <button key={t.key} type="button" onClick={() => setTab(t.key)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${
+                  tab === t.key ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/40 hover:text-[#14161C]/70'
+                }`}>
+                {t.label}
+                <span className={`text-[11px] rounded-full px-1.5 py-0.5 font-bold ${
+                  tab === t.key ? 'bg-[#1F4D3A]/8 text-[#1F4D3A]' : 'text-[#14161C]/30'
+                }`}>{t.count}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Category groups — each in a white card */}
+          {Object.keys(byCategory).length === 0 ? (
+            <p className="text-sm text-[#14161C]/40 py-8 text-center">No items in this filter</p>
+          ) : (
+            <div className="space-y-3">
+              {Object.entries(byCategory)
+                .sort((a, b) => b[1].estimated - a[1].estimated)
+                .map(([cat, totals]) => {
+                  const variance = totals.estimated - totals.actual
+                  const catPct = totals.estimated > 0 ? Math.round((totals.actual / totals.estimated) * 100) : 0
+                  return (
+                    <div key={cat} className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm overflow-hidden">
+                      {/* Category header */}
+                      <div className="flex items-center justify-between px-5 py-3 border-b border-[#1F4D3A]/8 bg-[#F7F5F2]/60">
+                        <div className="flex items-center gap-3">
+                          <p className="text-xs font-bold text-[#14161C]/60 uppercase tracking-widest">
+                            {cat.replaceAll('_', ' ')}
+                          </p>
+                          <span className="text-[11px] text-[#14161C]/40">{catPct}% used</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs tabular-nums">
+                          <span className="text-[#14161C]/40">{fmt(totals.estimated)}</span>
+                          <span className={`font-bold ${variance < 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                            {variance < 0 ? '-' : '+'}{fmt(Math.abs(variance))}
+                          </span>
+                        </div>
+                      </div>
+                      {/* Line items */}
+                      {totals.lines.map(l => (
+                        <BudgetLineRow
+                          key={l.id}
+                          l={l}
+                          onEdit={setEditingLine}
+                          onPay={setPayingLine}
+                          onDelete={setConfirmDelete}
+                        />
+                      ))}
+                    </div>
+                  )
+                })}
+            </div>
+          )}
+        </>
       )}
+
+      {/* Modals */}
       {showAdd && <BudgetLineModal weddingId={weddingId} eventId={eventId} events={events} vendors={vendors} onClose={() => setShowAdd(false)} onPay={setPayingLine} />}
       {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} onPay={setPayingLine} />}
       {showTemplate && <LoadBudgetTemplateModal weddingId={weddingId} eventId={eventId} onClose={() => setShowTemplate(false)} />}
       {payingLine && <QuickPayModal weddingId={weddingId} line={payingLine} onClose={() => setPayingLine(null)} />}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete budget line?"
+          description={`"${confirmDelete.description}" will be permanently removed.`}
+          confirmLabel="Delete"
+          onConfirm={() => void handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
     </div>
   )
 }

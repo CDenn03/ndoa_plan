@@ -49,49 +49,60 @@ function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Paymen
   )
 
   return (
-    <div className="space-y-8">
-      <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total received</p>
-          <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalReceived)}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total payments</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{payments.length}</p></div>
-        {pendingCount > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Pending</p>
-          <p className="text-2xl font-extrabold text-amber-500">{pendingCount}</p></div>}
+    <div className="space-y-6">
+      {/* Stats card */}
+      <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm p-5 grid grid-cols-3 gap-0 divide-x divide-zinc-100">
+        <div className="pr-6">
+          <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Total received</p>
+          <p className="text-xl font-extrabold text-emerald-600 font-heading tabular-nums">{fmt(totalReceived)}</p>
+        </div>
+        <div className="px-6">
+          <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Total payments</p>
+          <p className="text-xl font-extrabold text-[#14161C] font-heading tabular-nums">{payments.length}</p>
+        </div>
+        <div className="pl-6">
+          <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Pending</p>
+          <p className={`text-xl font-extrabold font-heading tabular-nums ${pendingCount > 0 ? 'text-amber-500' : 'text-[#14161C]/30'}`}>{pendingCount}</p>
+        </div>
       </div>
-      <div className="space-y-3">
-        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
+
+      {/* By event card */}
+      <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm overflow-hidden">
+        <div className="px-5 py-3 border-b border-[#1F4D3A]/8 bg-[#F7F5F2]/60">
+          <p className="text-xs font-bold text-[#14161C]/60 uppercase tracking-widest">By event</p>
+        </div>
         {Array.from(byEvent.entries()).map(([key, { event, payments: evPays }]) => {
           if (evPays.length === 0) return null
           const evTotal = evPays.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0)
           return (
-            <div key={key} className="rounded-2xl border border-[#1F4D3A]/8 p-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-[#14161C]/40" />
-                <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
-                <span className="text-xs text-[#14161C]/40">{evPays.length} payments</span>
+            <div key={key} className="flex items-center gap-4 py-3.5 px-5 border-b border-[#1F4D3A]/6 last:border-0 hover:bg-[#F7F5F2]/60 transition-colors">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <CalendarDays size={14} className="text-[#14161C]/40 flex-shrink-0" />
+                <p className="text-sm font-semibold text-[#14161C] truncate">{event?.name ?? 'Unassigned'}</p>
+                <span className="text-xs text-[#14161C]/40 flex-shrink-0">{evPays.length} payments</span>
               </div>
-              <p className="text-sm font-bold text-emerald-600">{fmt(evTotal)}</p>
+              <p className="text-sm font-bold text-emerald-600 flex-shrink-0 tabular-nums">{fmt(evTotal)}</p>
             </div>
           )
         })}
       </div>
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">All payments</p>
-          <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl">
+
+      {/* All payments card */}
+      <div className="rounded-2xl border border-[#1F4D3A]/10 bg-white shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[#1F4D3A]/8 bg-[#F7F5F2]/60">
+          <p className="text-xs font-bold text-[#14161C]/60 uppercase tracking-widest">All payments</p>
+          <div className="flex gap-1 bg-white rounded-xl p-1 border border-[#1F4D3A]/8">
             {(['all', 'pending', 'completed'] as const).map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${filter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
-                {f === 'all' ? `All (${payments.length})` : f === 'pending' ? `Pending (${pendingCount})` : `Completed (${payments.filter(p => p.status === 'COMPLETED').length})`}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all capitalize ${filter === f ? 'bg-[#1F4D3A] text-white shadow-sm' : 'text-[#14161C]/40 hover:text-[#14161C]/70'}`}>
+                {f === 'all' ? `All (${payments.length})` : f === 'pending' ? `Pending (${pendingCount})` : `Done (${payments.filter(p => p.status === 'COMPLETED').length})`}
               </button>
             ))}
           </div>
         </div>
         {filtered.length === 0
           ? <p className="text-sm text-[#14161C]/40 text-center py-8">No {filter} payments</p>
-          : <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
-              {filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
-            </div>}
+          : filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
       </div>
       {confirmDelete && (
         <ConfirmDialog
@@ -128,7 +139,7 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
 
   return (
     <div className="min-h-full">
-      <div className="px-8 pt-10 pb-0 border-b border-[#1F4D3A]/8 bg-white">
+      <div className="px-6 pt-8 pb-0 border-b border-[#1F4D3A]/8 bg-white">
         <div className="max-w-6xl mx-auto">
           <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Finance</p>
           <div className="flex items-end justify-between gap-4 mb-1">
@@ -148,7 +159,7 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-8 py-10">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         {isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
           activeTab === '__overall__'
             ? <OverallTab payments={payments} events={events} weddingId={wid} />

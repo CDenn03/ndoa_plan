@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import {
   MapPin, Clock, Plus, DollarSign, Users,
   ArrowLeft, CreditCard, Sparkles, Truck, Gift, Camera,
-  CalendarDays, LayoutTemplate, CheckSquare,
+  CalendarDays, LayoutTemplate, CheckSquare, UserCheck,
 } from 'lucide-react'
 import { Button, Spinner } from '@/components/ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -29,7 +29,7 @@ import { PhotographyTab } from '@/components/features/photography-components'
 import { EventBudgetTab } from '@/components/features/budget-components'
 import { EventScheduleTab } from '@/components/features/schedule-components'
 import type { Incident } from '@/components/features/schedule-components'
-import { EventGuestsTab } from '@/components/features/guest-components'
+import { EventGuestsTab, EventCheckInTab } from '@/components/features/guest-components'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ interface Props {
   }
 }
 
-type Tab = 'tasks' | 'budget' | 'guests' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule' | 'photography'
+type Tab = 'tasks' | 'budget' | 'guests' | 'check-in' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule' | 'photography'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -231,6 +231,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'schedule', label: 'Schedule', icon: <CalendarDays size={13} /> },
   { key: 'budget', label: 'Budget', icon: <DollarSign size={13} /> },
   { key: 'guests', label: 'Guests', icon: <Users size={13} /> },
+  { key: 'check-in', label: 'Check-in', icon: <UserCheck size={13} /> },
   { key: 'appointments', label: 'Appointments', icon: <Sparkles size={13} /> },
   { key: 'payments', label: 'Payments', icon: <CreditCard size={13} /> },
   { key: 'contributions', label: 'Contributions', icon: <Users size={13} /> },
@@ -287,6 +288,7 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
         {activeTab === 'schedule' && <ScheduleTab weddingId={weddingId} event={event} />}
         {activeTab === 'budget' && <BudgetTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'guests' && <GuestsTab weddingId={weddingId} eventId={event.id} />}
+        {activeTab === 'check-in' && <EventCheckInTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'appointments' && <AppointmentsTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'payments' && <PaymentsTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'contributions' && <ContributionsTab weddingId={weddingId} eventId={event.id} />}

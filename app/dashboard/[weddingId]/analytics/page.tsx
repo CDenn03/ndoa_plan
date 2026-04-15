@@ -12,7 +12,7 @@ export default async function AnalyticsPage(props: Readonly<{ params: Promise<{ 
   const wid = params.weddingId
 
   const [wedding, guestCounts, vendorCounts, budgetLines, checklistCounts, payments] = await Promise.all([
-    db.wedding.findUnique({ where: { id: wid }, select: { budget: true, currency: true } }),
+    db.wedding.findUnique({ where: { id: wid }, select: { name: true, budget: true, currency: true } }),
     db.guest.groupBy({ by: ['rsvpStatus'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.vendor.groupBy({ by: ['status'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.budgetLine.findMany({ where: { weddingId: wid, deletedAt: null }, select: { category: true, estimated: true, actual: true } }),
@@ -53,6 +53,8 @@ export default async function AnalyticsPage(props: Readonly<{ params: Promise<{ 
 
   return (
     <AnalyticsClient
+      weddingId={wid}
+      weddingName={wedding.name}
       currency={wedding.currency}
       totalBudget={totalBudget}
       totalSpent={totalSpent}

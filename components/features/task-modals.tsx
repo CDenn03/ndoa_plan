@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/toast'
 import { format } from 'date-fns'
 import { CheckSquare, Plus, Pencil, Trash2 } from 'lucide-react'
 import type { LocalChecklistItem } from '@/types'
+import { weddingDB } from '@/lib/db/dexie'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,7 +124,18 @@ export function LoadTemplateModal({ weddingId, eventId, onClose }: Readonly<{
         body: JSON.stringify({ templateId, eventId: eventId ?? undefined }),
       })
       if (!res.ok) throw new Error()
-      await qc.invalidateQueries({ queryKey: ['checklist', weddingId] })
+      // Fetch fresh server items
+      const fresh = await fetch(`/api/weddings/${weddingId}/checklist`)
+      if (fresh.ok) {
+        const serverItems = await fresh.json() as import('@/types').LocalChecklistItem[]
+        // Clear Dexie first, then add all items to ensure consistency
+        await weddingDB.checklistItems.where('weddingId').equals(weddingId).delete()
+        await weddingDB.checklistItems.bulkPut(serverItems)
+        // Update React Query cache
+        qc.setQueryData(['checklist', weddingId], serverItems.sort((a, b) => a.order - b.order))
+      } else {
+        await qc.invalidateQueries({ queryKey: ['checklist', weddingId] })
+      }
       toast('Template applied', 'success'); onClose()
     } catch { toast('Failed to apply template', 'error') }
     finally { setApplying(null) }

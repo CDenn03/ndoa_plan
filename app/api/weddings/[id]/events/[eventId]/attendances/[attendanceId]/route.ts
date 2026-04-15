@@ -13,13 +13,25 @@ export async function PATCH(req: NextRequest, props: Params) {
   const member = await db.weddingMember.findFirst({ where: { weddingId: id, userId } })
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const body = await req.json() as { rsvpStatus?: string }
+  const body = await req.json() as { rsvpStatus?: string; checkedIn?: boolean }
+  const updateData: { rsvpStatus?: string; checkedIn?: boolean; checkedInAt?: Date | null } = {}
+  
+  if (body.rsvpStatus) updateData.rsvpStatus = body.rsvpStatus
+  if (body.checkedIn !== undefined) {
+    updateData.checkedIn = body.checkedIn
+    updateData.checkedInAt = body.checkedIn ? new Date() : null
+  }
+
   const attendance = await db.guestEventAttendance.update({
     where: { id: attendanceId },
-    data: { ...(body.rsvpStatus && { rsvpStatus: body.rsvpStatus }) },
+    data: updateData,
     include: { guest: { select: { id: true, name: true, phone: true, side: true, rsvpStatus: true, checkedIn: true, mealPref: true, tags: true } } },
   })
-  return NextResponse.json(attendance)
+  
+  return NextResponse.json({
+    ...attendance,
+    guest: { ...attendance.guest, checkedIn: attendance.checkedIn }, // Use event-specific check-in
+  })
 }
 
 export async function DELETE(_req: NextRequest, props: Params) {
