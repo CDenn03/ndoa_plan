@@ -60,7 +60,7 @@ function TasksTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId:
 
   // Use the same Dexie-backed hook as the checklist page so mutations stay in sync
   const { data: allTasks = [], isLoading } = useChecklistItems(weddingId)
-  const tasks = (allTasks as TaskItem[]).filter(t => t.eventId === eventId && !t.deletedAt)
+  const tasks = (allTasks as TaskItem[]).filter(t => t.eventId === eventId && !t.deletedAt && t.category !== 'SHOT_LIST')
 
   if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
 
@@ -227,19 +227,23 @@ function ScheduleTab({ weddingId, event }: Readonly<{ weddingId: string; event: 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
-  { key: 'tasks', label: 'Tasks', icon: <CheckSquare size={13} /> },
-  { key: 'schedule', label: 'Schedule', icon: <CalendarDays size={13} /> },
-  { key: 'budget', label: 'Budget', icon: <DollarSign size={13} /> },
-  { key: 'guests', label: 'Guests', icon: <Users size={13} /> },
-  { key: 'check-in', label: 'Check-in', icon: <UserCheck size={13} /> },
-  { key: 'appointments', label: 'Appointments', icon: <Sparkles size={13} /> },
-  { key: 'payments', label: 'Payments', icon: <CreditCard size={13} /> },
-  { key: 'contributions', label: 'Contributions', icon: <Users size={13} /> },
-  { key: 'logistics', label: 'Logistics', icon: <Truck size={13} /> },
-  { key: 'vendors', label: 'Vendors', icon: <Users size={13} /> },
-  { key: 'gifts', label: 'Gifts', icon: <Gift size={13} /> },
-  { key: 'vision', label: 'Vision', icon: <Sparkles size={13} /> },
-  { key: 'photography', label: 'Media Production', icon: <Camera size={13} /> },
+  // ── Planning ──
+  { key: 'tasks',         label: 'Tasks',          icon: <CheckSquare size={13} /> },
+  { key: 'budget',        label: 'Budget',         icon: <DollarSign size={13} /> },
+  { key: 'vendors',       label: 'Vendors',        icon: <Users size={13} /> },
+  { key: 'appointments',  label: 'Appointments',   icon: <Sparkles size={13} /> },
+  // ── People ──
+  { key: 'guests',        label: 'Guests',         icon: <Users size={13} /> },
+  { key: 'contributions', label: 'Contributions',  icon: <Users size={13} /> },
+  // ── Execution ──
+  { key: 'schedule',      label: 'Schedule',       icon: <CalendarDays size={13} /> },
+  { key: 'logistics',     label: 'Logistics',      icon: <Truck size={13} /> },
+  { key: 'payments',      label: 'Payments',       icon: <CreditCard size={13} /> },
+  { key: 'check-in',      label: 'Check-in',       icon: <UserCheck size={13} /> },
+  // ── Extras ──
+  { key: 'gifts',         label: 'Gifts',          icon: <Gift size={13} /> },
+  { key: 'vision',        label: 'Vision',         icon: <Sparkles size={13} /> },
+  { key: 'photography',   label: 'Media Production', icon: <Camera size={13} /> },
 ]
 
 export function EventDetailClient({ weddingId, event }: Readonly<Props>) {

@@ -96,6 +96,7 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
   const params = use(props.params)
   const wid = params.weddingId
   const { data: items = [], isLoading } = useChecklistItems(wid)
+  const tasks = useMemo(() => (items as TaskItem[]).filter(i => i.category !== 'SHOT_LIST'), [items])
   const [activeTab, setActiveTab] = useState('__overall__')
   const [showAdd, setShowAdd] = useState(false)
   const [showTemplate, setShowTemplate] = useState(false)
@@ -108,11 +109,11 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
 
   const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
-  const checked = items.filter(i => i.isChecked).length
+  const checked = tasks.filter(i => i.isChecked).length
 
   const eventItems = useMemo(() =>
-    activeEvent ? (items as TaskItem[]).filter(i => i.eventId === activeEvent.id) : [],
-  [items, activeEvent])
+    activeEvent ? tasks.filter(i => i.eventId === activeEvent.id && i.category !== 'SHOT_LIST') : [],
+  [tasks, activeEvent])
 
   return (
     <div className="min-h-full">
@@ -122,7 +123,7 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
           <div className="flex items-end justify-between gap-4 mb-1">
             <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Tasks</h1>
           </div>
-          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{checked} of {items.length} completed</p>
+          <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{checked} of {tasks.length} completed</p>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
               tabs.map(t => (
@@ -139,7 +140,7 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
       <div className="max-w-6xl mx-auto px-8 py-10">
         {isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
           activeTab === '__overall__'
-            ? <OverallTab weddingId={wid} items={items as TaskItem[]} events={events} onAdd={() => setShowAdd(true)} onSelectEvent={setActiveTab} />
+            ? <OverallTab weddingId={wid} items={tasks} events={events} onAdd={() => setShowAdd(true)} onSelectEvent={setActiveTab} />
             : activeEvent
               ? (
                 <div className="space-y-6">

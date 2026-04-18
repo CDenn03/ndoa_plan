@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { recalculateBudgetLineActual } from '@/lib/budget-helpers'
+import { validatePaymentAmount } from '@/lib/payment-validation'
 
 function serializePayment(p: {
   id: string; weddingId: string; eventId: string | null; vendorId: string | null
@@ -61,34 +62,56 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
     amount: number; description?: string; payerName?: string; payerPhone?: string
     vendorId?: string; contributionId?: string; budgetLineId?: string
     status?: string; mpesaRef?: string; eventId?: string; paymentDate?: string
+    vendorNameOverride?: string
   }
   if (!body.amount) return NextResponse.json({ error: 'amount is required' }, { status: 400 })
+
+  // Validate amount
+  const validation = validatePaymentAmount(body.amount)
+  if (!validation.valid) {
+    return NextResponse.json({ error: validation.error }, { status: 400 })
+  }
 
   // Validate budget line belongs to this wedding
   if (body.budgetLineId) {
     const bl = await db.budgetLine.findFirst({ where: { id: body.budgetLineId, weddingId: params.id, deletedAt: null } })
-    if (!bl) return NextResponse.json({ error: 'Budget line not found' }, { status: 404 })
+    if (!bl) return NextResponse.json({ error: 'Budget line not found or does not belong to this wedding' }, { status: 400 })
   }
 
-  const payment = await db.payment.create({
-    data: {
-      weddingId: params.id,
-      eventId: body.eventId || null,
-      budgetLineId: body.budgetLineId || null,
-      amount: body.amount,
-      description: body.description || null,
-      payerName: body.payerName || null,
-      payerPhone: body.payerPhone || null,
-      vendorId: body.vendorId || null,
-      contributionId: body.contributionId || null,
-      status: body.status ?? 'COMPLETED',
-      mpesaRef: body.mpesaRef || null,
-      paymentDate: body.paymentDate ? new Date(body.paymentDate) : null,
-      idempotencyKey: `manual-${userId}-${Date.now()}`,
-      createdBy: userId,
-      processedAt: new Date(),
-    },
-  })
+  // Validate vendor exists if provided
+  if (body.vendorId) {
+    const vendor = await db.vendor.findFirst({ where: { id: body.vendorId, weddingId: params.id, deletedAt: null } })
+    if (!vendor) {
+      // Vendor ID invalid — treat as free-text name instead
+      body.vendorId = undefined
+    }
+  }
+
+  let payment
+  try {
+    payment = await db.payment.create({
+      data: {
+        weddingId: params.id,
+        eventId: body.eventId || null,
+        budgetLineId: body.budgetLineId || null,
+        amount: body.amount,
+        description: body.description || null,
+        payerName: body.payerName || null,
+        payerPhone: body.payerPhone || null,
+        vendorId: body.vendorId || null,
+        contributionId: body.contributionId || null,
+        status: body.status ?? 'COMPLETED',
+        mpesaRef: body.mpesaRef || null,
+        paymentDate: body.paymentDate ? new Date(body.paymentDate) : null,
+        idempotencyKey: `manual-${userId}-${Date.now()}`,
+        createdBy: userId,
+        processedAt: new Date(),
+      },
+    })
+  } catch (err) {
+    console.error('[payments POST] create failed:', err)
+    return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 })
+  }
 
   // Recalculate budget line actual if linked
   if (body.budgetLineId) {

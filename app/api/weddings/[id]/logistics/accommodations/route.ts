@@ -23,14 +23,14 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { hotelName, address, checkIn, checkOut, roomsBlocked, notes, eventId } = body
+  const { hotelName, address, checkIn, checkOut, roomsBlocked, notes, eventId, contactPerson, contactPhone } = body
 
   if (!hotelName || !checkIn || !checkOut) {
     return NextResponse.json({ error: 'hotelName, checkIn, and checkOut are required' }, { status: 400 })
   }
 
   const accommodation = await db.accommodation.create({
-    data: { weddingId: id, eventId: eventId ?? null, hotelName, address: address || null, checkIn: new Date(checkIn), checkOut: new Date(checkOut), roomsBlocked: roomsBlocked ?? null, notes: notes || null },
+    data: { weddingId: id, eventId: eventId ?? null, hotelName, address: address || null, checkIn: new Date(checkIn), checkOut: new Date(checkOut), roomsBlocked: roomsBlocked ?? null, notes: notes || null, contactPerson: contactPerson ?? null, contactPhone: contactPhone ?? null },
   })
   return NextResponse.json({
     ...accommodation, checkIn: accommodation.checkIn.toISOString(), checkOut: accommodation.checkOut.toISOString(), createdAt: accommodation.createdAt.toISOString(),

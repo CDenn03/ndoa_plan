@@ -22,14 +22,14 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { name, departureLocation, arrivalLocation, departureTime, capacity, eventId } = body
+  const { name, departureLocation, arrivalLocation, departureTime, capacity, eventId, contactPerson, contactPhone } = body
 
   if (!name || !departureLocation || !arrivalLocation || !departureTime) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
   const route = await db.transportRoute.create({
-    data: { weddingId: id, eventId: eventId ?? null, name, departureLocation, arrivalLocation, departureTime: new Date(departureTime), capacity: capacity ?? null },
+    data: { weddingId: id, eventId: eventId ?? null, name, departureLocation, arrivalLocation, departureTime: new Date(departureTime), capacity: capacity ?? null, contactPerson: contactPerson ?? null, contactPhone: contactPhone ?? null },
   })
   return NextResponse.json({ ...route, departureTime: route.departureTime.toISOString(), createdAt: route.createdAt.toISOString() }, { status: 201 })
 }

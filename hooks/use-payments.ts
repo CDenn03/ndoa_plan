@@ -9,6 +9,7 @@ export interface Payment {
   eventId?: string
   vendorId?: string
   contributionId?: string
+  budgetLineId?: string
   mpesaRef?: string
   amount: number
   currency: string
@@ -16,9 +17,14 @@ export interface Payment {
   payerName?: string
   payerPhone?: string
   description?: string
+  paymentDate?: string
   processedAt?: string
   reconciledAt?: string
   createdAt: string
+  isDirty?: boolean
+  syncedAt?: string
+  version?: number
+  checksum?: string
 }
 
 export interface Contribution {
@@ -54,7 +60,7 @@ export function usePayments(weddingId: string) {
       if (!res.ok) throw new Error('Failed to load payments')
       return res.json() as Promise<Payment[]>
     },
-    staleTime: 60_000,
+    staleTime: 0, // Changed from 60_000 for cache consistency with budget
   })
 }
 

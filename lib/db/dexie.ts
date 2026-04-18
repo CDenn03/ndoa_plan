@@ -4,6 +4,7 @@ import type {
   LocalVendor,
   LocalChecklistItem,
   LocalBudgetLine,
+  LocalPayment,
   SyncOperation,
   ConflictPayload,
 } from '@/types'
@@ -37,6 +38,7 @@ class WeddingDB extends Dexie {
   vendors!: Table<LocalVendor>
   checklistItems!: Table<LocalChecklistItem>
   budgetLines!: Table<LocalBudgetLine>
+  payments!: Table<LocalPayment>
   syncQueue!: Table<SyncOperation>
   syncConflicts!: Table<SyncConflictRow>
   weddingCache!: Table<WeddingCacheRow>
@@ -87,6 +89,37 @@ class WeddingDB extends Dexie {
       })
       .upgrade(tx => {
         return tx.table('timelineEvents').clear()
+      })
+
+    // v4: Add payments table for offline-first manual payment recording
+    this.version(4)
+      .stores({
+        guests: 'id, weddingId, rsvpStatus, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
+        vendors: 'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
+        timelineEvents: null,
+        checklistItems: 'id, weddingId, eventId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
+        budgetLines: 'id, weddingId, eventId, category, isDirty, updatedAt, syncedAt',
+        payments: 'id, weddingId, eventId, budgetLineId, status, isDirty, updatedAt, syncedAt',
+        syncQueue: '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
+        syncConflicts: '++id, operationId, entityId, resolved, createdAt',
+        weddingCache: 'id, updatedAt',
+      })
+
+    // v4: Add payments table for offline-first manual payment recording
+    this.version(4)
+      .stores({
+        guests: 'id, weddingId, rsvpStatus, committeeId, checkedIn, isDirty, updatedAt, syncedAt',
+        vendors: 'id, weddingId, status, category, lastContactAt, isDirty, updatedAt, syncedAt',
+        checklistItems: 'id, weddingId, eventId, isChecked, dueDate, category, priority, isDirty, updatedAt, syncedAt',
+        budgetLines: 'id, weddingId, eventId, category, isDirty, updatedAt, syncedAt',
+        payments: 'id, weddingId, eventId, budgetLineId, status, isDirty, updatedAt, syncedAt',
+        syncQueue: '++localId, operationId, entityType, entityId, status, priority, createdAt, attemptCount',
+        syncConflicts: '++id, operationId, entityId, resolved, createdAt',
+        weddingCache: 'id, updatedAt',
+      })
+      .upgrade(() => {
+        // Payments table is new, no migration needed
+        console.log('[WeddingDB] v4: Added payments table for offline-first support')
       })
 
     this.on('ready', async () => {

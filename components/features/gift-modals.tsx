@@ -1,9 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { Button, Input, Label, Select, Modal, EmptyState } from '@/components/ui'
+import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQueryClient } from '@tanstack/react-query'
-import { format } from 'date-fns'
 import { Pencil, Trash2, Plus, Heart, Gift, CheckCircle2, Home, DollarSign, HandHeart, Send } from 'lucide-react'
 
 export interface GiftRegistryItem {
@@ -85,7 +84,7 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
   const [form, setForm] = useState({
     giverName: gift?.giverName ?? '', giverPhone: gift?.giverPhone ?? '', description: gift?.description ?? '',
     estimatedValue: gift?.estimatedValue ? String(gift.estimatedValue) : '',
-    status: gift?.status ?? 'RECEIVED', thankYouSent: gift?.thankYouSent ?? false,
+    thankYouSent: gift?.thankYouSent ?? false,
   })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,14 +93,14 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
       if (gift) {
         const res = await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, {
           method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ giverName: form.giverName, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, status: form.status, thankYouSent: form.thankYouSent }),
+          body: JSON.stringify({ giverName: form.giverName || null, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, thankYouSent: form.thankYouSent }),
         })
         if (!res.ok) throw new Error('Failed to update')
         toast('Gift updated', 'success')
       } else {
         const res = await fetch(`/api/weddings/${weddingId}/gifts/received`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ giverName: form.giverName, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, eventId: eventId ?? null }),
+          body: JSON.stringify({ giverName: form.giverName || null, giverPhone: form.giverPhone || null, description: form.description, estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, eventId: eventId ?? null }),
         })
         if (!res.ok) throw new Error('Failed to record')
         toast('Gift recorded', 'success')
@@ -120,20 +119,16 @@ export function AddReceivedGiftModal({ weddingId, eventId, gift, onClose, onDone
           <Input id="gift-giver" value={form.giverName} onChange={e => setForm(f => ({ ...f, giverName: e.target.value }))} placeholder="Aunt Jane, Uncle Tom…" /></div>
         <div><Label htmlFor="gift-phone">Giver's phone (optional)</Label>
           <Input id="gift-phone" value={form.giverPhone} onChange={e => setForm(f => ({ ...f, giverPhone: e.target.value }))} placeholder="+254712345678" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="gift-val">Estimated value (KES)</Label>
-            <Input id="gift-val" type="number" value={form.estimatedValue} onChange={e => setForm(f => ({ ...f, estimatedValue: e.target.value }))} placeholder="5000" min="0" /></div>
-          <div><Label htmlFor="gift-status">Status</Label>
-            <Select id="gift-status" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
-              <option value="RECEIVED">Received</option>
-              <option value="THANKED">Thanked</option>
-              <option value="RETURNED">Returned</option>
-            </Select></div>
-        </div>
-        <label className="flex items-center gap-2 text-sm text-[#14161C]/60 cursor-pointer">
-          <input type="checkbox" checked={form.thankYouSent} onChange={e => setForm(f => ({ ...f, thankYouSent: e.target.checked }))} className="rounded" />
-          Thank you note sent
-        </label>
+        <div><Label htmlFor="gift-val">Estimated value (KES)</Label>
+          <Input id="gift-val" type="number" value={form.estimatedValue} onChange={e => setForm(f => ({ ...f, estimatedValue: e.target.value }))} placeholder="5000" min="0" /></div>
+        {gift && (form.giverName || form.giverPhone) && (
+          <label className="flex items-center gap-2.5 text-sm text-[#14161C]/70 cursor-pointer select-none">
+            <input type="checkbox" checked={form.thankYouSent}
+              onChange={e => setForm(f => ({ ...f, thankYouSent: e.target.checked }))}
+              className="w-4 h-4 rounded accent-violet-600" />
+            Thank you sent
+          </label>
+        )}
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
           <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving…' : gift ? 'Save' : 'Record gift'}</Button>
@@ -248,13 +243,25 @@ export function ReceivedGiftRow({ gift, weddingId, onRefresh }: Readonly<{
     GIVE: 'bg-sky-50 text-sky-700 border-sky-200',
   }
 
+  // Derive a single status label for the badge
+  const statusBadge = (() => {
+    if (gift.disposition === 'KEEP') return { label: 'Kept', cls: 'bg-emerald-50 text-emerald-700' }
+    if (gift.disposition === 'SELL') return { label: 'Sold', cls: 'bg-amber-50 text-amber-700' }
+    if (gift.disposition === 'GIVE') return { label: 'Given out', cls: 'bg-sky-50 text-sky-700' }
+    if (gift.thankYouSent) return { label: 'Thanked', cls: 'bg-violet-50 text-violet-700' }
+    return { label: 'Received', cls: 'bg-[#1F4D3A]/6 text-[#1F4D3A]' }
+  })()
+
   return (
     <>
       <div className="group flex flex-col gap-3 py-4 px-4 border border-[#1F4D3A]/8 rounded-xl bg-white">
         {/* Header */}
         <div className="flex items-start gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#14161C]">{gift.description}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-semibold text-[#14161C]">{gift.description}</p>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBadge.cls}`}>{statusBadge.label}</span>
+            </div>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               {gift.giverName && <span className="text-xs text-[#14161C]/40">From {gift.giverName}</span>}
               {!gift.giverName && gift.giverPhone && <span className="text-xs text-[#14161C]/40">{gift.giverPhone}</span>}
@@ -273,59 +280,55 @@ export function ReceivedGiftRow({ gift, weddingId, onRefresh }: Readonly<{
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Disposition buttons */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => void handleDisposition('KEEP')}
-              disabled={updating || gift.disposition === 'KEEP'}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
-                gift.disposition === 'KEEP'
-                  ? dispositionColors.KEEP
-                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700'
-              }`}
-            >
-              <Home size={12} /> Keep
-            </button>
-            <button
-              onClick={() => void handleDisposition('SELL')}
-              disabled={updating || gift.disposition === 'SELL'}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
-                gift.disposition === 'SELL'
-                  ? dispositionColors.SELL
-                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700'
-              }`}
-            >
-              <DollarSign size={12} /> Sell
-            </button>
-            <button
-              onClick={() => void handleDisposition('GIVE')}
-              disabled={updating || gift.disposition === 'GIVE'}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
-                gift.disposition === 'GIVE'
-                  ? dispositionColors.GIVE
-                  : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700'
-              }`}
-            >
-              <HandHeart size={12} /> Give
-            </button>
-          </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <button
+            onClick={() => void handleDisposition('KEEP')}
+            disabled={updating || gift.disposition === 'KEEP'}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+              gift.disposition === 'KEEP'
+                ? dispositionColors.KEEP
+                : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700'
+            }`}
+          >
+            <Home size={12} /> Keep
+          </button>
+          <button
+            onClick={() => void handleDisposition('SELL')}
+            disabled={updating || gift.disposition === 'SELL'}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+              gift.disposition === 'SELL'
+                ? dispositionColors.SELL
+                : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+            }`}
+          >
+            <DollarSign size={12} /> Sell
+          </button>
+          <button
+            onClick={() => void handleDisposition('GIVE')}
+            disabled={updating || gift.disposition === 'GIVE'}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+              gift.disposition === 'GIVE'
+                ? dispositionColors.GIVE
+                : 'border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700'
+            }`}
+          >
+            <HandHeart size={12} /> Give
+          </button>
 
-          {/* Thank you button */}
-          {canSendThankYou && !gift.thankYouSent && (
+          {/* Thank you — hidden for anonymous gifts (no name or phone) */}
+          {canSendThankYou && (!gift.thankYouSent ? (
             <button
               onClick={() => void handleThankYou()}
               disabled={updating}
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border border-[#1F4D3A]/12 text-[#14161C]/60 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 transition-colors ml-auto"
             >
-              <Send size={12} /> Send thank you
+              <Send size={12} /> Mark as thanked
             </button>
-          )}
-          {gift.thankYouSent && (
-            <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600 ml-auto">
-              <CheckCircle2 size={12} /> Thank you sent
+          ) : (
+            <span className="flex items-center gap-1 text-xs font-semibold text-violet-600 ml-auto">
+              <CheckCircle2 size={12} /> Thanked
             </span>
-          )}
+          ))}
         </div>
       </div>
       {editing && <AddReceivedGiftModal weddingId={weddingId} gift={gift} onClose={() => setEditing(false)} onDone={onRefresh} />}
@@ -362,32 +365,6 @@ function RegistryItemActions({ item, weddingId, onRefresh }: Readonly<{
   )
 }
 
-function ReceivedGiftActions({ gift, weddingId, onRefresh }: Readonly<{
-  gift: GiftReceived; weddingId: string; onRefresh: () => void
-}>) {
-  const { toast } = useToast()
-  const qc = useQueryClient()
-  const [editing, setEditing] = useState(false)
-
-  const handleDelete = async () => {
-    if (!confirm('Delete this gift record?')) return
-    try {
-      await fetch(`/api/weddings/${weddingId}/gifts/received/${gift.id}`, { method: 'DELETE' })
-      await qc.invalidateQueries({ queryKey: ['gifts-received', weddingId] })
-      toast('Gift deleted', 'success'); onRefresh()
-    } catch { toast('Failed to delete', 'error') }
-  }
-
-  return (
-    <>
-      <div className="flex gap-1 ">
-        <button onClick={() => setEditing(true)} className="p-1 text-[#14161C]/25 hover:text-[#1F4D3A]/70" aria-label="Edit"><Pencil size={13} /></button>
-        <button onClick={handleDelete} className="p-1 text-[#14161C]/25 hover:text-red-400" aria-label="Delete"><Trash2 size={13} /></button>
-      </div>
-      {editing && <AddReceivedGiftModal weddingId={weddingId} gift={gift} onClose={() => setEditing(false)} onDone={onRefresh} />}
-    </>
-  )
-}
 
 // ─── Registry List ────────────────────────────────────────────────────────────
 
@@ -422,37 +399,49 @@ export function RegistryList({ items, weddingId, onRefresh, onAdd }: Readonly<{
 
 // ─── Received List ────────────────────────────────────────────────────────────
 
+type DispositionFilter = 'all' | 'KEEP' | 'SELL' | 'GIVE'
+
 export function ReceivedList({ gifts, weddingId, onRefresh, onAdd }: Readonly<{
   gifts: GiftReceived[]; weddingId: string; onRefresh: () => void; onAdd: () => void
 }>) {
+  const [filter, setFilter] = useState<DispositionFilter>('all')
+
+  const tabs: { key: DispositionFilter; label: string }[] = [
+    { key: 'all',  label: `All (${gifts.length})` },
+    { key: 'KEEP', label: `Keep (${gifts.filter(g => g.disposition === 'KEEP').length})` },
+    { key: 'SELL', label: `Sell (${gifts.filter(g => g.disposition === 'SELL').length})` },
+    { key: 'GIVE', label: `Give (${gifts.filter(g => g.disposition === 'GIVE').length})` },
+  ]
+
+  const visible = filter === 'all' ? gifts : gifts.filter(g => g.disposition === filter)
+
   if (gifts.length === 0) return (
     <EmptyState icon={<Gift size={40} />} title="No gifts recorded" description="Track gifts received and send thank-yous"
       action={<Button onClick={onAdd}><Plus size={14} /> Record gift</Button>} />
   )
+
   return (
-    <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
-      {gifts.map(gift => (
-        <div key={gift.id} className="flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0 group">
-          <div className="w-9 h-9 rounded-full bg-[#1F4D3A]/8 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
-            {gift.giverName.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#14161C]">{gift.giverName}</p>
-            <p className="text-xs text-[#14161C]/40 mt-0.5">{gift.description}</p>
-            {gift.giverPhone && <p className="text-xs text-[#14161C]/40">{gift.giverPhone}</p>}
-            {gift.receivedAt && <p className="text-xs text-[#14161C]/40">{format(new Date(gift.receivedAt), 'MMM d, yyyy')}</p>}
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="text-right">
-              {gift.estimatedValue != null && <p className="text-sm font-bold text-[#14161C]">{fmt(gift.estimatedValue)}</p>}
-              {gift.thankYouSent
-                ? <span className="flex items-center gap-1 text-xs text-emerald-500 font-semibold"><CheckCircle2 size={12} /> Thanked</span>
-                : <span className="text-xs text-amber-500 font-semibold">Thank-you pending</span>}
-            </div>
-            <ReceivedGiftActions gift={gift} weddingId={weddingId} onRefresh={onRefresh} />
-          </div>
+    <div className="space-y-3">
+      {/* Filter tabs */}
+      <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
+        {tabs.map(t => (
+          <button key={t.key} onClick={() => setFilter(t.key)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filter === t.key ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* List */}
+      {visible.length === 0 ? (
+        <p className="text-sm text-[#14161C]/40 py-6 text-center">No gifts marked to {filter.toLowerCase()} yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {visible.map(gift => (
+            <ReceivedGiftRow key={gift.id} gift={gift} weddingId={weddingId} onRefresh={onRefresh} />
+          ))}
         </div>
-      ))}
+      )}
     </div>
   )
 }

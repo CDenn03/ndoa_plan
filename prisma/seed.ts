@@ -334,6 +334,124 @@ async function seedTemplates() {
     await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'BUDGET', name: t.name, isSystem: true, data: t.data } })
   }
 
+  const photographyTemplates = [
+    {
+      name: 'Standard Photography Deliverables',
+      data: [
+        { title: 'Sneak peek (3–5 edited photos)' },
+        { title: 'Full edited photo gallery' },
+        { title: 'Highlight video (3–5 min)' },
+        { title: 'Full wedding film' },
+        { title: 'Printed album' },
+      ],
+    },
+    {
+      name: 'Photography + Videography Package',
+      data: [
+        { title: 'Sneak peek (3–5 edited photos)' },
+        { title: 'Full edited photo gallery' },
+        { title: 'Highlight reel (Instagram cut)' },
+        { title: 'Highlight video (3–5 min)' },
+        { title: 'Full wedding film' },
+        { title: 'Drone footage edit' },
+        { title: 'Printed album' },
+        { title: 'USB drive with all files' },
+      ],
+    },
+    {
+      name: 'Basic Photography Deliverables',
+      data: [
+        { title: 'Sneak peek (3–5 edited photos)' },
+        { title: 'Full edited photo gallery' },
+        { title: 'Printed album' },
+      ],
+    },
+  ]
+
+  for (const t of photographyTemplates) {
+    const id = `sys-photography-${t.name.toLowerCase().replace(/[\s()–+]+/g, '-')}`
+    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'PHOTOGRAPHY', name: t.name, isSystem: true, data: t.data } })
+  }
+
+  const shotListTemplates = [
+    {
+      name: 'Full Wedding Shot List',
+      data: [
+        { title: 'Bride getting ready — detail shots (dress, shoes, rings)', group: 'GETTING_READY' },
+        { title: 'Groom getting ready', group: 'GETTING_READY' },
+        { title: 'Bridesmaids helping bride', group: 'GETTING_READY' },
+        { title: 'Groomsmen with groom', group: 'GETTING_READY' },
+        { title: 'First look (if planned)', group: 'GETTING_READY' },
+        { title: 'Processional', group: 'CEREMONY' },
+        { title: 'Bride entrance', group: 'CEREMONY' },
+        { title: 'Exchange of vows', group: 'CEREMONY' },
+        { title: 'Ring exchange', group: 'CEREMONY' },
+        { title: 'First kiss', group: 'CEREMONY' },
+        { title: 'Recessional', group: 'CEREMONY' },
+        { title: 'Signing of register', group: 'CEREMONY' },
+        { title: 'Couple portraits — outdoor', group: 'PORTRAITS' },
+        { title: 'Couple portraits — venue', group: 'PORTRAITS' },
+        { title: 'Bridal party group', group: 'PORTRAITS' },
+        { title: 'Groomsmen group', group: 'PORTRAITS' },
+        { title: 'Bridesmaids group', group: 'PORTRAITS' },
+        { title: 'Bride with parents', group: 'FAMILY' },
+        { title: 'Groom with parents', group: 'FAMILY' },
+        { title: 'Both families together', group: 'FAMILY' },
+        { title: 'Siblings', group: 'FAMILY' },
+        { title: 'Extended family groups', group: 'FAMILY' },
+        { title: 'Venue details — tables, decor, flowers', group: 'RECEPTION' },
+        { title: 'Cake cutting', group: 'RECEPTION' },
+        { title: 'First dance', group: 'RECEPTION' },
+        { title: 'Parent dances', group: 'RECEPTION' },
+        { title: 'Speeches', group: 'RECEPTION' },
+        { title: 'Bouquet toss', group: 'RECEPTION' },
+        { title: 'Guests dancing', group: 'RECEPTION' },
+        { title: 'Wedding rings', group: 'DETAILS' },
+        { title: 'Bouquet', group: 'DETAILS' },
+        { title: 'Invitation suite', group: 'DETAILS' },
+        { title: 'Venue exterior', group: 'DETAILS' },
+        { title: 'Table settings', group: 'DETAILS' },
+        { title: 'Cake detail', group: 'DETAILS' },
+      ],
+    },
+    {
+      name: 'Ruracio / Traditional Ceremony Shot List',
+      data: [
+        { title: 'Ruracio — dowry negotiation', group: 'CULTURAL' },
+        { title: 'Ruracio — handover ceremony', group: 'CULTURAL' },
+        { title: 'Traditional attire portraits', group: 'CULTURAL' },
+        { title: 'Elder blessings', group: 'CULTURAL' },
+        { title: 'Cultural dance moments', group: 'CULTURAL' },
+        { title: 'Bride with parents', group: 'FAMILY' },
+        { title: 'Groom with parents', group: 'FAMILY' },
+        { title: 'Both families together', group: 'FAMILY' },
+        { title: 'Couple portraits — traditional attire', group: 'PORTRAITS' },
+      ],
+    },
+    {
+      name: 'Ceremony Only Shot List',
+      data: [
+        { title: 'Processional', group: 'CEREMONY' },
+        { title: 'Bride entrance', group: 'CEREMONY' },
+        { title: 'Exchange of vows', group: 'CEREMONY' },
+        { title: 'Ring exchange', group: 'CEREMONY' },
+        { title: 'First kiss', group: 'CEREMONY' },
+        { title: 'Recessional', group: 'CEREMONY' },
+        { title: 'Signing of register', group: 'CEREMONY' },
+        { title: 'Couple portraits — outdoor', group: 'PORTRAITS' },
+        { title: 'Couple portraits — venue', group: 'PORTRAITS' },
+        { title: 'Bride with parents', group: 'FAMILY' },
+        { title: 'Groom with parents', group: 'FAMILY' },
+        { title: 'Both families together', group: 'FAMILY' },
+      ],
+    },
+  ]
+
+  for (const t of shotListTemplates) {
+    const id = `sys-shotlist-${t.name.toLowerCase().replace(/[\s/]+/g, '-')}`
+    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'SHOT_LIST', name: t.name, isSystem: true, data: t.data } })
+  }
+
   console.log('✅ Templates seeded')
 }
 

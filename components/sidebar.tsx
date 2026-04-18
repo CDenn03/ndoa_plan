@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   Users, ShoppingBag, DollarSign, CheckSquare, AlertTriangle,
-  LayoutDashboard, Menu, X, Heart, LogOut, Settings, UserCheck,
+  LayoutDashboard, Menu, X, Heart, LogOut, Settings,
   CreditCard, Calendar, BarChart2, Image, FileText, Gift,
   Truck, Zap, Sparkles, ChevronDown, ChevronRight, Camera,
 } from 'lucide-react'
@@ -34,8 +34,10 @@ interface NavLinkProps {
 }
 
 function NavLink({ href, label, icon: Icon, indent = false, base, pathname, toggleSidebar }: Readonly<NavLinkProps>) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const to = `${base}${href}`
-  const active = href === '' ? pathname === base : pathname === to || pathname.startsWith(to + '/')
+  const active = mounted && (href === '' ? pathname === base : pathname === to || pathname.startsWith(to + '/'))
   return (
     <Link
       href={to}
@@ -148,7 +150,7 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
               <ul className="mt-0.5 space-y-0.5">
                 {events.map(ev => {
                   const evPath = `${base}/events/${ev.id}`
-                  const active = pathname === evPath || pathname.startsWith(evPath + '/')
+                  const active = mounted && (pathname === evPath || pathname.startsWith(evPath + '/'))
                   return (
                     <li key={ev.id}>
                       <Link href={evPath}
@@ -173,6 +175,8 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
             <SectionLabel>Planning</SectionLabel>
             <div className="space-y-0.5">
               <NavLink href="/checklist" label="Tasks" icon={CheckSquare} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/budget" label="Budget" icon={DollarSign} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/vendors" label="Vendors" icon={ShoppingBag} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/appointments" label="Appointments" icon={Sparkles} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               {culturalType && culturalType !== 'STANDARD' && (
                 <NavLink href="/dowry" label="Dowry" icon={Heart} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
@@ -184,16 +188,6 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
             <SectionLabel>People</SectionLabel>
             <div className="space-y-0.5">
               <NavLink href="/guests" label="Guests" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
-              <NavLink href="/guests/check-in" label="Check-in" icon={UserCheck} indent base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
-              <NavLink href="/vendors" label="Vendors" icon={ShoppingBag} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
-            </div>
-          </div>
-
-          <div className="mt-1">
-            <SectionLabel>Finance</SectionLabel>
-            <div className="space-y-0.5">
-              <NavLink href="/budget" label="Budget" icon={DollarSign} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
-              <NavLink href="/payments" label="Payments" icon={CreditCard} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/contributions" label="Contributions" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
@@ -201,8 +195,9 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Execution</SectionLabel>
             <div className="space-y-0.5">
-              <NavLink href="/logistics" label="Logistics" icon={Truck} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/day-of" label="Schedule" icon={Zap} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/logistics" label="Logistics" icon={Truck} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/payments" label="Payments" icon={CreditCard} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 
@@ -217,9 +212,9 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
           <div className="mt-1">
             <SectionLabel>Content</SectionLabel>
             <div className="space-y-0.5">
+              <NavLink href="/gifts" label="Gifts" icon={Gift} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/moodboard" label="Vision Board" icon={Image} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/photography" label="Media Production" icon={Camera} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
-              <NavLink href="/gifts" label="Gifts" icon={Gift} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/documents" label="Documents" icon={FileText} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>

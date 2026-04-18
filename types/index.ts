@@ -236,3 +236,32 @@ export interface LocalBudgetLine {
   updatedAt: number
   deletedAt?: number
 }
+
+export interface LocalPayment {
+  id: string
+  serverId?: string
+  weddingId: string
+  eventId?: string
+  vendorId?: string
+  contributionId?: string
+  budgetLineId?: string
+  mpesaRef?: string
+  amount: number
+  currency: string
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'DUPLICATE' | 'DISPUTED' | 'REFUNDED'
+  payerName?: string
+  payerPhone?: string
+  description?: string
+  paymentDate?: number
+  processedAt?: number
+  reconciledAt?: number
+  version: number
+  checksum: string
+  syncedAt?: number
+  isDirty: boolean
+  createdAt: number
+  updatedAt: number
+  deletedAt?: number
+  createdBy?: string
+  updatedBy?: string
+}

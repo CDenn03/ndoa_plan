@@ -379,7 +379,8 @@ export const TemplateType: {
   VENDOR_LIST: 'VENDOR_LIST',
   APPOINTMENT: 'APPOINTMENT',
   ACTIVITY_GROUP: 'ACTIVITY_GROUP',
-  GUEST_TAGS: 'GUEST_TAGS'
+  GUEST_TAGS: 'GUEST_TAGS',
+  PHOTOGRAPHY: 'PHOTOGRAPHY'
 };
 
 export type TemplateType = (typeof TemplateType)[keyof typeof TemplateType]
@@ -49818,6 +49819,8 @@ export namespace Prisma {
     departureTime: Date | null
     capacity: number | null
     assignedVendorId: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean | null
     createdAt: Date | null
   }
@@ -49832,6 +49835,8 @@ export namespace Prisma {
     departureTime: Date | null
     capacity: number | null
     assignedVendorId: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean | null
     createdAt: Date | null
   }
@@ -49846,6 +49851,8 @@ export namespace Prisma {
     departureTime: number
     capacity: number
     assignedVendorId: number
+    contactPerson: number
+    contactPhone: number
     isCompleted: number
     createdAt: number
     _all: number
@@ -49870,6 +49877,8 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
   }
@@ -49884,6 +49893,8 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
   }
@@ -49898,6 +49909,8 @@ export namespace Prisma {
     departureTime?: true
     capacity?: true
     assignedVendorId?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
     _all?: true
@@ -49999,6 +50012,8 @@ export namespace Prisma {
     departureTime: Date
     capacity: number | null
     assignedVendorId: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean
     createdAt: Date
     _count: TransportRouteCountAggregateOutputType | null
@@ -50032,6 +50047,8 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -50051,6 +50068,8 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -50068,6 +50087,8 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -50085,11 +50106,13 @@ export namespace Prisma {
     departureTime?: boolean
     capacity?: boolean
     assignedVendorId?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
   }
 
-  export type TransportRouteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "name" | "departureLocation" | "arrivalLocation" | "departureTime" | "capacity" | "assignedVendorId" | "isCompleted" | "createdAt", ExtArgs["result"]["transportRoute"]>
+  export type TransportRouteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "name" | "departureLocation" | "arrivalLocation" | "departureTime" | "capacity" | "assignedVendorId" | "contactPerson" | "contactPhone" | "isCompleted" | "createdAt", ExtArgs["result"]["transportRoute"]>
   export type TransportRouteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | TransportRoute$eventArgs<ExtArgs>
@@ -50126,6 +50149,8 @@ export namespace Prisma {
       departureTime: Date
       capacity: number | null
       assignedVendorId: string | null
+      contactPerson: string | null
+      contactPhone: string | null
       isCompleted: boolean
       createdAt: Date
     }, ExtArgs["result"]["transportRoute"]>
@@ -50564,6 +50589,8 @@ export namespace Prisma {
     readonly departureTime: FieldRef<"TransportRoute", 'DateTime'>
     readonly capacity: FieldRef<"TransportRoute", 'Int'>
     readonly assignedVendorId: FieldRef<"TransportRoute", 'String'>
+    readonly contactPerson: FieldRef<"TransportRoute", 'String'>
+    readonly contactPhone: FieldRef<"TransportRoute", 'String'>
     readonly isCompleted: FieldRef<"TransportRoute", 'Boolean'>
     readonly createdAt: FieldRef<"TransportRoute", 'DateTime'>
   }
@@ -52122,6 +52149,8 @@ export namespace Prisma {
     checkOut: Date | null
     roomsBlocked: number | null
     notes: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean | null
     createdAt: Date | null
   }
@@ -52136,6 +52165,8 @@ export namespace Prisma {
     checkOut: Date | null
     roomsBlocked: number | null
     notes: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean | null
     createdAt: Date | null
   }
@@ -52150,6 +52181,8 @@ export namespace Prisma {
     checkOut: number
     roomsBlocked: number
     notes: number
+    contactPerson: number
+    contactPhone: number
     isCompleted: number
     createdAt: number
     _all: number
@@ -52174,6 +52207,8 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
   }
@@ -52188,6 +52223,8 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
   }
@@ -52202,6 +52239,8 @@ export namespace Prisma {
     checkOut?: true
     roomsBlocked?: true
     notes?: true
+    contactPerson?: true
+    contactPhone?: true
     isCompleted?: true
     createdAt?: true
     _all?: true
@@ -52303,6 +52342,8 @@ export namespace Prisma {
     checkOut: Date
     roomsBlocked: number | null
     notes: string | null
+    contactPerson: string | null
+    contactPhone: string | null
     isCompleted: boolean
     createdAt: Date
     _count: AccommodationCountAggregateOutputType | null
@@ -52336,6 +52377,8 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -52354,6 +52397,8 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -52370,6 +52415,8 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
@@ -52386,11 +52433,13 @@ export namespace Prisma {
     checkOut?: boolean
     roomsBlocked?: boolean
     notes?: boolean
+    contactPerson?: boolean
+    contactPhone?: boolean
     isCompleted?: boolean
     createdAt?: boolean
   }
 
-  export type AccommodationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "hotelName" | "address" | "checkIn" | "checkOut" | "roomsBlocked" | "notes" | "isCompleted" | "createdAt", ExtArgs["result"]["accommodation"]>
+  export type AccommodationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weddingId" | "eventId" | "hotelName" | "address" | "checkIn" | "checkOut" | "roomsBlocked" | "notes" | "contactPerson" | "contactPhone" | "isCompleted" | "createdAt", ExtArgs["result"]["accommodation"]>
   export type AccommodationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wedding?: boolean | WeddingDefaultArgs<ExtArgs>
     event?: boolean | Accommodation$eventArgs<ExtArgs>
@@ -52423,6 +52472,8 @@ export namespace Prisma {
       checkOut: Date
       roomsBlocked: number | null
       notes: string | null
+      contactPerson: string | null
+      contactPhone: string | null
       isCompleted: boolean
       createdAt: Date
     }, ExtArgs["result"]["accommodation"]>
@@ -52860,6 +52911,8 @@ export namespace Prisma {
     readonly checkOut: FieldRef<"Accommodation", 'DateTime'>
     readonly roomsBlocked: FieldRef<"Accommodation", 'Int'>
     readonly notes: FieldRef<"Accommodation", 'String'>
+    readonly contactPerson: FieldRef<"Accommodation", 'String'>
+    readonly contactPhone: FieldRef<"Accommodation", 'String'>
     readonly isCompleted: FieldRef<"Accommodation", 'Boolean'>
     readonly createdAt: FieldRef<"Accommodation", 'DateTime'>
   }
@@ -57243,6 +57296,8 @@ export namespace Prisma {
     departureTime: 'departureTime',
     capacity: 'capacity',
     assignedVendorId: 'assignedVendorId',
+    contactPerson: 'contactPerson',
+    contactPhone: 'contactPhone',
     isCompleted: 'isCompleted',
     createdAt: 'createdAt'
   };
@@ -57269,6 +57324,8 @@ export namespace Prisma {
     checkOut: 'checkOut',
     roomsBlocked: 'roomsBlocked',
     notes: 'notes',
+    contactPerson: 'contactPerson',
+    contactPhone: 'contactPhone',
     isCompleted: 'isCompleted',
     createdAt: 'createdAt'
   };
@@ -61053,6 +61110,8 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPerson?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPhone?: StringNullableFilter<"TransportRoute"> | string | null
     isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -61071,6 +61130,8 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrderInput | SortOrder
     assignedVendorId?: SortOrderInput | SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    contactPhone?: SortOrderInput | SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
     wedding?: WeddingOrderByWithRelationInput
@@ -61092,6 +61153,8 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPerson?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPhone?: StringNullableFilter<"TransportRoute"> | string | null
     isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -61110,6 +61173,8 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrderInput | SortOrder
     assignedVendorId?: SortOrderInput | SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    contactPhone?: SortOrderInput | SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
     _count?: TransportRouteCountOrderByAggregateInput
@@ -61132,6 +61197,8 @@ export namespace Prisma {
     departureTime?: DateTimeWithAggregatesFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableWithAggregatesFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableWithAggregatesFilter<"TransportRoute"> | string | null
+    contactPerson?: StringNullableWithAggregatesFilter<"TransportRoute"> | string | null
+    contactPhone?: StringNullableWithAggregatesFilter<"TransportRoute"> | string | null
     isCompleted?: BoolWithAggregatesFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"TransportRoute"> | Date | string
   }
@@ -61198,6 +61265,8 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    contactPerson?: StringNullableFilter<"Accommodation"> | string | null
+    contactPhone?: StringNullableFilter<"Accommodation"> | string | null
     isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -61215,6 +61284,8 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    contactPhone?: SortOrderInput | SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
     wedding?: WeddingOrderByWithRelationInput
@@ -61235,6 +61306,8 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    contactPerson?: StringNullableFilter<"Accommodation"> | string | null
+    contactPhone?: StringNullableFilter<"Accommodation"> | string | null
     isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
     wedding?: XOR<WeddingScalarRelationFilter, WeddingWhereInput>
@@ -61252,6 +61325,8 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    contactPhone?: SortOrderInput | SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
     _count?: AccommodationCountOrderByAggregateInput
@@ -61274,6 +61349,8 @@ export namespace Prisma {
     checkOut?: DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableWithAggregatesFilter<"Accommodation"> | number | null
     notes?: StringNullableWithAggregatesFilter<"Accommodation"> | string | null
+    contactPerson?: StringNullableWithAggregatesFilter<"Accommodation"> | string | null
+    contactPhone?: StringNullableWithAggregatesFilter<"Accommodation"> | string | null
     isCompleted?: BoolWithAggregatesFilter<"Accommodation"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
   }
@@ -65209,6 +65286,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
@@ -65227,6 +65306,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
@@ -65239,6 +65320,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
@@ -65257,6 +65340,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
@@ -65272,6 +65357,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -65283,6 +65370,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65297,6 +65386,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65349,6 +65440,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
@@ -65366,6 +65459,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
@@ -65379,6 +65474,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
@@ -65396,6 +65493,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
@@ -65411,6 +65510,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -65423,6 +65524,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65437,6 +65540,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -68474,6 +68579,8 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -68492,6 +68599,8 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -68506,6 +68615,8 @@ export namespace Prisma {
     departureTime?: SortOrder
     capacity?: SortOrder
     assignedVendorId?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -68552,6 +68663,8 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -68570,6 +68683,8 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -68584,6 +68699,8 @@ export namespace Prisma {
     checkOut?: SortOrder
     roomsBlocked?: SortOrder
     notes?: SortOrder
+    contactPerson?: SortOrder
+    contactPhone?: SortOrder
     isCompleted?: SortOrder
     createdAt?: SortOrder
   }
@@ -74373,6 +74490,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     event?: WeddingEventCreateNestedOneWithoutTransportRoutesInput
@@ -74389,6 +74508,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
@@ -74412,6 +74533,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     event?: WeddingEventCreateNestedOneWithoutAccommodationsInput
@@ -74427,6 +74550,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
@@ -75217,6 +75342,8 @@ export namespace Prisma {
     departureTime?: DateTimeFilter<"TransportRoute"> | Date | string
     capacity?: IntNullableFilter<"TransportRoute"> | number | null
     assignedVendorId?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPerson?: StringNullableFilter<"TransportRoute"> | string | null
+    contactPhone?: StringNullableFilter<"TransportRoute"> | string | null
     isCompleted?: BoolFilter<"TransportRoute"> | boolean
     createdAt?: DateTimeFilter<"TransportRoute"> | Date | string
   }
@@ -75250,6 +75377,8 @@ export namespace Prisma {
     checkOut?: DateTimeFilter<"Accommodation"> | Date | string
     roomsBlocked?: IntNullableFilter<"Accommodation"> | number | null
     notes?: StringNullableFilter<"Accommodation"> | string | null
+    contactPerson?: StringNullableFilter<"Accommodation"> | string | null
+    contactPhone?: StringNullableFilter<"Accommodation"> | string | null
     isCompleted?: BoolFilter<"Accommodation"> | boolean
     createdAt?: DateTimeFilter<"Accommodation"> | Date | string
   }
@@ -76087,6 +76216,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
@@ -76103,6 +76234,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
@@ -76126,6 +76259,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
@@ -76141,6 +76276,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestAccommodations?: GuestAccommodationUncheckedCreateNestedManyWithoutAccommodationInput
@@ -78815,6 +78952,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
@@ -78831,6 +78970,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     guestTransports?: GuestTransportUncheckedCreateNestedManyWithoutRouteInput
@@ -86768,6 +86909,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutTransportRoutesInput
@@ -86785,6 +86928,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -86885,6 +87030,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
@@ -86902,6 +87049,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -87367,6 +87516,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
     wedding: WeddingCreateNestedOneWithoutAccommodationsInput
@@ -87383,6 +87534,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -87484,6 +87637,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
@@ -87500,6 +87655,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -88254,6 +88411,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -88267,6 +88426,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -89242,6 +89403,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: WeddingEventUpdateOneWithoutTransportRoutesNestedInput
@@ -89258,6 +89421,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
@@ -89272,6 +89437,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -89284,6 +89451,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: WeddingEventUpdateOneWithoutAccommodationsNestedInput
@@ -89299,6 +89468,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
@@ -89313,6 +89484,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -89559,6 +89732,8 @@ export namespace Prisma {
     departureTime: Date | string
     capacity?: number | null
     assignedVendorId?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -89572,6 +89747,8 @@ export namespace Prisma {
     checkOut: Date | string
     roomsBlocked?: number | null
     notes?: string | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -90047,6 +90224,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
@@ -90063,6 +90242,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
@@ -90077,6 +90258,8 @@ export namespace Prisma {
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
     assignedVendorId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -90089,6 +90272,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutAccommodationsNestedInput
@@ -90104,6 +90289,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestAccommodations?: GuestAccommodationUncheckedUpdateManyWithoutAccommodationNestedInput
@@ -90118,6 +90305,8 @@ export namespace Prisma {
     checkOut?: DateTimeFieldUpdateOperationsInput | Date | string
     roomsBlocked?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -90821,6 +91010,8 @@ export namespace Prisma {
     arrivalLocation: string
     departureTime: Date | string
     capacity?: number | null
+    contactPerson?: string | null
+    contactPhone?: string | null
     isCompleted?: boolean
     createdAt?: Date | string
   }
@@ -91062,6 +91253,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wedding?: WeddingUpdateOneRequiredWithoutTransportRoutesNestedInput
@@ -91078,6 +91271,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guestTransports?: GuestTransportUncheckedUpdateManyWithoutRouteNestedInput
@@ -91092,6 +91287,8 @@ export namespace Prisma {
     arrivalLocation?: StringFieldUpdateOperationsInput | string
     departureTime?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

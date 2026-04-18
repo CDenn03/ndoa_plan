@@ -8,7 +8,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   const session = await getServerSession(authOptions)
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
-  const { name, departureLocation, arrivalLocation, departureTime, capacity, isCompleted } = body
+  const { name, departureLocation, arrivalLocation, departureTime, capacity, isCompleted, contactPerson, contactPhone } = body
   const route = await db.transportRoute.update({
     where: { id: routeId, weddingId: id },
     data: {
@@ -18,6 +18,8 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       ...(departureTime !== undefined && { departureTime: new Date(departureTime) }),
       ...(capacity !== undefined && { capacity: capacity ?? null }),
       ...(isCompleted !== undefined && { isCompleted }),
+      ...(contactPerson !== undefined && { contactPerson: contactPerson ?? null }),
+      ...(contactPhone !== undefined && { contactPhone: contactPhone ?? null }),
     },
   })
   return NextResponse.json({ ...route, departureTime: route.departureTime.toISOString(), createdAt: route.createdAt.toISOString() })

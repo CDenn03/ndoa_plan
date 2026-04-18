@@ -10,12 +10,14 @@ export interface TransportRoute {
   id: string; name: string; departureLocation: string; arrivalLocation: string
   departureTime: string; capacity?: number | null; eventId?: string | null
   isCompleted?: boolean
+  contactPerson?: string | null; contactPhone?: string | null
   assignedVendor?: { id: string; name: string } | null
 }
 export interface Accommodation {
   id: string; hotelName: string; address?: string | null
   checkIn: string; checkOut: string; roomsBlocked?: number | null; notes?: string | null; eventId?: string | null
   isCompleted?: boolean
+  contactPerson?: string | null; contactPhone?: string | null
 }
 
 export function AddRouteModal({ weddingId, eventId, onClose, onDone }: Readonly<{
@@ -23,7 +25,7 @@ export function AddRouteModal({ weddingId, eventId, onClose, onDone }: Readonly<
 }>) {
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ name: '', departureLocation: '', arrivalLocation: '', departureDate: '', departureTime: '08:00', capacity: '' })
+  const [form, setForm] = useState({ name: '', departureLocation: '', arrivalLocation: '', departureDate: '', departureTime: '08:00', capacity: '', contactPerson: '', contactPhone: '' })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setSaving(true)
@@ -31,7 +33,7 @@ export function AddRouteModal({ weddingId, eventId, onClose, onDone }: Readonly<
       const departureTime = new Date(`${form.departureDate}T${form.departureTime}`).toISOString()
       const res = await fetch(`/api/weddings/${weddingId}/logistics/routes`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, departureLocation: form.departureLocation, arrivalLocation: form.arrivalLocation, departureTime, capacity: form.capacity ? Number.parseInt(form.capacity) : null, eventId: eventId ?? null }),
+        body: JSON.stringify({ name: form.name, departureLocation: form.departureLocation, arrivalLocation: form.arrivalLocation, departureTime, capacity: form.capacity ? Number.parseInt(form.capacity) : null, eventId: eventId ?? null, contactPerson: form.contactPerson || null, contactPhone: form.contactPhone || null }),
       })
       if (!res.ok) throw new Error('Failed to add route')
       toast('Route added', 'success'); onDone(); onClose()
@@ -55,6 +57,12 @@ export function AddRouteModal({ weddingId, eventId, onClose, onDone }: Readonly<
           <div><Label htmlFor="route-cap">Capacity</Label>
             <Input id="route-cap" type="number" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} placeholder="50" min="1" /></div>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="route-contact">Contact person</Label>
+            <Input id="route-contact" value={form.contactPerson} onChange={e => setForm(f => ({ ...f, contactPerson: e.target.value }))} placeholder="Driver / coordinator name" /></div>
+          <div><Label htmlFor="route-phone">Contact phone</Label>
+            <Input id="route-phone" value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+254 7XX XXX XXX" /></div>
+        </div>
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
           <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Adding…' : 'Add route'}</Button>
@@ -74,6 +82,7 @@ export function EditRouteModal({ weddingId, route, onClose, onDone }: Readonly<{
     name: route.name, departureLocation: route.departureLocation, arrivalLocation: route.arrivalLocation,
     departureDate: format(dt, 'yyyy-MM-dd'), departureTime: format(dt, 'HH:mm'),
     capacity: route.capacity ? String(route.capacity) : '',
+    contactPerson: route.contactPerson ?? '', contactPhone: route.contactPhone ?? '',
   })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -82,7 +91,7 @@ export function EditRouteModal({ weddingId, route, onClose, onDone }: Readonly<{
       const departureTime = new Date(`${form.departureDate}T${form.departureTime}`).toISOString()
       const res = await fetch(`/api/weddings/${weddingId}/logistics/routes/${route.id}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, departureLocation: form.departureLocation, arrivalLocation: form.arrivalLocation, departureTime, capacity: form.capacity ? Number.parseInt(form.capacity) : null }),
+        body: JSON.stringify({ name: form.name, departureLocation: form.departureLocation, arrivalLocation: form.arrivalLocation, departureTime, capacity: form.capacity ? Number.parseInt(form.capacity) : null, contactPerson: form.contactPerson || null, contactPhone: form.contactPhone || null }),
       })
       if (!res.ok) throw new Error('Failed to update route')
       toast('Route updated', 'success'); onDone(); onClose()
@@ -105,6 +114,12 @@ export function EditRouteModal({ weddingId, route, onClose, onDone }: Readonly<{
             <Input id="er-time" type="time" value={form.departureTime} onChange={e => setForm(f => ({ ...f, departureTime: e.target.value }))} /></div>
           <div><Label htmlFor="er-cap">Capacity</Label>
             <Input id="er-cap" type="number" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} min="1" /></div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="er-contact">Contact person</Label>
+            <Input id="er-contact" value={form.contactPerson} onChange={e => setForm(f => ({ ...f, contactPerson: e.target.value }))} placeholder="Driver / coordinator name" /></div>
+          <div><Label htmlFor="er-phone">Contact phone</Label>
+            <Input id="er-phone" value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+254 7XX XXX XXX" /></div>
         </div>
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
@@ -184,6 +199,7 @@ function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
     hotelName: '', address: '', checkIn: '', checkOut: '', roomsBlocked: '', notes: '',
+    contactPerson: '', contactPhone: '',
     guestType: 'none' as 'none' | 'individual' | 'group',
     selectedGuestIds: [] as string[],
     groupName: '', groupSize: '',
@@ -213,6 +229,7 @@ function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly
           roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null,
           notes: [assignedTo ? `Assigned to: ${assignedTo}` : '', form.notes].filter(Boolean).join('\n') || null,
           eventId: eventId ?? null,
+          contactPerson: form.contactPerson || null, contactPhone: form.contactPhone || null,
         }),
       })
       if (!res.ok) throw new Error('Failed to add accommodation')
@@ -235,6 +252,13 @@ function AddAccommodationModal({ weddingId, eventId, onClose, onDone }: Readonly
         </div>
         <div><Label htmlFor="hotel-rooms">Rooms blocked</Label>
           <Input id="hotel-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} placeholder="1" min="1" /></div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="hotel-contact">Contact person</Label>
+            <Input id="hotel-contact" value={form.contactPerson} onChange={e => setForm(f => ({ ...f, contactPerson: e.target.value }))} placeholder="Hotel coordinator name" /></div>
+          <div><Label htmlFor="hotel-phone">Contact phone</Label>
+            <Input id="hotel-phone" value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+254 7XX XXX XXX" /></div>
+        </div>
 
         {/* Assignment type */}
         <div>
@@ -310,6 +334,7 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
     checkIn: accommodation.checkIn.slice(0, 10), checkOut: accommodation.checkOut.slice(0, 10),
     roomsBlocked: accommodation.roomsBlocked ? String(accommodation.roomsBlocked) : '',
     notes: restNotes,
+    contactPerson: accommodation.contactPerson ?? '', contactPhone: accommodation.contactPhone ?? '',
     guestType: (assignedLine ? (groupMatch ? 'group' : 'individual') : 'none') as 'none' | 'individual' | 'group',
     selectedGuestIds: [] as string[],
     groupName: groupMatch ? groupMatch[1] : '',
@@ -339,6 +364,7 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
           checkIn: form.checkIn, checkOut: form.checkOut,
           roomsBlocked: form.roomsBlocked ? Number.parseInt(form.roomsBlocked) : null,
           notes: [assignedTo ? `Assigned to: ${assignedTo}` : '', form.notes].filter(Boolean).join('\n') || null,
+          contactPerson: form.contactPerson || null, contactPhone: form.contactPhone || null,
         }),
       })
       if (!res.ok) throw new Error('Failed to update accommodation')
@@ -361,6 +387,13 @@ export function EditAccommodationModal({ weddingId, accommodation, onClose, onDo
         </div>
         <div><Label htmlFor="ea-rooms">Rooms blocked</Label>
           <Input id="ea-rooms" type="number" value={form.roomsBlocked} onChange={e => setForm(f => ({ ...f, roomsBlocked: e.target.value }))} min="1" /></div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="ea-contact">Contact person</Label>
+            <Input id="ea-contact" value={form.contactPerson} onChange={e => setForm(f => ({ ...f, contactPerson: e.target.value }))} placeholder="Hotel coordinator name" /></div>
+          <div><Label htmlFor="ea-phone">Contact phone</Label>
+            <Input id="ea-phone" value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+254 7XX XXX XXX" /></div>
+        </div>
 
         <div>
           <Label>Assigned to</Label>
@@ -452,6 +485,11 @@ export function RouteRow({ route, weddingId, onRefresh }: Readonly<{
             {route.capacity ? ` · ${route.capacity} seats` : ''}
           </p>
           {route.assignedVendor && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">{route.assignedVendor.name}</p>}
+          {(route.contactPerson ?? route.contactPhone) && (
+            <p className="text-xs text-[#14161C]/55 mt-0.5 flex items-center gap-1">
+              📞 {route.contactPerson}{route.contactPerson && route.contactPhone ? ' · ' : ''}{route.contactPhone && <a href={`tel:${route.contactPhone}`} className="text-[#1F4D3A] hover:underline">{route.contactPhone}</a>}
+            </p>
+          )}
         </div>
         <div className="flex gap-1 flex-shrink-0">
           {route.isCompleted && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full self-center">Done</span>}
@@ -515,6 +553,11 @@ export function AccommodationRow({ accommodation, weddingId, onRefresh }: Readon
             {accommodation.roomsBlocked ? ` · ${accommodation.roomsBlocked} rooms` : ''}
           </p>
           {assignedTo && <p className="text-xs text-[#1F4D3A]/70 mt-0.5">👤 {assignedTo}</p>}
+          {(accommodation.contactPerson ?? accommodation.contactPhone) && (
+            <p className="text-xs text-[#14161C]/55 mt-0.5 flex items-center gap-1">
+              📞 {accommodation.contactPerson}{accommodation.contactPerson && accommodation.contactPhone ? ' · ' : ''}{accommodation.contactPhone && <a href={`tel:${accommodation.contactPhone}`} className="text-[#1F4D3A] hover:underline">{accommodation.contactPhone}</a>}
+            </p>
+          )}
           {restNotes && <p className="text-xs text-[#14161C]/40 mt-0.5 italic">{restNotes}</p>}
         </div>
         <div className="flex gap-1 flex-shrink-0">

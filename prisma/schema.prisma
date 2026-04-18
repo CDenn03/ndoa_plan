@@ -836,6 +836,8 @@ enum TemplateType {
   APPOINTMENT
   ACTIVITY_GROUP
   GUEST_TAGS
+  PHOTOGRAPHY
+  SHOT_LIST
 }
 
 // ─── Dowry Items ──────────────────────────────────────────────────────────────
@@ -946,6 +948,8 @@ model TransportRoute {
   departureTime     DateTime
   capacity          Int?
   assignedVendorId  String?
+  contactPerson     String?
+  contactPhone      String?
   isCompleted       Boolean         @default(false)
   wedding           Wedding         @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event             WeddingEvent?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
@@ -975,6 +979,8 @@ model Accommodation {
   checkOut     DateTime
   roomsBlocked Int?
   notes        String?
+  contactPerson String?
+  contactPhone  String?
   isCompleted  Boolean              @default(false)
   wedding      Wedding              @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   event        WeddingEvent?        @relation(fields: [eventId], references: [id], onDelete: SetNull)

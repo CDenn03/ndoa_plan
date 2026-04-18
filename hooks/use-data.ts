@@ -108,20 +108,20 @@ export function useBudgetLines(weddingId: string) {
         estimated: Number(l.estimated) || 0,
         actual: Number(l.actual) || 0,
       })
-
+      // Always fetch from server (actual is server-computed from payments)
       const res = await fetch(`/api/weddings/${weddingId}/budget`)
       if (!res.ok) {
-        // Offline fallback: return whatever is in Dexie
+        // Offline fallback: return Dexie data
         const local = await weddingDB.budgetLines.where('weddingId').equals(weddingId)
           .filter(l => !l.deletedAt).toArray()
         return local.map(sanitize)
       }
       const serverLines: LocalBudgetLine[] = (await res.json() as LocalBudgetLine[]).map(sanitize)
-      // Preserve any dirty (unsynced) local lines not yet on the server
+      // Merge any dirty (unsynced) local lines not yet on the server
       const dirty = (await weddingDB.budgetLines.where('weddingId').equals(weddingId)
         .filter(l => !!l.isDirty && !l.deletedAt).toArray()).map(sanitize)
       const dirtyIds = new Set(dirty.map(l => l.id))
-      await weddingDB.budgetLines.bulkPut(serverLines.filter(l => !dirtyIds.has(l.id)))
+      await weddingDB.budgetLines.bulkPut(serverLines)
       return [...serverLines.filter(l => !dirtyIds.has(l.id)), ...dirty]
     },
     staleTime: 0,

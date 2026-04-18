@@ -49,6 +49,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       data: lines.map(line => ({
         id: uuid(),
         weddingId: wid,
+        eventId: eventId ?? null,
         category: line.category,
         description: line.description,
         estimated: line.estimated,
@@ -77,6 +78,42 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
           createdBy: userId,
         }
       }),
+    })
+  } else if (template.type === 'SHOT_LIST') {
+    const shots = data as Array<{ title: string; group: string }>
+    await db.checklistItem.createMany({
+      data: shots.map((s, i) => ({
+        id: uuid(),
+        weddingId: wid,
+        eventId: eventId ?? null,
+        title: s.title,
+        category: 'SHOT_LIST',
+        description: s.group,   // group is stored in description field
+        priority: 2,
+        order: i,
+        isChecked: false,
+        version: 1,
+        checksum: '',
+        updatedBy: userId,
+      })),
+    })
+  } else if (template.type === 'PHOTOGRAPHY') {
+    const deliverables = data as Array<{ title: string }>
+    await db.checklistItem.createMany({
+      data: deliverables.map((d, i) => ({
+        id: uuid(),
+        weddingId: wid,
+        eventId: eventId ?? null,
+        title: d.title,
+        category: 'PHOTOGRAPHY',
+        description: 'deliverable',
+        priority: 2,
+        order: i,
+        isChecked: false,
+        version: 1,
+        checksum: '',
+        updatedBy: userId,
+      })),
     })
   }
 

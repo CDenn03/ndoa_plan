@@ -6,9 +6,10 @@ import { useBudgetLines } from '@/hooks/use-data'
 import { useQuery } from '@tanstack/react-query'
 import type { LocalBudgetLine } from '@/types'
 import {
-  BudgetLineModal, EventBudgetTab, CategoryBreakdown, QuickPayModal,
+  BudgetLineModal, EventBudgetTab, CategoryBreakdown,
   summarise, fmt, type WeddingEvent, type Vendor,
 } from '@/components/features/budget-components'
+import { PaymentModal } from '@/components/features/payment-modals'
 
 // ─── Overall tab ──────────────────────────────────────────────────────────────
 
@@ -92,7 +93,7 @@ function OverallTab({ lines, events, vendors, isLoading, weddingId, onAddLine }:
         <CategoryBreakdown lines={lines} weddingId={weddingId} events={events} vendors={vendors} onEdit={setEditingLine} onPay={setPayingLine} />
       </div>
       {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} onPay={setPayingLine} />}
-      {payingLine && <QuickPayModal weddingId={weddingId} line={payingLine} onClose={() => setPayingLine(null)} />}
+      {payingLine && <PaymentModal weddingId={weddingId} budgetLine={payingLine} events={events} onClose={() => setPayingLine(null)} />}
     </div>
   )
 }

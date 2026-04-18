@@ -2,11 +2,13 @@
 import { useState, useMemo } from 'react'
 import { DollarSign, Plus, Lightbulb, LayoutTemplate, Pencil, Trash2, CreditCard, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
 import { Button, Input, Select, Label, ProgressBar, EmptyState, Spinner, Modal, ConfirmDialog } from '@/components/ui'
-import { useBudgetLines, useAddBudgetLine } from '@/hooks/use-data'
+import { useBudgetLines } from '@/hooks/use-data'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/toast'
 import { format } from 'date-fns'
+import { weddingDB } from '@/lib/db/dexie'
 import type { LocalBudgetLine } from '@/types'
+import { PaymentModal } from '@/components/features/payment-modals'
 
 export const BUDGET_CATEGORIES = ['VENUE','CATERING','PHOTOGRAPHY','VIDEOGRAPHY','DECOR','FLOWERS','MUSIC','TRANSPORT','ATTIRE','CAKE','INVITATIONS','ACCOMMODATION','HONEYMOON','MISCELLANEOUS']
 const PAYMENT_TYPES = ['FULL', 'DEPOSIT', 'INSTALLMENT', 'BALANCE']
@@ -54,7 +56,6 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
   line?: LocalBudgetLine; onClose: () => void; onPay?: (line: LocalBudgetLine) => void
 }>) {
   const { toast } = useToast()
-  const addLine = useAddBudgetLine(weddingId)
   const qc = useQueryClient()
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
@@ -94,7 +95,7 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.selectedEventId && !line) { toast('Please select an event for this budget line', 'error'); return }
+    if (!form.selectedEventId && !line) { toast('Please select an event for this budget item', 'error'); return }
     setSaving(true)
     try {
       const payload = {
@@ -115,20 +116,26 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
           body: JSON.stringify(payload),
         })
         await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
-        toast('Budget line updated', 'success')
+        toast('Budget item updated', 'success')
       } else {
-        await addLine.mutateAsync(payload)
-        toast('Budget line added', 'success')
+        // POST directly to server so the line gets a real Postgres ID immediately
+        const res = await fetch(`/api/weddings/${weddingId}/budget`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) throw new Error('Failed to add budget item')
+        await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
+        toast('Budget item added', 'success')
       }
       onClose()
-    } catch { toast(line ? 'Failed to update' : 'Failed to add budget line', 'error') }
+    } catch { toast(line ? 'Failed to update' : 'Failed to add budget item', 'error') }
     finally { setSaving(false) }
   }
 
   const remaining = line ? Math.max(0, line.estimated - line.actual) : null
 
   return (
-    <Modal onClose={onClose} title={line ? 'Edit budget line' : 'Add budget line'}>
+    <Modal onClose={onClose} title={line ? 'Edit budget item' : 'Add budget item'}>
       <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* Event selector — only when not scoped */}
@@ -230,8 +237,8 @@ export function BudgetLineModal({ weddingId, eventId, events, vendors, line, onC
               <CreditCard size={13} /> Pay
             </Button>
           )}
-          <Button type="submit" className="flex-1" disabled={saving || addLine.isPending}>
-            {saving || addLine.isPending ? (line ? 'Saving…' : 'Adding…') : (line ? 'Save' : 'Add line')}
+          <Button type="submit" className="flex-1" disabled={saving}>
+            {saving ? (line ? 'Saving…' : 'Adding…') : (line ? 'Save' : 'Add line')}
           </Button>
         </div>
       </form>
@@ -254,7 +261,15 @@ export function LoadBudgetTemplateModal({ weddingId, eventId, onClose }: Readonl
     try {
       const res = await fetch(`/api/weddings/${weddingId}/apply-template`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ templateId, eventId }) })
       if (!res.ok) throw new Error('Failed to apply')
-      await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
+      // Fetch fresh server data (all lines for this wedding)
+      const fresh = await fetch(`/api/weddings/${weddingId}/budget`)
+      if (fresh.ok) {
+        const serverItems = await fresh.json() as LocalBudgetLine[]
+        // Clear Dexie first, then insert fresh data (prevents stale cache)
+        await weddingDB.budgetLines.where('weddingId').equals(weddingId).delete()
+        await weddingDB.budgetLines.bulkPut(serverItems)
+        qc.setQueryData(['budget', weddingId], serverItems)
+      }
       toast('Budget template applied', 'success'); onClose()
     } catch { toast('Failed to apply template', 'error') } finally { setApplying(null) }
   }
@@ -292,7 +307,7 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
     try {
       await fetch(`/api/weddings/${weddingId}/budget/${line.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
-      toast('Budget line deleted', 'success')
+      toast('Budget item deleted', 'success')
     } catch { toast('Failed to delete', 'error') }
     setConfirmDelete(null)
   }
@@ -367,7 +382,7 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
     </div>
     {confirmDelete && (
       <ConfirmDialog
-        title="Delete budget line?"
+        title="Delete budget item?"
         description={`"${confirmDelete.description}" will be permanently removed.`}
         confirmLabel="Delete"
         onConfirm={() => void handleDelete(confirmDelete)}
@@ -499,7 +514,7 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
   const { toast } = useToast()
   const qc = useQueryClient()
 
-  const lines = useMemo(() => allLines.filter(l => l.eventId === eventId), [allLines, eventId])
+  const lines = useMemo(() => allLines.filter(l => l.eventId === eventId && !l.deletedAt), [allLines, eventId])
   const { estimated: totalEstimated, actual: totalActual } = summarise(lines)
   const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
@@ -525,7 +540,7 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
     try {
       await fetch(`/api/weddings/${weddingId}/budget/${line.id}`, { method: 'DELETE' })
       await qc.invalidateQueries({ queryKey: ['budget', weddingId] })
-      toast('Budget line deleted', 'success')
+      toast('Budget item deleted', 'success')
     } catch { toast('Failed to delete', 'error') }
     setConfirmDelete(null)
   }
@@ -546,7 +561,7 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
             <LayoutTemplate size={13} /> Load template
           </Button>
           <Button size="sm" onClick={() => setShowAdd(true)}>
-            <Plus size={14} /> Add line
+            <Plus size={14} /> Add item
           </Button>
         </div>
       </div>
@@ -570,9 +585,9 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
       )}
 
       {lines.length === 0 ? (
-        <EmptyState icon={<DollarSign size={40} />} title="No budget lines for this event"
-          description="Add line items or load a template to get started"
-          action={<Button onClick={() => setShowAdd(true)}><Plus size={14} /> Add line item</Button>} />
+        <EmptyState icon={<DollarSign size={40} />} title="No budget items for this event"
+          description="Add items or load a template to get started"
+          action={<Button onClick={() => setShowAdd(true)}><Plus size={14} /> Add budget item</Button>} />
       ) : (
         <>
           {/* Stats card */}
@@ -672,10 +687,10 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
       {showAdd && <BudgetLineModal weddingId={weddingId} eventId={eventId} events={events} vendors={vendors} onClose={() => setShowAdd(false)} onPay={setPayingLine} />}
       {editingLine && <BudgetLineModal weddingId={weddingId} events={events} vendors={vendors} line={editingLine} onClose={() => setEditingLine(null)} onPay={setPayingLine} />}
       {showTemplate && <LoadBudgetTemplateModal weddingId={weddingId} eventId={eventId} onClose={() => setShowTemplate(false)} />}
-      {payingLine && <QuickPayModal weddingId={weddingId} line={payingLine} onClose={() => setPayingLine(null)} />}
+      {payingLine && <PaymentModal weddingId={weddingId} budgetLine={payingLine} events={events} onClose={() => setPayingLine(null)} />}
       {confirmDelete && (
         <ConfirmDialog
-          title="Delete budget line?"
+          title="Delete budget item?"
           description={`"${confirmDelete.description}" will be permanently removed.`}
           confirmLabel="Delete"
           onConfirm={() => void handleDelete(confirmDelete)}
@@ -703,6 +718,17 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
     mpesaRef: '',
     paymentDate: new Date().toISOString().split('T')[0],
     status: 'COMPLETED',
+    vendorId: line.vendorId ?? '',
+    vendorNameOverride: line.vendorName ?? '',
+  })
+
+  // Load vendors for the dropdown (only needed when line has no vendor)
+  const needsVendor = !line.vendorId && !line.vendorName
+  const { data: vendors = [] } = useQuery<{ id: string; name: string; category: string }[]>({
+    queryKey: ['vendors', weddingId, 'select'],
+    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/vendors`); if (!res.ok) return []; return res.json() },
+    staleTime: 60_000,
+    enabled: needsVendor,
   })
 
   const handlePaymentTypeChange = (type: 'full' | 'partial') => {
@@ -711,7 +737,12 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); setSaving(true)
+    e.preventDefault()
+    if (!form.vendorId && !form.vendorNameOverride.trim()) {
+      toast('Please select a vendor or enter a vendor name', 'error')
+      return
+    }
+    setSaving(true)
     try {
       const res = await fetch(`/api/weddings/${weddingId}/payments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -720,7 +751,8 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
           description: form.description || null,
           payerName: form.payerName || null,
           mpesaRef: form.mpesaRef || null,
-          vendorId: line.vendorId || null,
+          vendorId: form.vendorId || null,
+          vendorNameOverride: !form.vendorId ? form.vendorNameOverride.trim() : null,
           status: form.status,
           eventId: line.eventId || null,
           budgetLineId: line.serverId ?? line.id,
@@ -736,6 +768,8 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
     finally { setSaving(false) }
   }
 
+  const resolvedVendorName = line.vendorName ?? vendors.find(v => v.id === form.vendorId)?.name
+
   return (
     <Modal onClose={onClose} title={`Pay — ${line.description}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -749,13 +783,46 @@ export function QuickPayModal({ weddingId, line, onClose }: Readonly<{
           </div>
         </div>
 
+        {/* Vendor — show if present, prompt if missing */}
+        {resolvedVendorName ? (
+          <div className="flex items-center gap-3 bg-[#1F4D3A]/6 rounded-xl px-4 py-3">
+            <div className="w-8 h-8 rounded-full bg-[#1F4D3A]/10 flex items-center justify-center text-xs font-bold text-[#1F4D3A] flex-shrink-0">
+              {resolvedVendorName.charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-[#14161C]/40 font-medium">Vendor</p>
+              <p className="text-sm font-semibold text-[#14161C] truncate">{resolvedVendorName}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 space-y-2">
+            <p className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
+              <span>⚠</span> No vendor linked — select one or enter a name
+            </p>
+            {vendors.length > 0 && (
+              <Select value={form.vendorId} onChange={e => setForm(f => ({ ...f, vendorId: e.target.value, vendorNameOverride: '' }))}>
+                <option value="">— Pick from your vendors —</option>
+                {vendors.map(v => <option key={v.id} value={v.id}>{v.name} — {v.category.replaceAll('_', ' ')}</option>)}
+              </Select>
+            )}
+            {!form.vendorId && (
+              <Input
+                value={form.vendorNameOverride}
+                onChange={e => setForm(f => ({ ...f, vendorNameOverride: e.target.value }))}
+                placeholder={vendors.length > 0 ? 'Or type a vendor name…' : 'Vendor name e.g. Kamau Caterers'}
+                required={!form.vendorId}
+              />
+            )}
+          </div>
+        )}
+
         {/* Full / Partial toggle */}
         <div>
           <Label>Payment type</Label>
           <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl mt-1">
             {(['full', 'partial'] as const).map(t => (
               <button key={t} type="button" onClick={() => handlePaymentTypeChange(t)}
-                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${paymentType === t ? 'bg-white text-[#14161C] shadow-lg border' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
                 {t === 'full' ? `Full (${fmt(remaining)})` : 'Partial'}
               </button>
             ))}

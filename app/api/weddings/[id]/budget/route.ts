@@ -20,15 +20,20 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
       deletedAt: null,
       ...(eventId ? { eventId } : {}),
     },
+    include: { vendor: { select: { id: true, name: true } } },
     orderBy: [{ category: 'asc' }, { createdAt: 'asc' }],
-  })
+  }).catch(() => db.budgetLine.findMany({
+    where: { weddingId: params.id, deletedAt: null, ...(eventId ? { eventId } : {}) },
+    orderBy: [{ category: 'asc' }, { createdAt: 'asc' }],
+  }))
 
   return NextResponse.json(lines.map(l => ({
     id: l.id, serverId: l.id, weddingId: l.weddingId,
     eventId: l.eventId ?? undefined,
     category: l.category, description: l.description,
     estimated: Number(l.estimated), actual: Number(l.actual),
-    vendorId: l.vendorId ?? undefined, vendorName: l.vendorName ?? undefined,
+    vendorId: l.vendorId ?? undefined,
+    vendorName: ('vendor' in l && l.vendor) ? (l.vendor as { name: string }).name : (l.vendorName ?? undefined),
     notes: l.notes ?? undefined,
     paymentDate: l.paymentDate?.toISOString() ?? undefined,
     paymentPlan: l.paymentPlan ?? undefined, paymentType: l.paymentType ?? undefined,

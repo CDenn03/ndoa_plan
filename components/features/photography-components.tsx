@@ -1,7 +1,8 @@
 'use client'
-import { useState, useRef } from 'react'
-import { Camera, Video, Plus, Pencil, Trash2, Check, X, Upload,
-  CheckSquare, DollarSign, FileText, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { useState } from 'react'
+import { Camera, Video, Plus, Pencil, Trash2, Check, X,
+  CheckSquare, FileText, ChevronDown, ChevronUp, ExternalLink, 
+  LayoutTemplate} from 'lucide-react'
 import { Button, Input, Label, Select, Modal, Badge, EmptyState, Spinner, ProgressBar } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -219,7 +220,7 @@ function VendorModal({ weddingId, vendor, onClose }: Readonly<{
           <div><Label htmlFor="pv-name">Name *</Label>
             <Input id="pv-name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Studio name" required /></div>
           <div><Label htmlFor="pv-cat">Type</Label>
-            <Select id="pv-cat" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+            <Select id="pv-cat" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as 'PHOTOGRAPHY' | 'VIDEOGRAPHY' }))}>
               <option value="PHOTOGRAPHY">Photography</option>
               <option value="VIDEOGRAPHY">Videography</option>
             </Select></div>
@@ -377,6 +378,64 @@ function ChecklistSection({ items, weddingId, eventId, title, category, template
   )
 }
 
+// ─── Load Shot List Template Modal ───────────────────────────────────────────
+
+function LoadShotListTemplateModal({ weddingId, eventId, onClose }: Readonly<{
+  weddingId: string; eventId?: string; onClose: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [applying, setApplying] = useState<string | null>(null)
+
+  const { data: templates = [], isLoading } = useQuery({
+    queryKey: ['templates', 'SHOT_LIST'],
+    queryFn: async () => {
+      const res = await fetch('/api/templates?type=SHOT_LIST')
+      if (!res.ok) return []
+      return res.json() as Promise<{ id: string; name: string; data: { title: string; group: string }[] }[]>
+    },
+  })
+
+  const handleApply = async (templateId: string) => {
+    setApplying(templateId)
+    try {
+      const res = await fetch(`/api/weddings/${weddingId}/apply-template`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateId, eventId: eventId ?? undefined }),
+      })
+      if (!res.ok) throw new Error()
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      toast('Template applied', 'success')
+      onClose()
+    } catch { toast('Failed to apply template', 'error') }
+    finally { setApplying(null) }
+  }
+
+  return (
+    <Modal onClose={onClose} title="Load shot list template">
+      <div className="space-y-3">
+        <p className="text-xs text-[#14161C]/40">Appends shots to your list. Existing shots are not affected.</p>
+        {isLoading ? <div className="flex justify-center py-8"><Spinner /></div> :
+          templates.length === 0 ? <p className="text-sm text-[#14161C]/40 py-4 text-center">No templates available.</p> : (
+            <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-thin">
+              {templates.map(t => (
+                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-[#1F4D3A]/8 last:border-0">
+                  <div>
+                    <p className="text-sm font-semibold text-[#14161C]">{t.name}</p>
+                    <p className="text-xs text-[#14161C]/40">{t.data.length} shots</p>
+                  </div>
+                  <Button size="sm" variant="lavender" onClick={() => void handleApply(t.id)} disabled={applying === t.id}>
+                    {applying === t.id ? <Spinner size="sm" /> : 'Apply'}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+      </div>
+    </Modal>
+  )
+}
+
 // ─── Shot List Section ────────────────────────────────────────────────────────
 
 function ShotListSection({ items, weddingId, eventId }: Readonly<{
@@ -385,12 +444,15 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
   const qc = useQueryClient()
   const { toast } = useToast()
   const [adding, setAdding] = useState(false)
+  const [showTemplate, setShowTemplate] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newGroup, setNewGroup] = useState('CEREMONY')
   const [loadingGroup, setLoadingGroup] = useState<string | null>(null)
-
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'done'>('all')
+  const [editingItem, setEditingItem] = useState<PhotographyChecklistItem | null>(null)
+  const [editTitle, setEditTitle] = useState('')
   const groups = Object.keys(SHOT_LIST_TEMPLATES) as (keyof typeof SHOT_LIST_TEMPLATES)[]
-  const done = items.filter(i => i.isChecked).length
+  const captured = items.filter(i => i.isChecked).length
 
   const toggle = async (item: PhotographyChecklistItem) => {
     try {
@@ -407,15 +469,23 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
     try {
       await fetch(`/api/weddings/${weddingId}/checklist`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: newTitle.trim(), category: 'SHOT_LIST',
-          description: newGroup, eventId: eventId ?? null,
-          priority: 2, order: items.length, isChecked: false,
-        }),
+        body: JSON.stringify({ title: newTitle.trim(), category: 'SHOT_LIST', description: newGroup, eventId: eventId ?? null, priority: 2, order: items.length, isChecked: false }),
       })
       await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
       setNewTitle(''); setAdding(false)
     } catch { toast('Failed to add shot', 'error') }
+  }
+
+  const saveEdit = async () => {
+    if (!editingItem || !editTitle.trim()) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/checklist/${editingItem.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: editTitle.trim() }),
+      })
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      setEditingItem(null)
+    } catch { toast('Failed to update', 'error') }
   }
 
   const deleteShot = async (id: string) => {
@@ -441,8 +511,13 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
     finally { setLoadingGroup(null) }
   }
 
-  // Group items by their description field (used as group label)
-  const grouped = items.reduce<Record<string, PhotographyChecklistItem[]>>((acc, item) => {
+  const filtered = items.filter(i => {
+    if (statusFilter === 'pending') return !i.isChecked
+    if (statusFilter === 'done') return i.isChecked
+    return true
+  })
+
+  const grouped = filtered.reduce<Record<string, PhotographyChecklistItem[]>>((acc, item) => {
     const g = item.description ?? 'OTHER'
     if (!acc[g]) acc[g] = []
     acc[g].push(item)
@@ -450,16 +525,30 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
   }, {})
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Shot List</p>
-          <span className="text-xs text-[#14161C]/40">{done}/{items.length} captured</span>
+        <p className="text-sm text-[#14161C]/55">{captured}/{items.length} captured</p>
+        <div className="flex gap-2">
+          <Button size="sm" variant="lavender" onClick={() => setShowTemplate(true)}>
+            <LayoutTemplate size={13} /> Load template
+          </Button>
+          <Button size="sm" onClick={() => setAdding(true)}><Plus size={13} /> Add shot</Button>
         </div>
-        <Button size="sm" onClick={() => setAdding(true)}><Plus size={13} /> Add shot</Button>
       </div>
 
-      {/* Template loader */}
+      {/* Progress */}
+      {items.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-[#14161C]/55">Progress</span>
+            <span className="font-bold text-[#1F4D3A]">{items.length > 0 ? Math.round((captured / items.length) * 100) : 0}% · {captured}/{items.length}</span>
+          </div>
+          <ProgressBar value={captured} max={items.length} />
+        </div>
+      )}
+
+      {/* Template loader — only when empty */}
       {items.length === 0 && (
         <div className="rounded-xl border border-dashed border-[#1F4D3A]/12 p-4 space-y-2">
           <p className="text-xs text-[#14161C]/40 font-medium">Load shot group templates:</p>
@@ -474,40 +563,95 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
         </div>
       )}
 
-      {/* Grouped shot list */}
-      {Object.entries(grouped).map(([group, shots]) => (
-        <div key={group} className="space-y-1">
-          <p className="text-[10px] font-bold text-[#14161C]/25 uppercase tracking-widest px-1">{group.replace('_', ' ')}</p>
-          <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
-            {shots.map(shot => (
-              <div key={shot.id} className="group flex items-center gap-3 px-4 py-2.5 border-b border-zinc-50 last:border-0">
-                <button onClick={() => toggle(shot)}
-                  className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${shot.isChecked ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-300 hover:border-emerald-400'}`}
-                  aria-label={shot.isChecked ? 'Uncheck' : 'Check'}>
-                  {shot.isChecked && <Check size={10} className="text-white" />}
-                </button>
-                <p className={`flex-1 text-sm ${shot.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]/70'}`}>{shot.title}</p>
-                <button onClick={() => deleteShot(shot.id)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-50 text-[#14161C]/25 hover:text-red-400 transition-all" aria-label="Delete">
-                  <Trash2 size={11} />
-                </button>
-              </div>
-            ))}
-          </div>
+      {/* Filters */}
+      {items.length > 0 && (
+        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
+          {(['all', 'pending', 'done'] as const).map(f => (
+            <button key={f} onClick={() => setStatusFilter(f)}
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${statusFilter === f ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
+              {f}
+            </button>
+          ))}
         </div>
-      ))}
+      )}
 
+      {/* Grouped shot list */}
+      {filtered.length === 0 && items.length > 0 ? (
+        <p className="text-sm text-[#14161C]/40 py-6 text-center">No shots match this filter.</p>
+      ) : (
+        <div className="space-y-8">
+          {Object.entries(grouped).map(([group, shots]) => {
+            const groupCaptured = shots.filter(s => s.isChecked).length
+            return (
+              <div key={group}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">{group.replace(/_/g, ' ')}</p>
+                  <span className="text-xs text-[#14161C]/40">{groupCaptured}/{shots.length}</span>
+                </div>
+                <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
+                  {shots.map(shot => (
+                    <div key={shot.id} className={`group flex items-start gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 ${shot.isChecked ? 'opacity-50' : ''}`}>
+                      <button
+                        onClick={() => toggle(shot)}
+                        className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                          shot.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
+                        }`}
+                        aria-label={shot.isChecked ? 'Mark not captured' : 'Mark captured'}>
+                        {shot.isChecked && (
+                          <svg viewBox="0 0 12 10" className="w-3 h-3 fill-white">
+                            <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        {editingItem?.id === shot.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input value={editTitle} onChange={e => setEditTitle(e.target.value)}
+                              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void saveEdit() } if (e.key === 'Escape') setEditingItem(null) }}
+                              className="h-7 text-sm flex-1" autoFocus />
+                            <button onClick={() => void saveEdit()} className="p-1 rounded hover:bg-[#1F4D3A]/6 text-[#1F4D3A]" aria-label="Save"><Check size={13} /></button>
+                            <button onClick={() => setEditingItem(null)} className="p-1 rounded hover:bg-[#1F4D3A]/6 text-[#14161C]/40" aria-label="Cancel"><X size={13} /></button>
+                          </div>
+                        ) : (
+                          <p className={`text-sm font-semibold ${shot.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]'}`}>{shot.title}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <button onClick={() => { setEditingItem(shot); setEditTitle(shot.title) }}
+                          className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit">
+                          <Pencil size={13} />
+                        </button>
+                        <button onClick={() => deleteShot(shot.id)}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Inline add form */}
       {adding && (
         <div className="flex items-center gap-2 flex-wrap">
           <select value={newGroup} onChange={e => setNewGroup(e.target.value)}
             className="text-xs border border-[#1F4D3A]/12 rounded-xl px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300">
-            {groups.map(g => <option key={g} value={g}>{g.replace('_', ' ')}</option>)}
+            {groups.map(g => <option key={g} value={g}>{g.replace(/_/g, ' ')}</option>)}
           </select>
           <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Shot description…" className="flex-1 h-8 text-sm"
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addShot() } if (e.key === 'Escape') { setAdding(false); setNewTitle('') } }}
             autoFocus />
-          <button onClick={addShot} className="p-1.5 rounded-lg bg-[#1F4D3A]/6 text-[#1F4D3A] hover:bg-[#1F4D3A]/10" aria-label="Save"><Check size={13} /></button>
+          <button onClick={() => void addShot()} className="p-1.5 rounded-lg bg-[#1F4D3A]/6 text-[#1F4D3A] hover:bg-[#1F4D3A]/10" aria-label="Save"><Check size={13} /></button>
           <button onClick={() => { setAdding(false); setNewTitle('') }} className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40" aria-label="Cancel"><X size={13} /></button>
         </div>
+      )}
+
+      {showTemplate && (
+        <LoadShotListTemplateModal weddingId={weddingId} eventId={eventId} onClose={() => setShowTemplate(false)} />
       )}
     </div>
   )
@@ -515,24 +659,83 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
 
 // ─── Deliverables Section ─────────────────────────────────────────────────────
 
-interface Deliverable { label: string; key: string; expectedKey: string; receivedKey: string }
-
-const DELIVERABLES: Deliverable[] = [
-  { label: 'Sneak peek', key: 'sneak_peek', expectedKey: 'sneak_peek_expected', receivedKey: 'sneak_peek_received' },
-  { label: 'Full gallery', key: 'gallery', expectedKey: 'gallery_expected', receivedKey: 'gallery_received' },
-  { label: 'Highlight video', key: 'highlight', expectedKey: 'highlight_expected', receivedKey: 'highlight_received' },
-  { label: 'Full film', key: 'film', expectedKey: 'film_expected', receivedKey: 'film_received' },
-  { label: 'Printed album', key: 'album', expectedKey: 'album_expected', receivedKey: 'album_received' },
+const DEFAULT_DELIVERABLES = [
+  'Sneak peek', 'Full gallery', 'Highlight video', 'Full film', 'Printed album',
 ]
+
+// ─── Load Deliverable Template Modal ─────────────────────────────────────────
+
+function LoadDeliverableTemplateModal({ weddingId, eventId, onClose }: Readonly<{
+  weddingId: string; eventId?: string; onClose: () => void
+}>) {
+  const { toast } = useToast()
+  const qc = useQueryClient()
+  const [applying, setApplying] = useState<string | null>(null)
+
+  const { data: templates = [], isLoading } = useQuery({
+    queryKey: ['templates', 'PHOTOGRAPHY'],
+    queryFn: async () => {
+      const res = await fetch('/api/templates?type=PHOTOGRAPHY')
+      if (!res.ok) return []
+      return res.json() as Promise<{ id: string; name: string; data: { title: string }[] }[]>
+    },
+  })
+
+  const handleApply = async (templateId: string) => {
+    setApplying(templateId)
+    try {
+      const res = await fetch(`/api/weddings/${weddingId}/apply-template`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateId, eventId: eventId ?? undefined }),
+      })
+      if (!res.ok) throw new Error()
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      toast('Template applied', 'success')
+      onClose()
+    } catch { toast('Failed to apply template', 'error') }
+    finally { setApplying(null) }
+  }
+
+  return (
+    <Modal onClose={onClose} title="Load template">
+      <div className="space-y-3">
+        <p className="text-xs text-[#14161C]/40">Appends deliverables to your list. Existing items are not affected.</p>
+        {isLoading ? <div className="flex justify-center py-8"><Spinner /></div> :
+          templates.length === 0 ? <p className="text-sm text-[#14161C]/40 py-4 text-center">No templates available.</p> : (
+            <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-thin">
+              {templates.map(t => (
+                <div key={t.id} className="flex items-center justify-between gap-3 py-3 border-b border-[#1F4D3A]/8 last:border-0">
+                  <div>
+                    <p className="text-sm font-semibold text-[#14161C]">{t.name}</p>
+                    <p className="text-xs text-[#14161C]/40">{t.data.length} deliverable{t.data.length !== 1 ? 's' : ''}</p>
+                  </div>
+                  <Button size="sm" variant="lavender" onClick={() => void handleApply(t.id)} disabled={applying === t.id}>
+                    {applying === t.id ? <Spinner size="sm" /> : 'Apply'}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+      </div>
+    </Modal>
+  )
+}
 
 function DeliverablesSection({ items, weddingId, eventId }: Readonly<{
   items: PhotographyChecklistItem[]; weddingId: string; eventId?: string
 }>) {
   const qc = useQueryClient()
   const { toast } = useToast()
+  const [adding, setAdding] = useState(false)
+  const [showTemplate, setShowTemplate] = useState(false)
+  const [newTitle, setNewTitle] = useState('')
+  const [newDueDate, setNewDueDate] = useState('')
+  const [editingItem, setEditingItem] = useState<PhotographyChecklistItem | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editDueDate, setEditDueDate] = useState('')
+  const [loadingDefaults, setLoadingDefaults] = useState(false)
 
-  // Deliverables are stored as checklist items with category='PHOTOGRAPHY' and description=deliverable key
-  const getItem = (key: string) => items.find(i => i.description === key)
+  const received = items.filter(i => i.isChecked).length
 
   const toggle = async (item: PhotographyChecklistItem) => {
     try {
@@ -544,41 +747,186 @@ function DeliverablesSection({ items, weddingId, eventId }: Readonly<{
     } catch { toast('Failed to update', 'error') }
   }
 
-  const ensureItem = async (key: string, label: string) => {
-    const existing = getItem(key)
-    if (existing) return existing
-    const res = await fetch(`/api/weddings/${weddingId}/checklist`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: label, category: 'PHOTOGRAPHY', description: key, eventId: eventId ?? null, priority: 2, order: 99, isChecked: false }),
-    })
-    await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
-    return res.json() as Promise<PhotographyChecklistItem>
+  const addItem = async () => {
+    if (!newTitle.trim()) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/checklist`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newTitle.trim(), category: 'PHOTOGRAPHY', description: 'deliverable',
+          eventId: eventId ?? null, priority: 2, order: items.length, isChecked: false,
+          dueDate: newDueDate ? new Date(newDueDate).toISOString() : null,
+        }),
+      })
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      setNewTitle(''); setNewDueDate(''); setAdding(false)
+      toast('Deliverable added', 'success')
+    } catch { toast('Failed to add', 'error') }
+  }
+
+  const saveEdit = async () => {
+    if (!editingItem || !editTitle.trim()) return
+    try {
+      await fetch(`/api/weddings/${weddingId}/checklist/${editingItem.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editTitle.trim(),
+          dueDate: editDueDate ? new Date(editDueDate).toISOString() : null,
+        }),
+      })
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      setEditingItem(null)
+      toast('Updated', 'success')
+    } catch { toast('Failed to update', 'error') }
+  }
+
+  const deleteItem = async (id: string) => {
+    try {
+      await fetch(`/api/weddings/${weddingId}/checklist/${id}`, { method: 'DELETE' })
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      toast('Removed', 'success')
+    } catch { toast('Failed to delete', 'error') }
+  }
+
+  const loadDefaults = async () => {
+    setLoadingDefaults(true)
+    const existing = new Set(items.map(i => i.title.toLowerCase()))
+    const toAdd = DEFAULT_DELIVERABLES.filter(d => !existing.has(d.toLowerCase()))
+    if (toAdd.length === 0) { toast('All defaults already added', 'success'); setLoadingDefaults(false); return }
+    try {
+      for (let i = 0; i < toAdd.length; i++) {
+        await fetch(`/api/weddings/${weddingId}/checklist`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: toAdd[i], category: 'PHOTOGRAPHY', description: 'deliverable', eventId: eventId ?? null, priority: 2, order: items.length + i, isChecked: false }),
+        })
+      }
+      await qc.invalidateQueries({ queryKey: ['photography', weddingId] })
+      toast(`${toAdd.length} deliverable${toAdd.length !== 1 ? 's' : ''} added`, 'success')
+    } catch { toast('Failed to load', 'error') }
+    finally { setLoadingDefaults(false) }
   }
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Deliverables</p>
-      <div className="bg-white rounded-xl border border-[#1F4D3A]/8 overflow-hidden">
-        {DELIVERABLES.map(d => {
-          const item = getItem(d.key)
-          return (
-            <div key={d.key} className="flex items-center gap-4 px-4 py-3 border-b border-zinc-50 last:border-0">
-              <button
-                onClick={async () => {
-                  const it = item ?? await ensureItem(d.key, d.label)
-                  if (it) await toggle(it)
-                }}
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${item?.isChecked ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-300 hover:border-emerald-400'}`}
-                aria-label={item?.isChecked ? 'Mark not received' : 'Mark received'}>
-                {item?.isChecked && <Check size={10} className="text-white" />}
-              </button>
-              <p className={`flex-1 text-sm font-medium ${item?.isChecked ? 'text-[#14161C]/40 line-through' : 'text-[#14161C]/70'}`}>{d.label}</p>
-              {item?.isChecked && <span className="text-xs text-emerald-600 font-semibold">Received</span>}
-              {!item?.isChecked && <span className="text-xs text-[#14161C]/25">Pending</span>}
-            </div>
-          )
-        })}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[#14161C]/55">{received}/{items.length} received</p>
+        <div className="flex gap-2">
+          <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
+            <LayoutTemplate size={13} /> Load template
+          </Button>
+          <Button size="sm" onClick={() => setAdding(true)}><Plus size={13} /> Add deliverable</Button>
+        </div>
       </div>
+
+      {/* Progress */}
+      {items.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-[#14161C]/55">Progress</span>
+            <span className="font-bold text-[#1F4D3A]">{items.length > 0 ? Math.round((received / items.length) * 100) : 0}% · {received}/{items.length}</span>
+          </div>
+          <ProgressBar value={received} max={items.length} />
+        </div>
+      )}
+
+      {/* Empty state */}
+      {items.length === 0 && !adding && (
+        <div className="rounded-xl border border-dashed border-[#1F4D3A]/12 p-6 text-center">
+          <p className="text-sm text-[#14161C]/40">No deliverables tracked yet — use "Load defaults" or add a custom one.</p>
+        </div>
+      )}
+
+      {/* List */}
+      {items.length > 0 && (
+        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden px-4">
+          {items.map(item => (
+            <div key={item.id} className={`group flex items-start gap-4 py-3.5 border-b border-[#1F4D3A]/8 last:border-0 ${item.isChecked ? 'opacity-60' : ''}`}>
+              {/* Checkbox */}
+              <button
+                onClick={() => void toggle(item)}
+                className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                  item.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
+                }`}
+                aria-label={item.isChecked ? 'Mark not received' : 'Mark received'}>
+                {item.isChecked && (
+                  <svg viewBox="0 0 12 10" className="w-3 h-3 fill-white">
+                    <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                {editingItem?.id === item.id ? (
+                  <div className="space-y-2">
+                    <Input value={editTitle} onChange={e => setEditTitle(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void saveEdit() } if (e.key === 'Escape') setEditingItem(null) }}
+                      className="h-7 text-sm" autoFocus />
+                    <div className="flex items-center gap-2">
+                      <input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)}
+                        className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300" />
+                      <button onClick={() => void saveEdit()} className="p-1 rounded hover:bg-[#1F4D3A]/6 text-[#1F4D3A]" aria-label="Save"><Check size={13} /></button>
+                      <button onClick={() => setEditingItem(null)} className="p-1 rounded hover:bg-[#1F4D3A]/6 text-[#14161C]/40" aria-label="Cancel"><X size={13} /></button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className={`text-sm font-semibold ${item.isChecked ? 'line-through text-[#14161C]/40' : 'text-[#14161C]'}`}>{item.title}</p>
+                    <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                      {item.isChecked
+                        ? <span className="text-xs font-semibold text-emerald-600">✓ Received</span>
+                        : <span className="text-xs text-amber-500 font-medium">Pending</span>
+                      }
+                      {item.dueDate && !item.isChecked && (
+                        <span className="text-xs text-[#14161C]/40">
+                          Expected {format(new Date(item.dueDate), 'MMM d, yyyy')}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Actions */}
+              {editingItem?.id !== item.id && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => { setEditingItem(item); setEditTitle(item.title); setEditDueDate(item.dueDate ? item.dueDate.split('T')[0] : '') }}
+                    className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Edit">
+                    <Pencil size={13} />
+                  </button>
+                  <button onClick={() => void deleteItem(item.id)}
+                    className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Inline add form */}
+      {adding && (
+        <div className="bg-[#F7F5F2] rounded-xl p-4 space-y-3">
+          <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="e.g. Full gallery, Highlight reel…"
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addItem() } if (e.key === 'Escape') { setAdding(false); setNewTitle('') } }}
+            autoFocus />
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-[#14161C]/55 flex-shrink-0">Expected by</label>
+            <input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)}
+              className="text-xs border border-[#1F4D3A]/12 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 flex-1" />
+          </div>
+          <div className="flex gap-2">
+            <Button type="button" variant="secondary" size="sm" onClick={() => { setAdding(false); setNewTitle(''); setNewDueDate('') }} className="flex-1">Cancel</Button>
+            <Button size="sm" onClick={() => void addItem()} className="flex-1">Add</Button>
+          </div>
+        </div>
+      )}
+
+      {showTemplate && (
+        <LoadDeliverableTemplateModal weddingId={weddingId} eventId={eventId} onClose={() => setShowTemplate(false)} />
+      )}
     </div>
   )
 }
@@ -705,7 +1053,7 @@ interface PhotographyData {
   budgetLines: PhotographyBudgetLine[]
 }
 
-type PhotoTab = 'overview' | 'shotlist' | 'checklist' | 'deliverables' | 'budget'
+type PhotoTab = 'overview' | 'shotlist' | 'deliverables'
 
 export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: string; eventId?: string }>) {
   const [activeTab, setActiveTab] = useState<PhotoTab>('overview')
@@ -724,23 +1072,19 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
 
   const vendors = data?.vendors ?? []
   const allItems = data?.checklistItems ?? []
-  const budgetLines = data?.budgetLines ?? []
 
   // Filter by eventId if scoped
   const items = eventId ? allItems.filter(i => !i.eventId || i.eventId === eventId) : allItems
-  const lines = eventId ? budgetLines.filter(l => !l.eventId || l.eventId === eventId) : budgetLines
 
   const checklistItems = items.filter(i => i.category === 'PHOTOGRAPHY')
   const shotListItems = items.filter(i => i.category === 'SHOT_LIST')
-  const deliverableItems = checklistItems.filter(i => DELIVERABLES.some(d => d.key === i.description))
-  const preItems = checklistItems.filter(i => !DELIVERABLES.some(d => d.key === i.description) && !i.isFinalCheck)
+  const deliverableItems = checklistItems.filter(i => i.description === 'deliverable')
+  const preItems = checklistItems.filter(i => i.description !== 'deliverable' && !i.isFinalCheck)
 
   const tabs: { key: PhotoTab; label: string; icon: React.ElementType }[] = [
     { key: 'overview', label: 'Overview', icon: Camera },
     { key: 'shotlist', label: 'Shot List', icon: CheckSquare },
-    { key: 'checklist', label: 'Checklist', icon: CheckSquare },
     { key: 'deliverables', label: 'Deliverables', icon: FileText },
-    { key: 'budget', label: 'Budget', icon: DollarSign },
   ]
 
   if (isLoading) return <div className="flex justify-center py-12"><Spinner /></div>
@@ -788,7 +1132,7 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
                 <p className="text-xs text-[#14161C]/40 mt-0.5">Checklist done</p>
               </div>
               <div className="bg-[#F7F5F2] rounded-xl p-3 text-center">
-                <p className="text-lg font-extrabold text-sky-600">{deliverableItems.filter(i => i.isChecked).length}/{DELIVERABLES.length}</p>
+                <p className="text-lg font-extrabold text-sky-600">{deliverableItems.filter(i => i.isChecked).length}/{deliverableItems.length}</p>
                 <p className="text-xs text-[#14161C]/40 mt-0.5">Deliverables</p>
               </div>
             </div>
@@ -800,23 +1144,8 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
         <ShotListSection items={shotListItems} weddingId={weddingId} eventId={eventId} />
       )}
 
-      {activeTab === 'checklist' && (
-        <div className="space-y-8">
-          <ChecklistSection items={preItems.filter(i => !i.isFinalCheck)} weddingId={weddingId} eventId={eventId}
-            title="Pre-wedding" category="PHOTOGRAPHY" templateKey="PRE_WEDDING" />
-          <ChecklistSection items={preItems.filter(i => i.isFinalCheck)} weddingId={weddingId} eventId={eventId}
-            title="Day-of" category="PHOTOGRAPHY" templateKey="DAY_OF" />
-          <ChecklistSection items={checklistItems.filter(i => i.assignedToName === 'post')} weddingId={weddingId} eventId={eventId}
-            title="Post-wedding" category="PHOTOGRAPHY" templateKey="POST_WEDDING" />
-        </div>
-      )}
-
       {activeTab === 'deliverables' && (
         <DeliverablesSection items={deliverableItems} weddingId={weddingId} eventId={eventId} />
-      )}
-
-      {activeTab === 'budget' && (
-        <BudgetSection lines={lines} weddingId={weddingId} eventId={eventId} vendors={vendors} />
       )}
 
       {showVendorModal && <VendorModal weddingId={weddingId} onClose={() => setShowVendorModal(false)} />}

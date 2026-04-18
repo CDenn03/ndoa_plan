@@ -7,15 +7,17 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/toast'
 import type { Payment } from '@/hooks/use-payments'
 import {
-  PaymentRow, StkPushModal, AddManualPaymentModal, EventPaymentsTab, fmt,
+  PaymentRow, StkPushModal, EventPaymentsTab, PaymentDetailModal, fmt,
   type WeddingEvent,
 } from '@/components/features/payment-modals'
+import { PaymentModal } from '@/components/features/payment-modals'
 
 // ─── Overall tab ──────────────────────────────────────────────────────────────
 
 function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Payment[]; events: WeddingEvent[]; weddingId: string }>) {
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
   const [confirmDelete, setConfirmDelete] = useState<Payment | null>(null)
+  const [viewingPayment, setViewingPayment] = useState<Payment | null>(null)
   const qc = useQueryClient()
   const { toast } = useToast()
 
@@ -102,7 +104,7 @@ function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Paymen
         </div>
         {filtered.length === 0
           ? <p className="text-sm text-[#14161C]/40 text-center py-8">No {filter} payments</p>
-          : filtered.map(p => <PaymentRow key={p.id} p={p} onDelete={setConfirmDelete} />)}
+          : filtered.map(p => <PaymentRow key={p.id} p={p} onView={setViewingPayment} onDelete={setConfirmDelete} />)}
       </div>
       {confirmDelete && (
         <ConfirmDialog
@@ -113,6 +115,7 @@ function OverallTab({ payments, events, weddingId }: Readonly<{ payments: Paymen
           onCancel={() => setConfirmDelete(null)}
         />
       )}
+      {viewingPayment && <PaymentDetailModal p={viewingPayment} weddingId={weddingId} onClose={() => setViewingPayment(null)} />}
     </div>
   )
 }
@@ -169,7 +172,7 @@ export default function PaymentsPage(props: Readonly<{ params: Promise<{ wedding
       </div>
 
       {showStk && <StkPushModal weddingId={wid} onClose={() => setShowStk(false)} />}
-      {showManual && <AddManualPaymentModal weddingId={wid} eventId={activeEvent?.id} events={events} onClose={() => setShowManual(false)} />}
+      {showManual && <PaymentModal weddingId={wid} eventId={activeEvent?.id} events={events} onClose={() => setShowManual(false)} />}
     </div>
   )
 }
