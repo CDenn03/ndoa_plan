@@ -64,9 +64,10 @@ interface SidebarProps {
   weddingId: string
   weddingName: string
   culturalType?: string
+  isDemo?: boolean
 }
 
-export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<SidebarProps>) {
+export function Sidebar({ weddingId, weddingName, culturalType, isDemo }: Readonly<SidebarProps>) {
   const pathname = usePathname()
   const { sidebarOpen, toggleSidebar } = useWeddingStore()
   const { isOnline, circuitOpen } = useSync()
@@ -131,6 +132,18 @@ export function Sidebar({ weddingId, weddingName, culturalType }: Readonly<Sideb
         </div>
 
         <hr className="border-[#1F4D3A]/8 mx-5" />
+
+        {/* Demo mode banner */}
+        {isDemo && (
+          <div className="mx-3 mt-3 px-3 py-2.5 rounded-xl bg-[#D4A94F]/12 border border-[#D4A94F]/30">
+            <p className="text-[11px] font-bold text-[#D4A94F] flex items-center gap-1.5 mb-0.5">
+              <span>✨</span> Demo mode
+            </p>
+            <p className="text-[10px] text-[#14161C]/50 leading-relaxed">
+              Read-only preview. <a href="/login" className="text-[#1F4D3A] font-semibold hover:underline">Sign in</a> to create your own wedding.
+            </p>
+          </div>
+        )}
 
         <nav className="flex-1 px-3 py-3 overflow-y-auto scrollbar-thin">
 

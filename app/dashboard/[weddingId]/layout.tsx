@@ -29,10 +29,12 @@ export default async function DashboardLayout(
 
   if (!membership) notFound()
 
+  const isDemo = (session.user as typeof session.user & { isDemo?: boolean }).isDemo ?? false
+
   return (
     <SyncProvider weddingId={params.weddingId}>
       <div className="flex h-screen overflow-hidden bg-[#F7F5F2]">
-        <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} culturalType={membership.wedding.culturalType} />
+        <Sidebar weddingId={params.weddingId} weddingName={membership.wedding.name} culturalType={membership.wedding.culturalType} isDemo={isDemo} />
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile top bar */}
           <header className="flex items-center gap-3 px-4 py-3 border-b border-[#1F4D3A]/8 bg-white lg:hidden">

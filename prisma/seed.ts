@@ -4,7 +4,9 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-const db = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL! }) })
+// Use DIRECT_URL (non-pooled) for CLI scripts to avoid WebSocket connection issues
+const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL!
+const db = new PrismaClient({ adapter: new PrismaNeon({ connectionString }) })
 
 const WID = 'demo-wedding-id'
 const now = new Date()

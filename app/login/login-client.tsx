@@ -3,6 +3,10 @@ import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui'
 
 export function LoginClient() {
+  const handleDemo = () => {
+    void signIn('demo', { email: 'demo@ndoa.app', password: 'tryndoa2026', callbackUrl: '/dashboard' })
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -21,7 +25,7 @@ export function LoginClient() {
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-[#1F4D3A]/10 rounded-2xl p-8 shadow-sm">
+        <div className="bg-white border border-[#1F4D3A]/10 rounded-2xl p-8 shadow-sm space-y-3">
           <h2 className="font-heading text-lg font-semibold text-[#14161C] mb-1">Welcome back</h2>
           <p className="text-sm text-[#14161C]/45 mb-6">Sign in to manage your wedding</p>
 
@@ -39,8 +43,24 @@ export function LoginClient() {
             Continue with Google
           </Button>
 
-          <p className="text-xs text-[#14161C]/35 text-center mt-6">
-            Offline-first · End-to-end data integrity · M-Pesa reconciliation
+          <div className="relative flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-[#1F4D3A]/8" />
+            <span className="text-xs text-[#14161C]/30 font-medium">or</span>
+            <div className="flex-1 h-px bg-[#1F4D3A]/8" />
+          </div>
+
+          <button
+            onClick={handleDemo}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+              border-2 border-dashed border-[#D4A94F]/50 bg-[#D4A94F]/5
+              text-sm font-semibold text-[#14161C]/70 hover:bg-[#D4A94F]/10
+              hover:border-[#D4A94F]/70 transition-all"
+          >
+            Try demo — no sign-in needed
+          </button>
+
+          <p className="text-xs text-[#14161C]/35 text-center pt-2">
+            Demo is read-only · Resets daily · No data saved
           </p>
         </div>
 

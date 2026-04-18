@@ -277,3 +277,22 @@ To test on a mobile device:
 - Do not use raw IP addresses in Google OAuth — use ngrok or a proper domain
 - Do not render `Intl.NumberFormat` locale-sensitive output during SSR without a `mounted` guard
 - Do not use `bulkPut` alone when applying templates — always clear Dexie first to prevent stale data issues
+
+## Next.js 16 — Proxy vs Middleware
+
+**CRITICAL**: This project uses Next.js 16 which replaced `middleware.ts` with `proxy.ts`.
+
+- The request interception file is `proxy.ts` at the project root (NOT `middleware.ts`)
+- Export is named `proxy` (NOT `default` or `middleware`)
+- `next-auth/middleware`'s `withAuth` still works — only the filename and export name changed
+- Never create or edit `middleware.ts` — it has no effect in Next.js 16
+- Route protection, auth guards, and request interception all go in `proxy.ts`
+
+```ts
+// proxy.ts — correct pattern
+import { withAuth } from 'next-auth/middleware'
+
+export const proxy = withAuth({ pages: { signIn: '/login' } })
+
+export const config = { matcher: ['/dashboard/:path*'] }
+```
