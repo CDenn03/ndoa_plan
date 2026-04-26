@@ -7,7 +7,7 @@ import { DashboardClient } from './dashboard-client'
 import { Spinner } from '@/components/ui'
 import { differenceInDays } from 'date-fns'
 
-export default async function DashboardPage(props: { params: Promise<{ weddingId: string }> }) {
+export default async function DashboardPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
   const params = await props.params
   const session = await getServerSession(authOptions)
   if (!session?.user) redirect('/login')
@@ -61,7 +61,10 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
   const totalVendors = vendorCounts.reduce((s, v) => s + v._count, 0)
   const totalBudget = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
   const totalActual = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
-  const daysToWedding = differenceInDays(wedding.date, now)
+  // daysToWedding derived from the nearest upcoming event, not a wedding-level date
+  const daysToWedding = upcomingEvents.length > 0
+    ? differenceInDays(upcomingEvents[0].date, now)
+    : null
 
   const totalPledged = contributions.reduce((s, c) => s + Number(c.pledgeAmount), 0)
   const totalContribPaid = contributions.reduce((s, c) => s + Number(c.paidAmount), 0)
@@ -71,7 +74,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
     <Suspense fallback={<div className="flex items-center justify-center h-64"><Spinner /></div>}>
       <DashboardClient
         wedding={{
-          id: wedding.id, name: wedding.name, date: wedding.date.toISOString(),
+          id: wedding.id, name: wedding.name,
           venue: wedding.venue ?? undefined, themeColor: wedding.themeColor, budget: totalBudget,
           couplePhotoPath: wedding.couplePhotoPath ?? undefined,
         }}
@@ -83,7 +86,7 @@ export default async function DashboardPage(props: { params: Promise<{ weddingId
           upcomingTasks: upcomingTasks.length, overdueTasks: 0,
           activeRisks: activeRisks.length,
           criticalRisks: activeRisks.filter(r => r.severity === 'CRITICAL').length,
-          daysToWedding,
+          daysToWedding: daysToWedding ?? undefined,
           totalPledged, totalContribPaid, contributorCount,
         }}
         recentRisks={activeRisks.map(r => ({ id: r.id, severity: r.severity, message: r.message, category: r.category }))}

@@ -47,7 +47,7 @@ function OverallTab({ weddingId, items, events, onAdd, onSelectEvent }: Readonly
                   <div className="flex items-center gap-2 flex-wrap">
                     <CalendarDays size={15} className="text-[#14161C]/40" />
                     <p className="text-sm font-bold text-[#14161C]">{event?.name ?? 'Unassigned'}</p>
-                    <span className="text-xs text-[#14161C]/40">{evItems.length} task{evItems.length !== 1 ? 's' : ''}</span>
+                    <span className="text-xs text-[#14161C]/40">{evItems.length} task{evItems.length === 1 ? '' : 's'}</span>
                     {overdue > 0 && (
                       <span className="text-[10px] font-bold bg-red-100 text-red-600 rounded-full px-1.5 py-0.5">
                         {overdue} overdue

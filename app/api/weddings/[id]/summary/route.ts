@@ -19,8 +19,9 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const wid = params.id
+  const now = new Date()
 
-  const [guestCounts, vendorCounts, checkedIn, budgetAgg, checklistAgg, riskCount] = await Promise.all([
+  const [guestCounts, vendorCounts, checkedIn, budgetAgg, checklistAgg, riskCount, nextEvent] = await Promise.all([
     db.guest.groupBy({ by: ['rsvpStatus'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.vendor.groupBy({ by: ['status'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.guest.count({ where: { weddingId: wid, checkedIn: true } }),
@@ -30,6 +31,11 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
     }),
     db.checklistItem.groupBy({ by: ['isChecked'], where: { weddingId: wid, deletedAt: null }, _count: true }),
     db.riskAlert.groupBy({ by: ['severity', 'isResolved'], where: { weddingId: wid, isResolved: false }, _count: true }),
+    db.weddingEvent.findFirst({
+      where: { weddingId: wid, date: { gte: now } },
+      orderBy: { date: 'asc' },
+      select: { date: true },
+    }),
   ])
 
   const confirmed = guestCounts.find(g => g.rsvpStatus === 'CONFIRMED')?._count ?? 0
@@ -40,11 +46,11 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
   const totalBudget = Number(budgetAgg._sum.estimated ?? 0)
   const totalEstimated = totalBudget
   const totalActual = Number(budgetAgg._sum.actual ?? 0)
-  const totalActual2 = totalActual
   const checkedCount = checklistAgg.find(c => c.isChecked)?._count ?? 0
   const totalChecklist = checklistAgg.reduce((s, c) => s + c._count, 0)
   const activeRisks = riskCount.reduce((s, r) => s + r._count, 0)
   const criticalRisks = riskCount.find(r => r.severity === 'CRITICAL')?._count ?? 0
+  const daysToWedding = nextEvent ? differenceInDays(nextEvent.date, now) : null
 
   return NextResponse.json({
     guestCount: totalGuests,
@@ -63,6 +69,6 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ id: stri
     checklistProgress: totalChecklist > 0 ? Math.round((checkedCount / totalChecklist) * 100) : 0,
     activeRisks,
     criticalRisks,
-    daysToWedding: differenceInDays(member.wedding.date, new Date()),
+    daysToWedding,
   })
 }

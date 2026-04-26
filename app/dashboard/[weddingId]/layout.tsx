@@ -6,10 +6,10 @@ import { Sidebar, MobileMenuButton } from '@/components/sidebar'
 import { SyncProvider } from '@/components/sync-provider'
 
 export default async function DashboardLayout(
-  props: {
+  props: Readonly<{
     children: React.ReactNode
     params: Promise<{ weddingId: string }>
-  }
+  }>
 ) {
   const params = await props.params;
 

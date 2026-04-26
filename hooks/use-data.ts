@@ -12,14 +12,21 @@ export function useChecklistItems(weddingId: string) {
   return useQuery({
     queryKey: ['checklist', weddingId],
     queryFn: async () => {
-      const local = await weddingDB.checklistItems.where('weddingId').equals(weddingId)
-        .filter(i => !i.deletedAt).toArray()
-      if (local.length > 0) return local.sort((a, b) => a.order - b.order)
       const res = await fetch(`/api/weddings/${weddingId}/checklist`)
-      if (!res.ok) throw new Error('Failed to load checklist')
+      if (!res.ok) {
+        // Offline fallback: return Dexie data
+        const local = await weddingDB.checklistItems.where('weddingId').equals(weddingId)
+          .filter(i => !i.deletedAt).toArray()
+        return local.sort((a, b) => a.order - b.order)
+      }
       const items: LocalChecklistItem[] = await res.json()
+      // Merge dirty (unsynced) local items
+      const dirty = await weddingDB.checklistItems.where('weddingId').equals(weddingId)
+        .filter(i => !!i.isDirty && !i.deletedAt).toArray()
+      const dirtyIds = new Set(dirty.map(i => i.id))
       await weddingDB.checklistItems.bulkPut(items)
-      return items.sort((a, b) => a.order - b.order)
+      const merged = [...items.filter(i => !dirtyIds.has(i.id)), ...dirty]
+      return merged.sort((a, b) => a.order - b.order)
     },
     staleTime: 30_000,
     gcTime: Infinity,

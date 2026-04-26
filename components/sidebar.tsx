@@ -18,10 +18,9 @@ interface WeddingEvent { id: string; name: string; type: string }
 
 const EVENT_TYPE_COLORS: Record<string, string> = {
   WEDDING:     'bg-[#1F4D3A]',
-  RURACIO:     'bg-[#D4A94F]',
   RECEPTION:   'bg-sky-400',
   ENGAGEMENT:  'bg-pink-400',
-  TRADITIONAL: 'bg-[#E6C878]',
+  TRADITIONAL: 'bg-amber-400',
   CIVIL:       'bg-emerald-400',
   AFTER_PARTY: 'bg-[#1F4D3A]/60',
   HONEYMOON:   'bg-rose-400',
@@ -202,6 +201,7 @@ export function Sidebar({ weddingId, weddingName, culturalType, isDemo }: Readon
             <div className="space-y-0.5">
               <NavLink href="/guests" label="Guests" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
               <NavLink href="/contributions" label="Contributions" icon={Users} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
+              <NavLink href="/bridal-team" label="Bridal Team" icon={Heart} base={base} pathname={pathname} toggleSidebar={toggleSidebar} />
             </div>
           </div>
 

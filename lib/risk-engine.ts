@@ -2,7 +2,7 @@ import { differenceInDays } from 'date-fns'
 import type { RiskRuleResult } from '@/types'
 
 interface WeddingContext {
-  wedding: { id: string; date: Date; budget: number; venueCapacity?: number }
+  wedding: { id: string; date?: Date | null; budget: number; venueCapacity?: number }
   guests: { id: string; rsvpStatus: string; lastContactAt?: Date }[]
   vendors: { id: string; name: string; status: string; lastContactAt?: Date; lastStatusChangeAt?: Date; amount?: number }[]
   payments: { amount: number; status: string }[]
@@ -26,8 +26,8 @@ const rules: RiskRule[] = [
       suggestedAction: 'Review budget lines and defer or cancel non-essential items',
     }
     if (pct > 0.85) {
-      const daysLeft = differenceInDays(ctx.wedding.date, new Date())
-      if (daysLeft > 14) return {
+      const daysLeft = ctx.wedding.date ? differenceInDays(ctx.wedding.date, new Date()) : null
+      if (daysLeft === null || daysLeft > 14) return {
         ruleId: 'budget.drift', triggered: true, severity: 'HIGH', category: 'budget',
         message: `Budget at ${Math.round(pct * 100)}% with ${daysLeft} days remaining`,
         data: { percent: Math.round(pct * 100), daysLeft },
@@ -55,7 +55,7 @@ const rules: RiskRule[] = [
 
   // ── Vendor inactivity ────────────────────────────────────────────────────
   (ctx) => {
-    const daysToEvent = differenceInDays(ctx.wedding.date, new Date())
+    const daysToEvent = ctx.wedding.date ? differenceInDays(ctx.wedding.date, new Date()) : 999
     const threshold = daysToEvent < 7 ? 2 : daysToEvent < 30 ? 7 : 14
     const inactive = ctx.vendors.filter(v => {
       if (v.status === 'CONFIRMED' || v.status === 'CANCELLED' || v.status === 'COMPLETED') return false
@@ -93,6 +93,7 @@ const rules: RiskRule[] = [
 
   // ── Large pending RSVP count close to wedding ─────────────────────────────
   (ctx) => {
+    if (!ctx.wedding.date) return null
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft > 21 || ctx.pendingRsvps === 0) return null
     if (ctx.pendingRsvps > 20) return {
@@ -106,6 +107,7 @@ const rules: RiskRule[] = [
 
   // ── No catering vendor confirmed close to wedding ─────────────────────────
   (ctx) => {
+    if (!ctx.wedding.date) return null
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft > 60) return null
     const hasCatering = ctx.vendors.some(v =>
@@ -122,6 +124,7 @@ const rules: RiskRule[] = [
 
   // ── No photographer booked ────────────────────────────────────────────────
   (ctx) => {
+    if (!ctx.wedding.date) return null
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft > 90) return null
     const hasPhotographer = ctx.vendors.some(v =>
@@ -139,6 +142,7 @@ const rules: RiskRule[] = [
 
   // ── Budget spent >90% with >3 months remaining ────────────────────────
   (ctx) => {
+    if (!ctx.wedding.date) return null
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft < 90) return null
     const totalCommitted = ctx.budgetLines.reduce((s, l) => s + l.actual, 0)
@@ -154,6 +158,7 @@ const rules: RiskRule[] = [
 
   // ── Checklist <30% complete with <30 days to go ───────────────────────────
   (ctx) => {
+    if (!ctx.wedding.date) return null
     const daysLeft = differenceInDays(ctx.wedding.date, new Date())
     if (daysLeft > 30 || ctx.checklistItems.length === 0) return null
     const checked = ctx.checklistItems.filter(i => i.isChecked).length

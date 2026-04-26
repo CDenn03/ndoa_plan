@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Heart, Plus, CheckCircle2 } from 'lucide-react'
-import { Button, Input, Label, Select, Badge, EmptyState, Modal } from '@/components/ui'
+import { Button, Input, Label, Badge, EmptyState, Modal } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useRouter } from 'next/navigation'
 
@@ -32,7 +32,7 @@ function AddDowryModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
       const res = await fetch(`/api/weddings/${weddingId}/dowry`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, quantity: parseInt(form.quantity), estimatedValue: form.estimatedValue ? parseFloat(form.estimatedValue) : null, notes: form.notes || null }),
+        body: JSON.stringify({ name: form.name, quantity: Number.parseInt(form.quantity), estimatedValue: form.estimatedValue ? Number.parseFloat(form.estimatedValue) : null, notes: form.notes || null }),
       })
       if (!res.ok) throw new Error('Failed')
       toast('Item added', 'success')
@@ -101,7 +101,7 @@ export function DowryClient({ weddingId, items }: Readonly<Props>) {
           <EmptyState
             icon={<Heart size={40} />}
             title="No dowry items yet"
-            description="Track items to be negotiated and delivered during the Ruracio ceremony"
+            description="Track items to be negotiated and delivered during the traditional ceremony"
             action={<Button onClick={() => setShowAdd(true)}><Plus size={14} />Add item</Button>}
           />
         ) : (

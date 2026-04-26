@@ -112,7 +112,7 @@ async function main() {
   // ── Risk Alerts ───────────────────────────────────────────────────────────
   const riskData = [
     { id: 'rk-001', ruleId: 'budget-overrun',      severity: 'HIGH',   category: 'budget',   message: 'Attire spend has exceeded the estimated budget by 82%. Review remaining attire costs.' },
-    { id: 'rk-002', ruleId: 'rsvp-low',            severity: 'MEDIUM', category: 'guests',   message: '5 guests have not responded to invitations with less than 30 days to the Ruracio.' },
+    { id: 'rk-002', ruleId: 'rsvp-low',            severity: 'MEDIUM', category: 'guests',   message: '5 guests have not responded to invitations with less than 30 days to the Traditional Ceremony.' },
     { id: 'rk-003', ruleId: 'contrib-overdue',     severity: 'HIGH',   category: 'payments', message: "Wairimu Esther's contribution of KES 20,000 is 5 days overdue. Contact required." },
     { id: 'rk-004', ruleId: 'vendor-unconfirmed',  severity: 'LOW',    category: 'vendor',   message: 'Sweet Creations Bakery is still at QUOTED status. Confirm booking before the 30-day deadline.' },
   ]

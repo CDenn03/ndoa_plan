@@ -25,7 +25,8 @@ This is a Kenyan wedding planning platform. Key domain concepts:
 
 - Currency is **KES** (Kenyan Shillings) by default
 - Cultural wedding types: `STANDARD | KIKUYU | LUO | KAMBA | KALENJIN | COASTAL`
-- Wedding events include: `RURACIO` (dowry negotiation), `WEDDING`, `RECEPTION`, `POST_WEDDING`, `TRADITIONAL`, `CIVIL`
+- Wedding events include: `RURACIO` (dowry negotiation — user-defined name), `WEDDING`, `RECEPTION`, `POST_WEDDING`, `TRADITIONAL`, `CIVIL`
+- The `RURACIO` enum value is kept in the DB for backwards compatibility — never display it as "Ruracio" in UI labels; let users name their own events
 - User roles: `COUPLE | PLANNER | COMMITTEE | VENDOR | ADMIN`
 - Committee members make pledges (`CommitteeContribution`) and pay via M-Pesa
 

@@ -12,7 +12,7 @@ export default async function EventDetailPage(props: Readonly<{ params: Promise<
   const { weddingId: wid, eventId } = params
 
   const event = await db.weddingEvent.findUnique({ where: { id: eventId } })
-  if (!event || event.weddingId !== wid) notFound()
+  if (event?.weddingId !== wid) notFound()
 
   return (
     <EventDetailClient

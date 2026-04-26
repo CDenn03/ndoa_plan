@@ -18,12 +18,13 @@ export async function POST(_req: NextRequest, props: { params: Promise<{ id: str
   const member = await db.weddingMember.findFirst({ where: { weddingId: wid, userId } })
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const [wedding, guests, vendors, budgetLines, checklistItems] = await Promise.all([
+  const [wedding, guests, vendors, budgetLines, checklistItems, nextEvent] = await Promise.all([
     db.wedding.findUnique({ where: { id: wid } }),
     db.guest.findMany({ where: { weddingId: wid, deletedAt: null }, select: { id: true, rsvpStatus: true } }),
     db.vendor.findMany({ where: { weddingId: wid, deletedAt: null }, select: { id: true, name: true, status: true, lastContactAt: true, updatedAt: true, amount: true } }),
     db.budgetLine.findMany({ where: { weddingId: wid, deletedAt: null }, select: { estimated: true, actual: true } }),
     db.checklistItem.findMany({ where: { weddingId: wid, deletedAt: null }, select: { isChecked: true, dueDate: true, priority: true } }),
+    db.weddingEvent.findFirst({ where: { weddingId: wid, date: { gte: new Date() } }, orderBy: { date: 'asc' }, select: { date: true } }),
   ])
 
   if (!wedding) return NextResponse.json({ error: 'Wedding not found' }, { status: 404 })
@@ -34,7 +35,7 @@ export async function POST(_req: NextRequest, props: { params: Promise<{ id: str
   const results = evaluateRisks({
     wedding: {
       id: wedding.id,
-      date: wedding.date,
+      date: nextEvent?.date ?? null,
       budget: Number(wedding.budget),
       venueCapacity: wedding.venueCapacity ?? undefined,
     },

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Truck, CalendarDays } from 'lucide-react'
+import { Truck, CalendarDays, MapPin, Bed } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import {
   EventLogisticsTab, RouteList, AccomList,
@@ -68,7 +68,10 @@ function OverallTab({ routes, accommodations, events }: Readonly<{
 
 export function LogisticsClient({ weddingId, events, routes, accommodations, onRefresh }: Readonly<Props>) {
   const [activeTab, setActiveTab] = useState('__overall__')
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
+  const tabs = [
+    { key: '__overall__', label: 'Overall', icon: <CalendarDays size={13} /> },
+    ...events.map(e => ({ key: e.id, label: e.name, icon: <CalendarDays size={13} /> }))
+  ]
   const activeEvent = events.find(e => e.id === activeTab)
 
   return (
@@ -78,11 +81,11 @@ export function LogisticsClient({ weddingId, events, routes, accommodations, onR
           <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Logistics</p>
           <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Logistics</h1>
           <p className="text-sm text-[#14161C]/40 mt-2 mb-6">{routes.length} routes · {accommodations.length} accommodations</p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
+          <div className="flex gap-0.5 overflow-x-auto scrollbar-thin -mb-px">
             {tabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                {t.label}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
+                {t.icon}{t.label}
               </button>
             ))}
           </div>

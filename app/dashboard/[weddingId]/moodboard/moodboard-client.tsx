@@ -75,7 +75,7 @@ export function MoodboardClient({ weddingId, categories, initialImages }: Readon
           <div>
             <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Content</p>
             <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Vision Board</h1>
-            <p className="text-sm text-[#14161C]/40 mt-2">{images.length} image{images.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-[#14161C]/40 mt-2">{images.length} image{images.length === 1 ? '' : 's'}</p>
           </div>
           <div className="flex items-end gap-3">
             <div>

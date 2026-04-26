@@ -162,7 +162,7 @@ components/
 
 - Currency: **KES** (Kenyan Shillings) by default
 - Cultural types: `STANDARD | KIKUYU | LUO | KAMBA | KALENJIN | COASTAL`
-- Event types: `RURACIO | WEDDING | RECEPTION | POST_WEDDING | TRADITIONAL | CIVIL | ENGAGEMENT | AFTER_PARTY | HONEYMOON | MOVING`
+- Event types: `TRADITIONAL | WEDDING | RECEPTION | POST_WEDDING | CIVIL | ENGAGEMENT | AFTER_PARTY | HONEYMOON | MOVING`
 - User roles: `COUPLE | PLANNER | COMMITTEE | VENDOR | ADMIN`
 - Guest priority: `VIP | GENERAL | OVERFLOW`
 - RSVP status: `PENDING | CONFIRMED | DECLINED | MAYBE | WAITLISTED`
@@ -174,7 +174,7 @@ components/
 
 ### Events
 
-Each wedding can have multiple events (Ruracio, Wedding, Reception, etc.). Every event has its own set of tabs:
+Each wedding can have multiple events (traditional ceremony, wedding, reception, etc.). Every event has its own set of tabs:
 
 | Tab | Description |
 |---|---|
@@ -265,7 +265,7 @@ The Contacts tab within the Schedule view shows two types of contacts:
 
 ### Dowry
 
-- Traditional dowry item tracking (Ruracio-specific)
+- Traditional dowry item tracking (traditional ceremony-specific)
 - Item status and negotiation notes
 
 ### Gifts

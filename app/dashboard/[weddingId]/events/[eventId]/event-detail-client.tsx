@@ -30,6 +30,7 @@ import { EventBudgetTab } from '@/components/features/budget-components'
 import { EventScheduleTab } from '@/components/features/schedule-components'
 import type { Incident } from '@/components/features/schedule-components'
 import { EventGuestsTab, EventCheckInTab } from '@/components/features/guest-components'
+import { BridalTeamTab } from '@/components/features/bridal-team-components'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,12 +42,12 @@ interface Props {
   }
 }
 
-type Tab = 'tasks' | 'budget' | 'guests' | 'check-in' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule' | 'photography'
+type Tab = 'tasks' | 'budget' | 'guests' | 'check-in' | 'appointments' | 'payments' | 'contributions' | 'logistics' | 'vision' | 'gifts' | 'vendors' | 'schedule' | 'photography' | 'bridal-team'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TYPE_COLOR: Record<string, string> = {
-  WEDDING: 'bg-[#1F4D3A]/10 text-[#1F4D3A]', RURACIO: 'bg-amber-100 text-amber-700',
+  WEDDING: 'bg-[#1F4D3A]/10 text-[#1F4D3A]',
   RECEPTION: 'bg-sky-100 text-sky-700', ENGAGEMENT: 'bg-pink-100 text-pink-700',
   TRADITIONAL: 'bg-orange-100 text-orange-700', CIVIL: 'bg-[#1F4D3A]/6 text-[#14161C]/60',
   POST_WEDDING: 'bg-emerald-100 text-emerald-700',
@@ -234,6 +235,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'appointments',  label: 'Appointments',   icon: <Sparkles size={13} /> },
   // ── People ──
   { key: 'guests',        label: 'Guests',         icon: <Users size={13} /> },
+  { key: 'bridal-team',   label: 'Bridal Team',    icon: <Users size={13} /> },
   { key: 'contributions', label: 'Contributions',  icon: <Users size={13} /> },
   // ── Execution ──
   { key: 'schedule',      label: 'Schedule',       icon: <CalendarDays size={13} /> },
@@ -268,8 +270,8 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
                 <span className="flex items-center gap-1.5"><CalendarDays size={13} /> {format(new Date(event.date), 'EEEE, MMMM d, yyyy')}</span>
                 {(event.startTime || event.endTime) && (
                   <span className="flex items-center gap-1.5"><Clock size={13} />
-                    {event.startTime && format(new Date(event.startTime), 'HH:mm')}
-                    {event.endTime && ` – ${format(new Date(event.endTime), 'HH:mm')}`}
+                    {event.startTime && String(event.startTime).slice(0, 5)}
+                    {event.endTime && ` – ${String(event.endTime).slice(0, 5)}`}
                   </span>
                 )}
                 {event.venue && <span className="flex items-center gap-1.5"><MapPin size={13} /> {event.venue}</span>}
@@ -301,6 +303,7 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
         {activeTab === 'gifts' && <GiftsTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'vision' && <MoodboardTab weddingId={weddingId} eventId={event.id} />}
         {activeTab === 'photography' && <PhotographyTab weddingId={weddingId} eventId={event.id} />}
+        {activeTab === 'bridal-team' && <BridalTeamTab weddingId={weddingId} eventId={event.id} />}
       </div>
     </div>
   )

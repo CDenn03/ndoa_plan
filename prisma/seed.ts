@@ -1,10 +1,15 @@
 import { PrismaClient } from '../lib/generated/prisma'
 import { PrismaNeon } from '@prisma/adapter-neon'
+import { neonConfig } from '@neondatabase/serverless'
 import * as dotenv from 'dotenv'
+import ws from 'ws'
 
 dotenv.config()
 
-// Use DIRECT_URL (non-pooled) for CLI scripts to avoid WebSocket connection issues
+// Use ws for WebSocket support in Node.js CLI context
+neonConfig.webSocketConstructor = ws
+
+// Use DIRECT_URL (non-pooled) for CLI scripts to avoid connection pool issues
 const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL!
 const db = new PrismaClient({ adapter: new PrismaNeon({ connectionString }) })
 
@@ -29,7 +34,8 @@ async function main() {
     create: {
       id: WID,
       name: "Wanjiku & Brian's Wedding",
-      date: d(112),
+      brideName: 'Wanjiku',
+      groomName: 'Brian',
       venue: 'Safari Park Hotel, Nairobi',
       venueCapacity: 350,
       budget: 2_200_000,
@@ -41,14 +47,14 @@ async function main() {
   })
 
   // ── Events ────────────────────────────────────────────────────────────────
-  const [ruracio, civil, wedding_ev, reception] = await Promise.all([
-    db.weddingEvent.upsert({ where: { id: 'ev-ruracio' }, update: {}, create: { id: 'ev-ruracio', weddingId: WID, name: 'Ruracio', type: 'RURACIO', date: d(18), venue: "Bride's Family Home, Nyeri", startTime: '10:00', endTime: '17:00' } }),
+  const [traditional, civil, wedding_ev, reception] = await Promise.all([
+    db.weddingEvent.upsert({ where: { id: 'ev-traditional' }, update: {}, create: { id: 'ev-traditional', weddingId: WID, name: 'Traditional Ceremony', type: 'TRADITIONAL', date: d(18), venue: "Bride's Family Home", startTime: '10:00', endTime: '17:00' } }),
     db.weddingEvent.upsert({ where: { id: 'ev-civil' }, update: {}, create: { id: 'ev-civil', weddingId: WID, name: 'Civil Ceremony', type: 'CIVIL', date: d(111), venue: 'AG Offices, Nairobi', startTime: '09:00', endTime: '11:00' } }),
     db.weddingEvent.upsert({ where: { id: 'ev-wedding' }, update: {}, create: { id: 'ev-wedding', weddingId: WID, name: 'Wedding Ceremony', type: 'WEDDING', date: d(112), venue: 'Safari Park Hotel Chapel', startTime: '14:00', endTime: '16:00', isMain: true } }),
     db.weddingEvent.upsert({ where: { id: 'ev-reception' }, update: {}, create: { id: 'ev-reception', weddingId: WID, name: 'Reception', type: 'RECEPTION', date: d(112), venue: 'Safari Park Hotel Ballroom', startTime: '17:00', endTime: '23:00' } }),
   ])
   // events created above — referenced by id strings in checklist/contrib data
-  const _evIds = [ruracio.id, civil.id, wedding_ev.id, reception.id]
+  const _evIds = [traditional.id, civil.id, wedding_ev.id, reception.id]
   void _evIds
 
   // ── Guests ────────────────────────────────────────────────────────────────
@@ -103,24 +109,31 @@ async function main() {
 
   // ── Budget Lines ──────────────────────────────────────────────────────────
   const budgetData = [
-    { id: 'bl-catering', category: 'CATERING', description: 'Food & beverages (350 pax)', estimated: 550_000, actual: 150_000 },
-    { id: 'bl-venue', category: 'VENUE', description: 'Safari Park Hotel venue hire', estimated: 280_000, actual: 280_000 },
-    { id: 'bl-photo', category: 'PHOTOGRAPHY', description: 'Photography + second shooter', estimated: 130_000, actual: 65_000 },
-    { id: 'bl-video', category: 'VIDEOGRAPHY', description: 'Cinematic film + drone', estimated: 90_000, actual: 45_000 },
-    { id: 'bl-decor', category: 'DECORATIONS', description: 'Flowers, draping, centrepieces', estimated: 180_000, actual: 30_000 },
-    { id: 'bl-attire', category: 'ATTIRE', description: 'Wedding dress, suits, bridesmaids', estimated: 220_000, actual: 180_000 },
-    { id: 'bl-music', category: 'MUSIC', description: 'DJ + sound system', estimated: 40_000, actual: 20_000 },
-    { id: 'bl-transport', category: 'TRANSPORT', description: 'Bridal car + 3 guest buses', estimated: 55_000, actual: 20_000 },
-    { id: 'bl-cake', category: 'CAKE', description: '5-tier wedding cake', estimated: 28_000, actual: 0 },
-    { id: 'bl-makeup', category: 'BEAUTY', description: 'Bridal hair & makeup', estimated: 35_000, actual: 15_000 },
-    { id: 'bl-invites', category: 'STATIONERY', description: 'Invitations & programmes', estimated: 22_000, actual: 22_000 },
-    { id: 'bl-honeymoon', category: 'HONEYMOON', description: 'Diani Beach 5 nights', estimated: 120_000, actual: 60_000 },
-    { id: 'bl-misc', category: 'MISCELLANEOUS', description: 'Contingency buffer', estimated: 50_000, actual: 0 },
+    // Traditional ceremony event
+    { id: 'bl-trad-decor', category: 'DECORATIONS', description: 'Traditional venue décor & flowers', estimated: 45_000, actual: 20_000, eventId: 'ev-traditional' },
+    { id: 'bl-trad-catering', category: 'CATERING', description: 'Traditional ceremony food & drinks', estimated: 80_000, actual: 40_000, eventId: 'ev-traditional' },
+    { id: 'bl-trad-transport', category: 'TRANSPORT', description: 'Transport to ceremony venue', estimated: 25_000, actual: 25_000, eventId: 'ev-traditional' },
+    { id: 'bl-trad-attire', category: 'ATTIRE', description: 'Traditional attire', estimated: 60_000, actual: 60_000, eventId: 'ev-traditional' },
+    // Wedding Ceremony event
+    { id: 'bl-venue', category: 'VENUE', description: 'Safari Park Hotel venue hire', estimated: 280_000, actual: 280_000, eventId: 'ev-wedding' },
+    { id: 'bl-photo', category: 'PHOTOGRAPHY', description: 'Photography + second shooter', estimated: 130_000, actual: 65_000, eventId: 'ev-wedding' },
+    { id: 'bl-video', category: 'VIDEOGRAPHY', description: 'Cinematic film + drone', estimated: 90_000, actual: 45_000, eventId: 'ev-wedding' },
+    { id: 'bl-attire', category: 'ATTIRE', description: 'Wedding dress, suits, bridesmaids', estimated: 220_000, actual: 180_000, eventId: 'ev-wedding' },
+    { id: 'bl-makeup', category: 'BEAUTY', description: 'Bridal hair & makeup', estimated: 35_000, actual: 15_000, eventId: 'ev-wedding' },
+    { id: 'bl-invites', category: 'STATIONERY', description: 'Invitations & programmes', estimated: 22_000, actual: 22_000, eventId: 'ev-wedding' },
+    // Reception event
+    { id: 'bl-catering', category: 'CATERING', description: 'Food & beverages (350 pax)', estimated: 550_000, actual: 150_000, eventId: 'ev-reception' },
+    { id: 'bl-decor', category: 'DECORATIONS', description: 'Flowers, draping, centrepieces', estimated: 180_000, actual: 30_000, eventId: 'ev-reception' },
+    { id: 'bl-music', category: 'MUSIC', description: 'DJ + sound system', estimated: 40_000, actual: 20_000, eventId: 'ev-reception' },
+    { id: 'bl-transport', category: 'TRANSPORT', description: 'Bridal car + 3 guest buses', estimated: 55_000, actual: 20_000, eventId: 'ev-reception' },
+    { id: 'bl-cake', category: 'CAKE', description: '5-tier wedding cake', estimated: 28_000, actual: 0, eventId: 'ev-reception' },
+    { id: 'bl-honeymoon', category: 'HONEYMOON', description: 'Diani Beach 5 nights', estimated: 120_000, actual: 60_000, eventId: 'ev-reception' },
+    { id: 'bl-misc', category: 'MISCELLANEOUS', description: 'Contingency buffer', estimated: 50_000, actual: 0, eventId: 'ev-reception' },
   ]
   for (const b of budgetData) {
     await db.budgetLine.upsert({
       where: { id: b.id },
-      update: {},
+      update: { eventId: b.eventId },
       create: { ...b, weddingId: WID, version: 1, checksum: '' },
     })
   }
@@ -146,21 +159,29 @@ async function main() {
 
   // ── Checklist Items ───────────────────────────────────────────────────────
   const checklistData = [
-    { id: 'cl-001', title: 'Confirm final guest headcount with caterer', category: 'CATERING', dueDate: d(-3), isChecked: false, priority: 1 },
-    { id: 'cl-002', title: 'Send remaining invitations (15 pending)', category: 'INVITATIONS', dueDate: d(-1), isChecked: false, priority: 1 },
-    { id: 'cl-003', title: 'Final dress fitting', category: 'ATTIRE', dueDate: d(5), isChecked: false, priority: 1 },
-    { id: 'cl-004', title: 'Confirm DJ playlist and do-not-play list', category: 'MUSIC', dueDate: d(7), isChecked: false, priority: 2 },
-    { id: 'cl-005', title: 'Book honeymoon accommodation (Diani)', category: 'HONEYMOON', dueDate: d(10), isChecked: false, priority: 2 },
-    { id: 'cl-006', title: 'Collect marriage certificate requirements', category: 'LEGAL', dueDate: d(14), isChecked: false, priority: 1 },
-    { id: 'cl-007', title: 'Confirm transport pickup points and times', category: 'TRANSPORT', dueDate: d(14), isChecked: false, priority: 1 },
-    { id: 'cl-008', title: 'Order wedding cake (final design approval)', category: 'CAKE', dueDate: d(21), isChecked: false, priority: 2 },
-    { id: 'cl-009', title: 'Prepare seating plan', category: 'OTHER', dueDate: d(21), isChecked: false, priority: 2 },
-    { id: 'cl-010', title: 'Confirm florist delivery time and setup', category: 'DECORATIONS', dueDate: d(28), isChecked: false, priority: 1 },
+    // Traditional ceremony tasks
+    { id: 'cl-r-001', title: 'Confirm traditional ceremony date with both families', category: 'OTHER', dueDate: d(-10), isChecked: true, priority: 1, eventId: 'ev-traditional' },
+    { id: 'cl-r-002', title: 'Prepare traditional gifts list', category: 'OTHER', dueDate: d(-5), isChecked: true, priority: 1, eventId: 'ev-traditional' },
+    { id: 'cl-r-003', title: 'Book transport to ceremony venue', category: 'TRANSPORT', dueDate: d(-3), isChecked: false, priority: 1, eventId: 'ev-traditional' },
+    { id: 'cl-r-004', title: 'Confirm catering for traditional ceremony guests', category: 'CATERING', dueDate: d(-1), isChecked: false, priority: 2, eventId: 'ev-traditional' },
+    // Wedding Ceremony tasks
+    { id: 'cl-001', title: 'Final dress fitting', category: 'ATTIRE', dueDate: d(5), isChecked: false, priority: 1, eventId: 'ev-wedding' },
+    { id: 'cl-006', title: 'Collect marriage certificate requirements', category: 'LEGAL', dueDate: d(14), isChecked: false, priority: 1, eventId: 'ev-wedding' },
+    { id: 'cl-003', title: 'Confirm photographer briefing & shot list', category: 'PHOTOGRAPHY', dueDate: d(7), isChecked: false, priority: 1, eventId: 'ev-wedding' },
+    { id: 'cl-008', title: 'Confirm florist delivery time and setup', category: 'DECORATIONS', dueDate: d(21), isChecked: false, priority: 1, eventId: 'ev-wedding' },
+    // Reception tasks
+    { id: 'cl-002', title: 'Confirm final guest headcount with caterer', category: 'CATERING', dueDate: d(-3), isChecked: false, priority: 1, eventId: 'ev-reception' },
+    { id: 'cl-004', title: 'Confirm DJ playlist and do-not-play list', category: 'MUSIC', dueDate: d(7), isChecked: false, priority: 2, eventId: 'ev-reception' },
+    { id: 'cl-005', title: 'Book honeymoon accommodation (Diani)', category: 'HONEYMOON', dueDate: d(10), isChecked: false, priority: 2, eventId: 'ev-reception' },
+    { id: 'cl-007', title: 'Confirm transport pickup points and times', category: 'TRANSPORT', dueDate: d(14), isChecked: false, priority: 1, eventId: 'ev-reception' },
+    { id: 'cl-009', title: 'Order wedding cake (final design approval)', category: 'CAKE', dueDate: d(21), isChecked: false, priority: 2, eventId: 'ev-reception' },
+    { id: 'cl-010', title: 'Prepare seating plan', category: 'OTHER', dueDate: d(21), isChecked: false, priority: 2, eventId: 'ev-reception' },
+    { id: 'cl-011', title: 'Send remaining invitations (15 pending)', category: 'INVITATIONS', dueDate: d(-1), isChecked: false, priority: 1, eventId: 'ev-reception' },
   ]
   for (const c of checklistData) {
     await db.checklistItem.upsert({
       where: { id: c.id },
-      update: {},
+      update: { eventId: c.eventId },
       create: { ...c, weddingId: WID, version: 1, checksum: '' },
     })
   }
@@ -212,7 +233,7 @@ async function main() {
     create: {
       id: 'risk-002', weddingId: WID, ruleId: 'rsvp-low',
       severity: 'MEDIUM', category: 'guests', isResolved: false,
-      message: '5 guests have not responded to invitations with less than 30 days to the Ruracio. Follow up required.',
+      message: '5 guests have not responded to invitations with less than 30 days to the Traditional Ceremony. Follow up required.',
     },
   })
   await db.riskAlert.upsert({
@@ -287,15 +308,15 @@ async function seedTemplates() {
       { title: 'Register marriage certificate', category: 'LEGAL', priority: 1 },
       { title: 'Review and pay final vendor invoices', category: 'OTHER', priority: 1 },
     ]},
-    { name: 'Ruracio Ceremony Checklist', culturalType: 'KIKUYU', data: [
-      { title: 'Agree on Ruracio date with both families', category: 'LEGAL', priority: 1 },
-      { title: 'Prepare dowry list (bride price items)', category: 'OTHER', priority: 1 },
-      { title: 'Book venue for Ruracio', category: 'VENUE', priority: 1 },
-      { title: 'Arrange catering for Ruracio guests', category: 'CATERING', priority: 1 },
-      { title: 'Prepare traditional attire (Kikuyu)', category: 'ATTIRE', priority: 1 },
-      { title: 'Confirm elders / spokespersons for negotiation', category: 'OTHER', priority: 1 },
+    { name: 'Traditional Ceremony Checklist', data: [
+      { title: 'Agree on traditional ceremony date with both families', category: 'LEGAL', priority: 1 },
+      { title: 'Prepare dowry / bride price items list', category: 'OTHER', priority: 1 },
+      { title: 'Book venue for traditional ceremony', category: 'VENUE', priority: 1 },
+      { title: 'Arrange catering for traditional ceremony guests', category: 'CATERING', priority: 1 },
+      { title: 'Prepare traditional attire', category: 'ATTIRE', priority: 1 },
+      { title: 'Confirm elders / spokespersons', category: 'OTHER', priority: 1 },
       { title: "Prepare gifts for bride's family", category: 'OTHER', priority: 2 },
-      { title: 'Ruracio ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
+      { title: 'Traditional ceremony complete', category: 'OTHER', priority: 1, isFinalCheck: true },
       { title: 'Dowry items delivered and acknowledged', category: 'OTHER', priority: 1, isFinalCheck: true },
     ]},
     { name: 'Wedding Day Checklist', data: [
@@ -417,10 +438,10 @@ async function seedTemplates() {
       ],
     },
     {
-      name: 'Ruracio / Traditional Ceremony Shot List',
+      name: 'Traditional Ceremony Shot List',
       data: [
-        { title: 'Ruracio — dowry negotiation', group: 'CULTURAL' },
-        { title: 'Ruracio — handover ceremony', group: 'CULTURAL' },
+        { title: 'Traditional ceremony — key moments', group: 'CULTURAL' },
+        { title: 'Traditional ceremony — handover', group: 'CULTURAL' },
         { title: 'Traditional attire portraits', group: 'CULTURAL' },
         { title: 'Elder blessings', group: 'CULTURAL' },
         { title: 'Cultural dance moments', group: 'CULTURAL' },
@@ -451,7 +472,7 @@ async function seedTemplates() {
 
   for (const t of shotListTemplates) {
     const id = `sys-shotlist-${t.name.toLowerCase().replace(/[\s/]+/g, '-')}`
-    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'SHOT_LIST', name: t.name, isSystem: true, data: t.data } })
+    await db.template.upsert({ where: { id }, update: {}, create: { id, type: 'SHOT_LIST' as never, name: t.name, isSystem: true, data: t.data } })
   }
 
   console.log('✅ Templates seeded')

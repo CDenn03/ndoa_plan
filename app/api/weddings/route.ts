@@ -11,14 +11,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const userId = (session.user as typeof session.user & { id: string }).id
   const body = await req.json()
 
-  if (!body.name || !body.date) {
-    return NextResponse.json({ error: 'Name and date are required' }, { status: 400 })
+  if (!body.name) {
+    return NextResponse.json({ error: 'Name is required' }, { status: 400 })
   }
 
   const wedding = await db.wedding.create({
     data: {
       name: body.name,
-      date: new Date(body.date),
       venue: body.venue ?? null,
       venueCapacity: body.venueCapacity ?? null,
       budget: body.budget ?? 0,
@@ -74,14 +73,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const userId = (session.user as typeof session.user & { id: string }).id
   const memberships = await db.weddingMember.findMany({
     where: { userId },
-    include: { wedding: { select: { id: true, name: true, date: true, venue: true, themeColor: true } } },
+    include: { wedding: { select: { id: true, name: true, venue: true, themeColor: true } } },
     orderBy: { wedding: { date: 'asc' } },
   })
 
   return NextResponse.json(memberships.map(m => ({
     id: m.wedding.id,
     name: m.wedding.name,
-    date: m.wedding.date.toISOString(),
     venue: m.wedding.venue,
     themeColor: m.wedding.themeColor,
     role: m.role,

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Gift, Plus, CalendarDays } from 'lucide-react'
+import { Gift, CalendarDays } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import {
   EventGiftsTab, RegistryList, ReceivedList,

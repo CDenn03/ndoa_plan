@@ -37,7 +37,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       name: body.name,
       brideName: body.brideName ?? undefined,
       groomName: body.groomName ?? undefined,
-      date: body.date ? new Date(body.date) : undefined,
       venue: body.venue ?? null,
       venueCapacity: body.venueCapacity ?? null,
       budget: body.budget ?? undefined,
@@ -62,7 +61,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       action: 'wedding.updated',
       resourceId: params.id,
       resourceType: 'wedding',
-      nextState: JSON.stringify({ name: updated.name, date: updated.date }),
+      nextState: JSON.stringify({ name: updated.name }),
     },
   })
 

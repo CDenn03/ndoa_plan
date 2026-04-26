@@ -18,12 +18,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const weddings = await db.wedding.findMany({
     select: {
       id: true,
-      date: true,
       budget: true,
       venueCapacity: true,
-    },
-    where: {
-      date: { gte: new Date() }, // only upcoming weddings
     },
   })
 
@@ -32,18 +28,19 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   for (const wedding of weddings) {
     try {
-      const [guests, vendors, budgetLines, checklistItems] = await Promise.all([
+      const [guests, vendors, budgetLines, checklistItems, nextEvent] = await Promise.all([
         db.guest.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { id: true, rsvpStatus: true } }),
         db.vendor.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { id: true, name: true, status: true, lastContactAt: true, updatedAt: true, amount: true } }),
         db.budgetLine.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { estimated: true, actual: true } }),
         db.checklistItem.findMany({ where: { weddingId: wedding.id, deletedAt: null }, select: { isChecked: true, dueDate: true, priority: true } }),
+        db.weddingEvent.findFirst({ where: { weddingId: wedding.id, date: { gte: new Date() } }, orderBy: { date: 'asc' }, select: { date: true } }),
       ])
 
       const confirmedGuests = guests.filter(g => g.rsvpStatus === 'CONFIRMED').length
       const pendingRsvps = guests.filter(g => g.rsvpStatus === 'PENDING').length
 
       const results = evaluateRisks({
-        wedding: { id: wedding.id, date: wedding.date, budget: Number(wedding.budget), venueCapacity: wedding.venueCapacity ?? undefined },
+        wedding: { id: wedding.id, date: nextEvent?.date ?? null, budget: Number(wedding.budget), venueCapacity: wedding.venueCapacity ?? undefined },
         guests: guests.map(g => ({ id: g.id, rsvpStatus: g.rsvpStatus })),
         vendors: vendors.map(v => ({ id: v.id, name: v.name, status: v.status, lastContactAt: v.lastContactAt ?? undefined, lastStatusChangeAt: v.updatedAt, amount: v.amount ? Number(v.amount) : undefined })),
         payments: [],

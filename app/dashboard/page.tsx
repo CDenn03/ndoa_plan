@@ -11,7 +11,7 @@ export default async function DashboardRootPage() {
   const membership = await db.weddingMember.findFirst({
     where: { userId },
     include: { wedding: true },
-    orderBy: { wedding: { date: 'asc' } },
+    orderBy: { wedding: { createdAt: 'asc' } },
   })
 
   if (!membership) redirect('/onboarding')

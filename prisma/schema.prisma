@@ -70,7 +70,6 @@ model Wedding {
   name                String
   brideName           String?
   groomName           String?
-  date                DateTime
   venue               String?
   venueCapacity       Int?
   budget              Decimal         @default(0)
@@ -138,7 +137,7 @@ enum CulturalType {
   COASTAL
 }
 
-// ─── Wedding Events (Ruracio, Wedding, Post-wedding) ──────────────────────────
+// ─── Wedding Events (Traditional, Wedding, Post-wedding) ──────────────────────────
 
 model WeddingEvent {
   id                String              @id @default(uuid())
@@ -171,6 +170,8 @@ model WeddingEvent {
   mediaItems        MediaItem[]
   vendorAssignments VendorEventAssignment[]
   contacts          EventContact[]
+  bridalTeamMembers BridalTeamMember[]
+  bridalRoleOutfits BridalRoleOutfit[]
   @@index([weddingId, date])
 }
 
@@ -212,7 +213,6 @@ model EventProgramItem {
 }
 
 enum EventType {
-  RURACIO
   WEDDING
   RECEPTION
   POST_WEDDING
@@ -222,6 +222,67 @@ enum EventType {
   AFTER_PARTY
   HONEYMOON
   MOVING
+}
+
+// ─── Bridal Team ──────────────────────────────────────────────────────────────
+
+model BridalTeamMember {
+  id                 String             @id @default(cuid())
+  eventId            String
+  name               String
+  role               BridalRole
+  side               BridalSide
+  phone              String?
+  email              String?
+  confirmationStatus ConfirmationStatus @default(PENDING)
+  notes              String?
+  deletedAt          DateTime?
+  event              WeddingEvent       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  @@index([eventId])
+}
+
+model BridalRoleOutfit {
+  id          String       @id @default(cuid())
+  eventId     String
+  role        BridalRole
+  title       String
+  description String?
+  event       WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  @@unique([eventId, role])
+  @@index([eventId])
+}
+
+enum BridalRole {
+  BRIDE
+  GROOM
+  BEST_MAN
+  MAID_OF_HONOUR
+  BRIDESMAID
+  GROOMSMAN
+  FLOWER_GIRL
+  PAGE_BOY
+  RING_BEARER
+  PARENT_BRIDE
+  PARENT_GROOM
+  NEGOTIATOR
+  ELDER
+  OTHER
+}
+
+enum BridalSide {
+  BRIDE
+  GROOM
+  BOTH
+}
+
+enum ConfirmationStatus {
+  PENDING
+  CONFIRMED
+  DECLINED
 }
 
 // ─── Event Dependencies ───────────────────────────────────────────────────────

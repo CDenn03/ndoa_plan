@@ -18,7 +18,7 @@ interface NextAppointment { id: string; title: string; startAt: string; location
 
 interface Props {
   wedding: {
-    id: string; name: string; date: string; venue?: string
+    id: string; name: string; venue?: string
     themeColor: string; budget: number; couplePhotoPath?: string
   }
   summary: DashboardSummary
@@ -34,14 +34,14 @@ const SEVERITY_BADGE: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
 }
 
 const EVENT_COLORS: Record<string, string> = {
-  WEDDING: 'bg-[#1F4D3A]', RURACIO: 'bg-amber-400', RECEPTION: 'bg-sky-400',
-  ENGAGEMENT: 'bg-pink-400', TRADITIONAL: 'bg-orange-400', CIVIL: 'bg-emerald-400',
+  WEDDING: 'bg-[#1F4D3A]', TRADITIONAL: 'bg-amber-400', RECEPTION: 'bg-sky-400',
+  ENGAGEMENT: 'bg-pink-400', CIVIL: 'bg-emerald-400',
   AFTER_PARTY: 'bg-[#1F4D3A]/60', HONEYMOON: 'bg-rose-400', MOVING: 'bg-[#14161C]/25',
 }
 
 const EVENT_BAR_COLORS: Record<string, string> = {
-  WEDDING: 'bg-[#1F4D3A]', RURACIO: 'bg-amber-400', RECEPTION: 'bg-sky-400',
-  ENGAGEMENT: 'bg-pink-400', TRADITIONAL: 'bg-orange-400', CIVIL: 'bg-emerald-400',
+  WEDDING: 'bg-[#1F4D3A]', TRADITIONAL: 'bg-amber-400', RECEPTION: 'bg-sky-400',
+  ENGAGEMENT: 'bg-pink-400', CIVIL: 'bg-emerald-400',
   AFTER_PARTY: 'bg-[#1F4D3A]/60', HONEYMOON: 'bg-rose-400', MOVING: 'bg-zinc-300',
 }
 
@@ -152,7 +152,6 @@ export function DashboardClient({
   nextAppointment,
 }: Readonly<Props>) {
   const wid = wedding.id
-  const weddingDate = new Date(wedding.date)
   const now = MODULE_NOW
   const fmt = (n: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'KES', currencyDisplay: 'code', maximumFractionDigits: 0 }).format(n)
@@ -211,8 +210,10 @@ export function DashboardClient({
                 <p className="text-[11px] font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-0.5">Command Center</p>
                 <h1 className="text-2xl md:text-3xl font-bold text-[#14161C] leading-tight tracking-tight font-heading truncate">{wedding.name}</h1>
                 <p className="text-sm text-[#14161C]/40 mt-1 flex items-center gap-1.5">
-                  <Calendar size={12} className="flex-shrink-0" />
-                  {format(weddingDate, 'EEEE, d MMMM yyyy')}
+                  {sortedEvents.length > 0 && (
+                    <><Calendar size={12} className="flex-shrink-0" />
+                    {format(new Date(sortedEvents[0].ev.date), 'EEEE, d MMMM yyyy')}</>
+                  )}
                   {wedding.venue && <><span className="text-[#14161C]/15 mx-0.5">·</span><MapPin size={11} className="flex-shrink-0" />{wedding.venue}</>}
                 </p>
               </div>

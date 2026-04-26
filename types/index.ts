@@ -127,7 +127,7 @@ export interface DashboardSummary {
   overdueTasks: number
   activeRisks: number
   criticalRisks: number
-  daysToWedding: number
+  daysToWedding: number | null | undefined
   // contributions
   totalPledged: number
   totalContribPaid: number

@@ -325,7 +325,9 @@ function CategoryDetail({ weddingId, category, docs, onBack, onDelete, onUpload,
         </div>
       )}
     </div>
-    {viewDoc && <DocViewModal doc={viewDoc} onClose={() => setViewDoc(null)} />}
+    {
+      {viewDoc && <DocViewModal doc={viewDoc} onClose={() => setViewDoc(null)} />}
+    }
   )
 }
 

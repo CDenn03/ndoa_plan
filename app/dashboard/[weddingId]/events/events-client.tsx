@@ -7,11 +7,11 @@ import { useToast } from '@/components/ui/toast'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-const EVENT_TYPES = ['RURACIO','WEDDING','RECEPTION','POST_WEDDING','TRADITIONAL','CIVIL','ENGAGEMENT','AFTER_PARTY','HONEYMOON','MOVING']
+const EVENT_TYPES = ['WEDDING','RECEPTION','POST_WEDDING','TRADITIONAL','CIVIL','ENGAGEMENT','AFTER_PARTY','HONEYMOON','MOVING']
 
 const TYPE_COLOR: Record<string, string> = {
   WEDDING: 'bg-[#1F4D3A]/10 text-[#1F4D3A]',
-  RURACIO: 'bg-amber-100 text-amber-700',
+  TRADITIONAL: 'bg-amber-100 text-amber-700',
   RECEPTION: 'bg-sky-100 text-sky-700',
   ENGAGEMENT: 'bg-pink-100 text-pink-700',
   HONEYMOON: 'bg-emerald-100 text-emerald-700',
@@ -61,7 +61,7 @@ function AddEventModal({ weddingId, onClose }: Readonly<{ weddingId: string; onC
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="ev-name">Event name *</Label>
-          <Input id="ev-name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ruracio ceremony" required />
+          <Input id="ev-name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Traditional ceremony" required />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
@@ -146,12 +146,12 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
           <div className="flex items-center gap-4 mt-1.5">
             {ev.taskCount > 0 && (
               <span className="flex items-center gap-1 text-[11px] text-[#14161C]/40">
-                <CheckSquare size={10} /> {ev.taskCount} task{ev.taskCount !== 1 ? 's' : ''}
+                <CheckSquare size={10} /> {ev.taskCount} task{ev.taskCount === 1 ? '' : 's'}
               </span>
             )}
             {ev.budgetLineCount > 0 && (
               <span className="flex items-center gap-1 text-[11px] text-[#14161C]/40">
-                <DollarSign size={10} /> {ev.budgetLineCount} budget line{ev.budgetLineCount !== 1 ? 's' : ''}
+                <DollarSign size={10} /> {ev.budgetLineCount} budget line{ev.budgetLineCount === 1 ? '' : 's'}
               </span>
             )}
           </div>
@@ -168,7 +168,7 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
           <div>
             <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">Planning</p>
             <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Events</h1>
-            <p className="text-sm text-[#14161C]/40 mt-2">{events.length} event{events.length !== 1 ? 's' : ''} · {upcoming.length} upcoming</p>
+            <p className="text-sm text-[#14161C]/40 mt-2">{events.length} event{events.length === 1 ? '' : 's'} · {upcoming.length} upcoming</p>
           </div>
           <Button onClick={() => setShowAdd(true)} size="sm"><Plus size={14} /> Add event</Button>
         </div>
@@ -179,7 +179,7 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
           <EmptyState
             icon={<Calendar size={40} />}
             title="No events yet"
-            description="Add your wedding events — Ruracio, ceremony, reception, and more. Each event is a self-contained workspace with tasks, budget, and guests."
+            description="Add your wedding events — traditional ceremony, main ceremony, reception, and more. Each event is a self-contained workspace with tasks, budget, and guests."
             action={<Button onClick={() => setShowAdd(true)}><Plus size={14} />Add event</Button>}
           />
         ) : (

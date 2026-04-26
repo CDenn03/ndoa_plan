@@ -71,7 +71,7 @@ const CHECKLIST_TEMPLATES = {
 const SHOT_LIST_TEMPLATES = {
   GETTING_READY: ['Bride getting ready — detail shots (dress, shoes, rings)', 'Groom getting ready', 'Bridesmaids helping bride', 'Groomsmen with groom', 'First look (if planned)'],
   CEREMONY: ['Processional', 'Bride entrance', 'Exchange of vows', 'Ring exchange', 'First kiss', 'Recessional', 'Signing of register'],
-  CULTURAL: ['Ruracio — dowry negotiation', 'Ruracio — handover ceremony', 'Traditional attire portraits', 'Elder blessings', 'Cultural dance moments'],
+  CULTURAL: ['Traditional ceremony — dowry negotiation', 'Traditional ceremony — handover', 'Traditional attire portraits', 'Elder blessings', 'Cultural dance moments'],
   PORTRAITS: ['Couple portraits — outdoor', 'Couple portraits — venue', 'Bridal party group', 'Groomsmen group', 'Bridesmaids group'],
   FAMILY: ['Bride with parents', 'Groom with parents', 'Both families together', 'Siblings', 'Extended family groups'],
   RECEPTION: ['Venue details — tables, decor, flowers', 'Cake cutting', 'First dance', 'Parent dances', 'Speeches', 'Bouquet toss', 'Guests dancing'],
