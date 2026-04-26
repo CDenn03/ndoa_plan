@@ -2,6 +2,7 @@
 import { useState, useMemo, use } from 'react'
 import { ShoppingBag, Search, Plus, X, CalendarDays } from 'lucide-react'
 import { Button, Input, Select, EmptyState, Spinner } from '@/components/ui'
+import { EventTabs, StatsCard } from '@/components/ui/tabs'
 import { useVendors, useVendorStats } from '@/hooks/use-vendors'
 import { useWeddingStore } from '@/store/wedding-store'
 import { useQuery } from '@tanstack/react-query'
@@ -22,11 +23,14 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
     queryKey: ['events', wid],
-    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/events`); if (!res.ok) throw new Error('Failed'); return res.json() as Promise<WeddingEvent[]> },
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/events`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<WeddingEvent[]>
+    },
     staleTime: 60_000,
   })
 
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
 
   const filtered = useMemo(() => vendors.filter(v => {
@@ -47,16 +51,12 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
             <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Vendors</h1>
           </div>
           <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{stats.total} vendors · {fmt(stats.totalOwed)} outstanding</p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
-            {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
-              tabs.map(t => (
-                <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                  {t.label}
-                </button>
-              ))
-            )}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
 
@@ -67,20 +67,14 @@ export default function VendorsPage(props: Readonly<{ params: Promise<{ weddingI
         ) : (
           /* Overall tab */
           <div className="space-y-8">
-            {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-zinc-100">
-              {[
-                { label: 'Confirmed', val: stats.confirmed, color: 'text-emerald-600' },
-                { label: 'Booked', val: stats.booked, color: 'text-sky-600' },
-                { label: 'Pending', val: stats.pending, color: 'text-amber-500' },
-                { label: 'Total owed', val: fmt(stats.totalOwed), color: stats.totalOwed > 0 ? 'text-red-500' : 'text-[#14161C]' },
-              ].map(({ label, val, color }, i) => (
-                <div key={label} className={i === 0 ? 'pr-8' : i === 3 ? 'pl-8' : 'px-8'}>
-                  <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">{label}</p>
-                  <p className={`text-3xl font-extrabold leading-none ${color}`}>{val}</p>
-                </div>
-              ))}
-            </div>
+            <StatsCard
+              stats={[
+                { label: 'Confirmed', value: stats.confirmed, color: 'green' },
+                { label: 'Booked', value: stats.booked, color: 'blue' },
+                { label: 'Pending', value: stats.pending, color: 'amber' },
+                { label: 'Total owed', value: fmt(stats.totalOwed), color: stats.totalOwed > 0 ? 'red' : 'default' },
+              ]}
+            />
 
             {/* By event summary */}
             {events.length > 0 && (

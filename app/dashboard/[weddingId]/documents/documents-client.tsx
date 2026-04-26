@@ -266,68 +266,68 @@ function CategoryDetail({ weddingId, category, docs, onBack, onDelete, onUpload,
   const [viewDoc, setViewDoc] = useState<Doc | null>(null)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-xs text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors">
-          <ArrowLeft size={12} /> All categories
-        </button>
-        <Button size="sm" variant="lavender" onClick={() => fileRef.current?.click()} disabled={uploading}>
-          {uploading ? <Spinner size="sm" /> : <Upload size={13} />}
-          {uploading ? 'Uploading…' : `Upload to ${category.label}`}
-        </Button>
-        <input ref={fileRef} type="file" multiple className="hidden"
-          onChange={e => { const files = Array.from(e.target.files ?? []); if (files.length) onUpload(files, category.id); e.target.value = '' }} />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: category.color }} />
-        <div>
-          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">{category.label}</p>
-          <p className="text-sm text-[#14161C]/55">{docs.length} document{docs.length !== 1 ? 's' : ''}</p>
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center gap-1.5 text-xs text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors">
+            <ArrowLeft size={12} /> All categories
+          </button>
+          <Button size="sm" variant="lavender" onClick={() => fileRef.current?.click()} disabled={uploading}>
+            {uploading ? <Spinner size="sm" /> : <Upload size={13} />}
+            {uploading ? 'Uploading…' : `Upload to ${category.label}`}
+          </Button>
+          <input ref={fileRef} type="file" multiple className="hidden"
+            onChange={e => { const files = Array.from(e.target.files ?? []); if (files.length) onUpload(files, category.id); e.target.value = '' }} />
         </div>
-      </div>
 
-      {docs.length === 0 ? (
-        <EmptyState icon={<FileText size={40} />} title="No documents yet"
-          description={`Upload documents to ${category.label}`}
-          action={<Button variant="lavender" onClick={() => fileRef.current?.click()}><Upload size={14} /> Upload</Button>} />
-      ) : (
-        <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
-          {docs.map(doc => {
-            const Icon = fileIcon(doc.mimeType)
-            return (
-              <div key={doc.id} className="group flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-[#F7F5F2] transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-[#1F4D3A]/6 flex items-center justify-center flex-shrink-0">
-                  <Icon size={15} className="text-[#14161C]/40" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#14161C] truncate">{doc.title ?? doc.path.split('/').pop()}</p>
-                  <p className="text-xs text-[#14161C]/40">{doc.mimeType.split('/')[1]?.toUpperCase() ?? doc.mimeType} · {format(new Date(doc.createdAt), 'MMM d, yyyy')}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => setViewDoc(doc)}
-                    className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors">
-                    View →
-                  </button>
-                  <a href={`/api/storage/signed-url?path=${encodeURIComponent(doc.path)}&bucket=${doc.bucket}`}
-                    download={doc.title ?? doc.path.split('/').pop()}
-                    className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Download">
-                    <Download size={13} />
-                  </a>
-                  <button onClick={() => onDelete(doc.id)}
-                    className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: category.color }} />
+          <div>
+            <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">{category.label}</p>
+            <p className="text-sm text-[#14161C]/55">{docs.length} document{docs.length !== 1 ? 's' : ''}</p>
+          </div>
         </div>
-      )}
-    </div>
-    {
+
+        {docs.length === 0 ? (
+          <EmptyState icon={<FileText size={40} />} title="No documents yet"
+            description={`Upload documents to ${category.label}`}
+            action={<Button variant="lavender" onClick={() => fileRef.current?.click()}><Upload size={14} /> Upload</Button>} />
+        ) : (
+          <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+            {docs.map(doc => {
+              const Icon = fileIcon(doc.mimeType)
+              return (
+                <div key={doc.id} className="group flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-[#F7F5F2] transition-colors">
+                  <div className="w-9 h-9 rounded-xl bg-[#1F4D3A]/6 flex items-center justify-center flex-shrink-0">
+                    <Icon size={15} className="text-[#14161C]/40" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-[#14161C] truncate">{doc.title ?? doc.path.split('/').pop()}</p>
+                    <p className="text-xs text-[#14161C]/40">{doc.mimeType.split('/')[1]?.toUpperCase() ?? doc.mimeType} · {format(new Date(doc.createdAt), 'MMM d, yyyy')}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button onClick={() => setViewDoc(doc)}
+                      className="text-xs font-semibold text-[#1F4D3A] hover:text-[#16382B] transition-colors">
+                      View →
+                    </button>
+                    <a href={`/api/storage/signed-url?path=${encodeURIComponent(doc.path)}&bucket=${doc.bucket}`}
+                      download={doc.title ?? doc.path.split('/').pop()}
+                      className="p-1.5 rounded-lg hover:bg-[#1F4D3A]/6 text-[#14161C]/40 hover:text-[#14161C]/60 transition-colors" aria-label="Download">
+                      <Download size={13} />
+                    </a>
+                    <button onClick={() => onDelete(doc.id)}
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#14161C]/40 hover:text-red-500 transition-colors" aria-label="Delete">
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
       {viewDoc && <DocViewModal doc={viewDoc} onClose={() => setViewDoc(null)} />}
-    }
+    </>
   )
 }
 

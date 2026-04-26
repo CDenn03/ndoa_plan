@@ -1,8 +1,9 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Sparkles, Plus, CalendarDays } from 'lucide-react'
-import { Button, EmptyState, Spinner } from '@/components/ui'
-import { isFuture, isThisWeek } from 'date-fns'
+import { Sparkles, CalendarDays } from 'lucide-react'
+import { EmptyState, Spinner } from '@/components/ui'
+import { EventTabs, StatsCard } from '@/components/ui/tabs'
+import { isFuture, isThisWeek, format } from 'date-fns'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AppointmentList, EventAppointmentsTab,
@@ -40,16 +41,44 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
 
   return (
     <div className="space-y-10">
-      <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Upcoming</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{upcoming.length}</p></div>
-        {thisWeek.length > 0 && (
-          <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">This week</p>
-            <p className="text-2xl font-extrabold text-amber-500">{thisWeek.length}</p></div>
-        )}
-        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total</p>
-          <p className="text-2xl font-extrabold text-[#14161C]/40">{appointments.length}</p></div>
-      </div>
+      <StatsCard
+        stats={[
+          { label: 'Upcoming', value: upcoming.length, color: 'default' },
+          ...(thisWeek.length > 0 ? [{ label: 'This week', value: thisWeek.length, color: 'amber' as const }] : []),
+          { label: 'Total', value: appointments.length, color: 'default' }
+        ]}
+      />
+
+      {/* Upcoming appointments section */}
+      {upcoming.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Upcoming appointments</p>
+          <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+            {upcoming.slice(0, 5).map(appt => (
+              <div key={appt.id} className="flex items-center gap-4 py-4 px-6 border-b border-[#1F4D3A]/8 last:border-0">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C] truncate">{appt.title}</p>
+                  <p className="text-xs text-[#14161C]/40">
+                    {format(new Date(appt.startAt), 'MMM d, yyyy • h:mm a')}
+                    {appt.location && ` • ${appt.location}`}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-[#14161C]/40">
+                    {isThisWeek(new Date(appt.startAt)) ? 'This week' : format(new Date(appt.startAt), 'MMM d')}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {upcoming.length > 5 && (
+              <div className="px-6 py-3 bg-[#F7F5F2]/60 text-center">
+                <p className="text-xs text-[#14161C]/40">+{upcoming.length - 5} more upcoming appointments</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {Array.from(byEvent.entries()).map(([key, { event, appts }]) => {
@@ -69,6 +98,7 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
           )
         })}
       </div>
+
       <div>
         <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-4">All appointments</p>
         <AppointmentList appointments={appointments} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />
@@ -86,19 +116,26 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
 
   const { data: appointments = [], isLoading: apptLoading } = useQuery<Appointment[]>({
     queryKey: ['appointments', weddingId],
-    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/appointments`); if (!res.ok) throw new Error('Failed'); return res.json() as Promise<Appointment[]> },
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/appointments`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<Appointment[]>
+    },
     staleTime: 30_000,
   })
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
     queryKey: ['events', weddingId],
-    queryFn: async () => { const res = await fetch(`/api/weddings/${weddingId}/events`); if (!res.ok) throw new Error('Failed'); return res.json() as Promise<WeddingEvent[]> },
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${weddingId}/events`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<WeddingEvent[]>
+    },
     staleTime: 60_000,
   })
 
   const isLoading = apptLoading || eventsLoading
   const refresh = () => void qc.invalidateQueries({ queryKey: ['appointments', weddingId] })
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
   const upcoming = appointments.filter(a => a.status === 'SCHEDULED' && isFuture(new Date(a.startAt)))
   const thisWeek = upcoming.filter(a => isThisWeek(new Date(a.startAt)))
@@ -116,24 +153,20 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
             {upcoming.length} upcoming
             {thisWeek.length > 0 && <span className="ml-2 text-amber-500 font-semibold">· {thisWeek.length} this week</span>}
           </p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
-            {isLoading ? <div className="pb-4"><Spinner size="sm" /></div> : (
-              tabs.map(t => (
-                <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                  {t.label}
-                </button>
-              ))
-            )}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-8 py-10">
-        {activeTab === '__overall__'
-          ? <OverallTab appointments={appointments} events={events} isLoading={isLoading} weddingId={weddingId} vendors={vendors} onRefresh={refresh} />
-          : activeEvent
-            ? <EventAppointmentsTab weddingId={weddingId} userId={userId} eventId={activeEvent.id} vendors={vendors} appointments={appointments} onRefresh={refresh} />
-            : null}
+        {activeTab === '__overall__' ? (
+          <OverallTab appointments={appointments} events={events} isLoading={isLoading} weddingId={weddingId} vendors={vendors} onRefresh={refresh} />
+        ) : activeEvent ? (
+          <EventAppointmentsTab weddingId={weddingId} userId={userId} eventId={activeEvent.id} vendors={vendors} appointments={appointments} onRefresh={refresh} />
+        ) : null}
       </div>
       {showAdd && <AddAppointmentModal weddingId={weddingId} userId={userId} vendors={vendors} onClose={() => setShowAdd(false)} onDone={refresh} />}
     </div>

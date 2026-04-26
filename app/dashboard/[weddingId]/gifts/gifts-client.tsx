@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react'
 import { Gift, CalendarDays } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
+import { EventTabs, StatsCard, Tabs } from '@/components/ui/tabs'
 import {
   EventGiftsTab, RegistryList, ReceivedList,
   type GiftRegistryItem, type GiftReceived,
@@ -47,17 +48,14 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
 
   return (
     <div className="space-y-8">
-      {/* Stats */}
-      <div className="flex gap-8 divide-x divide-zinc-100 flex-wrap">
-        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Wish list items</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{registry.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Gifts received</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{received.length}</p></div>
-        {totalValue > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total value</p>
-          <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalValue)}</p></div>}
-        {pendingThankYous > 0 && <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Thank-yous pending</p>
-          <p className="text-2xl font-extrabold text-amber-500">{pendingThankYous}</p></div>}
-      </div>
+      <StatsCard
+        stats={[
+          { label: 'Wish list items', value: registry.length, color: 'default' },
+          { label: 'Gifts received', value: received.length, color: 'default' },
+          ...(totalValue > 0 ? [{ label: 'Total value', value: fmt(totalValue), color: 'green' as const }] : []),
+          ...(pendingThankYous > 0 ? [{ label: 'Thank-yous pending', value: pendingThankYous, color: 'amber' as const }] : [])
+        ]}
+      />
 
       {/* By event */}
       {events.length > 0 && (
@@ -81,19 +79,21 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
         </div>
       )}
 
-      {/* Sub-tab toggle for all items */}
       <div className="space-y-4">
-        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
-          {(['wishlist', 'received'] as const).map(t => (
-            <button key={t} onClick={() => setSubTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
-              {t === 'wishlist' ? `Wish List (${registry.length})` : `Received (${received.length})`}
-              {t === 'received' && pendingThankYous > 0 && (
-                <span className="ml-1.5 text-[10px] font-bold bg-amber-100 text-amber-600 rounded-full px-1.5 py-0.5">{pendingThankYous}</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={[
+            { key: 'wishlist', label: `Wish List (${registry.length})` },
+            { 
+              key: 'received', 
+              label: pendingThankYous > 0 
+                ? `Received (${received.length}) • ${pendingThankYous} pending`
+                : `Received (${received.length})`
+            }
+          ]}
+          activeTab={subTab}
+          onTabChange={(key) => setSubTab(key as 'wishlist' | 'received')}
+          variant="pills"
+        />
         {subTab === 'wishlist' && <RegistryList items={registry} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => {}} />}
         {subTab === 'received' && <ReceivedList gifts={received} weddingId={weddingId} onRefresh={onRefresh} onAdd={() => {}} />}
       </div>
@@ -103,7 +103,6 @@ function OverallTab({ weddingId, registry, received, events, onRefresh }: Readon
 
 export function GiftsClient({ weddingId, events, registry, received, onRefresh }: Readonly<Props>) {
   const [activeTab, setActiveTab] = useState('__overall__')
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
   const pendingThankYous = received.filter(r => !r.thankYouSent).length
 
@@ -117,22 +116,20 @@ export function GiftsClient({ weddingId, events, registry, received, onRefresh }
             {registry.length} wish list items · {received.length} received
             {pendingThankYous > 0 && <span className="ml-2 text-amber-500 font-semibold">· {pendingThankYous} thank-yous pending</span>}
           </p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
-            {tabs.map(t => (
-              <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-8 py-10">
-        {activeTab === '__overall__'
-          ? <OverallTab weddingId={weddingId} registry={registry} received={received} events={events} onRefresh={onRefresh} />
-          : activeEvent
-            ? <EventGiftsTab weddingId={weddingId} eventId={activeEvent.id} registry={registry} received={received} onRefresh={onRefresh} />
-            : null}
+        {activeTab === '__overall__' ? (
+          <OverallTab weddingId={weddingId} registry={registry} received={received} events={events} onRefresh={onRefresh} />
+        ) : activeEvent ? (
+          <EventGiftsTab weddingId={weddingId} eventId={activeEvent.id} registry={registry} received={received} onRefresh={onRefresh} />
+        ) : null}
       </div>
     </div>
   )

@@ -282,7 +282,7 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
           <div className="flex gap-0.5 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {TABS.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
+                className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
                 {t.icon}{t.label}
               </button>
             ))}

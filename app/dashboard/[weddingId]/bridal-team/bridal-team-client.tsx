@@ -1,15 +1,14 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Heart, CalendarDays, Users } from 'lucide-react'
-import { Button, Badge, EmptyState } from '@/components/ui'
+import { EmptyState } from '@/components/ui'
+import { EventTabs, StatsCard } from '@/components/ui/tabs'
 import { BridalTeamTab } from '@/components/features/bridal-team-components'
-import Link from 'next/link'
 
 type ConfirmationStatus = 'PENDING' | 'CONFIRMED' | 'DECLINED'
-type BridalRole = string
 
 interface Member {
-  id: string; name: string; role: BridalRole; side: string; confirmationStatus: ConfirmationStatus
+  id: string; name: string; role: string; side: string; confirmationStatus: ConfirmationStatus
 }
 
 interface EventWithTeam {
@@ -50,16 +49,12 @@ function OverallTab({ events, weddingId }: Readonly<{
 
   return (
     <div className="space-y-8">
-      <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8">
-          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total Members</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{totalMembers}</p>
-        </div>
-        <div className="px-8">
-          <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Confirmed</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{confirmedMembers}</p>
-        </div>
-      </div>
+      <StatsCard
+        stats={[
+          { label: 'Total Members', value: totalMembers, color: 'default' },
+          { label: 'Confirmed', value: confirmedMembers, color: 'green' }
+        ]}
+      />
       <div className="space-y-3">
         <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
         {eventsWithMembers.map(event => (
@@ -90,10 +85,6 @@ function OverallTab({ events, weddingId }: Readonly<{
 export function BridalTeamOverviewClient({ weddingId, events }: Readonly<Props>) {
   const [activeTab, setActiveTab] = useState('__overall__')
   const totalMembers = events.reduce((s, e) => s + e.bridalTeamMembers.length, 0)
-  const tabs = [
-    { key: '__overall__', label: 'Overall', icon: <Heart size={13} /> },
-    ...events.map(e => ({ key: e.id, label: e.name, icon: <Users size={13} /> }))
-  ]
   const activeEvent = events.find(e => e.id === activeTab)
 
   return (
@@ -103,22 +94,20 @@ export function BridalTeamOverviewClient({ weddingId, events }: Readonly<Props>)
           <p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-2">People</p>
           <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Bridal Team</h1>
           <p className="text-sm text-[#14161C]/40 mt-2 mb-6">{totalMembers} members across {events.length} events</p>
-          <div className="flex gap-0.5 overflow-x-auto scrollbar-thin -mb-px">
-            {tabs.map(t => (
-              <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                {t.icon}{t.label}
-              </button>
-            ))}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-8 py-10">
-        {activeTab === '__overall__'
-          ? <OverallTab events={events} weddingId={weddingId} />
-          : activeEvent
-            ? <BridalTeamTab weddingId={weddingId} eventId={activeEvent.id} />
-            : null}
+        {activeTab === '__overall__' ? (
+          <OverallTab events={events} weddingId={weddingId} />
+        ) : activeEvent ? (
+          <BridalTeamTab weddingId={weddingId} eventId={activeEvent.id} />
+        ) : null}
       </div>
     </div>
   )

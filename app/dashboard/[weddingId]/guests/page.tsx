@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo, use, useRef, useEffect } from 'react'
 import { Users, Search, Plus, X, UserCheck, Wifi, WifiOff } from 'lucide-react'
-import { Button, Input, Select, EmptyState, Spinner } from '@/components/ui'
+import { Button, Input, Select, EmptyState, Spinner, EventTabs } from '@/components/ui'
 import { useGuests, useGuestStats, useCheckInGuest } from '@/hooks/use-guests'
 import { useWeddingStore } from '@/store/wedding-store'
 import { useQuery } from '@tanstack/react-query'
@@ -203,12 +203,19 @@ export default function GuestsPage(props: Readonly<{ params: Promise<{ weddingId
           </div>
           <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
-              tabs.map(t => (
-                <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                  {t.label}
+              <>
+                <EventTabs
+                  events={events}
+                  activeTab={activeTab === '__check-in__' ? '__overall__' : activeTab}
+                  onTabChange={setActiveTab}
+                  showOverall={true}
+                />
+                <button
+                  onClick={() => setActiveTab('__check-in__')}
+                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === '__check-in__' ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
+                  Check-in
                 </button>
-              ))
+              </>
             )}
           </div>
         </div>

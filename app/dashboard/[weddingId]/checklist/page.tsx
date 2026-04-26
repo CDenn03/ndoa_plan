@@ -2,8 +2,10 @@
 import { useState, useMemo, use } from 'react'
 import { Plus, LayoutTemplate, CalendarDays } from 'lucide-react'
 import { Button, ProgressBar, Spinner } from '@/components/ui'
+import { EventTabs } from '@/components/ui/tabs'
 import { useChecklistItems } from '@/hooks/use-data'
 import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
 import { TaskModal, TaskList, LoadTemplateModal } from '@/components/features/task-modals'
 import type { TaskItem } from '@/components/features/task-modals'
 
@@ -14,6 +16,11 @@ interface WeddingEvent { id: string; name: string; type: string; date: string }
 function OverallTab({ weddingId, items, events, onAdd, onSelectEvent }: Readonly<{
   weddingId: string; items: TaskItem[]; events: WeddingEvent[]; onAdd: () => void; onSelectEvent: (id: string) => void
 }>) {
+  const overdue = items.filter(i => !i.isChecked && i.dueDate && new Date(i.dueDate) < new Date())
+  const highPriority = items.filter(i => !i.isChecked && i.priority === 1)
+  const upcomingDue = items.filter(i => !i.isChecked && i.dueDate && new Date(i.dueDate) > new Date())
+    .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())
+
   const byEvent = useMemo(() => {
     const map = new Map<string, { event: WeddingEvent | null; items: TaskItem[] }>()
     for (const e of events) map.set(e.id, { event: e, items: [] })
@@ -27,6 +34,48 @@ function OverallTab({ weddingId, items, events, onAdd, onSelectEvent }: Readonly
 
   return (
     <div className="space-y-8">
+      {/* Priority tasks section */}
+      {(overdue.length > 0 || highPriority.length > 0 || upcomingDue.length > 0) && (
+        <div className="space-y-3">
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Priority tasks</p>
+          <div className="bg-white rounded-2xl border border-[#1F4D3A]/8 overflow-hidden">
+            {/* Overdue tasks */}
+            {overdue.slice(0, 3).map(task => (
+              <div key={task.id} className="flex items-center gap-4 py-3 px-6 border-b border-[#1F4D3A]/8 bg-red-50/50">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C] truncate">{task.title}</p>
+                  <p className="text-xs text-red-600">Overdue • Due {format(new Date(task.dueDate!), 'MMM d')}</p>
+                </div>
+                <span className="text-[10px] font-bold bg-red-100 text-red-600 rounded-full px-2 py-1">OVERDUE</span>
+              </div>
+            ))}
+            
+            {/* High priority tasks */}
+            {highPriority.slice(0, 3).map(task => (
+              <div key={task.id} className="flex items-center gap-4 py-3 px-6 border-b border-[#1F4D3A]/8">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C] truncate">{task.title}</p>
+                  <p className="text-xs text-[#14161C]/40">
+                    {task.dueDate ? `Due ${format(new Date(task.dueDate), 'MMM d')}` : 'High priority'}
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full px-2 py-1">HIGH</span>
+              </div>
+            ))}
+
+            {/* Upcoming due tasks */}
+            {upcomingDue.slice(0, 2).map(task => (
+              <div key={task.id} className="flex items-center gap-4 py-3 px-6 border-b border-[#1F4D3A]/8 last:border-0">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#14161C] truncate">{task.title}</p>
+                  <p className="text-xs text-[#14161C]/40">Due {format(new Date(task.dueDate!), 'MMM d, yyyy')}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {events.length > 0 && (
         <div className="space-y-3">
           <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">By event</p>
@@ -103,11 +152,14 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
     queryKey: ['events', wid],
-    queryFn: async () => { const res = await fetch(`/api/weddings/${wid}/events`); if (!res.ok) throw new Error('Failed'); return res.json() as Promise<WeddingEvent[]> },
+    queryFn: async () => {
+      const res = await fetch(`/api/weddings/${wid}/events`)
+      if (!res.ok) throw new Error('Failed')
+      return res.json() as Promise<WeddingEvent[]>
+    },
     staleTime: 60_000,
   })
 
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
   const activeEvent = events.find(e => e.id === activeTab)
   const checked = tasks.filter(i => i.isChecked).length
 
@@ -124,39 +176,34 @@ export default function TasksPage(props: Readonly<{ params: Promise<{ weddingId:
             <h1 className="text-4xl font-heading font-semibold text-[#14161C] tracking-tight">Tasks</h1>
           </div>
           <p className="text-sm text-[#14161C]/40 mt-1 mb-6">{checked} of {tasks.length} completed</p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
-            {(isLoading || eventsLoading) ? <div className="pb-4"><Spinner size="sm" /></div> : (
-              tabs.map(t => (
-                <button key={t.key} onClick={() => setActiveTab(t.key)}
-                  className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                  {t.label}
-                </button>
-              ))
-            )}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-8 py-10">
-        {isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
-          activeTab === '__overall__'
-            ? <OverallTab weddingId={wid} items={tasks} events={events} onAdd={() => setShowAdd(true)} onSelectEvent={setActiveTab} />
-            : activeEvent
-              ? (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-[#14161C]/55">{eventItems.filter(t => t.isChecked).length}/{eventItems.length} completed</p>
-                    <div className="flex gap-2">
-                      <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
-                        <LayoutTemplate size={13} /> Load template
-                      </Button>
-                      <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Add task</Button>
-                    </div>
-                  </div>
-                  <TaskList items={eventItems} weddingId={wid} onAdd={() => setShowAdd(true)} />
-                </div>
-              )
-              : null}
+        {isLoading ? (
+          <div className="flex justify-center py-16"><Spinner /></div>
+        ) : activeTab === '__overall__' ? (
+          <OverallTab weddingId={wid} items={tasks} events={events} onAdd={() => setShowAdd(true)} onSelectEvent={setActiveTab} />
+        ) : activeEvent ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-[#14161C]/55">{eventItems.filter(t => t.isChecked).length}/{eventItems.length} completed</p>
+              <div className="flex gap-2">
+                <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
+                  <LayoutTemplate size={13} /> Load template
+                </Button>
+                <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Add task</Button>
+              </div>
+            </div>
+            <TaskList items={eventItems} weddingId={wid} onAdd={() => setShowAdd(true)} />
+          </div>
+        ) : null}
       </div>
 
       {showAdd && <TaskModal weddingId={wid} eventId={activeEvent?.id} onClose={() => setShowAdd(false)} />}

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
-import { Button, Input, Label, Modal, EmptyState } from '@/components/ui'
+import { Button, Input, Label, Modal, EmptyState, Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
@@ -616,17 +616,20 @@ export function EventLogisticsTab({ weddingId, eventId, routes, accommodations, 
   const evRoutes = routes.filter(r => r.eventId === eventId)
   const evAccoms = accommodations.filter(a => a.eventId === eventId)
 
+  const tabs = [
+    { key: 'transport', label: 'Transport', icon: <Truck size={13} /> },
+    { key: 'accommodation', label: 'Accommodation', icon: <Hotel size={13} /> }
+  ]
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-1 bg-[#1F4D3A]/6 p-1 rounded-xl w-fit">
-          {(['transport', 'accommodation'] as const).map(t => (
-            <button key={t} onClick={() => setSubTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${subTab === t ? 'bg-white text-[#14161C] shadow-sm' : 'text-[#14161C]/55 hover:text-[#14161C]/70'}`}>
-              {t === 'transport' ? 'Transport' : 'Accommodation'}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={tabs}
+          activeTab={subTab}
+          onTabChange={(key) => setSubTab(key as 'transport' | 'accommodation')}
+          variant="pills"
+        />
         <Button size="sm" onClick={() => subTab === 'transport' ? setShowAddRoute(true) : setShowAddAccom(true)}>
           <Plus size={14} /> {subTab === 'transport' ? 'Add route' : 'Add accommodation'}
         </Button>

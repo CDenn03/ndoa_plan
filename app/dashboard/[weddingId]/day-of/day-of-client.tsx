@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react'
 import { Calendar, CalendarDays } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
+import { EventTabs, StatsCard } from '@/components/ui/tabs'
 import { format } from 'date-fns'
 import {
   EventScheduleTab,
@@ -32,14 +33,13 @@ function OverallTab({ incidents, events }: Readonly<{ incidents: Incident[]; eve
 
   return (
     <div className="space-y-8">
-      <div className="flex gap-8 divide-x divide-zinc-100">
-        <div className="pr-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Events</p>
-          <p className="text-2xl font-extrabold text-[#14161C]">{events.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Active incidents</p>
-          <p className={`text-2xl font-extrabold ${activeIncidents.length > 0 ? 'text-red-500' : 'text-emerald-600'}`}>{activeIncidents.length}</p></div>
-        <div className="px-8"><p className="text-xs font-semibold text-[#1F4D3A]/40 uppercase tracking-widest mb-1">Total incidents</p>
-          <p className="text-2xl font-extrabold text-[#14161C]/40">{incidents.length}</p></div>
-      </div>
+      <StatsCard
+        stats={[
+          { label: 'Events', value: events.length, color: 'default' },
+          { label: 'Active incidents', value: activeIncidents.length, color: activeIncidents.length > 0 ? 'red' : 'green' },
+          { label: 'Total incidents', value: incidents.length, color: 'default' }
+        ]}
+      />
       <div className="space-y-3">
         <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">Events</p>
         {events.map(e => {
@@ -67,8 +67,7 @@ function OverallTab({ incidents, events }: Readonly<{ incidents: Incident[]; eve
 }
 
 export function ScheduleClient({ weddingId, events, vendors, incidents, onRefresh }: Readonly<Props>) {
-  const [activeTab, setActiveTab] = useState(() => events.find(e => e.isMain)?.id ?? events[0]?.id ?? '__overall__')
-  const tabs = [{ key: '__overall__', label: 'Overall' }, ...events.map(e => ({ key: e.id, label: e.name }))]
+  const [activeTab, setActiveTab] = useState('__overall__')
   const activeEvent = events.find(e => e.id === activeTab)
   const activeIncidents = incidents.filter(i => !i.resolvedAt)
 
@@ -84,22 +83,20 @@ export function ScheduleClient({ weddingId, events, vendors, incidents, onRefres
               <span className="ml-2 text-red-500 font-semibold">· {activeIncidents.length} active incident{activeIncidents.length === 1 ? '' : 's'}</span>
             )}
           </p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-thin -mb-px">
-            {tabs.map(t => (
-              <button key={t.key} onClick={() => setActiveTab(t.key)}
-                className={`flex-shrink-0 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.key ? 'border-[#14161C] text-[#14161C]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
+          <EventTabs
+            events={events}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showOverall={true}
+          />
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-8 py-10">
-        {activeTab === '__overall__'
-          ? <OverallTab incidents={incidents} events={events} />
-          : activeEvent
-            ? <EventScheduleTab weddingId={weddingId} event={activeEvent} vendors={vendors} incidents={incidents} onRefresh={onRefresh} />
-            : null}
+        {activeTab === '__overall__' ? (
+          <OverallTab incidents={incidents} events={events} />
+        ) : activeEvent ? (
+          <EventScheduleTab weddingId={weddingId} event={activeEvent} vendors={vendors} incidents={incidents} onRefresh={onRefresh} />
+        ) : null}
       </div>
     </div>
   )

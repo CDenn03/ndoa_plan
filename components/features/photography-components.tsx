@@ -346,7 +346,7 @@ function ChecklistSection({ items, weddingId, eventId, title, category, template
           {items.map(item => (
             <div key={item.id} className="group flex items-center gap-3 px-4 py-2.5 border-b border-zinc-50 last:border-0">
               <button onClick={() => toggle(item)}
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${item.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'}`}
+                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${item.isChecked ? 'bg-[#1F4D3A]/60 border-[#1F4D3A]' : 'border-zinc-300 hover:border-[#1F4D3A]/40'}`}
                 aria-label={item.isChecked ? 'Uncheck' : 'Check'}>
                 {item.isChecked && <Check size={10} className="text-white" />}
               </button>
@@ -594,7 +594,7 @@ function ShotListSection({ items, weddingId, eventId }: Readonly<{
                       <button
                         onClick={() => toggle(shot)}
                         className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                          shot.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
+                          shot.isChecked ? 'bg-[#1F4D3A]/60 border-[#1F4D3A]' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
                         }`}
                         aria-label={shot.isChecked ? 'Mark not captured' : 'Mark captured'}>
                         {shot.isChecked && (
@@ -846,7 +846,7 @@ function DeliverablesSection({ items, weddingId, eventId }: Readonly<{
               <button
                 onClick={() => void toggle(item)}
                 className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                  item.isChecked ? 'bg-[#1F4D3A]/60 border-violet-500' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
+                  item.isChecked ? 'bg-[#1F4D3A]/60 border-[#1F4D3A]' : 'border-zinc-300 hover:border-[#1F4D3A]/40'
                 }`}
                 aria-label={item.isChecked ? 'Mark not received' : 'Mark received'}>
                 {item.isChecked && (
@@ -1095,7 +1095,7 @@ export function PhotographyTab({ weddingId, eventId }: Readonly<{ weddingId: str
       <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-[#1F4D3A]/8 -mx-1 px-1">
         {tabs.map(({ key, label }) => (
           <button key={key} onClick={() => setActiveTab(key)}
-            className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === key ? 'border-violet-500 text-[#1F4D3A]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
+            className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === key ? 'border-[#14161C] text-[#1F4D3A]' : 'border-transparent text-[#14161C]/40 hover:text-[#14161C]/60'}`}>
             {label}
           </button>
         ))}
