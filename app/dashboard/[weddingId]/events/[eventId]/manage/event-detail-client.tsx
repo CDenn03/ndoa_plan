@@ -278,6 +278,14 @@ export function EventDetailClient({ weddingId, event }: Readonly<Props>) {
               </div>
               {event.description && <p className="text-sm text-[#14161C]/40 mt-1">{event.description}</p>}
             </div>
+            <div className="flex gap-2">
+              <Link href={`/dashboard/${weddingId}/events/${event.id}/manage`}>
+                <Button variant="secondary" size="sm">
+                  <Sparkles size={14} />
+                  Manage Event
+                </Button>
+              </Link>
+            </div>
           </div>
           <div className="flex gap-0.5 overflow-x-auto scrollbar-thin -mb-px mt-6">
             {TABS.map(t => (

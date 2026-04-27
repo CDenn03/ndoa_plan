@@ -1,29 +1,49 @@
-'use client'
-import { use } from 'react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { AppointmentsClient } from './appointments-client'
-import { useQuery } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
-import { Spinner } from '@/components/ui'
+import { db } from '@/lib/db'
 
-interface Vendor { id: string; name: string; category: string }
+interface WeddingEvent { id: string; name: string; type: string; date: string }
 
-export default function AppointmentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
-  const params = use(props.params)
+export default async function AppointmentsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
+  const params = await props.params
   const wid = params.weddingId
-  const { data: session } = useSession()
-  const userId = (session?.user as typeof session.user & { id?: string })?.id ?? ''
+  const session = await getServerSession(authOptions)
+  
+  if (!session?.user) {
+    return <div>Unauthorized</div>
+  }
 
-  const { data: vendors = [] } = useQuery<Vendor[]>({
-    queryKey: ['vendors', wid, 'select'],
-    queryFn: async () => {
-      const res = await fetch(`/api/weddings/${wid}/vendors`)
-      if (!res.ok) return []
-      return res.json() as Promise<Vendor[]>
-    },
-    staleTime: 60_000,
-  })
+  // Fetch vendors and events server-side
+  const [vendors, events] = await Promise.all([
+    db.vendor.findMany({
+      where: { weddingId: wid },
+      select: { id: true, name: true, category: true },
+      orderBy: { name: 'asc' }
+    }),
+    db.weddingEvent.findMany({
+      where: { weddingId: wid },
+      select: { id: true, name: true, type: true, date: true },
+      orderBy: { date: 'asc' }
+    })
+  ])
 
-  if (!userId) return <div className="flex justify-center py-20"><Spinner /></div>
+  const userId = (session.user as { id: string }).id ?? ''
 
-  return <AppointmentsClient weddingId={wid} userId={userId} vendors={vendors} />
+  // Convert events to match the expected interface
+  const formattedEvents: WeddingEvent[] = events.map(event => ({
+    id: event.id,
+    name: event.name,
+    type: event.type,
+    date: event.date.toISOString()
+  }))
+
+  return (
+    <AppointmentsClient 
+      weddingId={wid} 
+      userId={userId} 
+      vendors={vendors} 
+      events={formattedEvents}
+    />
+  )
 }

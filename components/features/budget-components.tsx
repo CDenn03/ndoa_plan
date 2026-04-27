@@ -21,14 +21,20 @@ export const SUGGESTED_ALLOC: Record<string, number> = {
 export interface WeddingEvent { id: string; name: string; type: string; date: string }
 export interface Vendor { id: string; name: string; category: string }
 
-export const fmt = (n: number) =>
-  new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(n)
+import { 
+  sanitizeNumeric, 
+  addBudgetAmounts, 
+  formatCurrency, 
+  groupBudgetByCategory 
+} from '@/lib/budget-helpers'
+
+export const fmt = (n: number) => formatCurrency(n)
 
 export function summarise(lines: LocalBudgetLine[]) {
   return lines.reduce(
     (acc, l) => ({
-      estimated: acc.estimated + (Number(l.estimated) || 0),
-      actual: acc.actual + (Number(l.actual) || 0),
+      estimated: addBudgetAmounts(acc.estimated, l.estimated),
+      actual: addBudgetAmounts(acc.actual, l.actual),
     }),
     { estimated: 0, actual: 0 },
   )
@@ -312,13 +318,13 @@ export function CategoryBreakdown({ lines, weddingId, events, vendors, onEdit, o
     setConfirmDelete(null)
   }
 
-  const byCategory = useMemo(() =>
-    lines.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, l) => {
-      if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, lines: [] }
-      acc[l.category].estimated += (Number(l.estimated) || 0); acc[l.category].actual += (Number(l.actual) || 0); acc[l.category].lines.push(l)
+  const byCategory = useMemo(() => {
+    const grouped = groupBudgetByCategory(lines)
+    return grouped.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, { category, lines, totalEstimated, totalActual }) => {
+      acc[category] = { estimated: totalEstimated, actual: totalActual, lines }
       return acc
-    }, {}),
-  [lines])
+    }, {})
+  }, [lines])
 
   if (Object.keys(byCategory).length === 0) return null
 
@@ -519,22 +525,20 @@ export function EventBudgetTab({ weddingId, eventId, events, vendors }: Readonly
   const pct = totalEstimated > 0 ? Math.round((totalActual / totalEstimated) * 100) : 0
 
   const paidLines = useMemo(() =>
-    lines.filter(l => (Number(l.estimated) || 0) > 0 && (Number(l.actual) || 0) >= (Number(l.estimated) || 0)),
+    lines.filter(l => sanitizeNumeric(l.estimated) > 0 && sanitizeNumeric(l.actual) >= sanitizeNumeric(l.estimated)),
   [lines])
   const unpaidLines = useMemo(() =>
-    lines.filter(l => !((Number(l.estimated) || 0) > 0 && (Number(l.actual) || 0) >= (Number(l.estimated) || 0))),
+    lines.filter(l => !(sanitizeNumeric(l.estimated) > 0 && sanitizeNumeric(l.actual) >= sanitizeNumeric(l.estimated))),
   [lines])
   const filteredLines = tab === 'paid' ? paidLines : tab === 'unpaid' ? unpaidLines : lines
 
-  const byCategory = useMemo(() =>
-    filteredLines.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, l) => {
-      if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0, lines: [] }
-      acc[l.category].estimated += (Number(l.estimated) || 0)
-      acc[l.category].actual += (Number(l.actual) || 0)
-      acc[l.category].lines.push(l)
+  const byCategory = useMemo(() => {
+    const grouped = groupBudgetByCategory(filteredLines)
+    return grouped.reduce<Record<string, { estimated: number; actual: number; lines: LocalBudgetLine[] }>>((acc, { category, lines, totalEstimated, totalActual }) => {
+      acc[category] = { estimated: totalEstimated, actual: totalActual, lines }
       return acc
-    }, {}),
-  [filteredLines])
+    }, {})
+  }, [filteredLines])
 
   const handleDelete = async (line: LocalBudgetLine) => {
     try {

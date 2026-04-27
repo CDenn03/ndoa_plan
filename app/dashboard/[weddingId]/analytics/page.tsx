@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import { AnalyticsClient } from './analytics-client'
+import { addBudgetAmounts } from '@/lib/budget-helpers'
 
 export default async function AnalyticsPage(props: Readonly<{ params: Promise<{ weddingId: string }> }>) {
   const params = await props.params
@@ -22,16 +23,16 @@ export default async function AnalyticsPage(props: Readonly<{ params: Promise<{ 
 
   if (!wedding) redirect('/dashboard')
 
-  const totalBudget = budgetLines.reduce((s, l) => s + Number(l.estimated), 0)
-  const totalSpent = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
-  const totalActual = budgetLines.reduce((s, l) => s + Number(l.actual), 0)
+  const totalBudget = budgetLines.reduce((s, l) => addBudgetAmounts(s, l.estimated), 0)
+  const totalSpent = budgetLines.reduce((s, l) => addBudgetAmounts(s, l.actual), 0)
+  const totalActual = budgetLines.reduce((s, l) => addBudgetAmounts(s, l.actual), 0)
 
   // Budget by category
   const budgetByCategory = Object.entries(
     budgetLines.reduce<Record<string, { estimated: number; actual: number }>>((acc, l) => {
       if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0 }
-      acc[l.category].estimated += Number(l.estimated)
-      acc[l.category].actual += Number(l.actual)
+      acc[l.category].estimated = addBudgetAmounts(acc[l.category].estimated, l.estimated)
+      acc[l.category].actual = addBudgetAmounts(acc[l.category].actual, l.actual)
       return acc
     }, {})
   ).map(([name, vals]) => ({ name, ...vals, total: vals.actual }))

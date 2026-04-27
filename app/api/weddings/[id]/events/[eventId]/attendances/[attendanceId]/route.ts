@@ -14,9 +14,9 @@ export async function PATCH(req: NextRequest, props: Params) {
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json() as { rsvpStatus?: string; checkedIn?: boolean }
-  const updateData: { rsvpStatus?: string; checkedIn?: boolean; checkedInAt?: Date | null } = {}
+  const updateData: { rsvpStatus?: any; checkedIn?: boolean; checkedInAt?: Date | null } = {}
   
-  if (body.rsvpStatus) updateData.rsvpStatus = body.rsvpStatus
+  if (body.rsvpStatus) updateData.rsvpStatus = body.rsvpStatus as any
   if (body.checkedIn !== undefined) {
     updateData.checkedIn = body.checkedIn
     updateData.checkedInAt = body.checkedIn ? new Date() : null

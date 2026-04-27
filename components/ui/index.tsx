@@ -6,11 +6,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// ─── Brand tokens (mirrors landing page) ─────────────────────────────────────
-// Primary:   #1F4D3A  (deep green)
-// Gold:      #D4A94F
-// BG:        #F7F5F2
-// Text:      #14161C
+// ─── Brand tokens (Ndoa Plan Brand Guidelines) ─────────────────────────────────
+// Primary:   #1F4D3A  (Deep Green - Trust & Reliability)
+// Gold:      #D4A94F  (Gold - Celebration & Premium)
+// Light Gold:#E6C878  (Supporting)
+// Dark Green:#16382B  (Supporting)
+// BG:        #F7F5F2  (Background - Warm & Welcoming)
+// Text:      #14161C  (Primary Text)
+
+// Typography: Playfair Display (headings) + Inter (UI)
+// Spacing: 8px system with generous whitespace
+// Icons: Outline style with minimal fill, slight rounded edges
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 const badgeVariants = {
@@ -314,3 +320,22 @@ export function Modal({ onClose, title, children }: Readonly<{
 
 // ─── Export new tab components ────────────────────────────────────────────────
 export { Tabs, EventTabs, StatsCard, ContentCard } from './tabs'
+
+// ─── Export standardized module components ────────────────────────────────────
+export { StatsCards, SingleStatCard } from './stats-cards'
+export { StandardModal, FormModal, ListModal, TemplateLoadingModal } from './standard-modal'
+export { 
+  ConfirmationDialog, 
+  DeleteConfirmation, 
+  BulkActionConfirmation, 
+  StatusChangeConfirmation,
+  UnsavedChangesConfirmation 
+} from './confirmation-dialog'
+export { 
+  ModuleHeader, 
+  CompactModuleHeader, 
+  SectionHeader, 
+  PageHeaderWithTabs, 
+  FilterHeader,
+  EmptyStateHeader 
+} from './module-header'

@@ -100,7 +100,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         payerPhone: body.payerPhone || null,
         vendorId: body.vendorId || null,
         contributionId: body.contributionId || null,
-        status: body.status ?? 'COMPLETED',
+        status: (body.status as any) ?? 'COMPLETED',
         mpesaRef: body.mpesaRef || null,
         paymentDate: body.paymentDate ? new Date(body.paymentDate) : null,
         idempotencyKey: `manual-${userId}-${Date.now()}`,

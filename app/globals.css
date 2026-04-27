@@ -61,6 +61,25 @@
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #d4d4d8; border-radius: 9999px; }
 
+  /* Tab navigation scrollbar */
+  .tab-nav-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 77, 58, 0.2) transparent;
+  }
+  .tab-nav-scroll::-webkit-scrollbar { 
+    height: 4px; 
+  }
+  .tab-nav-scroll::-webkit-scrollbar-track { 
+    background: transparent; 
+  }
+  .tab-nav-scroll::-webkit-scrollbar-thumb { 
+    background-color: rgba(31, 77, 58, 0.2); 
+    border-radius: 9999px; 
+  }
+  .tab-nav-scroll:hover::-webkit-scrollbar-thumb { 
+    background-color: rgba(31, 77, 58, 0.4); 
+  }
+
   .section-divider {
     border: none;
     border-top: 1px solid hsl(var(--border));

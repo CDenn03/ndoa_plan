@@ -112,10 +112,7 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
     const daysLeft = differenceInDays(new Date(ev.date), now)
     const isPast = daysLeft < 0
     return (
-      <Link
-        href={`/dashboard/${weddingId}/events/${ev.id}`}
-        className="flex items-start gap-4 py-4 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors group"
-      >
+      <div className="flex items-start gap-4 py-4 border-b border-[#1F4D3A]/8 last:border-0 hover:bg-stone-50 transition-colors group">
         <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isPast ? 'bg-[#1F4D3A]/6' : 'bg-[#E5DF98]/40 border border-[#E5DF98]'}`}>
           {isPast ? (
             <p className="text-xs font-semibold text-[#14161C]/40">Done</p>
@@ -156,8 +153,21 @@ export function EventsClient({ weddingId, events }: Readonly<Props>) {
             )}
           </div>
         </div>
-        <ChevronRight size={14} className="text-[#14161C]/25 group-hover:text-[#14161C]/55 transition-colors flex-shrink-0 mt-1" />
-      </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/dashboard/${weddingId}/events/${ev.id}/manage`}
+            className="px-3 py-1.5 text-xs font-medium text-[#1F4D3A] bg-[#1F4D3A]/8 hover:bg-[#1F4D3A]/15 rounded-lg transition-colors"
+          >
+            Manage
+          </Link>
+          <Link
+            href={`/dashboard/${weddingId}/events/${ev.id}`}
+            className="text-[#14161C]/25 group-hover:text-[#14161C]/55 transition-colors"
+          >
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+      </div>
     )
   }
 

@@ -42,7 +42,7 @@ export async function POST(req: NextRequest, props: Params) {
     const guest = await db.guest.create({
       data: {
         weddingId: id, name: body.name,
-        phone: body.phone ?? null, side: body.side ?? 'BOTH',
+        phone: body.phone ?? null, side: (body.side as any) ?? 'BOTH',
         tags: body.tags ?? [],
         rsvpStatus: 'PENDING', version: 1, checksum: '', updatedBy: userId,
       },
@@ -52,8 +52,8 @@ export async function POST(req: NextRequest, props: Params) {
 
   const attendance = await db.guestEventAttendance.upsert({
     where: { guestId_eventId: { guestId, eventId } },
-    create: { guestId, eventId, rsvpStatus: body.rsvpStatus ?? 'PENDING' },
-    update: { rsvpStatus: body.rsvpStatus ?? 'PENDING' },
+    create: { guestId, eventId, rsvpStatus: (body.rsvpStatus as any) ?? 'PENDING' },
+    update: { rsvpStatus: (body.rsvpStatus as any) ?? 'PENDING' },
     include: { guest: { select: { id: true, name: true, phone: true, side: true, rsvpStatus: true, checkedIn: true, mealPref: true, tags: true } } },
   })
 

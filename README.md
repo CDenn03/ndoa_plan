@@ -1,6 +1,66 @@
-# Ndoa — Wedding Platform
+# Ndoa Plan — The Operating System for Weddings in Africa
+
+*"Reliable like a bank 💳 Emotional like a love story ❤️ Structured like enterprise software ⚙️"*
 
 Offline-first, fault-tolerant wedding coordination platform built for real-world use in low-connectivity environments. Supports M-Pesa payment reconciliation, multi-cultural Kenyan wedding types, and role-based multi-member planning.
+
+## 🧩 Brand Essence
+
+| Attribute | Meaning |
+|---|---|
+| **Trust** | Financial + planning reliability |
+| **Connection** | Couples, families, committees |
+| **Continuity** | Offline-first sync |
+| **Celebration** | Weddings, culture, joy |
+
+## 🎨 Brand Guidelines
+
+### Color System
+```css
+/* Primary Colors */
+--primary: #1F4D3A      /* Deep Green */
+--gold: #D4A94F         /* Gold */
+
+/* Supporting Colors */
+--light-gold: #E6C878   /* Light Gold */
+--dark-green: #16382B   /* Dark Green */
+--background: #F7F5F2   /* Background */
+--dark-bg: #0F172A      /* Dark Mode BG */
+
+/* Functional Colors */
+--success: #22C55E      /* Success */
+--warning: #F59E0B      /* Warning */
+--error: #EF4444        /* Error */
+--info: #3B82F6         /* Info */
+```
+
+### Typography System
+- **Primary Font (Brand/Headings)**: Playfair Display (elegant serif)
+- **Secondary Font (UI/App)**: Inter (clean, modern)
+
+**Usage:**
+- Logo/Hero text: Playfair Display
+- Headings (H1–H3): Playfair Display  
+- UI text/forms: Inter
+- Buttons: Inter (medium/semibold)
+
+**Type Scale:**
+- H1: 48–56px (Playfair)
+- H2: 36–40px (Playfair)
+- H3: 28–32px (Playfair)
+- Body: 14–16px (Inter)
+- Small: 12–13px (Inter)
+
+### Design Principles
+- **8px spacing system** for consistent layout
+- **Generous whitespace** → reinforces premium feel
+- **Outline icons** with minimal fill and slight rounded edges
+- **Consistent stroke width** across all iconography
+
+### Motion Design
+- **Sync** → looping motion (match logo)
+- **Payment success** → subtle gold pulse
+- **Loading** → rotating loop (logo-inspired)
 
 ---
 

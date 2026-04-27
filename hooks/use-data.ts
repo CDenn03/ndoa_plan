@@ -5,6 +5,10 @@ import { computeChecksum } from '@/lib/db/checksum'
 import { atomicWrite } from './use-atomic-write'
 import { v4 as uuidv4 } from 'uuid'
 import type { LocalChecklistItem, LocalBudgetLine } from '@/types'
+import { 
+  sanitizeNumeric, 
+  addBudgetAmounts 
+} from '@/lib/budget-helpers'
 
 // ─── Checklist ────────────────────────────────────────────────────────────────
 
@@ -112,8 +116,8 @@ export function useBudgetLines(weddingId: string) {
     queryFn: async () => {
       const sanitize = (l: LocalBudgetLine): LocalBudgetLine => ({
         ...l,
-        estimated: Number(l.estimated) || 0,
-        actual: Number(l.actual) || 0,
+        estimated: sanitizeNumeric(l.estimated),
+        actual: sanitizeNumeric(l.actual),
       })
       // Always fetch from server (actual is server-computed from payments)
       const res = await fetch(`/api/weddings/${weddingId}/budget`)
@@ -138,12 +142,12 @@ export function useBudgetLines(weddingId: string) {
 
 export function useBudgetSummary(weddingId: string) {
   const { data: lines = [] } = useBudgetLines(weddingId)
-  const totalEstimated = lines.reduce((s, l) => s + l.estimated, 0)
-  const totalActual = lines.reduce((s, l) => s + l.actual, 0)
+  const totalEstimated = lines.reduce((s, l) => addBudgetAmounts(s, l.estimated), 0)
+  const totalActual = lines.reduce((s, l) => addBudgetAmounts(s, l.actual), 0)
   const byCategory = lines.reduce<Record<string, { estimated: number; actual: number }>>((acc, l) => {
     if (!acc[l.category]) acc[l.category] = { estimated: 0, actual: 0 }
-    acc[l.category].estimated += l.estimated
-    acc[l.category].actual += l.actual
+    acc[l.category].estimated = addBudgetAmounts(acc[l.category].estimated, l.estimated)
+    acc[l.category].actual = addBudgetAmounts(acc[l.category].actual, l.actual)
     return acc
   }, {})
   return { totalEstimated, totalActual, byCategory, lines }

@@ -1,24 +1,30 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Sparkles, CalendarDays } from 'lucide-react'
-import { EmptyState, Spinner } from '@/components/ui'
-import { EventTabs, StatsCard } from '@/components/ui/tabs'
+import { Sparkles, CalendarDays, Plus, LayoutTemplate } from 'lucide-react'
+import { EmptyState, Spinner, Button } from '@/components/ui'
+import { EventTabs } from '@/components/ui/tabs'
+import { StatsCards } from '@/components/ui/stats-cards'
 import { isFuture, isThisWeek, format } from 'date-fns'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  AppointmentList, EventAppointmentsTab,
+  AppointmentList, EventAppointmentsTab, AppointmentLoadTemplateModal,
   type Appointment, type Vendor,
 } from '@/components/features/appointment-modals'
 import { AddAppointmentModal } from '@/components/features/appointment-modals'
 
 interface WeddingEvent { id: string; name: string; type: string; date: string }
-interface Props { weddingId: string; userId: string; vendors: Vendor[] }
+interface Props { 
+  weddingId: string; 
+  userId: string; 
+  vendors: Vendor[]; 
+  events: WeddingEvent[];
+}
 
 // ─── Overall tab ──────────────────────────────────────────────────────────────
 
-function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRefresh }: Readonly<{
+function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRefresh, onAdd, onTemplate }: Readonly<{
   appointments: Appointment[]; events: WeddingEvent[]; isLoading: boolean
-  weddingId: string; vendors: Vendor[]; onRefresh: () => void
+  weddingId: string; vendors: Vendor[]; onRefresh: () => void; onAdd: () => void; onTemplate: () => void
 }>) {
   const upcoming = appointments.filter(a => a.status === 'SCHEDULED' && isFuture(new Date(a.startAt)))
   const thisWeek = upcoming.filter(a => isThisWeek(new Date(a.startAt)))
@@ -36,12 +42,23 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
 
   if (isLoading) return <div className="flex justify-center py-16"><Spinner /></div>
   if (appointments.length === 0) return (
-    <EmptyState icon={<Sparkles size={40} />} title="No appointments yet" description="Book appointments inside each event tab to get started" />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[#14161C]/55">No appointments yet</p>
+        <div className="flex gap-2">
+          <Button variant="lavender" size="sm" onClick={onTemplate}>
+            <LayoutTemplate size={13} /> Load template
+          </Button>
+          <Button size="sm" onClick={onAdd}><Plus size={14} /> Book appointment</Button>
+        </div>
+      </div>
+      <EmptyState icon={<Sparkles size={40} />} title="No appointments yet" description="Book appointments to get started" />
+    </div>
   )
 
   return (
     <div className="space-y-10">
-      <StatsCard
+      <StatsCards
         stats={[
           { label: 'Upcoming', value: upcoming.length, color: 'default' },
           ...(thisWeek.length > 0 ? [{ label: 'This week', value: thisWeek.length, color: 'amber' as const }] : []),
@@ -100,7 +117,15 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
       </div>
 
       <div>
-        <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest mb-4">All appointments</p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xs font-bold text-[#1F4D3A]/40 uppercase tracking-widest">All appointments</p>
+          <div className="flex gap-2">
+            <Button variant="lavender" size="sm" onClick={onTemplate}>
+              <LayoutTemplate size={13} /> Load template
+            </Button>
+            <Button size="sm" onClick={onAdd}><Plus size={14} /> Book appointment</Button>
+          </div>
+        </div>
         <AppointmentList appointments={appointments} weddingId={weddingId} vendors={vendors} onRefresh={onRefresh} />
       </div>
     </div>
@@ -109,10 +134,11 @@ function OverallTab({ appointments, events, isLoading, weddingId, vendors, onRef
 
 // ─── Main client ──────────────────────────────────────────────────────────────
 
-export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Props>) {
+export function AppointmentsClient({ weddingId, userId, vendors, events }: Readonly<Props>) {
   const qc = useQueryClient()
   const [activeTab, setActiveTab] = useState('__overall__')
   const [showAdd, setShowAdd] = useState(false)
+  const [showTemplate, setShowTemplate] = useState(false)
 
   const { data: appointments = [], isLoading: apptLoading } = useQuery<Appointment[]>({
     queryKey: ['appointments', weddingId],
@@ -124,21 +150,12 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
     staleTime: 30_000,
   })
 
-  const { data: events = [], isLoading: eventsLoading } = useQuery<WeddingEvent[]>({
-    queryKey: ['events', weddingId],
-    queryFn: async () => {
-      const res = await fetch(`/api/weddings/${weddingId}/events`)
-      if (!res.ok) throw new Error('Failed')
-      return res.json() as Promise<WeddingEvent[]>
-    },
-    staleTime: 60_000,
-  })
-
-  const isLoading = apptLoading || eventsLoading
+  const isLoading = apptLoading
   const refresh = () => void qc.invalidateQueries({ queryKey: ['appointments', weddingId] })
   const activeEvent = events.find(e => e.id === activeTab)
   const upcoming = appointments.filter(a => a.status === 'SCHEDULED' && isFuture(new Date(a.startAt)))
   const thisWeek = upcoming.filter(a => isThisWeek(new Date(a.startAt)))
+  const completed = appointments.filter(a => a.status === 'COMPLETED').length
 
   return (
     <div className="min-h-full">
@@ -150,7 +167,7 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
             
           </div>
           <p className="text-sm text-[#14161C]/40 mt-1 mb-6">
-            {upcoming.length} upcoming
+            {completed} of {appointments.length} completed
             {thisWeek.length > 0 && <span className="ml-2 text-amber-500 font-semibold">· {thisWeek.length} this week</span>}
           </p>
           <EventTabs
@@ -163,12 +180,43 @@ export function AppointmentsClient({ weddingId, userId, vendors }: Readonly<Prop
       </div>
       <div className="max-w-6xl mx-auto px-8 py-10">
         {activeTab === '__overall__' ? (
-          <OverallTab appointments={appointments} events={events} isLoading={isLoading} weddingId={weddingId} vendors={vendors} onRefresh={refresh} />
+          <OverallTab 
+            appointments={appointments} 
+            events={events} 
+            isLoading={isLoading} 
+            weddingId={weddingId} 
+            vendors={vendors} 
+            onRefresh={refresh}
+            onAdd={() => setShowAdd(true)}
+            onTemplate={() => setShowTemplate(true)}
+          />
         ) : activeEvent ? (
-          <EventAppointmentsTab weddingId={weddingId} userId={userId} eventId={activeEvent.id} vendors={vendors} appointments={appointments} onRefresh={refresh} />
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-[#14161C]/55">
+                {appointments.filter(a => a.eventId === activeEvent.id && a.status === 'COMPLETED').length}/
+                {appointments.filter(a => a.eventId === activeEvent.id).length} completed
+              </p>
+              <div className="flex gap-2">
+                <Button variant="lavender" size="sm" onClick={() => setShowTemplate(true)}>
+                  <LayoutTemplate size={13} /> Load template
+                </Button>
+                <Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Book appointment</Button>
+              </div>
+            </div>
+            <EventAppointmentsTab 
+              weddingId={weddingId} 
+              userId={userId} 
+              eventId={activeEvent.id} 
+              vendors={vendors} 
+              appointments={appointments} 
+              onRefresh={refresh} 
+            />
+          </div>
         ) : null}
       </div>
-      {showAdd && <AddAppointmentModal weddingId={weddingId} userId={userId} vendors={vendors} onClose={() => setShowAdd(false)} onDone={refresh} />}
+      {showAdd && <AddAppointmentModal weddingId={weddingId} userId={userId} vendors={vendors} eventId={activeEvent?.id} onClose={() => setShowAdd(false)} onDone={refresh} />}
+      {showTemplate && activeEvent && <AppointmentLoadTemplateModal weddingId={weddingId} eventId={activeEvent.id} onClose={() => setShowTemplate(false)} onDone={refresh} />}
     </div>
   )
 }
